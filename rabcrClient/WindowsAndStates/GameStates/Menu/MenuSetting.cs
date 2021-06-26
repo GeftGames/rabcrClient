@@ -387,9 +387,9 @@ namespace rabcrClient {
                 //    Global.ChangedSettings=true;
                  //   System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 }
-            }else{
-                  SettingHeader button=new SettingHeader(Lang.Texts[340]);
-                    settings.Add(button);
+            } else {
+                SettingMessage button=new SettingMessage(Lang.Texts[340]);
+                settings.Add(button);
             }
 
             {

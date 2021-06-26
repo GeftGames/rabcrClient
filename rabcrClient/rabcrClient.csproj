@@ -77,6 +77,7 @@
     <Compile Include="InterLogic\Game\BlockType\BasicWavingPlant.cs" />
     <Compile Include="InterLogic\Game\BlockType\Parrot.cs" />
     <Compile Include="InterLogic\Game\BlockType\WavingPlant.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingMessage.cs" />
     <Compile Include="InterLogic\Multiplayer\CheckServer.cs" />
     <Compile Include="InterLogic\Multiplayer\ConnectionChecker.cs" />
     <Compile Include="InterLogic\Multiplayer\MultiplayerSystem.cs" />
