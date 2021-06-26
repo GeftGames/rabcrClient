@@ -1,7 +1,7 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:C:\Users\GeftGames\rabcr\rabcrClient\rabcrClient\Publish\RabcrData
+/outputDir:..\rabcrClient\Publish\RabcrData
 /intermediateDir:obj
 /platform:Windows
 /config:
