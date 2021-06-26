@@ -38,11 +38,12 @@ namespace rabcrClient {
             try {  if (checker!=null) {
                 if (started) {
                     if (checker.IsAlive) {
+                            if (p!=null){
                 if ((int)(DateTime.Now-p.StartTime).TotalSeconds>5) {
                     Error=true;
                     ErrorText="Server nenalezen v časovém intervalu";
                     ErrorDeep=2;
-                }
+                } }
 
 
                     } else {

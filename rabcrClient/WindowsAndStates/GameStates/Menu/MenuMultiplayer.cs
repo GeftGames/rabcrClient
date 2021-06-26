@@ -85,6 +85,7 @@ namespace rabcrClient {
             if (Menu.newMouseState.ScrollWheelValue!=Menu.oldMouseState.ScrollWheelValue) {
                 scrollbar.Scroll((Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/2f);
             }
+              buttonMenu.Update();
             //if (buttonProblems.Click) {
             //    new FormProblems().ShowDialog();
 
@@ -192,6 +193,7 @@ namespace rabcrClient {
             angleChecking+=0.02f;
 
             if (findingservers) {
+             //   connectionChecker=new ConnectionChecker(servers[foreachedServer].ip.ToString(), servers[foreachedServer].port);
                 connectionChecker.Check();
 
                 if (connectionChecker.Error) {
@@ -444,10 +446,10 @@ namespace rabcrClient {
             base.Draw(gameTime);
         }
 
-        public override void Shutdown() {
-            worldsTarget.Dispose();
-            base.Shutdown();
-        }
+        //public override void Shutdown() {
+        //    worldsTarget.Dispose();
+        //    base.Shutdown();
+        //}
 
         void ClickMenu(object sender, EventArgs e){
            //  if (buttonMenu.Click) {
