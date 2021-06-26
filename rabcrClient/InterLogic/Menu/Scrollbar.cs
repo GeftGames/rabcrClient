@@ -52,7 +52,7 @@ namespace rabcrClient {
         public void ButtonDraw(SpriteBatch spriteBatch, float f) {
             if (bscale!=scale) {
                 bscale=scale;
-                MoveScollBar.Invoke(this,ea);
+                MoveScollBar?.Invoke(this,ea);
             }
             if (height>maxheight)return;
             if (height<19)return;
