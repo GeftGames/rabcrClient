@@ -2,10 +2,10 @@
 ## English
 ### Download
 Releases here 
-https://geftgames.ga/
+https://rabcr.ga/
 
 ### About
-A sample game written with MonoGame that targets Win.
+A game written with MonoGame that targets Win.
 
 
 ### Programing
