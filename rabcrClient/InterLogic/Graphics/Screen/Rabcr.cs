@@ -31,9 +31,6 @@ namespace rabcrClient {
         public static Color color_r0_g0_b0_a100 = new Color(0,0,0,100);
 
         public Rabcr() {
-
-
-
             newMouseState=new MouseState();
             //Activated += ActivateMyGame;
             //Deactivated += DeactivateMyGame;
@@ -150,7 +147,7 @@ namespace rabcrClient {
            // }
             #endregion
 
-             Window.AllowUserResizing = true;
+            Window.AllowUserResizing = true;
             GraphicsManager= new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
 
@@ -168,9 +165,11 @@ namespace rabcrClient {
                 MyGameForm.SizeChanged+=Window_ClientSizeChanged;
                 MyGameForm.StartPosition=FormStartPosition.CenterScreen;
             }
-            try{
+            try {
                 GraphicsManager.ApplyChanges();
-            }catch{ }
+            } catch { }
+
+            // Set up text in multiply languages
             Lang.Load();
             SetLangUp();
 
@@ -178,13 +177,12 @@ namespace rabcrClient {
 
             (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
-             /*Constants.random=*/random=new FastRandom();
+            random=new FastRandom();
 
 
           //  Graphics.SynchronizeWithVerticalRetrace = false;
 //base.IsFixedTimeStep = false;
          //   SynchronizeWithVerticalRetrace = true;
-         //   Game.
         }
 
         public static void SetLangUp(){
@@ -385,7 +383,6 @@ namespace rabcrClient {
                 (byte)Setting.CurrentLanguage,
                 Constants.AnimationsControls ? (byte)1 : (byte)0,
                 Constants.AnimationsGame ? (byte)1 : (byte)0,
-              //  Constants.Shadow ? (byte)1 : (byte)0,
                 (byte)Setting.GraphicsProfile,
 
                 (byte)Setting.currentScale,
