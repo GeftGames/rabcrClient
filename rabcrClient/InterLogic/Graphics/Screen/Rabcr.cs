@@ -115,8 +115,26 @@ namespace rabcrClient {
 
                 //Log.Init();
 
-                if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")){
-                    MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu","Nenalezeny data hry");
+                if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
+                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+                         default:
+                            MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu"
+                            #if DEBUG
+                           \r\nZkontrolujte  System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData"
+                            #endif
+                            ,"Nenalezeny data hry");
+                            break;
+
+                         case "Czech":
+                            MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu"
+                            #if DEBUG
+                           \r\nZkontrolujte  System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData"
+                            #endif
+                            ,"Nenalezeny data hry");
+                            break;
+                    }
+                   
+
                     Environment.Exit(-1);
                     return;
                 }
