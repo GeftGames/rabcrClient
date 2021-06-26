@@ -1,0 +1,489 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B0E7EE60-C50B-43B6-8CD2-2A5B6D87E15E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>rabcrClient</RootNamespace>
+    <AssemblyName>rabcrClient</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MonoGamePlatform>Windows</MonoGamePlatform>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Publish\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>none</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>rabcrClient.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Achievement.cs" />
+    <Compile Include="AchievmentControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ClothesTypes.cs" />
+    <Compile Include="Functions\FastMath.cs" />
+    <Compile Include="Functions\FastRandom.cs" />
+    <Compile Include="InterLogic\Game\BlockType\CactusBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\FruitPlantWaving.cs" />
+    <Compile Include="InterLogic\Game\BlockType\BasicWavingPlant.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Parrot.cs" />
+    <Compile Include="InterLogic\Game\BlockType\WavingPlant.cs" />
+    <Compile Include="InterLogic\Multiplayer\CheckServer.cs" />
+    <Compile Include="InterLogic\Multiplayer\ConnectionChecker.cs" />
+    <Compile Include="InterLogic\Multiplayer\MultiplayerSystem.cs" />
+    <Compile Include="LiveObject.cs" />
+    <Compile Include="GImageButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\Data\Effects.cs" />
+    <Compile Include="InterLogic\Data\Fonts.cs" />
+    <Compile Include="InterLogic\Data\Songs.cs" />
+    <Compile Include="InterLogic\Data\SoundEffects.cs" />
+    <Compile Include="InterLogic\Data\Textures.cs" />
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GBounds.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GChangeButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GColor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GeDoPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GLangButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GLink.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GTextBox.designer.cs">
+      <DependentUpon>GTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Components\GTextPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\DrawComponents\Classic\Help\Constants.cs" />
+    <Compile Include="InterLogic\DrawComponents\Classic\Help\GGeDo.cs" />
+    <Compile Include="InterLogic\DrawComponents\Classic\Help\NativeMethods.cs" />
+    <Compile Include="InterLogic\DrawComponents\Classic\PreComponents\GPreTextbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InterLogic\Game\BlockType\AnimatedBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\AnimatedBlockOffset.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Barrel.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Block.cs" />
+    <Compile Include="InterLogic\Game\BlockType\BoxBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Chicken.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Fish.cs" />
+    <Compile Include="InterLogic\Game\BlockType\WoodBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\MashineBlockBasic.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Mob.cs" />
+    <Compile Include="InterLogic\Game\BlockType\LeavesBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\NormalBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Plant.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Rabbit.cs" />
+    <Compile Include="InterLogic\Game\BlockType\ScreenBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\ShelfBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\Water.cs" />
+    <Compile Include="InterLogic\Game\Energy.cs" />
+    <Compile Include="InterLogic\Game\Enums\BlocksIds.cs" />
+    <Compile Include="InterLogic\Game\Enums\BlockType.cs" />
+    <Compile Include="InterLogic\Game\Enums\InventoryType.cs" />
+    <Compile Include="InterLogic\Game\Enums\Items.cs" />
+    <Compile Include="InterLogic\Game\GameButton.cs" />
+    <Compile Include="InterLogic\Game\GameDraw.cs" />
+    <Compile Include="InterLogic\Game\GameMethods.cs" />
+    <Compile Include="InterLogic\Game\GameScrollbar.cs" />
+    <Compile Include="InterLogic\Game\GunShot.cs" />
+    <Compile Include="InterLogic\Game\ImgButton.cs" />
+    <Compile Include="InterLogic\Game\Item.cs" />
+    <Compile Include="InterLogic\Game\Mobile\AppInfo.cs" />
+    <Compile Include="InterLogic\Game\Mobile\AppNotes.cs" />
+    <Compile Include="InterLogic\Game\Mobile\AppWikiBlocks.cs" />
+    <Compile Include="InterLogic\Game\Mobile\AppWikiItems.cs" />
+    <Compile Include="InterLogic\Game\Mobile\System.cs" />
+    <Compile Include="InterLogic\Game\Structs.cs" />
+    <Compile Include="InterLogic\Game\Terrain\GenerateWorld.cs" />
+    <Compile Include="InterLogic\Game\Terrain\MTerrain.cs" />
+    <Compile Include="InterLogic\Game\Terrain\Terrain.cs" />
+    <Compile Include="InterLogic\Global\Global.cs" />
+    <Compile Include="InterLogic\Global\Setting.cs" />
+    <Compile Include="InterLogic\Graphics\Background.cs" />
+    <Compile Include="InterLogic\Graphics\Bar.cs" />
+    <Compile Include="InterLogic\Graphics\GeDo.cs" />
+    <Compile Include="InterLogic\Graphics\Screen\MenuScreen.cs" />
+    <Compile Include="InterLogic\Graphics\Screen\Rabcr.cs" />
+    <Compile Include="InterLogic\Graphics\Screen\Screen.cs" />
+    <Compile Include="InterLogic\ItemInv.cs" />
+    <Compile Include="InterLogic\ItemNonInv.cs" />
+    <Compile Include="InterLogic\Lang.cs" />
+    <Compile Include="InterLogic\Menu\Button.cs" />
+    <Compile Include="InterLogic\Menu\ButtonCenter.cs" />
+    <Compile Include="InterLogic\Menu\ButtonCenterLang.cs" />
+    <Compile Include="InterLogic\Menu\Scrollbar.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingButton.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingColor.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingHeader.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingItem.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingKey.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingMovemer.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingOnOff.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingSwitcher.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingSwitcherTexture.cs" />
+    <Compile Include="InterLogic\MousePos.cs" />
+    <Compile Include="InterLogic\MoveType.cs" />
+    <Compile Include="InterLogic\SaveType.cs" />
+    <Compile Include="InterLogic\StartUpItems.cs" />
+    <Compile Include="InterLogic\TextDrawer.cs" />
+    <Compile Include="LiquidId.cs" />
+    <Compile Include="GenLiveObject.cs" />
+    <Compile Include="Particles.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RabcrGame.cs" />
+    <Compile Include="Relase.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\GeneratePlanetSystem.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\GWorld.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\Multiplayer.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\PlanetSystem.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\Singleplayer.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\Informations.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MainMenu.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MenuCharacter.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MenuLang.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MenuMultiplayer.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MenuSetting.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Menu\MenuSingleplayer.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Start.cs" />
+    <Compile Include="WindowsAndStates\Splash\AddServer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\AddServer.Designer.cs">
+      <DependentUpon>AddServer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\AddSingleWorld.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\AddSingleWorld.Designer.cs">
+      <DependentUpon>AddSingleWorld.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\CheckPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\CheckPassword.Designer.cs">
+      <DependentUpon>CheckPassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\EditServer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\EditServer.Designer.cs">
+      <DependentUpon>EditServer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\EditSingleWorld.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\EditSingleWorld.Designer.cs">
+      <DependentUpon>EditSingleWorld.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormGiftCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormGiftCode.Designer.cs">
+      <DependentUpon>FormGiftCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAchGameJolt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAchGameJolt.Designer.cs">
+      <DependentUpon>FormAchGameJolt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAchDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAchDetail.Designer.cs">
+      <DependentUpon>FormAchDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormBanCountry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormBanCountry.Designer.cs">
+      <DependentUpon>FormBanCountry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormAch.Designer.cs">
+      <DependentUpon>FormAch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormColors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormColors.Designer.cs">
+      <DependentUpon>FormColors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormBadTranslation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormBadTranslation.Designer.cs">
+      <DependentUpon>FormBadTranslation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormTest18Plus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormTest18Plus.Designer.cs">
+      <DependentUpon>FormTest18Plus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormTextInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormTextInput.Designer.cs">
+      <DependentUpon>FormTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\Message.cs" />
+    <Compile Include="WindowsAndStates\Splash\Password.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\Password.Designer.cs">
+      <DependentUpon>Password.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.MediaFoundation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.MediaFoundation.4.0.1\lib\net45\SharpDX.MediaFoundation.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XAudio2, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XAudio2.4.0.1\lib\net45\SharpDX.XAudio2.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XInput.4.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stones.png" />
+    <None Include="Resources\SpaceStation.png" />
+    <None Include="Default\Textures\Blocks\Mashines\Desk.png" />
+    <None Include="Default\Textures\Blocks\ForInventory\FurnaceStone.png" />
+    <None Include="Default\Textures\Blocks\Mashines\SewingMachine.png" />
+    <None Include="Default\Textures\Space\Rocket.png" />
+    <None Include="Default\Textures\Blocks\ForInventory\Macerator.png" />
+    <None Include="Default\Textures\Blocks\ForInventory\FurnaceElectric.png" />
+    <None Include="Default\Textures\Blocks\Mashines\Lamp.png" />
+    <None Include="Default\Textures\Items\Ingots\Bronze.png" />
+    <None Include="Default\Textures\Items\Ingots\Iron.png" />
+    <Content Include="Icon.ico" />
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="RabcrData.mgcb" />
+    <None Include="ReadMe.TXT" />
+    <None Include="Resources\Done.png" />
+    <None Include="Resources\backpack %282%29.png" />
+    <None Include="Resources\Drill.png" />
+    <None Include="Resources\Cloth.png" />
+    <None Include="Resources\gold2.png" />
+    <None Include="Resources\bronze.png" />
+    <Content Include="Resources\heart.png" />
+    <None Include="Resources\IngotCopper.png" />
+    <Content Include="Resources\page_left.png" />
+    <Content Include="Resources\page_right.png" />
+    <None Include="Resources\Play.png" />
+    <None Include="Resources\PickaxeIron.png" />
+    <None Include="Resources\platinum.png" />
+    <None Include="Resources\rocket.png" />
+    <Content Include="Resources\sad.png" />
+    <None Include="Resources\silver.png" />
+    <Content Include="Resources\Smiling.png" />
+    <None Include="Resources\FontInfo traditionalChinese 18.bin" />
+    <None Include="Resources\FontInfo traditionalChinese 34.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.manifest" />
+    <None Include="Resources\FontInfo arabic 18.bin" />
+    <None Include="Resources\FontInfo arabic 34.bin" />
+    <None Include="Resources\FontInfo cyrillic 18.bin" />
+    <None Include="Resources\FontInfo cyrillic 34.bin" />
+    <None Include="Resources\FontInfo japanese 18.bin" />
+    <None Include="Resources\FontInfo japanese 34.bin" />
+    <None Include="Resources\FontInfo korean 18.bin" />
+    <None Include="Resources\FontInfo korean 34.bin" />
+    <None Include="Resources\FontInfo latin 18.bin" />
+    <None Include="Resources\FontInfo latin 34.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InterLogic\DrawComponents\Classic\Components\GTextBox.resx">
+      <DependentUpon>GTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\AddServer.resx">
+      <DependentUpon>AddServer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\AddSingleWorld.resx">
+      <DependentUpon>AddSingleWorld.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\CheckPassword.resx">
+      <DependentUpon>CheckPassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\EditServer.resx">
+      <DependentUpon>EditServer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\EditSingleWorld.resx">
+      <DependentUpon>EditSingleWorld.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormGiftCode.resx">
+      <DependentUpon>FormGiftCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormAchGameJolt.resx">
+      <DependentUpon>FormAchGameJolt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormAchDetail.resx">
+      <DependentUpon>FormAchDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormBanCountry.resx">
+      <DependentUpon>FormBanCountry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormAch.resx">
+      <DependentUpon>FormAch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormColors.resx">
+      <DependentUpon>FormColors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormBadTranslation.resx">
+      <DependentUpon>FormBadTranslation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormTest18Plus.resx">
+      <DependentUpon>FormTest18Plus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormTextInput.resx">
+      <DependentUpon>FormTextInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\Password.resx">
+      <DependentUpon>Password.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InterLogic\Splash\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,42 @@
+﻿namespace rabcrClient {
+    enum LiquidId : byte {
+        None,
+      //  NotDefined,
+
+        Water,
+        WaterSalt,
+        Lava,
+        Oil,
+
+        DyeWhite,
+        DyeYellow,
+        DyeGold,
+        DyeOrange,
+        DyeRed,
+        DyeDarkRed,
+        DyePink,
+        DyePurple,
+        DyeLightBlue,
+        DyeBlue,
+        DyeDarkBlue,
+        DyeTeal,
+        DyeLightGreen,
+        DyeGreen,
+        DyeDarkGreen,
+        DyeBrown,
+        DyeLightGray,
+        DyeGray,
+        DyeDarkGray,
+        DyeBlack,
+        DyeArmy,
+        DyeMagenta,
+        DyeRoseQuartz,
+        DyeSpringGreen,
+        DyeViolet,
+        DyeOlive,
+
+        Vinegar,
+        Alcohol,
+        Brine,
+    }
+}
