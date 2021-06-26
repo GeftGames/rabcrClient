@@ -17,6 +17,6 @@ A game written with MonoGame that targets Win.
 - Some parts translated by Google translate :)
 
 ## Programing
-Visual Studio 2019
-MonoGame nuget
-https://docs.monogame.net/articles/tools/mgcb_editor.html
+- Visual Studio 2019 c#
+- MonoGame nuget
+- https://docs.monogame.net/articles/tools/mgcb_editor.html
