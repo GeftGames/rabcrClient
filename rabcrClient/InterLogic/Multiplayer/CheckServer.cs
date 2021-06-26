@@ -17,11 +17,11 @@ namespace rabcrClient {
             if (int.TryParse(args[2], out port)) {
                 if (IPAddress.TryParse(args[1], out ip) ) {
                     Start();
-                } else Console.WriteLine("Nelze rozpoznat ip");
+                } else Console.WriteLine("1515");//Nelze rozpoznat ip
             } else {
                 if (IPAddress.TryParse(args[1], out ip) ){
-                    Console.WriteLine("Nelze rozpoznat port");
-                } else Console.WriteLine("Nelze rozpoznat adresu serveru");
+                    Console.WriteLine("1516");//Nelze rozpoznat port
+                } else Console.WriteLine("1517");//Nelze rozpoznat adresu serveru
             }
             while (running) {}
             Console.WriteLine("I|Exited");
@@ -38,9 +38,9 @@ namespace rabcrClient {
 
                 clientSocket.BeginConnect(ipEndPoint, new AsyncCallback(OnConnect), null);
             } catch (SocketException ex) {
-               SetServerError(0,"Nelze se připojit",ex.ErrorCode,ex.Message,"Start");
+               SetServerError(0,"1518",ex.ErrorCode,ex.Message,"Start");//Nelze se připojit
             }catch (Exception ex){
-                SetServerError(0,"Nelze se připojit",0,ex.Message,"Start");
+                SetServerError(0,"1518",0,ex.Message,"Start");//Nelze se připojit
             }
         }
 
@@ -80,19 +80,19 @@ namespace rabcrClient {
                 clientSocket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
            } catch (SocketException ex) {
                 switch (ex.ErrorCode) {
-                    case 10061: SetServerError(0,"Server nenalezen", ex.ErrorCode, ex.Message, "OnConnect");
+                    case 10061: SetServerError(0,"1519", ex.ErrorCode, ex.Message, "OnConnect");//Server nenalezen
                     break;
 
-                    case 10060: SetServerError(2,"Server se nenašel v časovém intervalu", ex.ErrorCode, ex.Message, "OnConnect");
+                    case 10060: SetServerError(2,"1520", ex.ErrorCode, ex.Message, "OnConnect");//Server se nenašel v časovém intervalu
                     break;
 
-                    case 10049: SetServerError(0,"Neplatná adresa serveru", ex.ErrorCode, ex.Message, "OnConnect");
+                    case 10049: SetServerError(0,"1521", ex.ErrorCode, ex.Message, "OnConnect");//Neplatná adresa serveru
                     break;
 
-                    case 10065: SetServerError(0,"Server není dostupný", ex.ErrorCode, ex.Message, "OnConnect");
+                    case 10065: SetServerError(0,"1522", ex.ErrorCode, ex.Message, "OnConnect");//Server není dostupný
                     break;
 
-                    default: SetServerError(0,"Nelze se připojit", ex.ErrorCode, ex.Message, "OnConnect");
+                    default: SetServerError(0,"1518", ex.ErrorCode, ex.Message, "OnConnect");//Nelze se připojit
                     break;
                 }
             } catch (Exception ex) {
@@ -107,9 +107,9 @@ namespace rabcrClient {
             try {
                 clientSocket.EndSend(ar);
             } catch (SocketException ex) {
-               SetServerError(1,"Nelze odeslat k serveru požadavek o odeslání informací.",ex.ErrorCode,ex.Message,"OnSend");
+               SetServerError(1,"1523",ex.ErrorCode,ex.Message,"OnSend");//Nelze odeslat k serveru požadavek o odeslání informací.
             }catch (Exception ex){
-                SetServerError(1,"Nelze odeslat k serveru požadavek o odeslání informací.",0,ex.Message,"OnSend");
+                SetServerError(1,"1523",0,ex.Message,"OnSend");//Nelze odeslat k serveru požadavek o odeslání informací.
             }
         }
 
@@ -120,10 +120,10 @@ namespace rabcrClient {
                 clientSocket.EndReceive(ar);
                 msgReceived = new Data(byteData);
             } catch (SocketException ex) {
-                if (ex.ErrorCode==10054) SetServerError(1,"Server byl neočekávaně vypnut.",ex.ErrorCode,ex.Message,"OnReceive");
+                if (ex.ErrorCode==10054) SetServerError(1,"1524",ex.ErrorCode,ex.Message,"OnReceive");//Server byl neočekávaně vypnut.
                 else SetServerError(2,ex.Message,ex.ErrorCode,ex.Message,"OnReceive");
             } catch (Exception ex) {
-                SetServerError(2,"Nelze získat data",0,ex.Message,"OnReceive");
+                SetServerError(2,"1525",0,ex.Message,"OnReceive");//Nelze získat data
             } finally {
                 if (msgReceived.Cmd==Command.Check) {
                     string[]get=msgReceived.Message.Split('|');
@@ -131,12 +131,12 @@ namespace rabcrClient {
                         Console.WriteLine("G|"+msgReceived.Message);
                         Exit();
                     } else {
-                        SetServerError(3,"Připojení existuje, ale získané data nemají správný typ.",0,"","OnReceive");
+                        SetServerError(3,"1526",0,"","OnReceive");//Připojení existuje, ale získané data nemají správný typ.
                     }
                 } else {
                     string str="";
                     foreach (byte b in byteData)str+=b+" ";
-                    SetServerError(3,"Obdrženy vadné data",0,""+str,"OnReceive");
+                    SetServerError(3,"1527",0,""+str,"OnReceive");//Obdrženy vadné data
                 }
             }
         }
@@ -153,9 +153,9 @@ namespace rabcrClient {
                     null);
 
             } catch (SocketException ex) {
-                SetServerError(1,"Nelze odeslat serveru požadavek o poskytnutí informací",ex.ErrorCode,ex.Message,"SendBegin");
+                SetServerError(1,"1528",ex.ErrorCode,ex.Message,"SendBegin");
             } catch (Exception ex) {
-                SetServerError(1,"Nelze odeslat serveru požadavek o poskytnutí informací",0,ex.Message,"SendBegin");
+                SetServerError(1,"1528",0,ex.Message,"SendBegin");
             }
         }
 

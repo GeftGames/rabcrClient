@@ -3,6 +3,7 @@
   <Langs>
     <Lang EnglishName="British english" NativeName="British english" Name="eng" Flag="GB" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
     <Lang EnglishName="Czech" NativeName="Čeština" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+	<Lang EnglishName="Moravian" NativeName="Moravština" Name="mor" Base="eng" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="German" NativeName="Deutsch" Name="deu" Flag="DE,AT,CH,LI,BE,LU" Base="eng" alphabet="AÄBCDEFGHIJKLMNOÖPQRSTUÜVWXYZaäbcdefghijklmnoöpqrstuüvwxyzß" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
     <Lang EnglishName="Japanese" NativeName="日本語 (標準語)" Name="jpn" Flag="JP" Base="enu" Category="Asian&gt;Japanese" FontFile="japanese" />
     <Lang EnglishName="American english" NativeName="American english" Name="enu" Flag="US" Base="eng" UseBase="true" Category="Worldwide;American" FontFile="latin" />
@@ -12138,6 +12139,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1091">
       <eng>Plum wood</eng>
       <ces>Slivoňové dřevo</ces>
+	  <mor>Kadlátkové dřevo</mor>
       <ces-ha>Kadlátkové dřevo</ces-ha>
       <ces-va>Karlátkové dřevo</ces-va>
       <ces-sl>Kadlátkové dřevo</ces-sl>
@@ -12426,7 +12428,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1102">
       <eng>Plum leaves with plums</eng>
       <ces>Slivoňové listí se slívami</ces>
-      <ces-ha>Kadlátovové listí s kadlátky</ces-ha>
+      <mor>Kadlátovové listí s kadlátky</mor>
+	  <ces-ha>Kadlátovové listi s kadlátky</ces-ha>
       <ces-va>Karlátovové listí s kadlátky</ces-va>
       <ces-sl>Kadlátovové listí s kadlátky</ces-sl>
       <slk>Slivkové lístie sa slivky</slk>
@@ -12455,7 +12458,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1103">
       <eng>Plum leaves</eng>
       <ces>Slivoňové listí</ces>
-      <ces-ha>Kadlátovové listí</ces-ha>
+	  <mor>Kadlátovové listí</mor>
+      <ces-ha>Kadlátovové listi</ces-ha>
       <ces-sl>Kadlátovové listí</ces-sl>
       <ces-va>Karlátovové listí</ces-va>
       <slk>Slivkové lístie</slk>
@@ -15171,6 +15175,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Plum</eng>
       <ces>Švestka</ces>
       <slk>Švestka</slk>
+	  <mor>Kadlátka</mor>
       <ces-ha>Kadlátka</ces-ha>
       <ces-va>Karlátka</ces-va>
       <ces-sl>Kadlátka</ces-sl>
@@ -18115,7 +18120,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="1326">
       <eng>Sticks</eng>
-      <ces>Klacek</ces>
+      <ces>Větev</ces>
+	  <mor>Haluz</mor>
       <jpn>スティック</jpn>
       <slk>Klacek</slk>
       <pol>Kij</pol>
@@ -18542,6 +18548,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1345">
       <eng>Army trousers</eng>
       <ces>Vojenské kalhoty</ces>
+	  <mor>Vojenské gaťe</mor>
       <ces-ha>Vojenské ctnoške</ces-ha>
       <ces-sl>Vojenské gaťata</ces-sl>
       <ces-va>Vojenské gaťe</ces-va>
@@ -22287,7 +22294,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1503">
       <eng>Christmas ball</eng>
       <ces>Vánoční koule</ces>
-      <ces-ha>Vánoční baňka</ces-ha>
+	  <mor>Vánoční baňka</mor>
+      <ces-ha>Vánočni baňka</ces-ha>
       <slk>Vianočné gule</slk>
       <jpn>クリスマスボール</jpn>
       <fra>Boule de Noel</fra>
@@ -22546,5 +22554,61 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <zch>顯示/隱藏開發者信息</zch>
       <srp>Прикажи / сакриј информације о програмеру</srp>
     </a>
+	<a id="1515">
+	<ces>Nelze rozpoznat ip</ces>
+	</a>
+	<a id="1516">
+	<ces>Nelze rozpoznat port</ces>
+	</a>
+	<a id="1517">
+	<ces>Nelze rozpoznat adresu serveru</ces>
+	</a>
+	<a id="1518">
+	<ces>Nelze se připojit</ces>
+	</a>
+	<a id="1519">
+	<ces>Server nenalezen</ces>
+	</a>
+	<a id="1520">
+	<ces>Server se nenašel v časovém intervalu</ces>
+	</a>
+	<a id="1521">
+	<ces>Neplatná adresa serveru</ces>
+	</a>
+	<a id="1522">
+	<ces>Server není dostupný</ces>
+	</a>
+	<a id="1523">
+	<ces>Nelze odeslat k serveru požadavek o odeslání informací</ces>
+	</a>
+	<a id="1524">
+	<ces>Server byl neočekávaně vypnut</ces>
+	</a>
+	<a id="1525">
+	<ces>Nelze získat data</ces>
+	</a>
+	<a id="1526">
+	<ces>Připojení existuje, ale získané data nemají správný typ</ces>
+	</a>
+	<a id="1527">
+	<ces>Obdrženy vadné data</ces>
+	</a>
+	<a id="1528">
+	<ces>Nelze odeslat serveru požadavek o poskytnutí informací</ces>
+	</a>
+	<a id="1529">
+	<ces>Hra je pro jinou verzi - %name%</ces>
+	</a>
+	<a id="1530">
+	<ces>Server je plný</ces>
+	</a>
+	<a id="1531">
+	<ces>Neznámá chyba zamezující připojení</ces>
+	</a>
+	
+	<a id="1532">
+	<ces>Postel</ces>
+	<mor>Lůžko</mor>
+	</a>
   </Data>
 </XMLFile>

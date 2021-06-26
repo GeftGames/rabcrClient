@@ -200,15 +200,18 @@ namespace rabcrClient {
                     if (servers.Count>0) {
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
                         //   servers[foreachedServer].geDoMessage=new GeDo(Fonts.Small/*,Fonts.SmallItalic,Pixel*//*,false*/);
+                        
+                        if (!int.TryParse(connectionChecker.ErrorText, out int langErrorCode)) langErrorCode =1531;
+
                         if (connectionChecker.ErrorDeep==0) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                             //servers[foreachedServer].geDoMessage.BuildString("<Red>Chyba</Red> "+connectionChecker.ErrorText);
                         } else if (connectionChecker.ErrorDeep==1) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         } else if (connectionChecker.ErrorDeep==2) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Orange>"+Lang.Texts[241]+"</Orange> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Orange>"+Lang.Texts[241]+"</Orange> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         } else if (connectionChecker.ErrorDeep==3) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Yellow>"+Lang.Texts[241]+"</Yellow> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Yellow>"+Lang.Texts[241]+"</Yellow> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         }
                         connectionChecker.Dispose();
                         findingservers=false;
@@ -237,7 +240,7 @@ namespace rabcrClient {
                     } else if (servers[foreachedServer].joinedPlayers==servers[foreachedServer].maxplayers) {
                         servers[foreachedServer].error=true;
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
-                        servers[foreachedServer].geDoMessage.BuildString("<Yellow>"+Lang.Texts[241]+"</Yellow> Server je plný");
+                        servers[foreachedServer].geDoMessage.BuildString("<Yellow>"+Lang.Texts[241]+"</Yellow> "+Lang.Texts[1530]);//Server je plný
                     } else {
                         servers[foreachedServer].currentConnection=Server.Connection.Ok;
                     }
