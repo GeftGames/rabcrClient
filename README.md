@@ -2,6 +2,7 @@
 ## Download
 Releases here 
 https://rabcr.ga/
+(https://github.com/GeftGames/rabcrClient/releases)
 
 ## About
 A game written with MonoGame that targets Win.
