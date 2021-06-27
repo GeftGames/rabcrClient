@@ -300,16 +300,11 @@ namespace rabcrClient {
             }
         }
 
-      
-
         protected override void LoadContent() {
-    spriteBatch=new SpriteBatch(GraphicsDevice);
-
-         
-            IsMouseVisible = true;
+            spriteBatch=new SpriteBatch(GraphicsDevice);
+ IsMouseVisible = true;
             Window.AllowUserResizing = true;
 
-     
             GoTo(new Start());
             base.LoadContent();
         }

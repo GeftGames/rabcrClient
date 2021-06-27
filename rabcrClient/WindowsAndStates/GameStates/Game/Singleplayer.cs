@@ -25611,7 +25611,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
             public void Update() {
                 time+=0.07f;
                 Position.X+=VSpeed;
-                Position.Y+=(float)Math.Cos(time)*0.1f+0.2f;
+                Position.Y+=(float)Math.Cos(time)*0.125f+0.35f;
                 angle=(float)Math.Cos(time)*0.3f+FastMath.PI/2f;
             }
 
