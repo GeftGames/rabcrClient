@@ -149,17 +149,29 @@ namespace rabcrClient {
                 }
            // }
             #endregion
-
-             Window.AllowUserResizing = true;
-            GraphicsManager= new GraphicsDeviceManager(this);
+            //    GameWindow.Create(this,10,10); 
+ GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
-
-            Content.RootDirectory = "RabcrData";
-            IsMouseVisible = true;
 
             GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
             GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
-            Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
+           
+
+            try {
+                GraphicsManager.ApplyChanges();
+            } catch{ }
+
+            Lang.Load();
+            SetLangUp();
+     Content = new ContentManager(Services, "RabcrData");
+            content=Content;
+       
+  // Content.RootDirectory = "RabcrData";
+            (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
+
+            random=new FastRandom();
+
+                Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
             {
                 Form MyGameForm = (Form)Control.FromHandle(Window.Handle);
                 MyGameForm.LocationChanged+=Window_ClientSizeChanged;
@@ -167,24 +179,8 @@ namespace rabcrClient {
                 MyGameForm.MinimumSize=new Size(320, 200);
                 MyGameForm.SizeChanged+=Window_ClientSizeChanged;
                 MyGameForm.StartPosition=FormStartPosition.CenterScreen;
-            }
-            try{
-                GraphicsManager.ApplyChanges();
-            }catch{ }
-            Lang.Load();
-            SetLangUp();
-
-            content=Content;
-
-            (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
-
-             /*Constants.random=*/random=new FastRandom();
-
-
-          //  Graphics.SynchronizeWithVerticalRetrace = false;
-//base.IsFixedTimeStep = false;
-         //   SynchronizeWithVerticalRetrace = true;
-         //   Game.
+            } 
+          
         }
 
         public static void SetLangUp(){
@@ -304,8 +300,16 @@ namespace rabcrClient {
             }
         }
 
+      
+
         protected override void LoadContent() {
-            spriteBatch=new SpriteBatch(GraphicsDevice);
+    spriteBatch=new SpriteBatch(GraphicsDevice);
+
+         
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+
+     
             GoTo(new Start());
             base.LoadContent();
         }

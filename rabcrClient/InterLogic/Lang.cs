@@ -231,7 +231,7 @@ namespace rabcrClient {
             }
 
             Global.GameName=Texts[182]/*.Text*/;
-            Rabcr.Game.Window.Title = Global.GameName;
+    //     try{   Rabcr.Game.Window.Title = Global.GameName; }catch{ }
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
