@@ -5,7 +5,7 @@ Releases here
 - [github](https://github.com/GeftGames/rabcrClient/releases)
 
 ## About
-A game written with MonoGame that targets Win.
+A 2D game written with MonoGame that targets Win.
 
 ## Requirements
 - Windows 10, Windows 7, Windows 8.1
