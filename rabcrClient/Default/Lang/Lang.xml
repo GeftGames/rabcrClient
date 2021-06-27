@@ -110,6 +110,7 @@
     <a id="0">
       <eng>Generated in</eng>
       <ces>Vygenerováno za</ces>
+      <ces-pr>Vygenerový za</ces-pr>
       <slk>Vygenerované za</slk>
       <deu>Generiert in</deu>
       <ita>Generato in</ita>
@@ -12179,8 +12180,9 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="1089">
       <eng>Apple wood</eng>
-      <ces>Jablečné dřevo</ces>
-      <ces-pr>Jablečný dřevo</ces-pr>
+      <ces>Jabloňové dřevo</ces>
+      <mor>Jablečné dřevo</mor>
+      <ces-pr>Jabloňovy dřevo</ces-pr>
       <pol>Drewno jabłoniowe</pol>
       <slk>Jablkové drevo</slk>
       <jpn>アップルウッド</jpn>
@@ -12366,7 +12368,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="1096">
       <eng>Apple leaves</eng>
-      <ces>Jablečné listí</ces>
+      <ces>Jabloňové listí</ces>
+      <mor>Jablečné listí</mor>
       <slk>Jablkové lístie</slk>
       <jpn>リンゴの葉</jpn>
       <pol>Liście jabłka</pol>
@@ -12634,7 +12637,9 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="1106">
       <eng>Apple leaves with apples</eng>
-      <ces>Jablečné listí s jablky</ces>
+      <ces>Jabloňové listí s jablky</ces>
+      <ces-pr>Jabloňový listí s jablky</ces-pr>
+      <mor>Jablečné listí s jablky</mor>
       <slk>Jablkové lístie s jablkami</slk>
       <jpn>リンゴの葉とリンゴ</jpn>
       <pol>Liście jabłka z jabłkami</pol>
@@ -15298,6 +15303,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1210">
       <eng>Apple</eng>
       <ces>Jablko</ces>
+      <mor>Jabko</mor>
       <slk>Jablko</slk>
       <jpn>林檎</jpn>
       <uig>ئالما</uig>
@@ -15389,6 +15395,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Cooked meat</eng>
       <slk>Pečené mäso</slk>
       <ces>Pečené maso</ces>
+      <ces-pr>Pečený maso</ces-pr>
       <jpn>調理した肉</jpn>
       <pol>Pieczone mięso</pol>
       <deu>Gekochtes Fleisch</deu>
@@ -16015,6 +16022,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1238">
       <eng>Gold plate</eng>
       <ces>Zlatý plát</ces>
+      <ces-pr>Zlatej plát</ces-pr>
       <ces-ha>Zlaté plát</ces-ha>
       <jpn>ゴールド・プレート</jpn>
       <slk>Zlatý plát</slk>
@@ -16225,6 +16233,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1246">
       <eng>Coal wood</eng>
       <ces>Dřevěné uhlí</ces>
+      <ces-pr>Dřevěný uhlí</ces-pr>
       <jpn>石炭木</jpn>
       <slk>Drevené uhlie</slk>
       <pol>Węgiel drzewny</pol>
@@ -18037,7 +18046,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1319">
       <eng>Wheat seeds</eng>
       <ces>Obilné zrna</ces>
-      <ces-pr>Vobilné zrna</ces-pr>
+      <ces-pr>Vobilný zrna</ces-pr>
       <jpn>小麦種子</jpn>
       <uig>بۇغداي ئۇرۇقى</uig>
       <slk>Obilné zrná</slk>
@@ -18091,6 +18100,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1321">
       <eng>Flax seeds</eng>
       <ces>Lněná semena</ces>
+      <ces-pr>Lněný semena</ces-pr>
       <cs-kids>Lněná semínka</cs-kids>
       <jpn>亜麻の種子</jpn>
       <slk>Ľanové semená</slk>
@@ -18553,6 +18563,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1341">
       <eng>Space boots</eng>
       <ces>Vesmírné boty</ces>
+      <ces-pr>Vesmírný boty</ces-pr>
       <jpn>スペースブーツ</jpn>
       <slk>Vesmírne topánky</slk>
       <pol>Buty kosmiczne</pol>
@@ -18649,8 +18660,9 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1345">
       <eng>Army trousers</eng>
       <ces>Vojenské kalhoty</ces>
-	  <mor>Vojenské gaťe</mor>
-      <ces-ha>Vojenské ctnoške</ces-ha>
+      <ces-pr>Vojenský kalhoty</ces-pr>
+	    <mor>Vojenské gaťe</mor>
+      <ces-ha>Vojenské ctnoškê</ces-ha>
       <ces-sl>Vojenské gaťata</ces-sl>
       <ces-va>Vojenské gaťe</ces-va>
       <jpn>軍のズボン</jpn>
@@ -19250,6 +19262,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1378">
       <eng>White dye</eng>
       <ces>Bílé barvivo</ces>
+      <ces-pr>Bíléý barvivo</ces-pr>
       <jpn>白い染料</jpn>
       <slk>Biele farbivo</slk>
       <pol>Biały barwnik</pol>
@@ -19276,6 +19289,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1380">
       <eng>Yellow dye</eng>
       <ces>Žluté barvivo</ces>
+      <ces-pr>Žlutý barvivo</ces-pr>
       <jpn>黄色染料</jpn>
       <slk>Žlté farbivo</slk>
       <pol>Barwnik żółty</pol>
@@ -19302,6 +19316,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1381">
       <eng>Gold dye</eng>
       <ces>Zlaté barvivo</ces>
+      <ces-pr>Zlatý barvivo</ces-pr>
       <jpn>金染料</jpn>
       <slk>Zlaté farbivo</slk>
       <pol>Barwnik do złota</pol>
@@ -19328,6 +19343,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1382">
       <eng>Orange dye</eng>
       <ces>Oranžové barvivo</ces>
+      <ces-pr>Voranžový barvivo</ces-pr>
       <jpn>オレンジ染料</jpn>
       <slk>Oranžové farbivo</slk>
       <pol>Barwnik pomarańczowy</pol>
@@ -19354,6 +19370,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1383">
       <eng>Red dye</eng>
       <ces>Červené barvivo</ces>
+      <ces-pr>Červený barvivo</ces-pr>
       <jpn>赤い染料</jpn>
       <slk>Červené farbivo</slk>
       <pol>Czerwony barwnik</pol>
@@ -19380,6 +19397,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1384">
       <eng>Dark red dye</eng>
       <ces>Tmavě červené barvivo</ces>
+      <ces-pr>Tmavě červený barvivo</ces-pr>
       <jpn>暗赤色染料</jpn>
       <slk>Tmavo červené farbivo</slk>
       <pol>Barwnik ciemnoczerwony</pol>
@@ -19406,6 +19424,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1385">
       <eng>Pink dye</eng>
       <ces>Růžové barvivo</ces>
+      <ces-pr>Růžový barvivo</ces-pr>
       <uig>ھالرەڭ بوياق</uig>
       <jpn>ピンク染料</jpn>
       <slk>Ružové farbivo</slk>
@@ -19432,6 +19451,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1386">
       <eng>Purple dye</eng>
       <ces>Fialové barvivo</ces>
+      <ces-pr>Fialový barvivo</ces-pr>
       <jpn>紫色の染料</jpn>
       <slk>Fialové farbivo</slk>
       <pol>Fioletowy barwnik</pol>
@@ -19458,6 +19478,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1387">
       <eng>Light blue dye</eng>
       <ces>Světle modré barvivo</ces>
+      <ces-pr>Světle modrý barvivo</ces-pr>
       <jpn>ライトブルー染料</jpn>
       <slk>Svetlo modré farbivo</slk>
       <pol>Jasnoniebieski barwnik</pol>
@@ -19484,6 +19505,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1388">
       <eng>Blue dye</eng>
       <ces>Modré barvivo</ces>
+      <ces-pr>Modrý barvivo</ces-pr>
       <jpn>青い染料</jpn>
       <slk>Modré farbivo</slk>
       <pol>Niebieski barwnik</pol>
@@ -19510,6 +19532,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1389">
       <eng>Dark blue dye</eng>
       <ces>Tmavě modré barvivo</ces>
+      <ces-pr>Tmavě modrý barvivo</ces-pr>
       <jpn>紺色の染料</jpn>
       <slk>Tmavo modré farbivo</slk>
       <pol>Barwnik ciemnoniebieski</pol>
@@ -19536,6 +19559,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1390">
       <eng>Teal dye</eng>
       <ces>Modrozelené barvivo</ces>
+      <ces-pr>Modrozelený barvivo</ces-pr>
       <jpn>ティール染料</jpn>
       <slk>Modrozelené farbivo</slk>
       <pol>Barwnik niebiesko-zielony</pol>
@@ -19562,6 +19586,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1391">
       <eng>Light green dye</eng>
       <ces>Světle zelené barvivo</ces>
+      <ces-pr>Světle zelený barvivo</ces-pr>
       <jpn>薄緑色の染料</jpn>
       <slk>Svetlo zelené farbivo</slk>
       <pol>Jasnozielony barwnik</pol>
@@ -19588,6 +19613,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1392">
       <eng>Green dye</eng>
       <ces>Zelené barvivo</ces>
+      <ces-pr>Zelený barvivo</ces-pr>
       <jpn>緑染料</jpn>
       <slk>Zelené farbivo</slk>
       <pol>Barwnik zielony</pol>
@@ -19614,6 +19640,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1393">
       <eng>Dark green dye</eng>
       <ces>Tmavě zelené barvivo</ces>
+      <ces-pr>Tmavě zelený barvivo</ces-pr>
       <jpn>濃い緑色の染料</jpn>
       <slk>Tmavo zelené farbivo</slk>
       <pol>Barwnik ciemnozielony</pol>
@@ -19640,6 +19667,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1394">
       <eng>Brown dye</eng>
       <ces>Hnědé barvivo</ces>
+      <ces-pr>Hnědý barvivo</ces-pr>
       <jpn>ブラウン染料</jpn>
       <slk>Hnedé farbivo</slk>
       <pol>Barwnik brązowy</pol>
@@ -19667,6 +19695,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Light grey dye</eng>
       <enu>Light gray dye</enu>
       <ces>Světle šedé barvivo</ces>
+      <ces-pr>Světle šedý barvivo</ces-pr>
       <jpn>ライトグレー染料</jpn>
       <slk>Svetlo sivé farbivo</slk>
       <pol>Jasnoszary barwnik</pol>
@@ -19694,6 +19723,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Grey dye</eng>
       <enu>Gray dye</enu>
       <ces>Šedé barvivo</ces>
+      <ces-pr>Šedý barvivo</ces-pr>
       <jpn>灰色染料</jpn>
       <slk>Šedé farbivo</slk>
       <pol>Szary barwnik</pol>
@@ -19721,6 +19751,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Dark grey dye</eng>
       <enu>Dark gray dye</enu>
       <ces>Tmavě šedé barvivo</ces>
+      <ces-pr>Tmavě šedý barvivo</ces-pr>
       <jpn>濃い灰色の染料</jpn>
       <slk>Tmavo šedé farbivo</slk>
       <pol>Barwnik ciemnoszary</pol>
@@ -19747,6 +19778,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1398">
       <eng>Black dye</eng>
       <ces>Černé barvivo</ces>
+      <ces-pr>Černý barvivo</ces-pr>
       <jpn>黒色染料</jpn>
       <slk>Čierne farbivo</slk>
       <pol>Czarny barwnik</pol>
@@ -19773,6 +19805,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1399">
       <eng>Army dye</eng>
       <ces>Vojenské barvivo</ces>
+      <ces-pr>Vojenský barvivo</ces-pr>
       <jpn>軍の染料</jpn>
       <slk>Vojenské farbivo</slk>
       <pol>Barwnik wojskowy</pol>
@@ -19799,6 +19832,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1400">
       <eng>Magenta dye</eng>
       <ces>Purpurové barvivo</ces>
+      <ces-pr>Purpurový barvivo</ces-pr>
       <jpn>マゼンタ染料</jpn>
       <slk>Purpurové farbivo</slk>
       <pol>Fioletowy barwnik</pol>
@@ -19824,6 +19858,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1401">
       <eng>Rose quartz dye</eng>
       <ces>Růženinové barvivo</ces>
+      <ces-pr>Růženinový barvivo</ces-pr>
       <jpn>ローズクォーツ染料</jpn>
       <slk>Růženinové farbivo</slk>
       <pol>Barwnik do różańca</pol>
@@ -19849,6 +19884,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1402">
       <eng>Spring green dye</eng>
       <ces>Jarně zelené barvivo</ces>
+      <ces-pr>Jarně zelený barvivo</ces-pr>
       <jpn>春の緑の染料</jpn>
       <slk>Jarno zelené farbivo</slk>
       <pol>Wiosenny zielony barwnik</pol>
@@ -19874,7 +19910,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="1403">
       <eng>Violet dye</eng>
-      <ces>Fialkové barvivo</ces>
+      <ces>Fialové barvivo</ces>
+      <ces-pr>Fialový barvivo</ces-pr>
       <jpn>紫染料</jpn>
       <slk>Fialkové farbivo</slk>
       <pol>Fioletowy barwnik</pol>
@@ -19901,7 +19938,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1404">
       <eng>Olive dye</eng>
       <ces>Olivové barvivo</ces>
-      <ces>Volivové barvivo</ces>
+      <ces-pr>Volivový barvivo</ces-pr>
       <jpn>オリーブ染料</jpn>
       <slk>Olivové farbivo</slk>
       <pol>Barwnik oliwkowy</pol>
@@ -20035,6 +20072,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1409">
       <eng>Gold hammer</eng>
       <ces>Zlaté kladivo</ces>
+      <ces-pr>Zlatý kladivo</ces-pr>
       <ces-kids>Zlaté kladívko</ces-kids>
       <jpn>金槌</jpn>
       <slk>Zlaté kladivo</slk>
@@ -20063,7 +20101,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1410">
       <eng>Steel hammer</eng>
       <ces>Ocelové kladivo</ces>
-      <ces-pr>Vocelové kladivo</ces-pr>
+      <ces-pr>Vocelový kladivo</ces-pr>
       <ces-kids>Ocelové kladívko</ces-kids>
       <jpn>スチールハンマー</jpn>
       <slk>Oceľové kladivo</slk>
@@ -20091,6 +20129,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1411">
       <eng>Aluminium hammer</eng>
       <ces>Hliníkové kladivo</ces>
+      <ces-pr>Hliníkový kladivo</ces-pr>
       <ces-kids>Hliníkové kladívko</ces-kids>
       <jpn>アルミハンマー</jpn>
       <slk>Hliníkové kladivo</slk>
@@ -20118,6 +20157,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1412">
       <eng>Copper hammer</eng>
       <ces>Měděné kladivo</ces>
+      <ces-pr>Měděný kladivo</ces-pr>
       <ces-kids>Měděné kladívko</ces-kids>
       <jpn>銅ハンマー</jpn>
       <slk>Medené kladivo</slk>
@@ -20255,7 +20295,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1417">
       <eng>Gold shears</eng>
       <ces>Zlaté nůžky</ces>
-      <ces-ha>Zlaté nožéce</ces-ha>
+      <ces-pr>Zlatý nůžky</ces-pr>
+      <ces-ha>Zlaty nožéce</ces-ha>
       <ces-va>Zlaté nožice</ces-va>
       <ces-sl>Zlaté nožíce</ces-sl>
       <slk>Zlaté nožnice</slk>
@@ -20363,6 +20404,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1421">
       <eng>Aluminium shears</eng>
       <ces>Hliníkové nůžky</ces>
+      <ces-pr>Hliníkový nůžky</ces-pr>
       <ces-ha>Hliníkové nožéce</ces-ha>
       <ces-va>Hliníkové nožice</ces-va>
       <ces-sl>Hliníkové nožíce</ces-sl>
@@ -20559,7 +20601,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1428">
       <eng>Steel shears</eng>
       <ces>Ocelové nůžky</ces>
-      <ces-pr>Vocelové nůžky</ces-pr>
+      <ces-pr>Vocelový nůžky</ces-pr>
       <ces-ha>Ocelové nožéce</ces-ha>
       <ces-va>Ocelové nožice</ces-va>
       <ces-sl>Ocelové nožíce</ces-sl>
@@ -20878,6 +20920,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Copper axe head</eng>
       <enu>Copper ax head</enu>
       <ces>Hlava měděné sekerky</ces>
+      <ces-pr>Hlava měděný sekery</ces-pr>
       <jpn>銅斧の頭</jpn>
       <slk>Hlava medené sekerky</slk>
       <pol>Miedziana głowa topora</pol>
@@ -20905,6 +20948,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Bronze axe head</eng>
       <enu>Bronze ax head</enu>
       <ces>Hlava bronzové sekerky</ces>
+      <ces-pr>Hlava bronzový sekery</ces-pr>
       <jpn>ブロンズアックスヘッド</jpn>
       <slk>Hlava bronzové sekerky</slk>
       <pol>Topór z brązu</pol>
@@ -20932,6 +20976,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Gold axe head</eng>
       <enu>Gold ax head</enu>
       <ces>Hlava zlaté sekerky</ces>
+      <ces-pr>Hlava zlatý sekery</ces-pr>
       <jpn>ゴールドアックスヘッド</jpn>
       <slk>Hlava zlaté sekerky</slk>
       <pol>Głowa złotej siekiery</pol>
@@ -20959,6 +21004,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Iron axe head</eng>
       <enu>Iron ax head</enu>
       <ces>Hlava železné sekerky</ces>
+      <ces-pr>Hlava železný sekery</ces-pr>
       <jpn>鉄斧の頭</jpn>
       <slk>Hlava železnej sekerky</slk>
       <pol>Głowa żelaznego topora</pol>
@@ -20986,6 +21032,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Steel axe head</eng>
       <enu>Steel ax head</enu>
       <ces>Hlava ocelové sekerky</ces>
+      <ces-pr>Hlava ocelový sekerky</ces-pr>
       <jpn>スチールアックスヘッド</jpn>
       <slk>Hlava oceľové sekerky</slk>
       <pol>Stalowy topór</pol>
@@ -21013,6 +21060,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>Aluminium axe head</eng>
       <enu>Aluminium ax head</enu>
       <ces>Hlava hliníkové sekerky</ces>
+      <ces-pr>Hlava hliníkový sekery</ces-pr>
       <jpn>アルミ斧頭</jpn>
       <slk>Hlava hliníkové sekerky</slk>
       <pol>Aluminiowa głowica siekiery</pol>
@@ -21195,6 +21243,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1452">
       <eng>Copper shovel head</eng>
       <ces>Hlava měděné lopaty</ces>
+      <ces-pr>Hlava měděný lopaty</ces-pr>
       <jpn>銅シャベルヘッド</jpn>
       <slk>Hlava medené lopaty</slk>
       <pol>Miedziana łopata</pol>
@@ -21221,6 +21270,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1453">
       <eng>Bronze shovel head</eng>
       <ces>Hlava bronzové lopaty</ces>
+      <ces-pr>Hlava bronzový lopaty</ces-pr>
       <jpn>ブロンズシャベルヘッド</jpn>
       <slk>Hlava bronzové lopaty</slk>
       <pol>Głowica kubełkowa z brązu</pol>
@@ -21247,6 +21297,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1454">
       <eng>Gold shovel head</eng>
       <ces>Hlava zlaté lopaty</ces>
+      <ces-pr>Hlava zlatý lopaty</ces-pr>
       <jpn>ゴールドシャベルヘッド</jpn>
       <slk>Hlava zlaté lopaty</slk>
       <pol>Złota łopata głowy</pol>
@@ -21273,6 +21324,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1455">
       <eng>Iron shovel head</eng>
       <ces>Hlava železné lopaty</ces>
+      <ces-pr>Hlava železný lopaty</ces-pr>
       <jpn>アイアンシャベルヘッド</jpn>
       <slk>Hlava železné lopaty</slk>
       <pol>Żelazna łopata głowy</pol>
@@ -21300,6 +21352,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1456">
       <eng>Steel shovel head</eng>
       <ces>Hlava ocelové lopaty</ces>
+      <ces-pr>Hlava ocelový lopaty</ces-pr>
       <pol>Stalowa głowica łopaty</pol>
       <jpn>スチールシャベルヘッド</jpn>
       <slk>Hlava oceľové lopaty</slk>
@@ -21326,6 +21379,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1457">
       <eng>Aluminium shovel head</eng>
       <ces>Hlava hliníkové lopaty</ces>
+      <ces-pr>Hlava hliníkový lopaty</ces-pr>
       <pol>Aluminiowa głowica łopaty</pol>
       <jpn>アルミショベルヘッド</jpn>
       <slk>Hlava hliníkové lopaty</slk>
@@ -21352,6 +21406,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1458">
       <eng>Bronze hoe head</eng>
       <ces>Hlava bronzové motyky</ces>
+      <ces-pr>Hlava bronzový motyky</ces-pr>
       <pol>Głowica motyki z brązu</pol>
       <jpn>ブロンズ鍬</jpn>
       <deu>Bronze Hackenkopf</deu>
@@ -21378,6 +21433,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1459">
       <eng>Gold hoe head</eng>
       <ces>Hlava zlaté motyky</ces>
+      <ces-pr>Hlava zlatý motyky</ces-pr>
       <pol>Złota głowa motyki</pol>
       <jpn>金の鍬の頭</jpn>
       <slk>Hlava zlaté motyky</slk>
@@ -21404,6 +21460,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1460">
       <eng>Iron hoe head</eng>
       <ces>Hlava železné motyky</ces>
+      <ces-pr>Hlava železný motyky</ces-pr>
       <pol>Żelazna głowa motyki</pol>
       <jpn>アイアンホーヘッド</jpn>
       <slk>Hlava železnej motyky</slk>
@@ -21430,6 +21487,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1461">
       <eng>Steel hoe head</eng>
       <ces>Hlava ocelové motyky</ces>
+      <ces-pr>Hlava ocelový motyky</ces-pr>
       <pol>Stalowa głowica motyki</pol>
       <jpn>スチール製ホーヘッド</jpn>
       <slk>Hlava oceľové motyky</slk>
@@ -21456,6 +21514,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1462">
       <eng>Aluminium hoe head</eng>
       <ces>Hlava hliníkové motyky</ces>
+      <ces-pr>Hlava hliníkový motyky</ces-pr>
       <pol>Aluminiowa głowica motyki</pol>
       <jpn>アルミ製ホーヘッド</jpn>
       <slk>Hlava hliníkové motyky</slk>
@@ -22364,7 +22423,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1501">
       <eng>The award can only be used in adventure mode, otherwise it would be too easy</eng>
       <ces>Ocenění lze používat jen v dobrodružném módu, jinak by to bylo příliš jednoduché</ces>
-      <ces>tak hélé vocenění lze jen v dobrodružném módu, jinak by to bylo příliš jednoduché</ces>
+      <ces>Tak hele vocenění jen v dobrodružným módu, jinak by to bylo příliš jednoduchý ne</ces>
       <ces-pr>Vocenění lze používat jen v dobrodružným módu, jinak by to bylo příliš jednoduchý</ces-pr>
       <slk>Ocenenie je možné používať len v dobrodružnom módu, inak by to bolo príliš jednoduché</slk>
       <jpn>アワードはアドベンチャーモードでのみ使用できます。そうでない場合は簡単すぎます。</jpn>
@@ -22389,6 +22448,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1502">
       <eng>Angel hair</eng>
       <ces>Andělské vlasy</ces>
+      <ces-pr>Andělský vlasy</ces-pr>
       <slk>Anjelské vlasy</slk>
       <jpn>エンジェルヘア</jpn>
       <fra>Cheveux d'ange</fra>
@@ -22412,7 +22472,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1503">
       <eng>Christmas ball</eng>
       <ces>Vánoční koule</ces>
-	  <mor>Vánoční baňka</mor>
+	    <mor>Vánoční baňka</mor>
       <ces-ha>Vánočni baňka</ces-ha>
       <slk>Vianočné gule</slk>
       <jpn>クリスマスボール</jpn>
@@ -22437,6 +22497,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1504">
       <eng>Blue christmas ball</eng>
       <ces>Modrá vánoční koule</ces>
+      <mor>Modrá vánoční baňka</mor>
+      <ces-pr>Modrá vánoční koule</ces-pr>
       <ces-ha>Modrá vánoční baňka</ces-ha>
       <slk>Modrá vianočné gule</slk>
       <jpn>青いクリスマスボール</jpn>
@@ -22461,6 +22523,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1505">
       <eng>Yellow christmas ball</eng>
       <ces>Žlutá vánoční koule</ces>
+      <ces-pr>Žlutá vánoční koule</ces-pr>
+      <mor>Žlutá vánoční baňka</mor>
       <ces-ha>Žlutá vánoční baňka</ces-ha>
       <slk>Žltá vianočné gule</slk>
       <jpn>黄色のクリスマスボール</jpn>
@@ -22485,6 +22549,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1506">
       <eng>Orange christmas ball</eng>
       <ces>Oranžová vánoční koule</ces>
+      <mor>Oranžová vánoční baňka</mor>
       <ces-pr>Voranžová vánoční koule</ces-pr>
       <ces-ha>Oranžová vánoční baňka</ces-ha>
       <slk>Oranžová vianočné gule</slk>
@@ -22510,6 +22575,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1507">
       <eng>Red christmas ball</eng>
       <ces>Červená vánoční koule</ces>
+      <mor>Červená vánoční baňka</mor>
       <ces-ha>Červená vánoční baňka</ces-ha>
       <slk>Červená vianočné gule</slk>
       <jpn>赤いクリスマスボール</jpn>
@@ -22534,6 +22600,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1508">
       <eng>Pink christmas ball</eng>
       <ces>Růžová vánoční koule</ces>
+      <mor>Růžová vánoční baňka</mor>
       <ces-ha>Růžová vánoční baňka</ces-ha>
       <slk>Ružová vianočné gule</slk>
       <jpn>ピンクのクリスマスボール</jpn>
@@ -22558,6 +22625,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1509">
       <eng>Purple christmas ball</eng>
       <ces>Fialová vánoční koule</ces>
+      <mor>Fialová vánoční baňka</mor>
       <ces-ha>Fialová vánoční baňka</ces-ha>
       <slk>Fialová vianočné gule</slk>
       <jpn>紫のクリスマスボール</jpn>
@@ -22582,6 +22650,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1511">
       <eng>Light green christmas ball</eng>
       <ces>Světle zelená vánoční koule</ces>
+      <mor>Světle zelená vánoční baňka</mor>
       <ces-ha>Světle zelená vánoční baňka</ces-ha>
       <slk>Svetlo zelená vianočné gule</slk>
       <jpn>ライトグリーンのクリスマスボール</jpn>
@@ -22606,6 +22675,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1512">
       <eng>Teal christmas ball</eng>
       <ces>Tyrkysová vánoční koule</ces>
+      <mor>Tyrkysová vánoční baňka</mor>
       <ces-ha>Tyrkysová vánoční baňka</ces-ha>
       <slk>Tyrkysová vianočné gule</slk>
       <jpn>ティールクリスマスボール</jpn>
@@ -22653,6 +22723,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1514">
       <eng>Show/hide dev info</eng>
       <ces>Zobrazit/Skrýt vývojářské info</ces>
+      <ces-pr>Zobrazit/Skrejt vývojářský info</ces-pr>
       <slk>Zobraziť / Skryť vývojárske info</slk>
       <jpn>開発情報の表示/非表示</jpn>
       <fra>Afficher / masquer les informations du développeur</fra>
@@ -22707,7 +22778,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
 	<ces>Nelze získat data</ces>
 	</a>
 	<a id="1526">
-	<ces>Připojení existuje, ale získané data nemají správný typ</ces>
+	  <ces>Připojení existuje, ale získané data nemají správný typ</ces>
+    <ces-pr>Připojení existuje, ale získaný data nemajej správnej typ</ces-pr>
 	</a>
 	<a id="1527">
 	<ces>Obdrženy vadné data</ces>
