@@ -15,6 +15,9 @@ namespace rabcrClient {
 			ColorSpringGreen=new Color(0xff2cff8f), //R 143, G 225, B 44, A 255
 			ColorRoseQuartz=new Color(0xffa998aa); //R 170, G 152, B 169
 
+		float actualRainForce=0.75f;
+		float rainWaveForce;
+
 		#region Varibles
 		#region Textures
 		Texture2D
@@ -5194,23 +5197,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Wheather
-				if (rain) {
+				if (actualRainForce>0f) {
 					if (Temperature<0) { 
 						if (wind) {
 							for (int i=0; i<(weatherWindowWidth+600)/300; i++){ 
 								int addSide=Global.WindowHeight/2;
 								if (windRirectionRight) {
-									snowDots.Add(
-									new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
-										Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide), Y=-10 },
-										HSpeed=windForce*0.5f 
-									});
+									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
+										snowDots.Add(
+											new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
+												Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide), Y=-10 },
+												HSpeed=windForce*0.5f 
+										});
+									}
 								} else { 
-									snowDots.Add(
-									new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
-										Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
-										HSpeed=windForce*0.5f 
-									});
+									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
+										snowDots.Add(
+										new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
+											Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
+											HSpeed=windForce*0.5f 
+										});
+									}
 								}
 							}
 							if (Global.HasSoundGraphics) {
@@ -5221,16 +5228,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						} else {
 							for (int i=0; i<(weatherWindowWidth+10)/300; i++){ 
-								snowDots.Add(new ParticleSnow( random.Float()*0.8f+0.2f, gravity+0.2f) { 
-									Position=new Vector2 {X=random.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
-									HSpeed=windForce*0.5f 
-								}); 
+								if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
+									snowDots.Add(new ParticleSnow( random.Float()*0.8f+0.2f, gravity+0.2f) { 
+										Position=new Vector2 {X=random.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
+										HSpeed=windForce*0.5f 
+									}); 
+								}
 							} 
 						}
 					
 					} else { 
-						for (int i=0; i<(Global.WindowWidth+10)/300; i++){ 
-							rainDots.Add(new ParticleRain(random.Float()*0.8f+0.2f, gravity*20f+0.2f) { Position=new Vector2{X=random.Int(/*848*/weatherWindowWidth+20)-10, Y=-10 },HSpeed=windForce });
+						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
+							for (int i=0; i<(Global.WindowWidth+10)/300; i++){ 
+								rainDots.Add(new ParticleRain(random.Float()*0.8f+0.2f, gravity*20f+0.2f) { Position=new Vector2{X=random.Int(/*848*/weatherWindowWidth+20)-10, Y=-10 },HSpeed=windForce });
+							}
 						}
 						if (Global.HasSoundGraphics) {
 							if (rainDuration==0) {
@@ -5317,7 +5328,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (wind) WaveGrassDuringWind();
 				}	
 				
-				if (rain) {
+				if (actualRainForce>0f) {
 					for (int i = 0; i<rainDots.Count; ) {
 						ParticleRain r = rainDots[i];
 							
@@ -5341,6 +5352,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				if (timer5<-0.1f) {
 					if (wind) WaveGrassDuringWind();
+								rainWaveForce=((float)Math.Sin(time/600f))*0.5f+0.5f;
+				//	Console.WriteLine(rainWaveForce);
+					//if (rainWaveForce<0.5f)rainWaveForce+=0.05f;
+					//else if (rainWaveForce>1f)rainWaveForce-=0.05f;
+					//else if (random.Bool()) rainWaveForce+=0.05f;
+					//else rainWaveForce-=0.05f;
+
+					if (rain || changeRain<5f) { 
+						if (actualRainForce<1f)actualRainForce+=0.05f;
+					} else if (actualRainForce>0f)actualRainForce-=0.05f;
 
 					// Create ice
 					if (Temperature<0) {
@@ -5499,6 +5520,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					foreach (ShortAndByte ch in bucketRubber) {
 					   if (BucketsForRubberJob(ch)) break;
 					}
+
 					if (rocket)  {
 						if (rocketDown) {
 							if (PlayerY>0) {
@@ -5600,24 +5622,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 
 					// Sun rise
+
+				//float baseDayAlpha=
+
 					if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
 				   //     dayAlpha=((time-hour*7f)/hour)/2f*+1f;
 					
 						dayAlpha=((time-hour*dayStart)/hour)*(1f-ConstNightAlpha)+ConstNightAlpha;
-						colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+					//	colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
 
 					// Sun setting
 					} else if (time>hour*dayEnd && time<hour*(dayEnd+1)) {
 						//dayAlpha=((hour*19f-time)/hour)/2f+0.5f;
 						dayAlpha=(float)(hour*(dayEnd+1)-time)/hour*(1f-ConstNightAlpha)+ConstNightAlpha;
-						colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+				
 
 					} else if (time>=hour*(dayStart+1) && time<=hour*dayEnd) {
 
 						// day
 						if (dayAlpha!=1f) {
 							dayAlpha=1f;
-							colorAlpha = new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+							
 						}
 					}
 					else {
@@ -5625,10 +5650,29 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						// night
 						if (dayAlpha!=ConstNightAlpha) {
 							dayAlpha=ConstNightAlpha;
-							colorAlpha=new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+						
 						}
 					}
 
+
+				//	if (rain) {
+						//if (Temperature>0) { 
+						float xpler=0;
+						if (Temperature<10f)xpler=-(Temperature-10)/500f;
+
+							float otp=dayAlpha*(1-rainWaveForce*0.05f*actualRainForce)*(1f-actualRainForce*0.05f/**0.75f*/)*(1f-xpler);
+						Console.WriteLine("r "+otp);
+							colorAlpha=new Color(otp, otp, otp, otp);
+						//} else { 
+						//	colorAlpha = new Color(otp, dayAlpha, dayAlpha, dayAlpha);
+						//}
+					//} else { 
+					//	float otp=dayAlpha*(1f-actualRainForce*0.1f/**0.75f*/);
+					//		Console.WriteLine("n "+otp);
+					//	colorAlpha=new Color(otp, otp, otp, otp);
+
+					//////	colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+					//}
 
 					moonSpeed += 368f/(7f*dayLenght);
 					if (moonSpeed >= 368) moonSpeed = 0;
@@ -6237,15 +6281,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Weather
-				if (rain) {
+				if (/*rain*/actualRainForce>0f) {
 				//	int x, y;
 					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, null, CameraMatrixNoZoom(out int x, out int y));
 
 					Rabcr.spriteBatch=spriteBatch;
 					if (Temperature<0) {
-						foreach (ParticleSnow r in snowDots) r.Draw(x, y);
+						foreach (ParticleSnow r in snowDots)  r.Draw(x, y,actualRainForce); 
 					} else {
-						foreach (ParticleRain r in rainDots) r.Draw(x, y);
+						foreach (ParticleRain r in rainDots) r.Draw(x, y,actualRainForce);
 					}
 					spriteBatch.End();
 				}
@@ -15527,7 +15571,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (Constants.AnimationsGame) CreateJumpMess(blocks);
 			} else {
 				if (swimming) {
-					gravitySpeed+=gravity/5;
+					gravitySpeed+=gravity/5f;
 					if (gravitySpeed>1)gravitySpeed=1;
 					PlayerY+=(int)gravitySpeed;
 					changePosition=true;
@@ -25338,9 +25382,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		bool Command() { 
 			if (text.StartsWith("*time-set ")) {
-				if (int.TryParse(text.Substring("*time-set ".Length), out int num)){
+				if (int.TryParse(text.Substring("*time-set ".Length), out int num)) {
 					time=num*hour; 
-				} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)){
+				} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)) {
 					time=(int)(num2*hour); 
 				}
 				text="";
@@ -25356,6 +25400,70 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				diserpeard=0;
 				return true;
 			} 
+			if (text=="*time-set early morning"){
+				time=(int)(5.5f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set late morning"){
+				time=(int)(9.5f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+						
+			if (text=="*time-set morning"){
+				time=(int)(7f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set noon"){
+				time=(int)(12f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set night"){
+				time=(int)(20f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set afternoon"){
+				time=(int)(14f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set evening"){
+				time=(int)(16f*hour); 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
+			if (text=="*time-set midnight"){
+				time=0; 
+				ChangeLeavesForceEverything();
+				text="";
+				diserpeard=0;
+				return true;
+			} 
+
 			if (text=="*give-mobile") {
 				InventoryAddOne((ushort)Items.Mobile);
 				text="";
@@ -25433,12 +25541,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 Position.Y+=VSpeed;
             }
 
-            public void Draw(float x, float y) => Rabcr.spriteBatch.Draw(
+            public void Draw(float x, float y,float a) => Rabcr.spriteBatch.Draw(
                     texture: Rabcr.Pixel,
                     destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), 1, Size<0.5f ? 2 : 3),
                     //sourceRectangle: null,
                     //effects:SpriteEffects.None,
-                    color: Color/*,*/
+                    color: Color*a/*,*/
                 //rotation: Angle,
                 //origin: Vector2.Zero,
                 //layerDepth: 1f
@@ -25466,12 +25574,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 Position.Y+=VSpeed+((float)Math.Sin(time/10f))*HSpeed*0.5f/*+0.2f*/;
             }
 
-            public void Draw(float x, float y) => Rabcr.spriteBatch.Draw(
+            public void Draw(float x, float y,float A) => Rabcr.spriteBatch.Draw(
                     texture: Rabcr.Pixel,
                     destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Size>0.5f ? 2 : 1, Size>0.5f ? 2 : 1),
                     //sourceRectangle: null,
                     //effects:SpriteEffects.None,
-                    color: Color//,
+                    color: Color*A//,
                                 //rotation: Angle,
                                 //origin: Vector2.Zero,
                                 //layerDepth: 1f
