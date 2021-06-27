@@ -5626,23 +5626,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				//float baseDayAlpha=
 
 					if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
-				   //     dayAlpha=((time-hour*7f)/hour)/2f*+1f;
-					
 						dayAlpha=((time-hour*dayStart)/hour)*(1f-ConstNightAlpha)+ConstNightAlpha;
-					//	colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
 
 					// Sun setting
 					} else if (time>hour*dayEnd && time<hour*(dayEnd+1)) {
-						//dayAlpha=((hour*19f-time)/hour)/2f+0.5f;
 						dayAlpha=(float)(hour*(dayEnd+1)-time)/hour*(1f-ConstNightAlpha)+ConstNightAlpha;
-				
-
 					} else if (time>=hour*(dayStart+1) && time<=hour*dayEnd) {
 
 						// day
 						if (dayAlpha!=1f) {
 							dayAlpha=1f;
-							
 						}
 					}
 					else {
@@ -5650,7 +5643,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						// night
 						if (dayAlpha!=ConstNightAlpha) {
 							dayAlpha=ConstNightAlpha;
-						
 						}
 					}
 
@@ -5661,7 +5653,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (Temperature<10f)xpler=-(Temperature-10)/500f;
 
 							float otp=dayAlpha*(1-rainWaveForce*0.05f*actualRainForce)*(1f-actualRainForce*0.05f/**0.75f*/)*(1f-xpler);
-						Console.WriteLine("r "+otp);
+					//	Console.WriteLine("r "+otp);
 							colorAlpha=new Color(otp, otp, otp, otp);
 						//} else { 
 						//	colorAlpha = new Color(otp, dayAlpha, dayAlpha, dayAlpha);

@@ -10679,6 +10679,18 @@
 /processorParam:TextureFormat=Color
 /build:Default/Textures/Menu/Flags/MO.png
 
+#begin Default/Textures/Menu/Flags/mor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Default/Textures/Menu/Flags/mor.png
+
 #begin Default/Textures/Menu/Flags/MRI.png
 /importer:TextureImporter
 /processor:TextureProcessor
