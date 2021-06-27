@@ -7,9 +7,10 @@ https://rabcr.ga/
 A game written with MonoGame that targets Win.
 
 ## Requirements
-- Windows 7+
+- Windows 10, Windows 7, Windows 8.1
+- 64-bit OS
 - DirectX
-- .NET Framework: 4.7.2
+- .NET Framework: 4.8
 
 ## What I use
 - Fonts: M PLUS Rounded, Sunflower, Tajawal, HanWangYenLight
