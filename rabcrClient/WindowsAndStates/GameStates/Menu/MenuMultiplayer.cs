@@ -73,6 +73,11 @@ namespace rabcrClient {
         }
 
         public override void Update(GameTime gameTime) {
+              MousePos.mouseRealPosX=Menu.mousePosX;
+            MousePos.mouseRealPosY=Menu.mousePosYCorrection;
+            MousePos.mouseLeftDown=Menu.mouseDown;
+            MousePos.mouseLeftRelease=Menu.oldMouseState.LeftButton==ButtonState.Pressed && !Menu.mouseDown;
+
             //newMouseState=Mouse.GetState();
             //newKeyboardState=Keyboard.GetState();
 
@@ -85,7 +90,7 @@ namespace rabcrClient {
             if (Menu.newMouseState.ScrollWheelValue!=Menu.oldMouseState.ScrollWheelValue) {
                 scrollbar.Scroll((Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/2f);
             }
-              buttonMenu.Update();
+            buttonMenu.Update();
             //if (buttonProblems.Click) {
             //    new FormProblems().ShowDialog();
 
@@ -98,16 +103,17 @@ namespace rabcrClient {
             //    p.Start();
             //}
             int yy = (int)(-(servers.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
-
+          //  
             for (int i = 0; i<servers.Count; i++) {
                 //if (i>=Worlds.Count)break;
                 if (yy>-70-70&&yy<Global.WindowHeight-75-65-70) {
 
 
-
+               //    MousePos.mouseRealPosY+=130;
                     if (servers[i].setting.Update()/*.Click*/) {
                         //   EditSingleWorld(servers[i].directoryName);
                         EditServer(servers[i]);
+                      //  MousePos.mouseRealPosY-=130;
                         if (servers.Count==i) break;
                     }
                     if (servers[i].play.Click) {
@@ -118,7 +124,7 @@ namespace rabcrClient {
 
                 }
             }
-
+           //  
             //if (buttonMenu.Click) {
             //    ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
             //}

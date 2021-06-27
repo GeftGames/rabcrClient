@@ -392,7 +392,7 @@ namespace rabcrClient {
                 settings.Add(button);
             }
 
-            {
+           // {
                // SettingHeader button=new SettingHeader(Lang.Texts[319]);
                 //button.Click+=ClickGraphicsProfile;
                 //settings.Add(button);
@@ -402,7 +402,7 @@ namespace rabcrClient {
                 //    Global.ChangedSettings=true;
                 //    System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 //}
-            }
+          //  }
             {
                 SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
                 button.Click+=ClickFps;
