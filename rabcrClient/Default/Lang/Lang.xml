@@ -409,6 +409,7 @@
     <a id="8">
       <eng>Settings</eng>
       <ces>Nastavení</ces>
+      <ces-ha>Nastaveni</ces-ha>
       <deu>Optionen</deu>
       <jpn>設定</jpn>
       <slk>Nastavenie</slk>
@@ -574,6 +575,7 @@
     <a id="17">
       <eng>New world</eng>
       <ces>Nový svět</ces>
+      <ces-ha>Nové svět</ces-ha>
       <ces-pr>Novej svět</ces-pr>
       <deu>Neue Welt erstellen</deu>
       <jpn>新世界</jpn>
@@ -2672,7 +2674,7 @@
     </a>
     <a id="106">
       <eng>Run</eng>
-      <ces>Běh</ces>
+      <ces>Běhání</ces>
       <deu>Laufen</deu>
       <slk>Beh</slk>
       <fra>Courir</fra>
@@ -2780,7 +2782,7 @@
     </a>
     <a id="111">
       <eng>Open bubble and write some text</eng>
-      <ces>Otevřít bublinu k psaní</ces>
+      <ces>Otevřít bublinu ke psaní</ces>
       <ces-pr>Votevřít bublinu ke psaní</ces-pr>
       <slk>Otvoriť bublinu na písanie</slk>
       <deu>Chat</deu>
@@ -3193,6 +3195,7 @@
     <a id="135">
       <eng>Music</eng>
       <ces>Hlasitost písní</ces>
+      <ces-ha>Hlasitost pêsniček</ces-ha>
       <deu>Musik</deu>
       <slk>Hlasitosť piesní</slk>
       <pol>Muzyka</pol>
@@ -3226,7 +3229,8 @@
     <a id="137">
       <eng>Effects</eng>
       <ces>Hlasitost efektů</ces>
-      <slk>hlasitosť efektov</slk>
+      <ces-ha>Hlasêtost efektô</ces-ha>
+      <slk>Hlasitosť efektov</slk>
       <jpn>音響効果</jpn>
       <pol>Efekty</pol>
       <ita>Effetti</ita>
@@ -3259,6 +3263,7 @@
     <a id="139">
       <eng>Length of transition</eng>
       <ces>Rychlost přechodu</ces>
+      <ces-ha>Rêchlost přechodô</ces-ha>
       <slk>Rýchlosť prechodu</slk>
       <spa>Duración de la transición</spa>
       <ita>Lunghezza della transizione</ita>
@@ -3300,6 +3305,7 @@
     <a id="141">
       <eng>Background</eng>
       <ces>Pozadí</ces>
+      <ces-ha>Pozadi</ces-ha>
       <deu>Hintergrund</deu>
       <slk>Pozadie</slk>
       <jpn>背景</jpn>
@@ -4851,6 +4857,7 @@
     <a id="188">
       <eng>Add new world</eng>
       <ces>Přidat nový svět</ces>
+      <ces-ha>Přêdat nové svět</ces-ha>
       <ces-pr>Přidat novej svět</ces-pr>
       <slk>Pridať nový svět</slk>
       <pol>Dodaj nowy świat</pol>
@@ -8649,7 +8656,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     </a>
     <a id="343">
       <eng>This setting will be applied after restart.</eng>
-      <ces>Tohle nastavení bude aplikováno po znovuspuštění.</ces>
+      <ces>Tohle nastavení bude aplikováno až po znovuspuštění.</ces>
+      <ces-ha>Tohle nastaveni bôde aplikováno až po znovuspuštěni.</ces-ha>
       <slk>Toto nastavenie bude aplikované po znovuspustenie.</slk>
       <jpn>この設定は再起動後に適用されます。</jpn>
       <jpn-saga>こん設定は再起動後に適用さるっ。</jpn-saga>
@@ -9253,6 +9261,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <jpn>その他のオプションについては、グラフィックコントロールパネルを参照してください</jpn>
       <ces>Více nastavení naleznete v ovládacím panelu grafiky</ces>
       <mor>Více nastavení najdete v ovládacím panelu grafiky</mor>
+      <ces-ha>Vice nastaveni najdete v ovládacim panelô grafikê</ces-ha>
       <slk>Viac nastavení nájdete v ovládacom paneli grafiky</slk>
       <pol>Więcej ustawień można znaleźć w graficznym panelu sterowania</pol>
       <deu>Weitere Optionen finden Sie in der Grafiksteuerung</deu>
@@ -15623,6 +15632,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1220">
       <eng>Gold dust</eng>
       <ces>Zlatý prach</ces>
+      <ces-ha>Zlaté prach</ces-ha>
       <ces-han>Goldnový prach</ces-han>
       <slk>Zlatý prach</slk>
       <jpn>砂金</jpn>
@@ -15728,6 +15738,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1224">
       <eng>Tin dust</eng>
       <ces>Cínový prach</ces>
+      <ces-ha>Cínové prach</ces-ha>
       <slk>Cínový prach</slk>
       <jpn>スズ・ダスト</jpn>
       <pol>Pył cyny</pol>
