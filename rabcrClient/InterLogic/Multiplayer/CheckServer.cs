@@ -19,7 +19,7 @@ namespace rabcrClient {
                     Start();
                 } else Console.WriteLine("1515");//Nelze rozpoznat ip
             } else {
-                if (IPAddress.TryParse(args[1], out ip) ){
+                if (IPAddress.TryParse(args[1], out ip)) {
                     Console.WriteLine("1516");//Nelze rozpoznat port
                 } else Console.WriteLine("1517");//Nelze rozpoznat adresu serveru
             }
@@ -39,7 +39,7 @@ namespace rabcrClient {
                 clientSocket.BeginConnect(ipEndPoint, new AsyncCallback(OnConnect), null);
             } catch (SocketException ex) {
                SetServerError(0,"1518",ex.ErrorCode,ex.Message,"Start");//Nelze se připojit
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 SetServerError(0,"1518",0,ex.Message,"Start");//Nelze se připojit
             }
         }
@@ -108,7 +108,7 @@ namespace rabcrClient {
                 clientSocket.EndSend(ar);
             } catch (SocketException ex) {
                SetServerError(1,"1523",ex.ErrorCode,ex.Message,"OnSend");//Nelze odeslat k serveru požadavek o odeslání informací.
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 SetServerError(1,"1523",0,ex.Message,"OnSend");//Nelze odeslat k serveru požadavek o odeslání informací.
             }
         }
@@ -141,7 +141,7 @@ namespace rabcrClient {
             }
         }
 
-        private void SendBegin() {
+        void SendBegin() {
             try {
                 byteData = new byte[1024];
 
@@ -159,8 +159,6 @@ namespace rabcrClient {
             }
         }
 
-        public void Dispose() {
-            clientSocket.Dispose();
-        }
+        public void Dispose() => clientSocket.Dispose();
     }
 }

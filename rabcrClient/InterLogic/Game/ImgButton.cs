@@ -31,7 +31,7 @@ namespace rabcrClient {
                             }
                         }
                     }
-                    if (fill!=200){
+                    if (fill!=200) {
                         if (fill>200) fill-=5;
                         else fill+=5;
                         color=new Color(fill, fill, fill);
