@@ -20,5 +20,5 @@ A 2D game written with MonoGame that targets Win.
 ## Programing
 - Visual Studio 2019 c# (https://visualstudio.microsoft.com/)
 - MonoGame nuget (https://www.monogame.net/)
-- dotnet-mgcb-editor nuget for opening .mgcb file (https://docs.monogame.net/articles/tools/mgcb_editor.html)
+- dotnet-mgcb-editor tool for opening .mgcb file (https://docs.monogame.net/articles/tools/mgcb_editor.html)
 - Optional - something for syntax highlight .fx shader files
