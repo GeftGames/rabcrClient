@@ -23,7 +23,7 @@
     <Lang EnglishName="Irish" NativeName="An Ghaeilge" Name="gle" Flag="IE" Base="eng" Category="European&gt;Celtic" alphabet="aábcdeéfghiílmnoóprstuúAÁBCDEÉFGHIÍLMNOÓPRSTUÚjkqvwxyzJKQVWXYZ" FontFile="latin" />
     <Lang EnglishName="Ukrainian" NativeName="Українська" Flag="UA" Name="ukr" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя" FontFile="cyrillic" />
     <Lang EnglishName="Serbian" NativeName="Српски" Name="srp" Flag="RS,XK,BA,ME" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЂђЕеЖжЗзИиЈјКкЛлЉљМмНнЊњОоПпРрСсТтЋћУуФфХхЦцЧчЏџШш" FontFile="cyrillic" />
-    <Lang EnglishName="Hungarian" NativeName="Magyar nyelv" Flag="HU" Name="hun" Base="eng" Category="European&gt;Finno-Ugric" alphabet="AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZaábcdeéfghiíjkllymnoóöőpqrstuúüűvwxyz" FontFile="latin" />
+    <Lang EnglishName="Hungarian" NativeName="Magyar nyelv" Name="hun" Base="eng" Category="European&gt;Finno-Ugric" alphabet="AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZaábcdeéfghiíjkllymnoóöőpqrstuúüűvwxyz" FontFile="latin" />
     <Lang EnglishName="Filipino" NativeName="Wikang Filipino" Name="fil" Flag="PH" Base="eng" Category="Asian" alphabet="ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" FontFile="latin" />
     <Lang EnglishName="Lithuanian" NativeName="Lietuvių" Name="lit" Flag="LT" Base="eng" Category="European&gt;Baltic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄąĖėĘęĮįŲųŪūČčŠšŽž" FontFile="latin" />
     <Lang EnglishName="Slovene" NativeName="Slovenščina" Name="svl" Flag="SI" Base="eng" Category="European&gt;Slavic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzČčŠšŽžđćĐĆ" FontFile="latin" />
@@ -4783,7 +4783,7 @@
     <a id="182">
       <eng>Rabigoncraft - The Most of My World</eng>
       <ces>Rabigoncraft - To nej z mého světa</ces>
-      <mor>Rabigoncraft - To nej z mojeho světa</mor>
+      <ces-pr>Rabigoncraft - To nej z mýho světa</ces-pr>
       <deu>Rabigoncraft - Das meiste von meiner Welt</deu>
       <slk>Rabigoncraft - To naj z môjho sveta</slk>
       <pol>Rabigoncraft - Najlepsze z mojego świata</pol>
