@@ -13,11 +13,10 @@ A game written with MonoGame that targets Win.
 
 ## What I use
 - Fonts: M PLUS Rounded, Sunflower, Tajawal, HanWangYenLight
-- WindowsAPICodePack
 - Some parts translated by Google translate :)
 
 ## Programing
-- Visual Studio 2019 c# (https://visualstudio.microsoft.com/cs/vs/)
+- Visual Studio 2019 c# (https://visualstudio.microsoft.com/)
 - MonoGame nuget (https://www.monogame.net/)
 - dotnet-mgcb-editor nuget for opening .mgcb file (https://docs.monogame.net/articles/tools/mgcb_editor.html)
 - Optional something for editing .fx shader file
