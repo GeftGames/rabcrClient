@@ -2815,6 +2815,7 @@
     <a id="112">
       <eng>Drop item</eng>
       <ces>Vyhození itemu</ces>
+      <ces-ha>Vêhozeni itemô</ces-ha>
       <slk>Vyhodenie itema</slk>
       <pol>Upuść przedmiot</pol>
       <spa>Descarta un objeto</spa>
@@ -4893,7 +4894,6 @@
       <ces>Skrýt náhled</ces>
       <mor>Schovat náhled</mor>
       <ces-pr>Skrejt náhled</ces-pr>
-      <mor>Schovat náhled</mor>
       <slk>Skryť náhľad</slk>
       <eo>Kaŝi spoiler</eo>
       <spa>Ocultar spoiler</spa>
@@ -9377,7 +9377,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <eng>This world was created by old version, so it isn't compatible with this version</eng>
       <jpn>この世界は古いバージョンで作成されているため、このバージョンと互換性がありません</jpn>
       <ces>Tento svět byl vytvořen ve starší verzi, která není kompatibilní s nynější</ces>
-      <mor>Tento svět byl vytvořen ve starší verzi, která není kompatibilní s touhle</mor>
+      <mor>Tento svět byl vytvořen ve starší verzi, která néni kompatibilní s touhle</mor>
       <ces-ha>Tento svět bêl vêtvořené ve starši verzi, kerá neni kompatibilni s tóhle</ces-ha>
       <slk>Tento svet bol vytvorený v staršej verzii, ktorá nie je kompatibilná s terajšou</slk>
       <pol>Ten świat został stworzony w starszej wersji, która nie jest kompatybilna z obecną</pol>
@@ -16702,6 +16702,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
       <ces>Kámen</ces>
       <ces-han>Gryml</ces-han>
       <ces-ha>Kámeň</ces-ha>
+      <mor>Kameň</mor>
       <ces-sl>Kámeň</ces-sl>
       <jpn>ミディアムストーンロック</jpn>
       <slk>Kameň</slk>
@@ -18319,7 +18320,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1326">
       <eng>Sticks</eng>
       <ces>Větev</ces>
-	  <mor>Haluz</mor>
+	    <mor>Haluz</mor>
       <jpn>スティック</jpn>
       <slk>Klacek</slk>
       <pol>Kij</pol>
@@ -20827,6 +20828,10 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1433">
       <eng>Barrel</eng>
       <ces>Sud</ces>
+      <mor>Bečka</mor>
+      <ces-ha>Bečka</ces-ha>
+      <ces-sl>Bečka</ces-sl>
+      <ces-va>Bečka</ces-va>
       <jpn>たる</jpn>
       <slk>Sud</slk>
       <pol>Beczka</pol>
@@ -22030,6 +22035,7 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
     <a id="1480">
       <eng>Pick up an stone rock</eng>
       <ces>Zvedněte kámen ze země</ces>
+      <mor>Zdvihněte kameň ze země</mor>
       <slk>Zdvihnite kameň zo zeme</slk>
       <jpn>石の岩を拾う</jpn>
       <fra>Ramassez un rocher de pierre</fra>
@@ -22855,7 +22861,8 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
 	<ces>Neplatná adresa serveru</ces>
 	</a>
 	<a id="1522">
-	<ces>Server není dostupný</ces>
+	  <ces>Server není dostupný</ces>
+    <mor>Server néni dostupný</mor>
 	</a>
 	<a id="1523">
 	<ces>Nelze odeslat k serveru požadavek o odeslání informací</ces>
