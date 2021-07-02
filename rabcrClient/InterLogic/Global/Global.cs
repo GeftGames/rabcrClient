@@ -40,7 +40,7 @@
             "<NewLine><DarkGreen>DarkGreen</DarkGreen>, <Brown>Brown</Brown>, <Gray>Gray</Gray>, <DarkGray>DarkGray</DarkGray>, <Black>Black</Black>"+
             "<NewLine>Barevné efekty: <Mark>Mark</Mark>, <Animated>Animated</Animated>, <Random>Random</Random>"+
             "<NewLine>Typ textu: <Bold>Bold</Bold>, <Italic>Italic</Italic>, <Underline>Underline</Underline>, <Link>Link</Link>, <Subscript>Subscript</Subscript>"+
-            "<NewLine>Složitější co povolují sub-tagy: &l;Spoiler&g; a &l;Article&g;"+
+         //   "<NewLine>Složitější co povolují sub-tagy: &l;Spoiler&g; a &l;Article&g;"+
             "</Spoiler>"+
 
             "<Spoiler|show=Rozšíření tagů|hide=Skrýt rozšíření tagů>"+
@@ -54,21 +54,21 @@
             "Nebezpečná url: &l;Link<Red>|</Red><Blue>url</Blue>=<Green>cmd.exe</Green>&g;url&l;/Link&g;  <Link|url=cmd.exe>odkaz</Link>"+
             "<NewLine>Nebezpečná url se tváří jako odkaz na stránku, ale může spustit soubor v počítači"+
             "<NewLine>Chybně napsaná url (chybí http): &l;Link<Red>|</Red><Blue>url</Blue>=<Green>google.com</Green>&g;url&l;/Link&g;  <Link|url=google.com>odkaz</Link>"+
-            "<NewLine>Link-event (jen pro systémové účely, nefunguje běžně): &l;Link<Red>|</Red><Blue>event</Blue>=<Green>1</Green>&g;url&l;/Link&g;  <Link|event=1>web</Link>"+
+       //     "<NewLine>Link-event (jen pro systémové účely, nefunguje běžně): &l;Link<Red>|</Red><Blue>event</Blue>=<Green>1</Green>&g;url&l;/Link&g;  <Link|event=1>web</Link>"+
             "</Spoiler>" +
 
             "<Spoiler|show=Symboly|hide=Skrýt symboly>" +
-            "<NewLine><Black>&</Black>t; <Green>Tab (5 mezer)</Green>" +
+            "<Black>&</Black>t; <Green>Tab (5 mezer)</Green>" +
             "<NewLine>&g<Black>;</Black> <Green>&g;</Green>"+
             "<NewLine>&l<Black>;</Black> <Green>&l;</Green>" +
             "</Spoiler>" +
 
-            "<Spoiler|show=Jak spustit?|hide=Skrýt jak spustit>" +
+          /*  "<Spoiler|show=Jak spustit?|hide=Skrýt jak spustit>" +
             "Standartně:"+
             "<NewLine><Green>\"...\\rabcr.exe\"</Green> <Blue>/MessageCZ</Blue> <Red>\"bla&l;Bold&g;bla&l;/Bold&g;bla\"</Red>" +
             "<NewLine>Tohle okno:"+
             "<NewLine><Green>\"...\\rabcr.exe\"</Green> <Blue>/MessageCZ</Blue> <Red>Info</Red>" +
-            "</Spoiler>"+
+            "</Spoiler>"+*/
 
             "<Spoiler|show=Co nemám používat v jednořádkovém GeDo?|hide=Skrýt co nemám používat v jednořádkovém GeDo>" +
             "Týká se např. ve hře <Green>Názvu světa</Green>"+

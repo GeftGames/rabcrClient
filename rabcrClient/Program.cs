@@ -73,7 +73,7 @@ namespace rabcrClient {
                         if (args.Length==1){ 
                             new Message("<Red>Error</Red> Missing text").Run();
                         }else{
-                            new Message(args[2]).Run();
+                            new Message(args[1]).Run();
                        // else new Message("").Run();
                         }
                         break;
