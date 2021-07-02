@@ -399,6 +399,8 @@ namespace rabcrClient {
        // int yybef;
         int xxx;
         #endregion
+   
+        ImgButton categorySwitch;
 
         void SetNewLanguage(LLanguage l) {
             Setting.CurrentLanguage=l.id;
@@ -412,31 +414,33 @@ namespace rabcrClient {
             buttonMenu=new Button(Textures.ButtonLongLeft, Lang.Texts[1]) {
                 Position=new Vector2(Global.WindowWidth-400+70, Global.WindowHeight-54)
             };
-             goBack=new Text(Lang.Texts[364],Global.WindowWidthHalf-BitmapFont.bitmapFont18.MeasureTextSingleLineX(Lang.Texts[364])/2,10+65+10+2,BitmapFont.bitmapFont18);
+            goBack=new Text(Lang.Texts[364],Global.WindowWidthHalf-BitmapFont.bitmapFont18.MeasureTextSingleLineX(Lang.Texts[364])/2,10+65+10+2,BitmapFont.bitmapFont18);
+          
 
             buttonMenu.Click+=ClickMenu;
         }
-
+        int langStart;
         public override void Init() {
             buttonMenu= new Button(Textures.ButtonLongLeft, Lang.Texts[1]);
             buttonMenu.Click+=ClickMenu;
 
             buttonBadTranslation=new ButtonCenter(Textures.ButtonLong){ Text= Lang.Texts[348]};
-           // buttonBadTranslation.,
-            //buttonBadTranslation.Click+=ClickWrongTranslation;
 
             effectBlur=Effects.BluredTopDownBounds;
-            //effectBlur2=Effects.BluredTopDownBounds.Clone();
-            //star=GetDataTexture(@"Menu\Star");
-            scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")) {
 
+            scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")) {
                 PositionY=76
             };
             scrollbar.MoveScollBar+=Move;
             header=new Text(Lang.Texts[121],10, 10,BitmapFont.bitmapFont34);
 
-            BuildList();
-           // SetPage();
+            categorySwitch=new ImgButton(GetDataTexture("Buttons/Other/list")) {
+                Position=new Vector2(2, 80)
+            };
+
+            langStart=Setting.CurrentLanguage;
+            if (Setting.LangSortByList) BuildListByList(); else BuildListByCategory();
+
             Resize();
             Move(null,null);
         }
@@ -449,12 +453,13 @@ namespace rabcrClient {
             }
         }
 
-        void BuildList(){
-             DocumentSize=(int)(Global.WindowWidth*0.6f);
-           if (DocumentSize<300) DocumentSize=200;
-         if (DocumentSize>550) DocumentSize=550;
-         xxx=Global.WindowWidthHalf-DocumentSize/2;
+        void BuildListByCategory(){
+            DocumentSize=(int)(Global.WindowWidth*0.6f);
+            if (DocumentSize<300) DocumentSize=200;
+            if (DocumentSize>550) DocumentSize=550;
+            xxx=Global.WindowWidthHalf-DocumentSize/2;
             int y=0;
+             yy=0;
 
            // LCategory unknown;
           //  int xx=Global.WindowWidthHalf-DocumentSize/2;
@@ -602,7 +607,7 @@ namespace rabcrClient {
                // System.Diagnostics.Debug.WriteLine(l.EnglishName);
 
                 // Known category
-                foreach (string strCategory in l.Category){
+                foreach (string strCategory in l.Category) {
                     string[] path=strCategory.Split('>');
                     InsertInto(LanguageList,path,l,null);
      //                           bool finded=false;
@@ -911,6 +916,184 @@ namespace rabcrClient {
             }
         }
 
+        void BuildListByList(){
+            DocumentSize=(int)(Global.WindowWidth*0.6f);
+            if (DocumentSize<300) DocumentSize=200;
+            if (DocumentSize>550) DocumentSize=550;
+            xxx=Global.WindowWidthHalf-DocumentSize/2;
+            int y=0;
+            yy=0;
+
+            LanguageList=new List<LItem>();
+            Texture2D ok=GetDataTexture("Menu/Styles/Used");
+
+            foreach (Language l in Lang.Languages) {
+                             
+                // Known category
+               // foreach (string strCategory in l.Category) {
+                 //   string[] path=strCategory.Split('>');
+                    InsertInto(LanguageList,/*path,*/l,null);
+
+                //}
+            }
+
+           void InsertInto(List<LItem> langs, /*string[] path,*/ Language lang, LCategory par){
+             //   bool exists=false;
+                //foreach (LItem item in langs) {
+                //    if (item.IsCategory) {
+                //        LCategory cat=(LCategory)item;
+                //        if (cat.Name==path[0]) {
+                          //  if (path.Length==1) {
+                                LLanguage l = new LLanguage {
+                                    Text=new Text(lang.EnglishName, xxx, y, BitmapFont.bitmapFont18),
+                                    TextureOK=ok,
+                                    id=lang.id
+                                };
+                                if (lang.Flags!=null) {
+
+                                    if (lang.Flags.Length>0) {
+
+                                        l.Flag=new List<Texture2D>();
+                                        foreach (string s in lang.Flags) {
+                                            var pth = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                                            if (File.Exists(pth+"\\RabcrData\\"+Setting.StyleName+@"\Textures\Menu\Flags\"+s+".xnb")){
+                                            Texture2D tex=null;
+                                            try {
+                                                tex=GetDataTexture(@"Menu\Flags\"+s);
+                                            }catch{ }
+                                                if (tex!=null)l.Flag.Add(tex);
+                                            }
+                                        }
+                                    }
+                                    if (l.Flag.Count>0){
+                                        l.hasFlags=true;
+                                        if (l.hasFlags) l.flagPos=new Vector2(xxx+10,yy+15);
+                                        if (l.Flag.Count>1)l.multipleFlags=true;
+                                    }
+                                }
+                             //   y+=90;
+                                langs.Add(l);
+                                //if (cat.Languages==null) cat.Languages=new List<LItem>{ l };
+                                //else cat.Languages.Add(l);
+                            //} else {
+                            //    if (cat.Languages==null) cat.Languages=new List<LItem>();
+                            //    string[] p=new string[path.Length-1];
+                            //    Array.Copy(path,1,p,0,path.Length-1);
+
+                            //    InsertInto(cat.Languages,p,lang,cat);
+                            //}
+                //            return;
+                //        }
+                //    }
+                //}
+
+                //if (!exists) {
+                //    string trns=TranslateLanguageCategory(path[0]);
+                //    LCategory cat = new LCategory {
+                //        Name=path[0],
+                //        Text=new Text(trns, xxx, y, BitmapFont.bitmapFont18),
+                //        Parent=par
+                //    };
+                //    langs.Add(cat);
+                //    InsertInto(langs,path,lang,cat);
+                //}
+            }
+        
+          
+
+            {
+                current=null;
+                deepSelected=0;
+
+                yy=(int)(-scrollbar.scale*((+1)*60-(Global.WindowHeight-75-40-65)-85/*+30*/))/*+70*/+15;
+                //startWindowPosX=Global.WindowWidthHalf-DocumentSize/2;
+
+                foreach (LItem f in LanguageList){
+                    f.SetPos(xxx, yy+60, DocumentSize);
+                    f.IsOnStartUpPage=true;
+                }
+            }
+
+
+            //string TranslateLanguageCategory(string name) { 
+            //    switch (name) { 
+            //        case "Worldwide": 
+            //            if (Lang.Texts[300]=="Worldwide") return Lang.Texts[300];
+            //            else return Lang.Texts[300]+" (Worldwide)";
+
+            //        case "Constructed": 
+            //            if (Lang.Texts[301]=="Constructed") return Lang.Texts[301];
+            //            else return Lang.Texts[301]+" (Constructed)";
+
+            //        case "Asian": 
+            //            if (Lang.Texts[302]=="Asian") return Lang.Texts[302];
+            //            else return Lang.Texts[302]+" (Asian)";
+
+            //        case "African": 
+            //            if (Lang.Texts[303]=="African") return Lang.Texts[303];
+            //            else return Lang.Texts[303]+" (African)";
+
+            //        case "American": 
+            //            if (Lang.Texts[304]=="American") return Lang.Texts[304];
+            //            else return Lang.Texts[304]+" (American)";
+
+            //        case "European": 
+            //            if (Lang.Texts[305]=="European") return Lang.Texts[305];
+            //            else return Lang.Texts[305]+" (European)";
+
+            //        case "Australian": 
+            //            if (Lang.Texts[306]=="Australian") return Lang.Texts[306];
+            //            else return Lang.Texts[306]+" (Australian)";
+
+            //        case "Germanic": 
+            //            if (Lang.Texts[307]=="Germanic") return Lang.Texts[307];
+            //            else return Lang.Texts[307]+" (Germanic)";
+
+            //        case "Slavic": 
+            //            if (Lang.Texts[308]=="Slavic") return Lang.Texts[308];
+            //            else return Lang.Texts[308]+" (Slavic)";
+
+            //        case "Romance": 
+            //            if (Lang.Texts[309]=="Romance") return Lang.Texts[309];
+            //            else return Lang.Texts[309]+" (Romance)";
+
+            //        case "Celtic": 
+            //            if (Lang.Texts[310]=="Celtic") return Lang.Texts[310];
+            //            else return Lang.Texts[310]+" (Celtic)";
+
+            //        case "Baltic": 
+            //            if (Lang.Texts[311]=="Baltic") return Lang.Texts[311];
+            //            else return Lang.Texts[311]+" (Baltic)";
+
+            //        case "Finno-Ugric": 
+            //            if (Lang.Texts[312]=="Finno-Ugric") return Lang.Texts[312];
+            //            else return Lang.Texts[312]+" (Finno-Ugric)";
+
+            //        case "Other": 
+            //            if (Lang.Texts[313]=="Other") return Lang.Texts[313];
+            //            else return Lang.Texts[313]+" (Other)";
+
+            //        case "Czech": 
+            //            if (Lang.Texts[357]=="Czech") return Lang.Texts[357];
+            //            else return Lang.Texts[357]+" (Czech)";
+
+            //        case "Oceanic": 
+            //            if (Lang.Texts[358]=="Oceanic") return Lang.Texts[358];
+            //            else return Lang.Texts[358]+" (Oceanic)";
+
+            //        case "Japanese": 
+            //            if (Lang.Texts[359]=="Japanese") return Lang.Texts[359];
+            //            else return Lang.Texts[359]+" (Japanese)";
+
+            //    }
+            //    #if DEBUG
+            //    throw new Exception("Missing translation of category");
+            //    #else
+            //    return name;
+            //    #endif
+            //}
+        }
+
         //int Mh(){
         //    if (deepSelected==0) return Categories.Count*60+60;
         //    if (deepSelected==1){
@@ -1033,12 +1216,15 @@ namespace rabcrClient {
         }
 
         public override void Shutdown() {
-            Rabcr.SaveSetting();
-            //return false;
-           // worldsTarget.Dispose();
+            // Save changed language
+            if (Setting.CurrentLanguage!=langStart) Rabcr.SaveSetting();
         }
 
         public override void Update(GameTime gameTime) {
+            MousePos.mouseRealPosX=Menu.mousePosX;
+            MousePos.mouseRealPosY=Menu.mousePosY;
+            MousePos.mouseLeftDown=Menu.mouseDown;
+            MousePos.mouseLeftRelease=Menu.oldMouseState.LeftButton==ButtonState.Pressed && !Menu.mouseDown;
             if (Menu.newKeyboardState.IsKeyDown(Keys.Up)) smoothMouse-=2f;
             if (Menu.newKeyboardState.IsKeyDown(Keys.Down)) smoothMouse+=2f;
 
@@ -1049,16 +1235,31 @@ namespace rabcrClient {
                 smoothMouse+=(Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/3f;
             }
 
-            if (smoothMouse!=0){
-                if (Constants.AnimationsControls){
-                scrollbar.Scroll(smoothMouse/1.5f);
-                smoothMouse/=1.3f;
-                if (smoothMouse>0){
-                    if (smoothMouse<0.049f) smoothMouse=0;
-                } else {
-                    if (smoothMouse>-0.049f) smoothMouse=0;
+            if (categorySwitch.Update()) {
+
+                Setting.LangSortByList=!Setting.LangSortByList;
+                if (Setting.LangSortByList) { 
+                    BuildListByList();
+                    categorySwitch=new ImgButton(GetDataTexture("Buttons/Other/list"));
+                } else { 
+                    BuildListByCategory();
+                    categorySwitch=new ImgButton(GetDataTexture("Buttons/Other/category"));
                 }
-                }else{
+                 categorySwitch.Position=new Vector2(2,80);
+                Resize();
+                  Move(null,null);
+            }
+
+            if (smoothMouse!=0){
+                if (Constants.AnimationsControls) {
+                    scrollbar.Scroll(smoothMouse/1.5f);
+                    smoothMouse/=1.3f;
+                    if (smoothMouse>0){
+                        if (smoothMouse<0.049f) smoothMouse=0;
+                    } else {
+                        if (smoothMouse>-0.049f) smoothMouse=0;
+                    }
+                } else {
                     scrollbar.Scroll(smoothMouse);
                     smoothMouse=0;
                 }
@@ -1636,7 +1837,7 @@ namespace rabcrClient {
             spriteBatch.Begin();
             //DrawTextHeader(10, 10,Lang.Texts[8],a);
             header.Draw(spriteBatch,Color.Black*a);
-
+            categorySwitch.ButtonDraw();
            // if (!loading) {
                //  if (Global.WindowWidth>700) buttonWrongTranslation.ButtonDraw(spriteBatch,a);
                buttonMenu.ButtonDraw(spriteBatch, /*mouse,*/a/*, new Vector2(newMouseState.X,newMouseState.Y)*/);
@@ -1666,7 +1867,7 @@ namespace rabcrClient {
             scrollbar.Scroll(0);
          //   Move(null,new EventArgs());
 
-
+             categorySwitch.Position=new Vector2(2,80);
             if (deepSelected!=0){
                  goBack.ChangePosition(Global.WindowWidthHalf-BitmapFont.bitmapFont18.MeasureTextSingleLineX("< Zpět na kategorie jazyků")/2,10+75+5+2);
                 backTarget?.Dispose();

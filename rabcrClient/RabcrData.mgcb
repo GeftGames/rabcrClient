@@ -3047,6 +3047,18 @@
 /processorParam:TextureFormat=Color
 /build:Default/Textures/Buttons/Other/Achievements.png
 
+#begin Default/Textures/Buttons/Other/category.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Default/Textures/Buttons/Other/category.png
+
 #begin Default/Textures/Buttons/Other/Craft.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -3058,6 +3070,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Default/Textures/Buttons/Other/Craft.png
+
+#begin Default/Textures/Buttons/Other/list.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Default/Textures/Buttons/Other/list.png
 
 #begin Default/Textures/Buttons/Other/Move.png
 /importer:TextureImporter

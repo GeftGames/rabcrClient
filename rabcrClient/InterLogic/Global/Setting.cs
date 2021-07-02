@@ -8,6 +8,7 @@ namespace rabcrClient {
     }
 
     struct Setting {
+        public static bool LangSortByList=true;
         public static Sex sex=Sex.Men;
         public static int hairType=1;
         public static Color hairColor=Color.Brown;
