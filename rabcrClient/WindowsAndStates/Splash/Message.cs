@@ -8,7 +8,7 @@ namespace rabcrClient {
 
         #region Varibles
         GraphicsDeviceManager graphics;
-        MouseState newMouseState/*, oldMouseState*/;
+        MouseState newMouseState, oldMouseState;
       //  SpriteFont spriteFont_small,spriteFont_medium,spriteFont_small_italic;
         SpriteBatch spriteBatch;
        // Texture2D buttonTexture;
@@ -24,7 +24,8 @@ namespace rabcrClient {
         public Message(string Error) {
             Constants.AnimationsControls=true;
             if (Error=="") {
-                 _txt=Environment.GetCommandLineArgs()[2].Replace("\r\n","<NewLine>")+"<NewLine>";
+               if (Environment.GetCommandLineArgs().Length>2)  _txt=Environment.GetCommandLineArgs()[2].Replace("\r\n","<NewLine>")+"<NewLine>";
+               else _txt="";
             }
             else {
                 _txt=Error;
@@ -53,7 +54,7 @@ namespace rabcrClient {
           //   Rabcr.GraphicsManager.ApplyChanges();
            //  GC.Collect();
             //GC.WaitForPendingFinalizers();
-
+            oldMouseState=new MouseState();
         }
 
 
@@ -119,6 +120,11 @@ namespace rabcrClient {
 
         protected override void Draw(GameTime gameTime) {
             Rabcr.newMouseState=newMouseState =Mouse.GetState();
+            Rabcr.spriteBatch=spriteBatch;
+            MousePos.mouseLeftDown=newMouseState.LeftButton==ButtonState.Pressed;
+            MousePos.mouseLeftRelease=newMouseState.LeftButton==ButtonState.Released && oldMouseState.LeftButton==ButtonState.Pressed;
+            MousePos.mouseRealPosX=newMouseState.X;
+            MousePos.mouseRealPosY=newMouseState.Y;
         //    GraphicsDevice.Clear(Color.White);
 graphics.GraphicsDevice.Clear(Color.White);
             effectColorize.CurrentTechnique.Passes[0].Apply();
@@ -152,7 +158,7 @@ graphics.GraphicsDevice.Clear(Color.White);
             //    DrawTextShadowMin(Fonts.Medium, new Vector2(302, 152), "OK");
             //}
             spriteBatch.End();
-            //oldMouseState=newMouseState;
+            oldMouseState=newMouseState;
         }
 
         Texture2D GetDataTexture(string path) {

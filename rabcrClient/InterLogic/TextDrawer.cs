@@ -1023,13 +1023,22 @@ namespace rabcrClient {
 
             Glyphs=tmpGlyphs.ToArray();
             //bytes=null;
+            if (Environment.GetCommandLineArgs().Length>2){ 
+                if (Environment.GetCommandLineArgs()[1]=="/Message"){ 
+                       using (FileStream fileStream = new FileStream(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"/RabcrData/Default/Fonts/Font latin 18.png", FileMode.Open)){
+       //    Bitmap=Rabcr.Game.Content.Load<Texture2D>("Default/Fonts/font"+size);
+                /*BitmapFont.bitmapFont16.*/Bitmap=Texture2D.FromStream(Rabcr.Game.GraphicsDevice, fileStream);
 
+           // fileStream.Dispose();
+           }  //
+                    }
+            }else{
             using (FileStream fileStream = new FileStream(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"/RabcrData/Default/Fonts/Font "+Lang.Languages[Setting.CurrentLanguage].FontFile+" "+size+".png", FileMode.Open)){
        //    Bitmap=Rabcr.Game.Content.Load<Texture2D>("Default/Fonts/font"+size);
                 /*BitmapFont.bitmapFont16.*/Bitmap=Texture2D.FromStream(Rabcr.Game.GraphicsDevice, fileStream);
 
            // fileStream.Dispose();
-           }  // GC.Collect();
+           } } // GC.Collect();
             //GC.WaitForPendingFinalizers();
         //    string[] lines = strs/*((string)Properties.Resources.ResourceManager.GetObject("FontInfo"+size+".txt"))*/./*; .FontInfo.*/Split('*');
         ////    string[] lines=Properties.Resources.ResourceManager.GetString("FontInfo"+size+".txt")./*; .FontInfo.*/Split('*');

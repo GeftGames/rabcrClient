@@ -1266,6 +1266,8 @@ namespace rabcrClient {
                                 case Action.Event:
                                     if (ev!=null) ev.Invoke(this, null);
                                     else System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location, " /Message \"<Red>Event nenalezen.</Red>\"");
+
+
                                     break;
 
                                 case Action.Url:

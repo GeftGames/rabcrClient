@@ -207,6 +207,6 @@ namespace rabcrClient {
             textPanel5.Visible=false;
         }
 
-        private void GButton1_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0],"/Message Info");
+        private void GButton1_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0],Global.MessageGedoInfo);
     }
 }
