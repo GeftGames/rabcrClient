@@ -4346,7 +4346,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Block block=chunk.TopBlocks[rh];
 								if (block is LeavesBlock lb){
 									if (lb.Id==(ushort)BlockId.SpruceLeaves){ 
-										FallingLeave fl=new FallingLeave(rch*16+8, rh*16+8, random.Float(),windRirectionRight,rain, new Rectangle(0,0,2+random.Int2(),1)){
+										FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,rain, new Rectangle(0,0,2+random.Int2(),1)){
 											texture=lb.Texture,
 											Color=lb.Color,
 										};
@@ -4386,7 +4386,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										|| lb.Id==(ushort)BlockId.MangroveLeaves
 										) { 
-											FallingLeave fl=new FallingLeave(rch*16+8, rh*16+8, random.Float(),windRirectionRight,rain, new Rectangle(0,0,2,2+random.Int2())){
+											FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,rain, new Rectangle(0,0,2,2+random.Int2())){
 												texture=lb.Texture
 											};
 											FallingLeaves.Add(fl);
@@ -6045,22 +6045,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				Graphics.Clear(black);
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
 
-                foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
+                foreach (Rectangle r in lightsHalf) spriteBatch.Draw(pixel/*lightMaskLine2Texture*/, r, ColorWhite);
 
                 for (int x = (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
                     Terrain chunk = terrain[x];
-                    spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
+                    spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
                 }
                 spriteBatch.End();
 
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-				spriteBatch.Draw(pixel,new Rectangle(0,0,Global.WindowWidth,Global.WindowHeight),new Color(0,0,0,50));
+				spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth,Global.WindowHeight), new Color(0,0,0,50));
 				spriteBatch.End();
 
 				// Draw high light
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
 				
-				foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
+				foreach (Rectangle r in lightsFull) spriteBatch.Draw(pixel/*lightMaskLine2Texture*/, r, ColorWhite);
 
 				for (int x= (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
 					Terrain chunk=terrain[x];
