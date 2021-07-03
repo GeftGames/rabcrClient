@@ -30,6 +30,7 @@ namespace rabcrClient {
 
         public override void Draw() {
             if (tree!=null) Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, Color, tree.angle, vecOrigin, 1f, SpriteEffects.None, 0); 
+            else Rabcr.spriteBatch.Draw(Texture, Position, Color); 
         }
 
         public override Block CloneDown() {

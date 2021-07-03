@@ -3760,28 +3760,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					if (diserpeard>0) diserpeard--;
 
-					#region Game - destruction + place blocks + drop item
-					bool notshot=true;
+						#region Game - destruction + place blocks + drop item
+						bool notshot=true;
 						if (Rabcr.Game.IsActive){
-					if (mouseRightDown) MouseRightAction(); 
-					if (mouseRightPress) ItemEat(); 
+						if (mouseRightDown) MouseRightAction(); 
+						if (mouseRightPress) ItemEat(); 
 
-					if (mouseLeftPress) {
-						if (InventoryNormal[boxSelected].Id==(ushort)Items.Gun) {
-							foreach (ItemInv i in InventoryNormal) {
-								if (i.Id==(ushort)Items.Ammo) {
-									ItemInvBasic32 ammo=(ItemInvBasic32)i;
-									notshot=false;
-									ammo.SetCount=ammo.GetCount-1;
-									if (ammo.GetCount==0) InventoryNormal[boxSelected]=itemBlank;
-									if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth,Global.WindowHeight)) {
-										if (Game.IsActive) CreateShot();
+						if (mouseLeftPress) {
+							if (InventoryNormal[boxSelected].Id==(ushort)Items.Gun) {
+								foreach (ItemInv i in InventoryNormal) {
+									if (i.Id==(ushort)Items.Ammo) {
+										ItemInvBasic32 ammo=(ItemInvBasic32)i;
+										notshot=false;
+										ammo.SetCount=ammo.GetCount-1;
+										if (ammo.GetCount==0) InventoryNormal[boxSelected]=itemBlank;
+										if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth,Global.WindowHeight)) {
+											if (Game.IsActive) CreateShot();
+										}
+										break;
 									}
-									break;
 								}
 							}
 						}
-					}
 
 					if (mouseLeftDown) {
 						if (destroing) {
@@ -4078,20 +4078,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 														RemovePlant(destroyBlockY);
 
 														if (Global.WorldDifficulty!=2) {
-															GetItemsFromPlant(destroingBlockType, destroyBlockX, destroyBlockY, plant.Grow==255/*IsGrow()*/);
+															GetItemsFromPlant(destroingBlockType, destroyBlockX, destroyBlockY, plant.Grow==255);
 															RemovePartTool();
 														}
 
-														foreach (object p in WavingPlants) { 
-															if (p is FruitPlantWaving) {
-																FruitPlantWaving pp=(FruitPlantWaving)p;
-
-																if (pp.Position.X==plant.Position.X && pp.Position.Y==plant.Position.Y)	{ 
-																	WavingPlants.Remove(p);
-																	break;
-																}
-															}
-														}
+														foreach (object p in WavingPlants) {
+                                                            if (p is FruitPlantWaving pp) {
+                                                                if (pp.Position.X==plant.Position.X && pp.Position.Y==plant.Position.Y) {
+                                                                    WavingPlants.Remove(p);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
 														break;
 													}
 												}
@@ -5766,7 +5764,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						AutoDestroyLeaves((ushort)BlockId.CherryWood, (ushort)BlockId.CherryLeaves, (ushort)BlockId.CherryLeavesWithCherries);
 						AutoDestroyLeaves((ushort)BlockId.OrangeWood, (ushort)BlockId.OrangeLeaves, (ushort)BlockId.OrangeLeavesWithOranges);
 						AutoDestroyLeaves((ushort)BlockId.LemonWood, (ushort)BlockId.LemonLeaves, (ushort)BlockId.LemonLeavesWithLemons);
-						AutoDestroyLeaves((ushort)BlockId.SpruceWood, (ushort)BlockId.ChristmasStar);
+						AutoDestroyLeaves((ushort)BlockId.AcaciaWood, (ushort)BlockId.AcaciaLeaves);
+						AutoDestroyLeaves((ushort)BlockId.EucalyptusWood, (ushort)BlockId.EucalyptusLeaves);
+						AutoDestroyLeaves((ushort)BlockId.KapokWood, (ushort)BlockId.KapokLeacesFibre,(ushort)BlockId.KapokLeacesFlowering);
+						AutoDestroyLeaves((ushort)BlockId.KapokWood, (ushort)BlockId.KapokLeaves);
+						AutoDestroyLeaves((ushort)BlockId.MangroveWood, (ushort)BlockId.MangroveLeaves);
+						AutoDestroyLeaves((ushort)BlockId.OliveWood, (ushort)BlockId.OliveLeaves,(ushort)BlockId.OliveLeavesWithOlives);
+						AutoDestroyLeaves((ushort)BlockId.RubberTreeWood, (ushort)BlockId.RubberTreeWood);
+						AutoDestroyLeaves((ushort)BlockId.WillowWood, (ushort)BlockId.WillowLeaves);
 						#endregion
 
 						// Start mooving
@@ -6040,12 +6045,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				Graphics.Clear(black);
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
 
-                foreach (Rectangle r in lightsHalf)
-                    spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
+                foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
 
                 for (int x = (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
                     Terrain chunk = terrain[x];
-                    spriteBatch.Draw(lightMask2Texture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
+                    spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
                 }
                 spriteBatch.End();
 
@@ -9273,7 +9277,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				#region Place block
 				if (FastMath.DistanceInt(mousePosRoundX,mousePosRoundY,(int)PlayerX, (int)PlayerY)<DistanceBlockEdit) {
-				   // Vector2.Distance(mousePosRound.Vector(),new Vector2(PlayerX, PlayerY))<DistanceBlockEdit) {
 					ushort id =InventoryNormal[boxSelected].Id;
 					if (id!=0) {
 
@@ -9294,131 +9297,131 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 
-								if (y!=0) {
-									if (y+1<=125)
-									if (chunk.IsSolidBlocks[y+1]) {
-										if (chunk.SolidBlocks[y+1].Id==(ushort)BlockId.Dirt || chunk.SolidBlocks[y+1].Id==(ushort)BlockId.Compost) {
-											if (!chunk.IsTopBlocks[y]) {
+							if (y!=0) {
+								if (y+1<=125)
+								if (chunk.IsSolidBlocks[y+1]) {
+									if (chunk.SolidBlocks[y+1].Id==(ushort)BlockId.Dirt || chunk.SolidBlocks[y+1].Id==(ushort)BlockId.Compost) {
+										if (!chunk.IsTopBlocks[y]) {
 
-												bool isNotPlant=true;
-												foreach (Plant p in chunk.Plants) {
-													if (p.Height==y) {
-														isNotPlant=false;
-														break;
-													}
-												}
-												if (isNotPlant) {
-													switch (id) {
-														case (ushort)Items.Seeds:
-															switch (random.Int(10)) {
-																default: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Dandelion,new Vector2(mousePosRoundX,mousePosRoundY)); break;
-																case 1: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Orchid, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 2: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Rose, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 3: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Heather, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 4: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Violet, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 5: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassDesert, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 6: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassForest, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 7: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassHills, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 8: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassJungle, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-																case 9: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassPlains, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															}
-															chunk.IsTopBlocks[y]=true;
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.WheatSeeds:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Wheat, (byte)y,0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.FlaxSeeds:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Flax, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.Carrot:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Carrot, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.Onion:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Onion, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.Peas:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Peas, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.PlantRashberry:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Rashberry, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.PlantStrawberry:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Strawberry, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-
-														case (ushort)Items.PlantBlueberry:
-															chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Blueberry, (byte)y, 0, (short)x));
-															RegisterPlant(x);
-															if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
-															InventoryRemoveSelectedItem();
-															return;
-													}
-												}
-											}
-										}
-
-										ushort mobId=GameMethods.MobFromItem(id);
-
-										if (mobId!=(ushort)BlockId.None) {
-											bool NotExists=true;
-											foreach (Mob mob in chunk.Mobs) {
-												if (mob.Height==y) {
-													NotExists=false;
+											bool isNotPlant=true;
+											foreach (Plant p in chunk.Plants) {
+												if (p.Height==y) {
+													isNotPlant=false;
 													break;
 												}
 											}
+											if (isNotPlant) {
+												switch (id) {
+													case (ushort)Items.Seeds:
+														switch (random.Int(10)) {
+															default: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Dandelion,new Vector2(mousePosRoundX,mousePosRoundY)); break;
+															case 1: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Orchid, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 2: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Rose, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 3: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Heather, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 4: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Violet, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 5: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassDesert, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 6: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassForest, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 7: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassHills, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 8: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassJungle, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+															case 9: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassPlains, new Vector2(mousePosRoundX, mousePosRoundY)); break;
+														}
+														chunk.IsTopBlocks[y]=true;
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
 
-											if (NotExists) {
-												// m;// = GetMobFromId((byte)mobId,(byte)y,random.Bool(),x);
-												switch (mobId) {
-													case (ushort)BlockId.Fish:
-														chunk.Mobs.Add(new Fish(mobId, y, x,random.Bool(), fishTexture0, fishTexture1));
-													  // m);
-														break;
+													case (ushort)Items.WheatSeeds:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Wheat, (byte)y,0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
 
-													case (ushort)BlockId.Chicken:
-														chunk.Mobs.Add(new Chicken(mobId, y,x, random.Bool(), chickenWalkTexture, chickenEatTexture));
-														break;
+													case (ushort)Items.FlaxSeeds:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Flax, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
 
-													case (ushort)BlockId.Rabbit:
-														chunk.Mobs.Add(new Rabbit(mobId,y, x, random.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
-														break;
+													case (ushort)Items.Carrot:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Carrot, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
+
+													case (ushort)Items.Onion:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Onion, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
+
+													case (ushort)Items.Peas:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Peas, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
+
+													case (ushort)Items.PlantRashberry:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Rashberry, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
+
+													case (ushort)Items.PlantStrawberry:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Strawberry, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
+
+													case (ushort)Items.PlantBlueberry:
+														chunk.Plants.Add(GetPlantFromId((ushort)BlockId.Blueberry, (byte)y, 0, (short)x));
+														RegisterPlant(x);
+														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
+														InventoryRemoveSelectedItem();
+														return;
 												}
-											 //   if (m!=null)
 											}
 										}
 									}
+
+									ushort mobId=GameMethods.MobFromItem(id);
+
+									if (mobId!=(ushort)BlockId.None) {
+										bool NotExists=true;
+										foreach (Mob mob in chunk.Mobs) {
+											if (mob.Height==y) {
+												NotExists=false;
+												break;
+											}
+										}
+
+										if (NotExists) {
+											// m;// = GetMobFromId((byte)mobId,(byte)y,random.Bool(),x);
+											switch (mobId) {
+												case (ushort)BlockId.Fish:
+													chunk.Mobs.Add(new Fish(mobId, y, x,random.Bool(), fishTexture0, fishTexture1));
+													// m);
+													break;
+
+												case (ushort)BlockId.Chicken:
+													chunk.Mobs.Add(new Chicken(mobId, y,x, random.Bool(), chickenWalkTexture, chickenEatTexture));
+													break;
+
+												case (ushort)BlockId.Rabbit:
+													chunk.Mobs.Add(new Rabbit(mobId,y, x, random.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
+													break;
+											}
+											//   if (m!=null)
+										}
+									}
 								}
+							}
 						//	}
 						}
 
@@ -21840,19 +21843,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						//}
 						//terrain[Xran].IsTopBlocks[Yran]=false;
 						//terrain[Xran].TopBlocks[Yran]=null;
-						List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree.TitlesLeaves;
+						List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[/*destroyBlockY*/Yran]).tree.TitlesLeaves;
 													
 						for (int i = 0; i<listLeaves.Count; i++) {
-							if (listLeaves[i].X==destroyBlockX){
-								if (listLeaves[i].Y==destroyBlockY) listLeaves.RemoveAt(i);
+							if (listLeaves[i].X==/*destroyBlockX*/Xran){
+								if (listLeaves[i].Y==/*destroyBlockY*/Yran) listLeaves.RemoveAt(i);
 							}
 						}
 						chunk.TopBlocks[Yran]=null;
 						chunk.IsTopBlocks[Yran]=false;
-
-					
-											
-
 					}
 				}
 			}
@@ -21888,21 +21887,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (chunk.TopBlocks[Yran].Id==leaves) GetItemsFromBlock(leaves, Xran, Yran);
 						else GetItemsFromBlock(alternativeLeaves, Xran, Yran);
 
-						Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
+						Tree tree=((LeavesBlock)chunk.TopBlocks[Yran/*destroyBlockY*/]).tree;
 
 						// if not Artifical leaves (created by player)
 						if (tree!=null) {
-							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree.TitlesLeaves;
+							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran/*destroyBlockY*/]).tree.TitlesLeaves;
 													
 							for (int i = 0; i<listLeaves.Count; i++) {
 								if (listLeaves[i].X==destroyBlockX) {
-									if (listLeaves[i].Y==destroyBlockY) listLeaves.RemoveAt(i);
+									if (listLeaves[i].Y==Yran/*destroyBlockY*/) listLeaves.RemoveAt(i);
 								}
 							}
 
+						}
 							terrain[Xran].IsTopBlocks[Yran]=false;
 							terrain[Xran].TopBlocks[Yran]=null;
-						}
 					}
 				}
 			}
