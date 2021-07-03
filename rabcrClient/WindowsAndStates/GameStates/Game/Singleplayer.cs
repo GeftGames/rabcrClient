@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
     class SinglePlayer: Screen {
+		#region Varibles
 		static Color 
 			ColorArmy= new Color(0xff113022), // R 34, G 48, B 17, A 255
 			ColorSpringGreen=new Color(0xff2cff8f), //R 143, G 225, B 44, A 255
@@ -18,7 +19,6 @@ namespace rabcrClient {
 		float actualRainForce=0.75f;
 		float rainWaveForce;
 
-		#region Varibles
 		#region Textures
 		Texture2D
 			TextureBin,
@@ -5266,7 +5266,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					int w=(int)WindowY-8, w2=(int)WindowY/*+*/-8;
 					
-					for (int x=terrainStartIndexX; x<terrainStartIndexW; x++) {
+					for (int x=(terrainStartIndexX>2 ? terrainStartIndexX-2 : terrainStartIndexX); x<terrainStartIndexW+2 && x<TerrainLength; x++) {
 						Terrain chunk=terrain[x];
 						int f=chunk.LightPosFull16;
 
@@ -5276,7 +5276,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							
 							//	if (w<h) { 
 									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, h-w2));
-									lightsHalf.Add(new Rectangle(x*16-40,h/* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
+									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, chunk.LightPosFull16-w2));
+								//original:	lightsHalf.Add(new Rectangle(x*16-40,h/* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
+								//	lightsHalf.Add(new Rectangle(x*16-40,(int)WindowY /*h*//* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 							//	}else{ 
 								//	lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY+h, 16+40+40, f-h-w2));
 								//}
@@ -6017,29 +6019,54 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Draw lighting
+
+				// Draw full lights
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
-				
-				foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
-				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLine2Texture, r,/*new Rectangle(r.X,   r.Y, r.Width, r.Height-8),*/ ColorWhite*0.6f);
-				//foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, new Rectangle(r.X+4, r.Y, r.Width, r.Height-8), ColorWhite*0.25f);
-				//foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, new Rectangle(r.X-4, r.Y,r.Width, r.Height), ColorWhite*0.25f);
-				
-				for (int x= terrainStartIndexX; x<terrainStartIndexW; x++) {
-					Terrain chunk=terrain[x];
-					if (chunk.Half) {
-						spriteBatch.Draw(lightMask2Texture, new Vector2(chunk.LightVec.X,   chunk.LightVec.Y/*-8*/), ColorWhite*0.6f);
-						//spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X+4, chunk.LightVec.Y-8), ColorWhite*0.25f);
-						spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, /*x*16-40, */  chunk.LightPosHalf16/*+100*//*-48*//*,96,48*/),/* null,*/ ColorWhite/**0.5f*//*,0,Vector2Zero,SpriteEffects.None,0*/);
-						//spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(x*16-40+4, chunk.LightPosHalf16/*+100*//*-48*//*,96,48*/),/* null,*/ ColorWhite*0.5f/*,0,Vector2Zero,SpriteEffects.None,0*/);
-						//spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(x*16-40+4, chunk.LightPosHalf16/*+100*//*-48*//*,96,48*/),/* null,*/ ColorWhite/*,0,Vector2Zero,SpriteEffects.None,0*/);
-					//	foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, new Rectangle(r.X+4, r.Y,r.Width, r.Height), ColorWhite*0.25f);
-						//foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, new Rectangle(r.X-4, r.Y,r.Width, r.Height), ColorWhite*0.25f);
-					} else spriteBatch.Draw(lightMaskTexture, chunk.LightVec, ColorWhite);
-				}
-			
+
+                foreach (Rectangle r in lightsHalf)
+                    spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
+
+                for (int x = (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
+                    Terrain chunk = terrain[x];
+                    spriteBatch.Draw(lightMask2Texture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
+                }
+                spriteBatch.End();
+
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+				spriteBatch.Draw(pixel,new Rectangle(0,0,Global.WindowWidth,Global.WindowHeight),new Color(0,0,0,50));
 				spriteBatch.End();
+
+				// Draw high light
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
+				
+				foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite);
+
+				for (int x= (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
+					Terrain chunk=terrain[x];
+					if (chunk.Half) spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
+				}
+				spriteBatch.End();
+
+				// Draw with shadows
+
+				//Graphics.SetRenderTarget(sunLightTarget);
+				//Graphics.Clear(black);
+				//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
+				
+				//foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
+				//foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite*0.6f);
+
+				//for (int x= terrainStartIndexX; x<terrainStartIndexW; x++) {
+				//	Terrain chunk=terrain[x];
+				//	if (chunk.Half) {
+				//		spriteBatch.Draw(lightMask2Texture, new Vector2(chunk.LightVec.X,   chunk.LightVec.Y/*-8*/), ColorWhite*0.6f);
+				//		spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
+				//	} else spriteBatch.Draw(lightMaskTexture, chunk.LightVec, ColorWhite);
+				//}
+			
+				//spriteBatch.End();
 
 				// Modificate sunlight target with lamp's, lorch's or fireplace's lights
 				Graphics.SetRenderTarget(modificatedLightTarget);
@@ -21971,11 +21998,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											}
 										}
 									}
-								}else{
+								} else {
 									if (random.Bool_1Percent()) {
 										int /*x=(int)ch.Position.X/16,*/
 											y=(int)ch.Position.Y/16;
 										Terrain chunk=terrain[Xran];
+
 										if (!chunk.IsTopBlocks[y]) {
 											chunk.IsTopBlocks[y]=true;
 											chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.EggDrop,ch.Position);

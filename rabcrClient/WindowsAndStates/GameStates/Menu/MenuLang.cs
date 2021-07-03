@@ -641,7 +641,6 @@ namespace rabcrClient {
             if (DocumentSize>550) DocumentSize=550;
             xxx=Global.WindowWidthHalf-DocumentSize/2;
             int y=0;
-          //  yy=0;
 
             LanguageList=new List<LItem>();
             Texture2D ok=GetDataTexture("Menu/Styles/Used");
@@ -721,29 +720,18 @@ namespace rabcrClient {
 
         private void Move(object sender, EventArgs e) {
             start=0;
-            //foreach (SettingItem si in settings)si.ChangePos(Global.WindowWidth-210,yy);
-            yy=(int)(-scrollbar.scale*(PageHeight()-(Global.WindowHeight-75-40-65)/*-85*//*+30*/))/*+70*/+15;/*+140+90*/
-         //   int delta=yy-yybef;
-            //yybef=yy;
+            yy=(int)(-scrollbar.scale*(PageHeight()-(Global.WindowHeight-75-40-65)))+15;
 
-            //startWindowPosX=Global.WindowWidthHalf-DocumentSize/2;
-
-         //   start-=delta/60;
-           // if (start<0)start=0;
-          //  end=start+(Global.WindowHeight-75-40-65)/60;
-
-            if ((deepSelected!=0 && current.Languages!=null)){
+            if (deepSelected!=0 && current.Languages!=null){
                 List<LItem> langs=current.Languages;
 
                 for (int i = 0; i<langs.Count; i++) {
                     if (yy<0)start=i;
                     LItem c=langs[i];
                     c.SetPos(xxx,yy,DocumentSize);
-                  //  if (yy>Global.WindowHeight-75-40-65+60){end=i; /*break;*/}
-
+               
                     yy+=60;
                 }
-            //    end=start+(Global.WindowHeight-75-40-65+60)/60;
             }else{
                  List<LItem> cc;
                 if (deepSelected==0) cc=LanguageList;
@@ -753,77 +741,9 @@ namespace rabcrClient {
                     if (yy<0)start=i;
                     LItem c=cc[i];
                     c.SetPos(xxx,yy,DocumentSize);
-                  //  if (yy>Global.WindowHeight-75-40-65+60) {end=i; /*break;*/}
-
                     yy+=60;
                 }
-              //  end=start+(Global.WindowHeight-75-40-65+60)/60;
             }
-
-            //  SetPage();
-            // #region Settings
-            //////for (int i = 0; i<LangSections.Length; i++) {
-            //////    if (yy>-50&&yy<Global.WindowHeight-160+20) {
-            //////        if (start==-1)
-            //////            start=i;
-            //////        Language l = Lang.Languages[i];
-            //////        bool displayEnglishName = true;
-            //////        if (l.TwoLetterISOLanguageName=="en")
-            //////            displayEnglishName=false;
-            //////        if (l.EnglishName==l.NativeName)
-            //////            displayEnglishName=false;
-            //////        if (DocumentSize<400)
-            //////            displayEnglishName=false;
-            //////        string dis = l.NativeName;
-            //////        if (displayEnglishName)
-            //////            dis+=" ("+l.EnglishName+")";
-            //////        end=i;
-            //////        LangSections[i].stars=l.Quality;
-            //////        LangSections[i].y=yy;
-            //////        // LangSections[i].x=yy;
-            //////        if (LangSections[i].ButtonApply!=null)
-            //////            LangSections[i].ButtonApply.Position=new Vector2(startWindowPosX+/*48+*/DocumentSize-128, yy);
-            //////        //   if (l.TwoLetterISOLanguageName=="en") LangSections[i].Info=new Text(BitmapFont.bitmapFont18.MaxSizeOfString(l.NativeName,DocumentSize-185-5),startWindowPosX+65,yy+1,BitmapFont.bitmapFont18);
-            //////        //else
-            //////        LangSections[i].Info=new Text(BitmapFont.bitmapFont18.MaxSizeOfString(dis/*l.NativeName+" ("+l.EnglishName+")"*/, DocumentSize-185-5-5), startWindowPosX+65, yy+1, BitmapFont.bitmapFont18);
-
-
-            //////        //if (Global.WindowWidth>600) {
-
-            //////        //   // LangSections[i].ChangePos(Global.WindowWidthHalf+DocumentSize/2-150, yy);
-            //////        //} else {
-
-            //////        //    LangSections[i].X=20;
-            //////        //    LangSections[i].ChangePos(Global.WindowWidth-200, yy);
-            //////        //}
-
-            //////        //  settings[i].Draw(spriteBatch/*,new Vector2(20,yy),Global.WindowWidth-210*/);
-            //////        //  settings[i].ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
-            //////    }
-            //////    yy+=60;
-            //////}
-
-            //    //foreach (SettingItem si in settings)si.ChangePos(Global.WindowWidth-210,yy);
-            //     yy=(int)(-scrollbar.scale*(1290+60+70+60+90+90+90+30-Global.WindowHeight/*+60+60+90+30*/))/*+70*/;/*+140+90*/;
-            //   // #region Settings
-            //    for (int i=0; i<settings.Count; i++){
-            //        if (yy>-50 &&yy<Global.WindowHeight-160){
-            //            if (start==-1)start=i;
-            //            end=i;
-            //            if (Global.WindowWidth>600){
-            //                settings[i].X=Global.WindowWidthHalf-DocumentSize/2;
-            //                settings[i].ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
-            //            } else {
-
-            //                settings[i].X=20;
-            //                settings[i].ChangePos(Global.WindowWidth-200,yy);
-            //            }
-
-            //          //  settings[i].Draw(spriteBatch/*,new Vector2(20,yy),Global.WindowWidth-210*/);
-            //          //  settings[i].ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
-            //        }
-            //        yy+=settings[i].Value;
-            //    }
         }
 
         public override void Shutdown() {
