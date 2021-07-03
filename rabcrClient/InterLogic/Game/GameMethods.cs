@@ -191,6 +191,42 @@ namespace rabcrClient {
 
     static class GameMethods {
 
+
+        public static bool IsHalfShadowBlock(ushort id) { 
+			switch (id) { 
+				case (ushort)BlockId.AcaciaLeaves: return true;
+				case (ushort)BlockId.AppleLeaves: return true;
+				case (ushort)BlockId.AppleLeavesWithApples: return true;
+				case (ushort)BlockId.AppleLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeaves: return true;
+				case (ushort)BlockId.CherryLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeavesWithCherries: return true;
+				case (ushort)BlockId.EucalyptusLeaves: return true;
+				case (ushort)BlockId.KapokLeaves: return true;
+				case (ushort)BlockId.LemonLeaves: return true;
+				case (ushort)BlockId.LemonLeavesWithLemons: return true;
+				case (ushort)BlockId.LindenLeaves: return true;
+				case (ushort)BlockId.MangroveLeaves: return true;
+				case (ushort)BlockId.OakLeaves: return true;
+				case (ushort)BlockId.OliveLeaves: return true;
+				case (ushort)BlockId.OliveLeavesWithOlives: return true;
+				case (ushort)BlockId.OrangeLeaves: return true;
+				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
+				case (ushort)BlockId.PineLeaves: return true;
+				case (ushort)BlockId.PlumLeaves: return true;
+				case (ushort)BlockId.PlumLeavesBlossom: return true;
+				case (ushort)BlockId.PlumLeavesWithPlums: return true;
+				case (ushort)BlockId.RubberTreeLeaves: return true;
+				case (ushort)BlockId.SpruceLeaves: return true;
+				case (ushort)BlockId.WillowLeaves: return true;
+
+				case (ushort)BlockId.Ice: return true;
+				case (ushort)BlockId.WaterBlock: return true;
+				case (ushort)BlockId.WaterSalt: return true;
+			}
+			return false;
+		}
+
         public static bool IsSelectedShears(ushort id) { 
             switch (id) { 
                 case (ushort)Items.ShearsCopper: return true;	

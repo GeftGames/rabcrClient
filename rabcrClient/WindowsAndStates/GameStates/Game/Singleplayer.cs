@@ -1066,7 +1066,7 @@ namespace rabcrClient {
 	 //   int intPlayerX, intPlayerY;
 
 		int playerImg;
-		int playerImg2=100;
+	//	int playerImg2=100;
 		int playerState;
 	   int distanceToGround=0;
 		float gravitySpeed=0;
@@ -3565,10 +3565,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							playerImg+=(int)(speed*5);
 							if (playerImg>=420) playerImg=0;
 
-							if (newKeyboardState.IsKeyDown(Keys.Add) && !oldKeyboardState.IsKeyDown(Keys.Add))playerImg2+=20;
-							if (newKeyboardState.IsKeyDown(Keys.OemMinus) && !oldKeyboardState.IsKeyDown(Keys.OemMinus))playerImg2-=20;
-						   playerImg2+=(int)(speed*5);
-							if (playerImg2>=420) playerImg2=0;
+							//if (newKeyboardState.IsKeyDown(Keys.Add) && !oldKeyboardState.IsKeyDown(Keys.Add))playerImg2+=20;
+							//if (newKeyboardState.IsKeyDown(Keys.OemMinus) && !oldKeyboardState.IsKeyDown(Keys.OemMinus))playerImg2-=20;
+							//if (newKeyboardState.IsKeyDown(Keys.Multiply))
+							//	Debug.WriteLine("p2: "+playerImg2+" p:"+playerImg);
+
+						 //  playerImg2+=(int)(speed*5);
+							//if (playerImg2>=420) playerImg2=0;
 						}
 						if (swmove){
 							if (waterDown){
@@ -3929,9 +3932,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												{
 													Terrain chunk=terrain[destroyBlockX];
 
-													/*if (chunk.IsTopBlocks[destroyBlockY]) ((AirSolidBlock)chunk.SolidBlocks[destroyBlockY]).Back=null;*/
-													//else chunk.SolidBlocks[destroyBlockY]=null;
-
 													chunk.Background[destroyBlockY]=null;
 													chunk.IsBackground[destroyBlockY]=false;
 
@@ -3946,14 +3946,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												{
 													Terrain chunk=terrain[destroyBlockX];
 
-													//chunk.SolidBlocks[destroyBlockY]=new AirSolidBlock{
-													//    Top=chunk.TopBlocks[destroyBlockY],
-													//    Back=chunk.Background[destroyBlockY]
-													//};
 													chunk.SolidBlocks[destroyBlockY]=null;
 													chunk.IsSolidBlocks[destroyBlockY]=false;
 
-													RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY);
+													chunk.RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY);
 
 													if (destroingBlockType==(ushort)BlockId.Dirt
 													|| destroingBlockType==(ushort)BlockId.GrassBlockDesert
@@ -3967,7 +3963,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 														DestroyGrassUp(destroyBlockX, destroyBlockY-1);
 
 														if (Global.WorldDifficulty!=2) {
-														   /*((AirSolidBlock)chunk.SolidBlocks[destroyBlockY]).Back=*/chunk.Background[destroyBlockY]=new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														    chunk.Background[destroyBlockY]=new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX*16, destroyBlockY*16));
 															chunk.IsBackground[destroyBlockY]=true;
 														}
 													}
@@ -3979,22 +3975,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 													if (Global.WorldDifficulty!=2) {
 
 
-													if (destroingBlockType==(ushort)BlockId.OreAluminium) {
-														chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
-														chunk.IsBackground[destroyBlockY]=true;
-													}
+														if (destroingBlockType==(ushort)BlockId.OreAluminium) {
+															chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
+															chunk.IsBackground[destroyBlockY]=true;
+														}
 
-													if (destroingBlockType==(ushort)BlockId.BackDiorit) {
-														chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
-														chunk.IsBackground[destroyBlockY]=true;
-													}
+														if (destroingBlockType==(ushort)BlockId.BackDiorit) {
+															chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
+															chunk.IsBackground[destroyBlockY]=true;
+														}
 
-													if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
-														chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
-														chunk.IsBackground[destroyBlockY]=true;
-													}
-
-
+														if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
+															chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
+															chunk.IsBackground[destroyBlockY]=true;
+														}
 
 														GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
 														RemovePartTool();
@@ -4033,21 +4027,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												}
 
 												if (GameMethods.IsLeave(destroingBlockType)) {
-													List<UShortAndByte> leaves=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree.TitlesLeaves;
-													
-                                                    for (int i = 0; i<leaves.Count; i++) {
-														if (leaves[i].X==destroyBlockX){
-															if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+													Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
+													if (tree!=null) {
+														List<UShortAndByte> leaves=tree.TitlesLeaves;
+														for (int i = 0; i<leaves.Count; i++) {
+															if (leaves[i].X==destroyBlockX){
+																if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+															}
 														}
 													}
 												}
 
-											 //   if (chunk.IsBackground[destroyBlockY]) ((AirSolidBlock)chunk.SolidBlocks[destroyBlockY]).Top=null;
-											   // else chunk.SolidBlocks[destroyBlockY]=null;
-
 												chunk.TopBlocks[destroyBlockY]=null;
 												chunk.IsTopBlocks[destroyBlockY]=false;
 
+												chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY, id: destroingBlockType);
 
 												if (destroingBlockType==(ushort)BlockId.Label
 												|| destroingBlockType==(ushort)BlockId.SolarPanel
@@ -5283,22 +5277,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						Terrain chunk=terrain[x];
 						int f=chunk.LightPosFull16;
 
-						if (chunk.Half) { 
+						//if (chunk.Half) { 
 							if (w<f) { 
 								int h=chunk.LightPosHalf16-8;
 							
 							//	if (w<h) { 
-									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, h-w2));
-									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, chunk.LightPosFull16-w2));
+									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, h-w2));
+									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, chunk.LightPosFull16-w2));
 								//original:	lightsHalf.Add(new Rectangle(x*16-40,h/* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 								//	lightsHalf.Add(new Rectangle(x*16-40,(int)WindowY /*h*//* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 							//	}else{ 
 								//	lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY+h, 16+40+40, f-h-w2));
 								//}
 							} 
-						} else { 
-							if (w<f) lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, f-w2));
-						}
+						//} else { 
+						//	if (w<f) lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, f-w2));
+						//	lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, f-w2));
+							
+						//}
 					}
 				}
 				
@@ -6045,9 +6041,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				Graphics.Clear(black);
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
 
-                foreach (Rectangle r in lightsHalf) spriteBatch.Draw(pixel/*lightMaskLine2Texture*/, r, ColorWhite);
+                foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
 
-                for (int x = (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
+                for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
                     Terrain chunk = terrain[x];
                     spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
                 }
@@ -6060,11 +6056,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				// Draw high light
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
 				
-				foreach (Rectangle r in lightsFull) spriteBatch.Draw(pixel/*lightMaskLine2Texture*/, r, ColorWhite);
+				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
 
-				for (int x= (terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX); x<terrainStartIndexW; x++) {
+				for (int x= terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
 					Terrain chunk=terrain[x];
-					if (chunk.Half) spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
+					spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
 				}
 				spriteBatch.End();
 
@@ -6995,7 +6991,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							case 1://<-
 								{
 									Rectangle curImg=new Rectangle((playerImg/20)*20, 0, 20, 39);
-									Rectangle curImg2=new Rectangle((playerImg2/20)*20, 0, 20, 39);
+								//	Rectangle curImg2=new Rectangle((playerImg2/20)*20, 0, 20, 39);
+						
 									Vector2 vector=new Vector2(PlayerX-11, PlayerY-39/2);
 
 									Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2+7, vector.Y-39/2+12-1+38/2+1);
@@ -7015,9 +7012,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									// Feet
 									if (ClothesFeet!=null) {
-										spriteBatch.Draw(TexturePlayerWalkingFeetForShoes, vector, curImg2, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-										spriteBatch.Draw(ClothesFeet.TextureWalking, vector, curImg2, ClothesFeet.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-									} else spriteBatch.Draw(TexturePlayerWalkingFeet, vector, curImg2, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+										spriteBatch.Draw(TexturePlayerWalkingFeetForShoes, vector, curImg/*2*/, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+										spriteBatch.Draw(ClothesFeet.TextureWalking, vector, curImg/*2*/, ClothesFeet.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									} else spriteBatch.Draw(TexturePlayerWalkingFeet, vector, curImg/*2*/, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 
 
 									spriteBatch.Draw(TexturePlayerWalkingFace, new Vector2(vector.X-1,vector.Y), null, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
@@ -9290,7 +9287,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									chunk.SolidBlocks[y]=block;
 									chunk.IsSolidBlocks[y]=true;
 
-									RefreshLightingAddSolid(x, y);
+									chunk.RefreshLightingAddSolid(x, y);
 
 									InventoryRemoveSelectedItem();
 									return;
@@ -9451,7 +9448,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Block block=TopBlockFromId(blockId, new Vector2(mousePosRoundX, mousePosRoundY));
 
 								if (block!=null) {
-									if (GameMethods.IsDirtPlaceable(block.Id)) {
+									if (GameMethods.IsDirtPlaceable(blockId)) {
 										if (chunk.IsSolidBlocks[y+1]) {
 											ushort downId=chunk.SolidBlocks[y+1].Id;
 											if (GameMethods.IsBlockOnGrowing(downId)) {
@@ -9464,6 +9461,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										
 
 												if (chunk.StartSomething>y) chunk.StartSomething=/*(byte)*/y;
+												
+												chunk.RefreshLightingAddTop(y,blockId);
 
 												InventoryRemoveSelectedItem();
 												return;
@@ -9484,6 +9483,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											
 													chunk.TopBlocks[y]=block;
 													chunk.IsTopBlocks[y]=true;
+												//	chunk.RefreshLightingAddTop(y,(ushort)BlockId.SpruceLeaves);
 													if (chunk.StartSomething>y) chunk.StartSomething=y;
 												}
 											}
@@ -9494,7 +9494,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										chunk.TopBlocks[y]=block;
 										chunk.IsTopBlocks[y]=true;
 										if (chunk.StartSomething>y) chunk.StartSomething=y;
-
+										terrain[x].RefreshLightingAddTop(y,id: blockId);
 										if (blockId<(ushort)BlockId._MoreInLoad) {
 											switch (blockId) {
 												case (ushort)BlockId.FurnaceStone:
@@ -12324,7 +12324,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				SaveType lastType=SaveType.Unknown;
 				int lastTypeCount=-1;
 				bytes.Add((byte)chunk.LightPosFull);
-				bytes.Add(chunk.Half ? (byte)1 : (byte)0);
+			//	bytes.Add(chunk.Half ? (byte)1 : (byte)0);
 				bytes.Add((byte)chunk.LightPosHalf);
 
 				for (int y=0; y<125; y++) {
@@ -13165,7 +13165,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					for (int pos=0; pos<TerrainLength; pos++) {
 						Terrain chunk=terrain[pos]=new Terrain {
 							LightPosFull=*current++,
-							Half=*current++==1,
+						//	Half=*current++==1,
 							LightPosHalf=*current++,
 						};
 
@@ -14670,138 +14670,206 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void RefreshLightingRemoveSolid(int pos, int y) {
-			Terrain chunk=terrain[pos];
+		//void RefreshLightingRemoveSolid(int pos, int y) {
+		//	Terrain chunk=terrain[pos];
 
-			if (y==chunk.LightPosFull) {
+		//	if (y==chunk.LightPosFull) {
 
-				int LightPos=y;
-				for (; LightPos<125; LightPos++) {
-					if (chunk.IsSolidBlocks[LightPos]) break;
-				}
+		//		int LightPos=y;
+		//		for (; LightPos<125; LightPos++) {
+		//			if (chunk.IsSolidBlocks[LightPos]) break;
+		//		}
 
-				chunk.Half=false;
+		//	//	chunk.Half=false;
 				
-				if (chunk.LightPosFull!=LightPos) {
+		//		if (chunk.LightPosFull!=LightPos) {
 					
-					int StartSomething;
-					for (StartSomething=0; StartSomething<125; StartSomething++) {
-						if (chunk.IsTopBlocks[StartSomething]) break;
-						if (chunk.IsSolidBlocks[StartSomething]) break;
-						if (chunk.IsBackground[StartSomething]) break;
-					}
+		//			int StartSomething;
+		//			for (StartSomething=0; StartSomething<125; StartSomething++) {
+		//				if (chunk.IsTopBlocks[StartSomething]) break;
+		//				if (chunk.IsSolidBlocks[StartSomething]) break;
+		//				if (chunk.IsBackground[StartSomething]) break;
+		//			}
 
-					chunk.StartSomething=StartSomething;
+		//			chunk.StartSomething=StartSomething;
 										
-					for (int i=StartSomething; i<125; i++) {
-						if (chunk.IsTopBlocks[i]) { 
-							if (IsHalfShadowBlock(chunk.TopBlocks[i].Id)) { 
-								chunk.Half=true;
-								chunk.LightPosHalf=i;
-								chunk.LightPosHalf16=i*16;
-								break;
-							}
-						}
+		//			for (int i=StartSomething; i<125; i++) {
+		//				if (chunk.IsTopBlocks[i]) { 
+		//					if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[i].Id)) { 
+		//					//	chunk.Half=true;
+		//						chunk.LightPosHalf=i;
+		//						chunk.LightPosHalf16=i*16;
+		//						break;
+		//					}
+		//				}
 					
-					}
-				}
+		//			}
+		//		}
 
-				chunk.LightPosFull=LightPos;
-				chunk.LightVec=new Vector2(pos*16-48+8, LightPos*16-48+8+48);
-				chunk.LightPosFull16=LightPos*16;
+		//		chunk.LightPosFull=LightPos;
+		//		chunk.LightVec=new Vector2(pos*16-48+8, LightPos*16-48+8+48);
+		//		chunk.LightPosFull16=LightPos*16;
 
-			}
-		}
+		//	}
+		//}
 
-		bool IsHalfShadowBlock(ushort id) { 
-			switch (id) { 
-				case (ushort)BlockId.AcaciaLeaves: return true;
-				case (ushort)BlockId.AppleLeaves: return true;
-				case (ushort)BlockId.AppleLeavesWithApples: return true;
-				case (ushort)BlockId.AppleLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeaves: return true;
-				case (ushort)BlockId.CherryLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeavesWithCherries: return true;
-				case (ushort)BlockId.EucalyptusLeaves: return true;
-				case (ushort)BlockId.KapokLeaves: return true;
-				case (ushort)BlockId.LemonLeaves: return true;
-				case (ushort)BlockId.LemonLeavesWithLemons: return true;
-				case (ushort)BlockId.LindenLeaves: return true;
-				case (ushort)BlockId.MangroveLeaves: return true;
-				case (ushort)BlockId.OakLeaves: return true;
-				case (ushort)BlockId.OliveLeaves: return true;
-				case (ushort)BlockId.OliveLeavesWithOlives: return true;
-				case (ushort)BlockId.OrangeLeaves: return true;
-				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
-				case (ushort)BlockId.PineLeaves: return true;
-				case (ushort)BlockId.PlumLeaves: return true;
-				case (ushort)BlockId.PlumLeavesBlossom: return true;
-				case (ushort)BlockId.PlumLeavesWithPlums: return true;
-				case (ushort)BlockId.RubberTreeLeaves: return true;
-				case (ushort)BlockId.SpruceLeaves: return true;
-				case (ushort)BlockId.WillowLeaves: return true;
-			}
-			return false;
-		}
+		//bool IsHalfShadowBlock(ushort id) { 
+		//	switch (id) { 
+		//		case (ushort)BlockId.AcaciaLeaves: return true;
+		//		case (ushort)BlockId.AppleLeaves: return true;
+		//		case (ushort)BlockId.AppleLeavesWithApples: return true;
+		//		case (ushort)BlockId.AppleLeavesBlossom: return true;
+		//		case (ushort)BlockId.CherryLeaves: return true;
+		//		case (ushort)BlockId.CherryLeavesBlossom: return true;
+		//		case (ushort)BlockId.CherryLeavesWithCherries: return true;
+		//		case (ushort)BlockId.EucalyptusLeaves: return true;
+		//		case (ushort)BlockId.KapokLeaves: return true;
+		//		case (ushort)BlockId.LemonLeaves: return true;
+		//		case (ushort)BlockId.LemonLeavesWithLemons: return true;
+		//		case (ushort)BlockId.LindenLeaves: return true;
+		//		case (ushort)BlockId.MangroveLeaves: return true;
+		//		case (ushort)BlockId.OakLeaves: return true;
+		//		case (ushort)BlockId.OliveLeaves: return true;
+		//		case (ushort)BlockId.OliveLeavesWithOlives: return true;
+		//		case (ushort)BlockId.OrangeLeaves: return true;
+		//		case (ushort)BlockId.OrangeLeavesWithOranges: return true;
+		//		case (ushort)BlockId.PineLeaves: return true;
+		//		case (ushort)BlockId.PlumLeaves: return true;
+		//		case (ushort)BlockId.PlumLeavesBlossom: return true;
+		//		case (ushort)BlockId.PlumLeavesWithPlums: return true;
+		//		case (ushort)BlockId.RubberTreeLeaves: return true;
+		//		case (ushort)BlockId.SpruceLeaves: return true;
+		//		case (ushort)BlockId.WillowLeaves: return true;
+		//	}
+		//	return false;
+		//}
 
-		void RefreshLightingAddSolid(int pos, int y) {
-			Terrain chunk=terrain[pos];
+		//void RefreshLightingAddSolid(int pos, int y) {
+		//	Terrain chunk=terrain[pos];
 
-			//if (y<chunk.LightPos) {
-			//	chunk.LightPos=y;
-			//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-			//	chunk.LightPos16=y*16;
-			//	if (y<chunk.StartSomething)  chunk.StartSomething=y;
-			//}
+		//	//if (y<chunk.LightPos) {
+		//	//	chunk.LightPos=y;
+		//	//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//	chunk.LightPos16=y*16;
+		//	//	if (y<chunk.StartSomething)  chunk.StartSomething=y;
+		//	//}
 			
-			if (y<chunk.LightPosFull) {
-				if (y<chunk.StartSomething) chunk.StartSomething=y;
+		//	if (y<chunk.LightPosFull) {
+		//		if (y<chunk.StartSomething) chunk.StartSomething=y;
 
-				if (chunk.Half) { 
-					if (y<chunk.LightPosHalf) {
-						chunk.Half=false;
-						chunk.LightPosFull=y;
-						chunk.LightPosFull16=y*16;
-						chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-					} else { 
-						chunk.LightPosFull=y;
-						chunk.LightPosFull16=y*16;
-						chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-					//	chunk.LightVec128=new Vector2(pos*16-48+8, y*16-48+8+48);
-					}
-					chunk.LightPosFull=y;
-					chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-					chunk.LightPosFull16=y*16;
-				} else { 
-					chunk.LightPosFull=y;
-					chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-					chunk.LightPosFull16=y*16;
-				}
+		//		//if (chunk.Half) { 
+		//			if (y<chunk.LightPosHalf) {
+		//			//	chunk.Half=false;
+		//				chunk.LightPosFull=y;
+		//				chunk.LightPosFull16=y*16;
+		//				chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//			} else { 
+		//				chunk.LightPosFull=y;
+		//				chunk.LightPosFull16=y*16;
+		//				chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//			//	chunk.LightVec128=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//			}
+		//			chunk.LightPosFull=y;
+		//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//			chunk.LightPosFull16=y*16;
+		//		//} else { 
+		//		//	chunk.LightPosFull=y;
+		//		//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//		//	chunk.LightPosFull16=y*16;
+		//		//}
 				
 				
-			}
+		//	}
 
 
-			//int LightPos;
-			//for (LightPos=0; LightPos<125; LightPos++) {
-			//    if (chunk.IsSolidBlocks[LightPos]) break;
-			//}
+		//	//int LightPos;
+		//	//for (LightPos=0; LightPos<125; LightPos++) {
+		//	//    if (chunk.IsSolidBlocks[LightPos]) break;
+		//	//}
 
-			//if (chunk.LightPos!=LightPos) {
-			//    chunk.LightPos=LightPos;
-			//    chunk.LightVec=new Vector2(pos*16-48+8, LightPos*16-48+8+48);
-			//    chunk.LightPos16=LightPos*16;
+		//	//if (chunk.LightPos!=LightPos) {
+		//	//    chunk.LightPos=LightPos;
+		//	//    chunk.LightVec=new Vector2(pos*16-48+8, LightPos*16-48+8+48);
+		//	//    chunk.LightPos16=LightPos*16;
 
-			//    int StartSomething;
-			//    for (StartSomething=0; StartSomething<125; StartSomething++) {
-			//        if (chunk.IsTopBlocks[StartSomething]) break;
-			//        if (chunk.IsSolidBlocks[StartSomething]) break;
-			//        if (chunk.IsBackground[StartSomething]) break;
-			//    }
+		//	//    int StartSomething;
+		//	//    for (StartSomething=0; StartSomething<125; StartSomething++) {
+		//	//        if (chunk.IsTopBlocks[StartSomething]) break;
+		//	//        if (chunk.IsSolidBlocks[StartSomething]) break;
+		//	//        if (chunk.IsBackground[StartSomething]) break;
+		//	//    }
 
-			//    chunk.StartSomething=StartSomething;
-			//}
-		}
+		//	//    chunk.StartSomething=StartSomething;
+		//	//}
+		//}
+
+		//void RefreshLightingAddTop(int pos, int y) {
+		//	Terrain chunk=terrain[pos];
+
+		//	if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[y].Id)) { 
+		//		if (y<chunk.LightPosFull) {
+		//			if (y<chunk.LightPosHalf) { 
+		//				chunk.LightPosHalf=y;
+		//				chunk.LightPosHalf16=y*16;
+		//			}
+		//		}
+		//	}
+
+		//	//if (y<chunk.LightPos) {
+		//	//	chunk.LightPos=y;
+		//	//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//	chunk.LightPos16=y*16;
+		//	//	if (y<chunk.StartSomething)  chunk.StartSomething=y;
+		//	//}
+			
+		//	//if (y<chunk.LightPosFull) {
+		//	//	if (y<chunk.StartSomething) chunk.StartSomething=y;
+
+		//	//	//if (chunk.Half) { 
+		//	//		if (y<chunk.LightPosHalf) {
+		//	//		//	chunk.Half=false;
+		//	//			chunk.LightPosFull=y;
+		//	//			chunk.LightPosFull16=y*16;
+		//	//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//		} else { 
+		//	//			chunk.LightPosFull=y;
+		//	//			chunk.LightPosFull16=y*16;
+		//	//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//		//	chunk.LightVec128=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//		}
+		//	//		chunk.LightPosFull=y;
+		//	//		chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//		chunk.LightPosFull16=y*16;
+		//	//	//} else { 
+		//	//	//	chunk.LightPosFull=y;
+		//	//	//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
+		//	//	//	chunk.LightPosFull16=y*16;
+		//	//	//}
+				
+				
+		//	//}
+
+
+		//	//int LightPos;
+		//	//for (LightPos=0; LightPos<125; LightPos++) {
+		//	//    if (chunk.IsSolidBlocks[LightPos]) break;
+		//	//}
+
+		//	//if (chunk.LightPos!=LightPos) {
+		//	//    chunk.LightPos=LightPos;
+		//	//    chunk.LightVec=new Vector2(pos*16-48+8, LightPos*16-48+8+48);
+		//	//    chunk.LightPos16=LightPos*16;
+
+		//	//    int StartSomething;
+		//	//    for (StartSomething=0; StartSomething<125; StartSomething++) {
+		//	//        if (chunk.IsTopBlocks[StartSomething]) break;
+		//	//        if (chunk.IsSolidBlocks[StartSomething]) break;
+		//	//        if (chunk.IsBackground[StartSomething]) break;
+		//	//    }
+
+		//	//    chunk.StartSomething=StartSomething;
+		//	//}
+		//}
 		#endregion
 
 		#region New blocks
@@ -21834,35 +21902,29 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (IsNotNearWood(wood, startX, startY, endX, endY)) {
 						GetItemsFromBlock(leaves, Xran, Yran);
 						Terrain chunk=terrain[Xran];
-						//Terrain chunk=terrain[Xran];
-						//if (chunk.IsBackground[Yran]) {
-						//    ((AirSolidBlock)chunk.TopBlocks[Yran]).Top=chunk.TopBlocks[Yran]=null;
-						//}
-						//else{
 
-						//}
-						//terrain[Xran].IsTopBlocks[Yran]=false;
-						//terrain[Xran].TopBlocks[Yran]=null;
-						List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[/*destroyBlockY*/Yran]).tree.TitlesLeaves;
+						List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
 													
 						for (int i = 0; i<listLeaves.Count; i++) {
-							if (listLeaves[i].X==/*destroyBlockX*/Xran){
-								if (listLeaves[i].Y==/*destroyBlockY*/Yran) listLeaves.RemoveAt(i);
+							if (listLeaves[i].X==Xran){
+								if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
 							}
 						}
 						chunk.TopBlocks[Yran]=null;
 						chunk.IsTopBlocks[Yran]=false;
+						chunk.RefreshLightingRemoveTop(Yran, leaves);
 					}
 				}
 			}
 		}
 
-		void RemoveTopBlock(int x, int y){
+		void RemoveTopBlock(int x, int y) {
 			Terrain chunk=terrain[x];
-		   // if (chunk.IsBackground[y]) ((AirSolidBlock)chunk.SolidBlocks[y]).Top=null;
-		  //  else chunk.SolidBlocks[y]=null;
+
+			ushort id=chunk.TopBlocks[y].Id;
 			chunk.TopBlocks[y]=null;
 			chunk.IsTopBlocks[y]=false;
+			chunk.RefreshLightingRemoveTop(y,id);
 		}
 
 		void AutoDestroyLeaves(ushort wood, ushort leaves, ushort alternativeLeaves) {
@@ -21871,7 +21933,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			if (terrain[Xran].IsTopBlocks[Yran]) {
 				Terrain chunk=terrain[Xran];
-				if (chunk.TopBlocks[Yran].Id==leaves || chunk.TopBlocks[Yran].Id==alternativeLeaves) {
+				ushort id =chunk.TopBlocks[Yran].Id;
+				if (id==leaves || id==alternativeLeaves) {
 
 					//Rectangle
 					int startX=Xran-4, startY=Yran-4, endX=Xran+4, endY=Yran+4;
@@ -21884,24 +21947,66 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (endY>120) endY=120;
 
 					if (IsNotNearWood(wood, startX, startY, endX, endY)) {
-						if (chunk.TopBlocks[Yran].Id==leaves) GetItemsFromBlock(leaves, Xran, Yran);
-						else GetItemsFromBlock(alternativeLeaves, Xran, Yran);
+						GetItemsFromBlock(id, Xran, Yran);
 
-						Tree tree=((LeavesBlock)chunk.TopBlocks[Yran/*destroyBlockY*/]).tree;
+						Tree tree=((LeavesBlock)chunk.TopBlocks[Yran]).tree;
 
 						// if not Artifical leaves (created by player)
 						if (tree!=null) {
-							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran/*destroyBlockY*/]).tree.TitlesLeaves;
+							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
 													
 							for (int i = 0; i<listLeaves.Count; i++) {
 								if (listLeaves[i].X==destroyBlockX) {
-									if (listLeaves[i].Y==Yran/*destroyBlockY*/) listLeaves.RemoveAt(i);
+									if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
 								}
 							}
-
 						}
-							terrain[Xran].IsTopBlocks[Yran]=false;
-							terrain[Xran].TopBlocks[Yran]=null;
+
+						terrain[Xran].IsTopBlocks[Yran]=false;
+						terrain[Xran].TopBlocks[Yran]=null;
+						chunk.RefreshLightingRemoveTop(Yran,id);
+					}
+				}
+			}
+		}
+
+		void AutoDestroyLeaves(ushort wood, ushort leaves, ushort alternativeLeaves, ushort alternativeLeaves2) {
+			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX),
+				Yran=terrainStartIndexY+random.Int(terrainStartIndexH-terrainStartIndexY);
+
+			if (terrain[Xran].IsTopBlocks[Yran]) {
+				Terrain chunk=terrain[Xran];
+				ushort id=chunk.TopBlocks[Yran].Id;
+				if (id==leaves || id==alternativeLeaves|| id==alternativeLeaves2) {
+
+					//Rectangle
+					int startX=Xran-4, startY=Yran-4, endX=Xran+4, endY=Yran+4;
+
+					//Limit
+					if (startX<0) startX=0;
+					if (startY<0) startY=0;
+
+					if (endX>TerrainLength) endX=TerrainLength;
+					if (endY>120) endY=120;
+
+					if (IsNotNearWood(wood, startX, startY, endX, endY)) {
+						GetItemsFromBlock(id, Xran, Yran);
+
+						Tree tree=((LeavesBlock)chunk.TopBlocks[Yran]).tree;
+
+						// if not Artifical leaves (created by player)
+						if (tree!=null) {
+							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
+													
+							for (int i = 0; i<listLeaves.Count; i++) {
+								if (listLeaves[i].X==destroyBlockX) {
+									if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
+								}
+							}
+						}
+						terrain[Xran].IsTopBlocks[Yran]=false;
+						terrain[Xran].TopBlocks[Yran]=null;
+						chunk.RefreshLightingRemoveTop(Yran, id);
 					}
 				}
 			}

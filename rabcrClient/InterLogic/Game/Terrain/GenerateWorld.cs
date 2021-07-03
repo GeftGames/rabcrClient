@@ -152,12 +152,13 @@ namespace rabcrClient {
                 byte by=(byte)y;
                 tree.AddLeave(x, by);
 
-                if (chunk.Half==1) { 
+                if (chunk.SetLightPosHalf) { 
                     if (y<chunk.LightPosHalf) chunk.LightPosHalf=by;
                 } else { 
-                    chunk.Half=(byte)1;
+                 //   chunk.Half=(byte)1;
                     chunk.LightPosHalf=by;
                 }
+                chunk.SetLightPosHalf=true;
             }
         }
 
@@ -817,6 +818,9 @@ namespace rabcrClient {
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Water
                 for (int yy=53; yy<terrainHeight; yy++) {
@@ -859,6 +863,9 @@ namespace rabcrClient {
                 } else terrainChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Water
                 for (int yy=53; yy<terrainHeight; yy++) {
@@ -1063,7 +1070,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Snow;
 
                 if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
@@ -1105,6 +1114,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 else if (random.Bool_10Percent())chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
@@ -1152,7 +1164,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool()) {
                     if (random.Bool_5Percent()){
                         chunk.AddRabbit((byte)(terrainHeight-1));
@@ -1210,7 +1224,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool_20Percent()){
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
                     if (random.Bool_12_5Percent()) {
@@ -1258,7 +1274,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool()) {
                     if (random.Bool_5Percent()) chunk.AddRabbit((byte)(terrainHeight-1));
 
@@ -1317,7 +1335,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
                 else if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
                 else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
@@ -1433,7 +1453,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
                 else if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
                 else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
@@ -1543,7 +1565,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
                 if (random.Bool()) {
@@ -1651,7 +1675,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
                 if (random.Bool()) {
@@ -1787,7 +1813,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
                 switch (random.Int(7)) {
@@ -1924,7 +1952,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
                 if (random.Bool()) {
@@ -2037,6 +2067,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
@@ -2178,6 +2211,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockPlains;
@@ -2274,6 +2310,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockDesert;
 
                 if (random.Bool_1Percent()) ClayPlace(pos-5,terrainHeight-1);
@@ -2339,7 +2378,9 @@ namespace rabcrClient {
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                } 
                 if (grass) {
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockDesert;
                     if (random.Bool()) {
@@ -2513,7 +2554,9 @@ namespace rabcrClient {
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool()) {
 
                     // Add animals
@@ -2635,7 +2678,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (seabedChange<0) {
                     if (grass) seabedChange=20+random.Int(50);
                     else seabedChange=3+random.Int5();
@@ -2743,7 +2788,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+              if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (seabedChange<0) {
                     if (grass) seabedChange=20+random.Int(50);
                     else seabedChange=3+random.Int5();
@@ -2868,7 +2915,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+        if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 if (random.Bool()) {
@@ -2938,7 +2987,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (random.Bool()) {
 
                     if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
@@ -3047,7 +3098,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+             if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
 
@@ -3142,7 +3195,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+             if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
                 if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
                 if (random.Bool()) {
@@ -3233,7 +3288,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+              if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
@@ -3323,7 +3380,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
                 if (random.Int(9)==1) {
@@ -3378,7 +3437,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
                 if (random.Bool_12_5Percent()) {
@@ -3434,7 +3495,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=(byte)(terrainHeight-2);
-
+            if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 if (Rabcr.random.Bool_12_5Percent()) chunk.TopBlocks[terrainHeight-3]=(ushort)BlockId.SnowTop;
 
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
@@ -3480,7 +3543,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
                 if (random.Int(6)==1) {
@@ -3531,7 +3596,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+            if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
                 if (random.Int(6)==1) {
@@ -3582,7 +3649,9 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
                 if (random.Int(6)==1) {
@@ -4305,7 +4374,7 @@ namespace rabcrClient {
                 SaveType lastType=SaveType.Unknown;
                 int lastTypeCount=-1;
                 bytes.Add(chunk.LightPosFull);
-                bytes.Add(chunk.Half);
+               // bytes.Add(chunk.Half);
                 bytes.Add(chunk.LightPosHalf);
 
                 for (int y=0; y<125; y++) {
@@ -5102,6 +5171,9 @@ namespace rabcrClient {
                 chunk.SolidBlocks[terrainHeight+1]=floor;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Lithosphere
                 if (random.Bool()) {
@@ -5127,6 +5199,9 @@ namespace rabcrClient {
                 chunk.SolidBlocks[terrainHeight+1]=(ushort)BlockId.Dirt;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Lithosphere
                 if (random.Bool()) {
@@ -5151,6 +5226,9 @@ namespace rabcrClient {
                 chunk.SolidBlocks[terrainHeight+1]=(ushort)BlockId.Sand;
 
                 chunk.LightPosFull=terrainHeight;
+                if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Lithosphere
                 if (random.Bool()) {
@@ -5175,6 +5253,9 @@ namespace rabcrClient {
                 chunk.SolidBlocks[terrainHeight+1]=(ushort)BlockId.Gravel;
 
                 chunk.LightPosFull=terrainHeight;
+               if (!chunk.SetLightPosHalf) {
+                    if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
+                }
 
                 // Lithosphere
                 if (random.Bool()) {
@@ -6512,6 +6593,7 @@ namespace rabcrClient {
 
         public byte LightPosFull;
         public byte LightPosHalf;
+        public bool SetLightPosHalf;
         public byte Half;
     }
 
