@@ -21961,7 +21961,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											}
 										}
 									} else {
-										Terrain chunkM1=terrain[Xran+1];
+										Terrain chunkM1=terrain[Xran-1];
 										if (!chunkM1.IsSolidBlocks[height]) {
 											if (chunkM1.IsSolidBlocks[height+1]) {
 												ch.lastChunkID=(short)Xran;
