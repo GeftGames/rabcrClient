@@ -22896,5 +22896,87 @@ In welcher Zeit legt es %length%km zurück? s=v·t</deu>
 	<ces>Postel</ces>
 	<mor>Lůžko</mor>
 	</a>
+    
+    <a id="1533">
+	    <ces>Země</ces>
+	  </a>
+    
+    <a id="1534">
+	    <ces>Měsíc</ces>
+	  </a>
+    
+    <a id="1535">
+	    <ces>Mars</ces>
+	  </a>
+    <a id="1536">
+	    <ces>Vesmírná stanice</ces>
+	  </a>
+    <a id="1537">
+	    <ces>Slunce</ces>
+	  </a>
+    <a id="1538">
+	    <ces>Merkur</ces>
+	  </a>
+    <a id="1539">
+	    <ces>Venuše</ces>
+	  </a>
+    <a id="1540">
+	    <ces>"Nemáte dostatek materiálu
+      pro vytvoření"</ces>
+	  </a>
+    <a id="1541">
+	    <ces>Phobos</ces>
+	  </a>
+    <a id="1542">
+	    <ces>Jupiter</ces>
+	  </a>
+    <a id="1543">
+	    <ces>Io</ces>
+	  </a>
+    <a id="1544">
+	    <ces>Europa</ces>
+	  </a>
+    <a id="1545">
+	    <ces>Ganymed</ces>
+	  </a>
+    <a id="1546">
+	    <ces>Callisto</ces>
+	  </a>
+    <a id="1547">
+	    <ces>Saturn</ces>
+	  </a>
+    <a id="1548">
+	    <ces>Titan</ces>
+	  </a>
+    <a id="1549">
+	    <ces>Uran</ces>
+	  </a>
+    <a id="1550">
+	    <ces>Titania</ces>
+	  </a>
+    <a id="1551">
+	    <ces>Neptun</ces>
+	  </a>
+    <a id="1552">
+	    <ces>Proteus</ces>
+	  </a>
+    <a id="1553">
+	    <ces>Triton</ces>
+	  </a>
+    <a id="1554">
+	    <ces>Pluto</ces>
+	  </a>
+    <a id="1555">
+	    <ces>Charon</ces>
+	  </a>
+    <a id="1556">
+	    <ces>Eris</ces>
+	  </a>
+    <a id="1557">
+	    <ces>Dysnomia</ces>
+	  </a>
+    <a id="1558">
+	    <ces>Žádné</ces>
+	  </a>
   </Data>
 </XMLFile>

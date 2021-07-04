@@ -6911,6 +6911,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite);
 										}
 									}
+
 									if (ClothesChestTop is null) {
 										if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
 										else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color, (int)ClothesChest.handSize);
@@ -21708,8 +21709,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			for (int oi=0; oi<objects.Length; oi++) {
 				AstronomicalObject o = objects[oi];
 
-				if (o.NameEn!=null) {
-					if (o.NameEn==world) {
+				if (o.Name!=null) {
+					if (o.Name==world) {
 						gravity=(float)(6.67259e-11*o.Mass/(o.MeanDiameter*o.MeanDiameter*1000000))/20f;
 						notNeedScafander=o.astrO==AstrO.Life;
 						dayLenght=(int)(o.DayLenght*200);
