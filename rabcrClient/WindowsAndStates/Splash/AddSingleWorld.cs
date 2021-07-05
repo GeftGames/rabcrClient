@@ -98,7 +98,7 @@ namespace rabcrClient {
             }
         }
 
-        void GButton4_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0],Global.MessageGedoInfo);
+        void GButton4_Click(object sender, EventArgs e) =>  Global.ShowgeDoHelp();//Global.RunMessage(Lang.Texts[1559],Lang.Texts[194]);/*System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0],Global.MessageGedoInfo);*/
 
         void GButton6_Click(object sender, EventArgs e) {
             using (OpenFileDialog sfd = new OpenFileDialog {

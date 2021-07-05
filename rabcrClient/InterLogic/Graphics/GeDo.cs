@@ -66,7 +66,7 @@ namespace rabcrClient {
                     }
 
                     int x=txtBody.IndexOf("</"+itag+">");
-                    if (x==-1)throw new Exception("Chybí uzavření tagu");
+                    if (x==-1)throw new Exception("Chybí uzavření tagu "+itag);
                     string inTag=txtBody.Substring(0, x);
 
                     if (Enum.TryParse(itag, out GeDoType tag)){
@@ -776,6 +776,9 @@ namespace rabcrClient {
             return s
                 .Replace("&g;",">")
                 .Replace("&l;","<")
+                .Replace("&h;","❤️")
+                .Replace("&s;","☺️")
+                .Replace("&w;","☹️")
                 .Replace("&t;","     ")
                 .Replace("&n;","\r\n");
                 //.Replace("&n;","\n")
@@ -1562,7 +1565,8 @@ namespace rabcrClient {
        int w;
         public GeDoStringArticle(string txt, int x, int y, int ww, int mouseAdd2, bool wr) {
             this.mouseAdd2=mouseAdd2;
-         wrap=wr; w=ww;
+            wrap=wr; 
+            w=ww;
             innerGedo=new GeDo(x, y) {
                 mouseAdd=mouseAdd2-Y
             };
@@ -1634,18 +1638,23 @@ namespace rabcrClient {
             if (!wrap) return rawGedo;
             float spaceWidth = BitmapFont.bitmapFont18.MeasureTextSingleLineX(" ");
             int maxLineWidth=w;
-            string[] words = rawGedo.Split(' ');
-            string sb = "";
-            float lineWidth = 0f;
+            string[] lines= rawGedo.Split('\n');
+ string sb = "";
+  foreach (string line in lines) {
 
+            string[] words = line.Replace('\r', ' ').Split(' ');
+           
+            float lineWidth = 0f;
+                int ii=0;
             foreach (string word in words) {
                 int size;
+                    ii++;
                 if (word.Contains("<") || word.Contains(">")) {
                   //  int countgr = word.Count(f => f == '>');
                   //  int countlw = word.Count(f => f == '<');
 
                     string e=word;
-                    for (int i=0; i<Enum.GetNames(typeof(GeDoType)).Length; i++){
+                    for (int i=0; i<Enum.GetNames(typeof(GeDoType)).Length; i++) {
                         e=e.Replace("<"+((GeDoType)i)+">","");
                         e=e.Replace("</"+((GeDoType)i)+">","");
                     }
@@ -1660,10 +1669,10 @@ namespace rabcrClient {
                     size = BitmapFont.bitmapFont18.MeasureTextSingleLineX(word);
                 }
 
-                if (word.Contains("\r\n")){
-                    sb+= word + " ";
-                    lineWidth = size + spaceWidth;
-                } else {
+                //if (word.Contains("\r\n")){
+                //    sb+= word + " ";
+                //    lineWidth = size + spaceWidth;
+                //} else {
                     if (lineWidth + size < maxLineWidth) {
                         sb+=word + " ";
                         lineWidth += size + spaceWidth;
@@ -1671,7 +1680,9 @@ namespace rabcrClient {
                         sb+="\r\n" + word + " ";
                         lineWidth = size + spaceWidth;
                     }
-                }
+               // }
+            }
+        /* if (ii<=lines.Length)*/ sb+=Environment.NewLine;
             }
           //  Console.WriteLine(sb);
             return sb;

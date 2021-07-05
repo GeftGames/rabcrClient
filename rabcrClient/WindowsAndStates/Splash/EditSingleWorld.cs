@@ -45,7 +45,7 @@ namespace rabcrClient {
             xTextBoxName.textBox.TextChanged+=TextBox_TextChanged;
         }
 
-        void TextPanel8_Resize(object sender, System.EventArgs e) => textPanel8.Location=new System.Drawing.Point(Width/2-textPanel8.Width/2, textPanel8.Location.Y);
+        void TextPanel8_Resize(object sender, EventArgs e) => textPanel8.Location=new System.Drawing.Point(Width/2-textPanel8.Width/2, textPanel8.Location.Y);
 
 
         void TextBox_TextChanged(object sender, EventArgs e) {
@@ -207,6 +207,6 @@ namespace rabcrClient {
             textPanel5.Visible=false;
         }
 
-        private void GButton1_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0],Global.MessageGedoInfo);
+        private void GButton1_Click(object sender, EventArgs e) => Global.ShowgeDoHelp();/*Global.RunMessage(Lang.Texts[1559],Lang.Texts[194]);*///System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0], Global.MessageGedoInfo);
     }
 }

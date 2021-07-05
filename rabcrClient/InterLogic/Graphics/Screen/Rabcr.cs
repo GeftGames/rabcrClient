@@ -31,9 +31,6 @@ namespace rabcrClient {
         public static Color color_r0_g0_b0_a100 = new Color(0,0,0,100);
 
         public Rabcr() {
-
-
-
             newMouseState=new MouseState();
             //Activated += ActivateMyGame;
             //Deactivated += DeactivateMyGame;
@@ -139,18 +136,18 @@ namespace rabcrClient {
                     return;
                 }
 
-                if (!File.Exists(Setting.Path+@"\Setting.bin")) CreateSettings();
+                if (!File.Exists(Setting.Path+@"\Setting.bin")) Setting.CreateSettings();
                 else {
                     try {
-                        LoadSetting();
+                        Setting.LoadSetting();
                     } catch {
-                        CreateSettings();
+                        Setting.CreateSettings();
                     }
                 }
-           // }
+
             #endregion
-            //    GameWindow.Create(this,10,10); 
- GraphicsManager = new GraphicsDeviceManager(this);
+
+            GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
 
             GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
@@ -163,15 +160,14 @@ namespace rabcrClient {
 
             Lang.Load();
             SetLangUp();
-     Content = new ContentManager(Services, "RabcrData");
+            Content = new ContentManager(Services, "RabcrData");
             content=Content;
        
-  // Content.RootDirectory = "RabcrData";
             (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
             random=new FastRandom();
 
-                Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
+            Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
             {
                 Form MyGameForm = (Form)Control.FromHandle(Window.Handle);
                 MyGameForm.LocationChanged+=Window_ClientSizeChanged;
@@ -180,7 +176,6 @@ namespace rabcrClient {
                 MyGameForm.SizeChanged+=Window_ClientSizeChanged;
                 MyGameForm.StartPosition=FormStartPosition.CenterScreen;
             } 
-          
         }
 
         public static void SetLangUp(){
@@ -263,7 +258,7 @@ namespace rabcrClient {
             exiting=true;
             screen.Shutdown();
 
-            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) SaveSetting();
+            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) {Setting.SaveSetting(); if (exiting) saved=true;}
             else {
                 saved=true;
             }
@@ -329,85 +324,85 @@ namespace rabcrClient {
             screen=name;
         }
 
-        public void CreateSettings() {
-           // Console.WriteLine("Creating new settings");
-            try {
-                if (File.Exists(Setting.Path+@"\Setting.bin")) File.Delete(Setting.Path+@"\Setting.bin");
-            } catch {}
+        //public void CreateSettings() {
+        //   // Console.WriteLine("Creating new settings");
+        //    try {
+        //        if (File.Exists(Setting.Path+@"\Setting.bin")) File.Delete(Setting.Path+@"\Setting.bin");
+        //    } catch {}
 
-            Lang.SetUp(true);
+        //    Lang.SetUp(true);
 
-            SaveSetting();
-        }
+        //    SaveSetting();
+        //}
 
-        public static void SaveSetting() {
-            //if (!Global.ChangedSettings){
-            //    return;
-            //}
-            Global.ChangedSettings=false;
-            #if DEBUG
-            Debug.WriteLine("Ukládání nastavení... ");
-            #endif
+        //public static void SaveSetting() {
+        //    //if (!Global.ChangedSettings){
+        //    //    return;
+        //    //}
+        //    Global.ChangedSettings=false;
+        //    #if DEBUG
+        //    Debug.WriteLine("Ukládání nastavení... ");
+        //    #endif
 
-            List<byte> bytes = new List<byte> {
-                (byte)Setting.sex,
-                (byte)Setting.MaturePlayer,
-                (byte)Setting.hairType,
-                (byte)Setting.moustageType,
-                Setting.hairColor.R,
-                Setting.hairColor.G,
-                Setting.hairColor.B,
+        //    List<byte> bytes = new List<byte> {
+        //        (byte)Setting.sex,
+        //        (byte)Setting.MaturePlayer,
+        //        (byte)Setting.hairType,
+        //        (byte)Setting.moustageType,
+        //        Setting.hairColor.R,
+        //        Setting.hairColor.G,
+        //        Setting.hairColor.B,
 
-                Setting.ColorSkin.R,
-                Setting.ColorSkin.G,
-                Setting.ColorSkin.B,
+        //        Setting.ColorSkin.R,
+        //        Setting.ColorSkin.G,
+        //        Setting.ColorSkin.B,
 
-                Setting.eyesColor.R,
-                Setting.eyesColor.G,
-                Setting.eyesColor.B,
+        //        Setting.eyesColor.R,
+        //        Setting.eyesColor.G,
+        //        Setting.eyesColor.B,
 
-                Setting.moustageColor.R,
-                Setting.moustageColor.G,
-                Setting.moustageColor.B,
+        //        Setting.moustageColor.R,
+        //        Setting.moustageColor.G,
+        //        Setting.moustageColor.B,
 
-                (byte)Setting.KeyLeft,
-                (byte)Setting.KeyRight,
-                (byte)Setting.KeyJump,
-                (byte)Setting.KeyRun,
-                (byte)Setting.KeyFlyMode,
-                (byte)Setting.KeyInventory,
-                (byte)Setting.KeyMessage,
-                (byte)Setting.KeyDropItem,
-                (byte)Setting.KeyExit,
-                (byte)Setting.KeyShowInfo,
+        //        (byte)Setting.KeyLeft,
+        //        (byte)Setting.KeyRight,
+        //        (byte)Setting.KeyJump,
+        //        (byte)Setting.KeyRun,
+        //        (byte)Setting.KeyFlyMode,
+        //        (byte)Setting.KeyInventory,
+        //        (byte)Setting.KeyMessage,
+        //        (byte)Setting.KeyDropItem,
+        //        (byte)Setting.KeyExit,
+        //        (byte)Setting.KeyShowInfo,
 
-                (byte)Setting.CurrentLanguage,
-                Constants.AnimationsControls ? (byte)1 : (byte)0,
-                Constants.AnimationsGame ? (byte)1 : (byte)0,
-              //  Constants.Shadow ? (byte)1 : (byte)0,
-                (byte)Setting.GraphicsProfile,
+        //        (byte)Setting.CurrentLanguage,
+        //        Constants.AnimationsControls ? (byte)1 : (byte)0,
+        //        Constants.AnimationsGame ? (byte)1 : (byte)0,
+        //      //  Constants.Shadow ? (byte)1 : (byte)0,
+        //        (byte)Setting.GraphicsProfile,
 
-                (byte)Setting.currentScale,
-                (byte)Setting.currentWindow,
-                Setting.Background ? (byte)1: (byte)0,
-                Global.YoungPlayer ? (byte)1: (byte)0,
-                Setting.Fps ? (byte)1: (byte)0,
-            };
-            bytes.AddRange(BitConverter.GetBytes(Setting.VolumeMusic));
-            bytes.AddRange(BitConverter.GetBytes(Setting.VolumeEffects));
-            bytes.AddRange(BitConverter.GetBytes(Setting.slideChangeTime));
-            bytes.AddRange(BitConverter.GetBytes(Setting.Zoom));
-            bytes.AddRange(BitConverter.GetBytes(Setting.NightBrightness));
+        //        (byte)Setting.currentScale,
+        //        (byte)Setting.currentWindow,
+        //        Setting.Background ? (byte)1: (byte)0,
+        //        Global.YoungPlayer ? (byte)1: (byte)0,
+        //        Setting.Fps ? (byte)1: (byte)0,
+        //    };
+        //    bytes.AddRange(BitConverter.GetBytes(Setting.VolumeMusic));
+        //    bytes.AddRange(BitConverter.GetBytes(Setting.VolumeEffects));
+        //    bytes.AddRange(BitConverter.GetBytes(Setting.slideChangeTime));
+        //    bytes.AddRange(BitConverter.GetBytes(Setting.Zoom));
+        //    bytes.AddRange(BitConverter.GetBytes(Setting.NightBrightness));
                 
           
 
-            File.WriteAllBytes(Setting.Path+@"\Setting.bin",bytes.ToArray());
-            //Debug.Write(" Uloženo!");
+        //    File.WriteAllBytes(Setting.Path+@"\Setting.bin",bytes.ToArray());
+        //    //Debug.Write(" Uloženo!");
 
-            //if (Global.OnlineAccount && Global.Logged) UploadAccountSetting();
-            //else 
-            if (exiting)saved=true;
-        }
+        //    //if (Global.OnlineAccount && Global.Logged) UploadAccountSetting();
+        //    //else 
+        //    if (exiting)saved=true;
+        //}
 
         //public static void UploadAccountSetting() {
         //    if (Global.OnlineAccount && Global.Logged) {
@@ -474,74 +469,74 @@ namespace rabcrClient {
         //    }
         //}
 
-        public unsafe static void LoadSetting() {
-            #if DEBUG
-            Debug.WriteLine("Načítání nastavení... ");
-            #endif
-            string pth=Setting.Path+@"\Setting.bin";
+        //public unsafe static void LoadSetting() {
+        //    #if DEBUG
+        //    Debug.WriteLine("Načítání nastavení... ");
+        //    #endif
+        //    string pth=Setting.Path+@"\Setting.bin";
 
-            if (File.Exists(pth)) {
-                byte[] bytes=File.ReadAllBytes(pth);
+        //    if (File.Exists(pth)) {
+        //        byte[] bytes=File.ReadAllBytes(pth);
 
-                fixed (byte* pointer=&bytes[0]) {
-                    byte* current=pointer;
+        //        fixed (byte* pointer=&bytes[0]) {
+        //            byte* current=pointer;
 
-                    Setting.sex =(Sex)(*current++);
-                    Setting.MaturePlayer = *current++;
-                    Setting.hairType= *current++;
-                    Setting.moustageType= *current++;
-                    Setting.hairColor = new Color(*current++,*current++,*current++);
-                    Setting.ColorSkin = new Color(*current++,*current++,*current++);
-                    Setting.eyesColor = new Color(*current++,*current++,*current++);
-                    Setting.moustageColor = new Color(*current++,*current++,*current++);
+        //            Setting.sex =(Sex)(*current++);
+        //            Setting.MaturePlayer = *current++;
+        //            Setting.hairType= *current++;
+        //            Setting.moustageType= *current++;
+        //            Setting.hairColor = new Color(*current++,*current++,*current++);
+        //            Setting.ColorSkin = new Color(*current++,*current++,*current++);
+        //            Setting.eyesColor = new Color(*current++,*current++,*current++);
+        //            Setting.moustageColor = new Color(*current++,*current++,*current++);
 
-                    Setting.KeyLeft = (Keys)(*current++);
-                    Setting.KeyRight =(Keys)(*current++);
-                    Setting.KeyJump=(Keys)(*current++);
-                    Setting.KeyRun=(Keys)(*current++);
-                    Setting.KeyFlyMode=(Keys)(*current++);
-                    Setting.KeyInventory=(Keys)(*current++);
-                    Setting.KeyMessage=(Keys)(*current++);
-                    Setting.KeyDropItem=(Keys)(*current++);
-                    Setting.KeyExit=(Keys)(*current++);
-                    Setting.KeyShowInfo=(Keys)(*current++);
+        //            Setting.KeyLeft = (Keys)(*current++);
+        //            Setting.KeyRight =(Keys)(*current++);
+        //            Setting.KeyJump=(Keys)(*current++);
+        //            Setting.KeyRun=(Keys)(*current++);
+        //            Setting.KeyFlyMode=(Keys)(*current++);
+        //            Setting.KeyInventory=(Keys)(*current++);
+        //            Setting.KeyMessage=(Keys)(*current++);
+        //            Setting.KeyDropItem=(Keys)(*current++);
+        //            Setting.KeyExit=(Keys)(*current++);
+        //            Setting.KeyShowInfo=(Keys)(*current++);
 
-                    Setting.CurrentLanguage=*current++;
-                    Constants.AnimationsControls=(*current++) == 1;
-                    Constants.AnimationsGame=(*current++) == 1;
-                   // Constants.Shadow=(*current++) == 1;
-                    Setting.GraphicsProfile=(GraphicsProfile)(*current++);
+        //            Setting.CurrentLanguage=*current++;
+        //            Constants.AnimationsControls=(*current++) == 1;
+        //            Constants.AnimationsGame=(*current++) == 1;
+        //           // Constants.Shadow=(*current++) == 1;
+        //            Setting.GraphicsProfile=(GraphicsProfile)(*current++);
 
 
-                    Setting.currentScale=(Setting.Scale)(*current++);
-                    Setting.currentWindow=(Setting.Window)(*current++);
+        //            Setting.currentScale=(Setting.Scale)(*current++);
+        //            Setting.currentWindow=(Setting.Window)(*current++);
 
-                    Setting.Background = (*current++) == 1;
-                    Global.YoungPlayer = (*current++) == 1;
-                    Setting.Fps= (*current++) == 1;
+        //            Setting.Background = (*current++) == 1;
+        //            Global.YoungPlayer = (*current++) == 1;
+        //            Setting.Fps= (*current++) == 1;
 
-                    Setting.VolumeMusic=GetFloat();
-                    Setting.VolumeEffects=GetFloat();
-                    Setting.slideChangeTime=GetFloat();
-                    Setting.Zoom=GetFloat();
-                    Setting.NightBrightness=GetFloat();
+        //            Setting.VolumeMusic=GetFloat();
+        //            Setting.VolumeEffects=GetFloat();
+        //            Setting.slideChangeTime=GetFloat();
+        //            Setting.Zoom=GetFloat();
+        //            Setting.NightBrightness=GetFloat();
 
-                    if (Setting.Zoom<=0)Setting.Zoom=2;
+        //            if (Setting.Zoom<=0)Setting.Zoom=2;
 
-                    if (Global.HasSoundGraphics) MediaPlayer.Volume=Setting.VolumeMusic;
+        //            if (Global.HasSoundGraphics) MediaPlayer.Volume=Setting.VolumeMusic;
 
-                    float GetFloat() {
-                        int n=(*current++) | (*current++ << 8) | (*current++ << 16) | (*current++ << 24);
-                        return *(float*)&n;
-                    }
-                }
-            }
-            #if DEBUG
-            else Debug.Write("Soubor nastavení neexistuje!");
-            #endif
+        //            float GetFloat() {
+        //                int n=(*current++) | (*current++ << 8) | (*current++ << 16) | (*current++ << 24);
+        //                return *(float*)&n;
+        //            }
+        //        }
+        //    }
+        //    #if DEBUG
+        //    else Debug.Write("Soubor nastavení neexistuje!");
+        //    #endif
 
-            //Log.Write("Načteno!");
-        }
+        //    //Log.Write("Načteno!");
+        //}
 
         //void ActivateMyGame(object sendet, EventArgs args) => ActiveWindow = true;
 

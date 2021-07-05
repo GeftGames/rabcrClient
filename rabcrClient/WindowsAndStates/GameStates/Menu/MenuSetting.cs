@@ -69,7 +69,7 @@ namespace rabcrClient {
         }
 
         public override void Shutdown() {
-            Rabcr.SaveSetting();
+            Setting.SaveSetting();
         }
 
         public override void Update(GameTime gameTime) {

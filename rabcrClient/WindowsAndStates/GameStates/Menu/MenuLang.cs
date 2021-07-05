@@ -748,7 +748,7 @@ namespace rabcrClient {
 
         public override void Shutdown() {
             // Save changed language
-            if (Setting.CurrentLanguage!=langStart) Rabcr.SaveSetting();
+            if (Setting.CurrentLanguage!=langStart) Setting.SaveSetting();
         }
 
         public override void Update(GameTime gameTime) {

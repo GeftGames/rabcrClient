@@ -11,7 +11,9 @@ namespace rabcrClient {
 
         [STAThread]
         static void Main(string[] args) {
-            
+          //   new Message("Player", Global.MessageGedoInfo).Run();
+
+
            // // Testing speed of code
            //// #if DEBUG
            // int max=1000000;
@@ -49,6 +51,15 @@ namespace rabcrClient {
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
+
+            /*
+            Args
+            Use: "...\rabcrClient.exe" Path="C:\Users\..." Type="Message" Name="Player" Text=""
+            
+            
+            */
+            //var otherWindow = Microsoft.Xna.Framework.GameWindow.Create(myGame, sizeX, sizeY);
+
             if (args.Length>0) {
                 switch (args[0]) {
                     case "/Game":
@@ -58,7 +69,7 @@ namespace rabcrClient {
                             Setting.Path=args[1]+"\\"+Setting.Name+"\\";
                             new Rabcr().Run();
                             //}
-                        } else if (args.Length==4 && (args[2].ToLower()=="geft"||args[2].ToLower()=="geftgames") && args[3].StartsWith("%") && args[3].Replace("%", "")==DateTime.Now.Day.ToString()){
+                        } else if (args.Length==4 && (args[2].ToLower()=="geft"||args[2].ToLower()=="geftgames") && args[3].StartsWith("%") && args[3].Replace("%", "")==DateTime.Now.Day.ToString()) {
                            // if (BanStateProcedure()){
                               //  Global.Logged=true;
                                // Global.OnlineAccount=false;
@@ -69,13 +80,48 @@ namespace rabcrClient {
                         } else ShowError("Zkontrolujte si dvojté uvozovky v argumentu programu");
                         break;
 
-                    case "/Message":
-                        if (args.Length==1){ 
-                            new Message("<Red>Error</Red> Missing text").Run();
-                        }else{
-                            new Message(args[1]).Run();
-                       // else new Message("").Run();
+                    case "/Message":{
+                        int language=-1;
+                        /*langFilePath="",*/string  Text="Error no text found", Header="Message";
+
+                            foreach (string arg in args) { 
+                                string[] a=arg.Split('=');
+                                switch (a[0]) { 
+                                    case "Language":
+                                        int.TryParse(a[1], out language);
+                                        break;
+
+                                    case "Header":
+                                        Header=a[1];
+                                        break;
+
+                                    case "Text":
+                                        Text=arg.Substring(5);
+                                        break;
+                                }
+                            } 
+                            
+                            using (Message message = new Message(language: language, Header: Header,/*langFilePath: langFilePath,*/ text: Text)) message.Run();
                         }
+
+                        //if (args.Length==3) {
+                        //    Setting.Name=args[2];
+                        //    Setting.Path=args[1]+"\\"+Setting.Name+"\\";
+                        //    new Message().Run();
+                        //} else if (args.Length==4&&(args[2].ToLower()=="geft"||args[2].ToLower()=="geftgames")&&args[3].StartsWith("%")&&args[3].Replace("%", "")==DateTime.Now.Day.ToString()) {
+                        //    Setting.Name="Geft";
+                        //    Setting.Path=args[1]+"\\"+Setting.Name+"\\";
+                        //    using (var game = new Message())
+                        //        game.Run();
+                        //} else
+                        //    ShowError("Zkontrolujte si dvojté uvozovky v argumentu programu");
+
+                        //if (args.Length==1) {
+                        //    new Message("<Red>Error</Red> Missing text").Run();
+                        //} else {
+                        //    new Message(args[1]).Run();
+                        //    // else new Message("").Run();
+                        //}
                         break;
 
                     case "/CheckServer":
@@ -87,8 +133,9 @@ namespace rabcrClient {
                         break;
 
                     default:
-                        if (File.Exists(args[0]))new Message(File.ReadAllText(args[0])).Run();
-                        else ShowError("Chybný 1. argument");
+                     //   if (File.Exists(args[0]))new Message(File.ReadAllText(args[0])).Run();
+                      //  else 
+                            ShowError("Chybný 1. argument");
                         break;
                 }
             } else {
