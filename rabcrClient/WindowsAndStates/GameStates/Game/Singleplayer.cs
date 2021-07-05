@@ -15693,7 +15693,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void CameraMatrix() {
 			if (Setting.Scale.Without==Setting.currentScale) {
 			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
-				camera=Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) * Translation;
+	
+				camera=Matrix.CreateTranslation(
+					new Vector3(
+					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
+					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
+					//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
+					//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
+						0
+					)
+				) * Translation;
 				return;
 			}
 
@@ -25757,7 +25766,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
             public void Draw() {
                 Rabcr.spriteBatch.Draw(
-                    texture: texture,
+                    texture: texture,		
                     destinationRectangle: new Rectangle((int)Position.X, (int)Position.Y, srcrec.Width, srcrec.Height),
                     sourceRectangle: srcrec/*new Rectangle(0,0,2,3)*/,
                     effects: SpriteEffects.None,
