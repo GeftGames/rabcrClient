@@ -25767,10 +25767,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
             public void Draw() {
                 Rabcr.spriteBatch.Draw(
                     texture: texture,		
-                    destinationRectangle: new Rectangle((int)Position.X, (int)Position.Y, srcrec.Width, srcrec.Height),
+                    position: new Vector2(Position.X, Position.Y/*, srcrec.Width, srcrec.Height*/),
+                //    destinationRectangle: new Rectangle((int)Position.X, (int)Position.Y, srcrec.Width, srcrec.Height),
                     sourceRectangle: srcrec/*new Rectangle(0,0,2,3)*/,
                     effects: SpriteEffects.None,
                     color: Color,
+					scale: 1f,
                     rotation: angle,
                     origin: vecOrigin,
                     layerDepth: 1f);
