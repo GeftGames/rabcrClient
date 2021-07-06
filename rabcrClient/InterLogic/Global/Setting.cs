@@ -50,7 +50,7 @@ namespace rabcrClient {
 
         public static float Zoom=2;
 
-        public static float VolumeMusic=1;
+        public static float VolumeMusic=.5f;
 
         public static float VolumeEffects=1;
 

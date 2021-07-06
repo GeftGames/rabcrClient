@@ -288,7 +288,10 @@ namespace rabcrClient {
         }
 
         public float MeasureX() {
-            if (/*Chars.*/Length>1) return Chars[/*Chars.*/Length-1].Pos.X-Chars[0].Pos.X+Chars[/*Chars.*/Length-1].Rectangle.Width;
+            if (Length>1) {
+                DrawingChar dch=Chars[Length-1];
+                return dch.Pos.X-Chars[0].Pos.X+dch.Rectangle.Width;
+            }
             if (/*Chars.*/Length==1) return Chars[0].Rectangle.Width;
             return 0;
         }

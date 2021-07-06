@@ -57,7 +57,8 @@ namespace rabcrClient {
                     if (start==-1)start=i;
                     end=i;
                     if (Global.WindowWidth>600){
-                        item.X=Global.WindowWidthHalf-DocumentSize/2;
+                        if (item  is SettingMessage) item.X=Global.WindowWidthHalf-DocumentSize+DocumentSize/*/2*/-((SettingMessage)item).centerDelta;
+                      else  item.X=Global.WindowWidthHalf-DocumentSize/2;
                         item.ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
                     } else {
                         item.X=20;
@@ -364,17 +365,17 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
-            {
-                SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
-                button.Click+=ClickGraphicsProfile;
-                settings.Add(button);
+            //{
+            //    SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
+            //    button.Click+=ClickGraphicsProfile;
+            //    settings.Add(button);
 
-                void ClickGraphicsProfile() {
-                    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
-                    Global.ChangedSettings=true;
-                    System.Windows.Forms.MessageBox.Show(Lang.Texts[343]);
-                }
-            }
+            //    void ClickGraphicsProfile() {
+            //        Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+            //        Global.ChangedSettings=true;
+            //        System.Windows.Forms.MessageBox.Show(Lang.Texts[343]);
+            //    }
+            //}
             if (File.Exists(@"C:\Program Files\NVIDIA Corporation\Control Panel Client\nvcplui.exe")){
                 SettingButton button=new SettingButton(tex,Lang.Texts[342]);
                 button.Click+=ClickGraphicsProfile;
