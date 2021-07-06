@@ -1237,7 +1237,7 @@ namespace rabcrClient {
                 } else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
 
                 if (random.Bool()) {
-                    chunk.SolidBlocks[dirtHeight+terrainHeight]=(ushort)BlockId.Cobblestone;
+                    chunk.SolidBlocks[1/*dirtHeight*/+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+1);
              }

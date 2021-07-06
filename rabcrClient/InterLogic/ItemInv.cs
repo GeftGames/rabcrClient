@@ -28,7 +28,7 @@ namespace rabcrClient {
         public abstract ItemNonInv ToNon();
     }
 
-    class ItemInvBlank :ItemInv{
+    class ItemInvBlank :ItemInv {
         public ItemInvBlank() {
             Id=(int)Items.None;
         }
@@ -75,20 +75,6 @@ namespace rabcrClient {
 
         public int SetCount {
             set {
-                //if (GetCount==1 && value>GetCount){ 
-                //    strItem=GetCount.ToString();
-                //    drawText=true;
-                //    if (posNum==null){
-                //        posNum=new Vector2(posTex.X, posTex.Y+20);
-                //        posNumSh=new Vector2(posNum.X+0.5f, posNum.Y+0.5f);
-                //    }
-                //}
- 
-                //if (GetCount>1 && value==1){ 
-
-                //}
-
-
                 if (drawText) {
                     if (value==1) {
 
@@ -230,30 +216,31 @@ namespace rabcrClient {
 
         public int SetCount {
             set {
-                GetCount=value;
-
                 if (drawText) {
-                    if (GetCount==1) {
+                    if (value==1) {
 
                         // Foget
                         strItem=null;
+                        drawText=false;
                     } else {
 
                         // Rewrite bigger number
-                        strItem=GetCount.ToString();
+                        strItem=value.ToString();
                     }
                 } else {
 
                     // new big num
-                    if (GetCount!=1) {
-                        strItem=GetCount.ToString();
+                    if (value>1) {
+                        strItem=value.ToString();
                         drawText=true;
-                        if (posNum==null){
+                        if (GetCount==1) {
                             posNum=new Vector2(posTex.X, posTex.Y+20);
                             posNumSh=new Vector2(posNum.X+0.5f, posNum.Y+0.5f);
                         }
                     }
                 }
+
+                GetCount=value;
             }
         }
 
