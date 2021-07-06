@@ -4133,22 +4133,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								void Do() {
 									switch (InventoryNormal[boxSelected]) {
 										case ItemInvBasic16 i1:
-											i1.SetCount=i1.GetCount-1;
-
-											if (PlayerX-mousePos.X>0) {
-												DroppedItems.Add(new Item{
-													X = (int)PlayerX-11-16-1,
-													Y = (int)PlayerY-22,
-													item=new ItemNonInvBasic(i1.Id,i1.GetCount),
-													Texture=i1.Texture,
-												});
-											} else {
-													DroppedItems.Add(new Item {
-													X = (int)PlayerX+11+1,
-													Y = (int)PlayerY-22,
-													item=new ItemNonInvBasic(i1.Id,i1.GetCount),
-													Texture=i1.Texture,
-												});
+											if (i1.GetCount>1) {
+												i1.SetCount=i1.GetCount-1;
+											} else { 
+												InventoryNormal[boxSelected]=itemBlank;
+											}
+											if (i1.GetCount>0){
+												if (PlayerX-mousePos.X>0) {
+													DroppedItems.Add(new Item{
+														X = (int)PlayerX-11-16-1,
+														Y = (int)PlayerY-22,
+														item=new ItemNonInvBasic(i1.Id,1/*i1.GetCount*/),
+														Texture=i1.Texture,
+													});
+												} else {
+														DroppedItems.Add(new Item {
+														X = (int)PlayerX+11+1,
+														Y = (int)PlayerY-22,
+														item=new ItemNonInvBasic(i1.Id,1/*i1.GetCount*/),
+														Texture=i1.Texture,
+													});
+												}
 											}
 											break;
 

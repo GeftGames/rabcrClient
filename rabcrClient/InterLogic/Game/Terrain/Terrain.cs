@@ -84,7 +84,7 @@ namespace rabcrClient {
 			if (y==LightPosFull) {
 
 				// starting something in chunk
-				int sStartSomething=y;
+				int sStartSomething=0;
 				for (; sStartSomething<125; sStartSomething++) {
 					if (IsTopBlocks[sStartSomething]) break;
 					if (IsSolidBlocks[sStartSomething]) break;
