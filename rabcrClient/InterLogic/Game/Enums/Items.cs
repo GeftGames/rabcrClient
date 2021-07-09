@@ -567,6 +567,7 @@ GrassBlockCompost,
     AnimalChicken,
     AnimalRabbit,
     AnimalFish,
+    AnimalParrot,
 
     Composter,
     Compost,

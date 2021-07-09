@@ -173,6 +173,26 @@ namespace rabcrClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] FontInfo_devanagari_18 {
+            get {
+                object obj = ResourceManager.GetObject("FontInfo_devanagari_18", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] FontInfo_devanagari_34 {
+            get {
+                object obj = ResourceManager.GetObject("FontInfo_devanagari_34", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] FontInfo_japanese_18 {
             get {
                 object obj = ResourceManager.GetObject("FontInfo_japanese_18", resourceCulture);

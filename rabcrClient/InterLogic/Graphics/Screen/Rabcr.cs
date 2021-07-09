@@ -190,6 +190,13 @@ namespace rabcrClient {
                     BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_arabic_18);
                     break;
 
+                case "devanagari":
+                    BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_devanagari_34);
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_devanagari_18);
+                    break;
+
                 case "cyrillic":
                     BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_cyrillic_34);
                     GC.Collect();

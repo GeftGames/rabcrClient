@@ -13,6 +13,8 @@ namespace rabcrClient {
 
         protected Mob() { }
 
+        public abstract byte[] Save();
+
         public virtual void Update(){ }
 
         public virtual void Draw(){ }

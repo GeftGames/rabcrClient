@@ -7,40 +7,13 @@ using System.IO;
 using System.Linq;
 
 namespace rabcrClient {
-    public class Text{
-        readonly DrawingChar[] Chars;
+    public class Text {
+
+        #region Varibles
+        DrawingChar[] Chars;
         readonly BitmapFont font;
-        int X, Y;
-        readonly int Length;
-        // connect on the right side and never connect on the left side
-      //  static readonly char[] selfishArabicCharsL={' '};//, 'و', 'ز', 'ر', 'ذ', 'د', 'ا' ,/*?*/'ۇ','\uFEFB','ە'};//
-
-        // never connect on the right side and  onnect on the left side
-       // static readonly char[] selfishArabicCharsR = { ' ' };//, /*'و',*/ /*'ز',*/ /*'ر',*/ /*'ذ', 'د',*/ 'ا', /*?'ۇ',*/'ي' };
-      //  static readonly char[] arabicDisconnecters = {/* '\uFC62', '\u064B', '\u064C', '\u064D', '\u064E', '\u064F', '\u0650', '\u0651', '\u0652', '\u0653', '\u0654', '\u0655'*/ };
-
-        //static bool IsSelfishL(char ch) {
-        //    foreach (char c in selfishArabicCharsL) {
-        //        if (c==ch) return true;
-        //    }
-        //    return false;
-        //}
-
-        //static bool IsSelfishR(char ch) {
-        ////    if ((int)ch==ArabicFinalFormConventer((int)ch))return true;
-        //    foreach (char c in selfishArabicCharsR) {
-        //        if (c==ch) return true;
-        //    }
-        //    return false;
-        //}
-
-        //static bool IsAsrabicDisconecter(char ch) {
-        //  //  if ((int)ch==ArabicInitialFormConventer((int)ch))return true;
-        //    foreach (char c in arabicDisconnecters) {
-        //        if (c==ch) return true;
-        //    }
-        //    return false;
-        //}
+        int X, Y, Length;
+        #endregion
 
         public Text(string txt, int x, int y, BitmapFont f) {
             if (txt==null) {
@@ -49,314 +22,257 @@ namespace rabcrClient {
             }
 
             font=f;
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
-            //txt=txt.Replace("\u200E","");
-            //txt=txt.Replace(((char)1617).ToString()+((char)1614).ToString(),"\uFC62");
-            //txt=txt.Replace(((char)1575).ToString()+((char)1604).ToString(),"\uFEFB");
-            //txt=txt.Replace(((char)1573).ToString()+((char)1604).ToString(),"\uFEF9");//ل ا  ء <- ل إ
-           // txt=
-            char[] chs=BuildArabicText(txt);//txt.ToCharArray();
-            int posx=x;
-
-//#if DEBUG
-//            bool add=false;
-//#endif
-
-            //if (IsUjgur(txt) || IsArabic(txt)){
-
-            //    Glyph g;
-            //    for (int ch = 0; ch<chs.Length; ch++) {
-
-            //        #if DEBUG
-            //        bool add=false;
-            //        #endif
-
-            //     //for (int ch = chs.Length-1; ch>=0; ch--) {
-            //        int numChar=chs[ch];
-            //        bool spaceBef, spaceAf;
-            //        //if (ch==0)spaceBef=true;
-            //        //else {
-            //        //    if (IsAsrabicDisconecter(chs[ch-1])) {
-            //        //        if (ch==1) spaceBef=true;
-            //        //        else spaceBef=IsSelfishR(chs[ch-2]);
-            //        //    } else {
-            //        //        spaceBef=IsSelfishR(chs[ch-1]);
-            //        //    }
-            //        //}
-            //        //if (ch==chs.Length-1)spaceAf=true;
-            //        //else {
-            //        //    if (IsAsrabicDisconecter(chs[ch+1])) {
-            //        //        if (ch==chs.Length-2) spaceAf =true;
-            //        //        else spaceAf=IsSelfishL(chs[ch+2]);
-            //        //    }else{
-            //        //        spaceAf =IsSelfishL(chs[ch+1]);
-            //        //    }
-            //        //}
-            //        //System.Diagnostics.Debug.WriteLine((char)numChar+" "+numChar+" bef:"+spaceBef+" af:"+spaceAf);
-
-            //        //if (ch==0) spaceBef=true;
-            //        //else {
-            //        //    if (IsAsrabicDisconecter(chs[ch-1])) {
-            //        //        if (ch==1) spaceBef=true;
-            //        //        else spaceBef=IsSelfishR(chs[ch-2]);
-            //        //    } else {
-            //        //        spaceBef=IsSelfishR(chs[ch-1]);
-            //        //    }
-            //        //}
-            //        //if (ch==chs.Length-1) spaceAf=true;
-            //        //else {
-            //        //    if (IsAsrabicDisconecter(chs[ch+1])) {
-            //        //        if (ch==chs.Length-2) spaceAf=true;
-            //        //        else spaceAf=IsSelfishL(chs[ch+2]);
-            //        //    } else {
-            //        //        spaceAf=IsSelfishL(chs[ch+1]);
-            //        //    }
-            //        //}
-            //        //System.Diagnostics.Debug.WriteLine((char)numChar+" "+numChar+" bef:"+spaceBef+" af:"+spaceAf);
-
-
-
-            //        //if (spaceBef){
-            //        //    if (spaceAf){
-
-            //        //    }else{
-            //        //        numChar=ArabicFinalFormConventer(numChar);
-
-            //        //    }
-            //        //}else{
-            //        //    if (spaceAf){
-            //        //       numChar=ArabicInitialFormConventer(numChar);
-            //        //    } else{
-            //        //       numChar=ArabicMedialFormConventer(numChar);
-            //        //    }
-            //        //}
-            //        //System.Diagnostics.Debug.Write((char)numChar+" "+numChar+" -> ");
-
-            //        //System.Diagnostics.Debug.Write((char)numChar+" "+numChar);
-            //        //System.Diagnostics.Debug.WriteLine(" b:"+spaceBef+" a:"+spaceAf);
-
-            //        if (ch==0) {
-            //            if (chs.Length>1) { 
-            //                if (IsArabicLetter(chs[1])) {
-            //                    if (HaveInitialForm(chs[1])) numChar=ArabicFinalFormConventer(numChar);
-            //                }
-            //            }
-            //        } else if (ch==chs.Length-1) {
-            //            if (chs.Length>1) { 
-            //                if (IsArabicLetter(chs[chs.Length-1-1])) {
-            //                    if (HaveFinalForm(chs[chs.Length-1-1])) numChar=ArabicInitialFormConventer(numChar);
-            //                }
-            //            }
-            //        } else { 
-            //            bool start=IsArabicLetter(chs[ch+1]); // if starts with arabic letter
-            //            bool end=IsArabicLetter(chs[ch-1]); // if ends with arabic letter
-
-            //          //  if (start || end) { 
-            //                bool e=end;
-            //                bool s=start;
-
-            //                if (e) e=HaveFinalForm(chs[ch-1]);
-            //                if (s) s=HaveInitialForm(chs[ch+1]);
-            //                int old=numChar;
-            //                if (s && e) numChar=ArabicMedialFormConventer(numChar);
-            //                else if (s && !e) numChar=ArabicFinalFormConventer(numChar);
-            //                else if (!s && e) numChar=ArabicInitialFormConventer(numChar);
-
-            //              //  System.Diagnostics.Debug.WriteLine(txt+": ch:"+ch+" s:"+s+" e:"+e+" "+(char)old+" > "+(char)numChar);
-            //            //bool s=HaveInitialForm(chs[ch-1]);
-                       
-
-            //            //    if (start && !end) start=HaveInitialForm(chs[ch-1]);
-            //            //    bool hif=
-
-
-            //            //    if (hif) numChar=ArabicFinalFormConventer(numChar);
-            //            //    else numChar=ArabicInitialFormConventer(numChar);
-            //           // }
-            //        }
-
-//                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-//                        if (numChar==(char)(g = font.Glyphs[gg]).Code) {
-//                            if (g.visible) {
-//                                tmpChs.Add(
-//                                    new DrawingChar{
-//                                        Pos=new Vector2(posx+g.X,y+g.Y),
-//                                        Rectangle=g.DrawRectangle,
-//                                    }
-//                                );
-//                             //   if (!IsAsrabicDisconecter((char)numChar))
-//                                posx+=g.DrawRectangle.Width+g.X+g.W;
-//                            } else {
-//                                posx+=g.W;
-//                            }
-//#if DEBUG
-//                                add=true;
-//                                //if (g.DrawRectangle.Width>10)Debug.WriteLine("Char '"+(char)numChar+"' has g.DrawRectangle.Width "+g.DrawRectangle.Width);
-//                                //if (g.W>10 || g.W<0)Debug.WriteLine("Char '"+(char)numChar+"' has g.W "+g.W);
-//                                //if (g.X>10|| g.X<0)Debug.WriteLine("Char '"+(char)numChar+"' has g.X "+g.X);
-//#endif
-//                            break;
-//                        }
-//                    }
-//#if DEBUG
-//                // Unknown char
-//                if (!add) {
-//                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-//                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
-//                            tmpChs.Add(
-//                                new DrawingChar {
-//                                    Pos=new Vector2(posx+g.X, y+g.Y),
-//                                    Rectangle=g.DrawRectangle,
-//                                }
-//                            );
-//                            posx+=g.DrawRectangle.Width+g.X+g.W;
-//                            Debug.WriteLine("Nonsuported char "+(int)numChar);
-//                            break;
-//                        }
-//                    }
-//                }
-//#endif
-//                }
-//            } else {
-                Glyph g;
-                for (int ch = 0; ch<chs.Length; ch++) {
-
-                    #if DEBUG
-                    bool add=false;
-                    #endif
-
-                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {
-                            if (g.visible) {
-                                tmpChs.Add(
-                                    new DrawingChar{
-                                        Pos=new Vector2(posx+g.X,y+g.Y),
-                                        Rectangle=g.DrawRectangle,
-                                    }
-                                );
-
-                                posx+=g.DrawRectangle.Width+g.X+g.W;
-                            } else {
-                                posx+=g.W;
-                            }
-                            #if DEBUG
-                            add=true;
-                            #endif
-                            break;
-                        }
-                    }
-                
-                    #if DEBUG
-                    // Unknown char
-                    if (!add){///continue;  //if (add)///continue;
-                        for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                            if ('�'==(char)(g = font.Glyphs[gg]).Code) {
-                                tmpChs.Add(
-                                    new DrawingChar {
-                                        Pos=new Vector2(posx+g.X, y+g.Y),
-                                        Rectangle=g.DrawRectangle,
-                                    }
-                                );
-                                posx+=g.DrawRectangle.Width+g.X+g.W;
-                                Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
-                                break;
-                            }
-                        } 
-                    }
-                    #endif
-               // }
-            }
-            Chars=tmpChs.ToArray();
             X=x;
             Y=y;
+            if (IsDevanagari(txt)){ 
+                BuildTextDevanagari(txt);
+                return;
+            }
+            if (IsArabic(txt)){ 
+                BuildTextArabic(txt);
+                return;
+            }
+
+            BuildTextNormal(txt);
+        }
+
+        #region Devanagari
+        static bool IsDevanagari(string input) { 
+            foreach (char i in input) { 
+                if (IsDevanagariChar(i)) return true;
+            }
+            return false;
+        } 
+
+        static bool IsDevanagariChar(char input) { 
+            switch (input) { 
+                case 'क': return true;
+                case 'ख': return true;
+                case 'ग': return true;
+                case 'घ': return true;
+                case 'ङ': return true;
+                case 'च': return true;
+                case 'छ': return true;
+                case 'ज': return true;
+                case 'झ': return true;
+                case 'ञ': return true;
+                case 'ट': return true;
+                case 'ठ': return true;
+                case 'ड': return true;
+                case 'ढ': return true;
+                case 'ण': return true;
+                case 'त': return true;
+                case 'थ': return true;
+                case 'द': return true;
+                case 'ध': return true;
+                case 'न': return true;
+                case 'प': return true;
+                case 'फ': return true;
+                case 'ब': return true;
+                case 'भ': return true;
+                case 'म': return true;
+                case 'य': return true;
+                case 'र': return true;
+                case 'ल': return true;
+                case 'व': return true;
+                case 'श': return true;
+                case 'ष': return true;
+                case 'स': return true;
+                case 'ह': return true;
+            }
+            return false;
+        }
+
+        void BuildTextDevanagari(string txt){ 
+            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            char[] chs=new RenderEnngineDevanagari(txt).Output.ToCharArray();
+            int posx=X;
+          
+            Glyph g;
+            for (int ch = 0; ch<chs.Length; ch++) {
+
+                #if DEBUG
+                bool add=false;
+                #endif
+
+                for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
+                        Debug.Write(chs[ch]+" ");
+                        if (g.visible) {
+                    //    if (chs[ch]=='媪') {g.Y-=1; }
+                      //      if (chs[ch]=='发') {posx-=3; }//ा
+                            tmpChs.Add(
+                                new DrawingChar{
+                                    Pos=new Vector2(posx+g.X,Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W-3;
+                            if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
+                         //   if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
+                        } else {
+                            posx+=g.W;
+                        }
+                        #if DEBUG
+                        add=true;
+                        #endif
+                        break;
+                    }
+                }
+           
+                // Unknown char
+                #if DEBUG
+                if (!add){
+                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                            tmpChs.Add(
+                                new DrawingChar {
+                                    Pos=new Vector2(posx+g.X, Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W;
+                            Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
+                            break;
+                        }
+                    } 
+                }
+                #endif
+            }
+            Debug.WriteLine("");
+            Chars=tmpChs.ToArray();
 
             Length=Chars.Length;
         }
+        #endregion
 
-        public void Draw(SpriteBatch sb) {
-            for (int i=0; i<Length; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, Color.Black);
+        #region Arabic
+        static bool IsArabic(string input) { 
+            foreach (char i in input) { 
+                if (IsArabicChar(i)) return true;
             }
+            return false;
         }
 
-        public void Draw(SpriteBatch sb, Color c) {
-            for (int i=0; i<Length; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, c);
+        static bool IsArabicChar(char ch){ 
+            switch (ch){ 
+                case 'ا': return true; 
+                case 'ب': return true; 
+                case 'ت': return true; 
+                case 'ث': return true; 
+                case 'ج': return true; 
+                case 'ح': return true; 
+                case 'خ': return true; 
+                case 'د': return true; 
+                case 'ذ': return true; 
+                case 'ر': return true; 
+                case 'ز': return true; 
+                case 'س': return true; 
+                case 'ش': return true; 
+                case 'ص': return true; 
+                case 'ض': return true; 
+                case 'ط': return true; 
+                case 'ظ': return true; 
+                case 'ع': return true; 
+                case 'غ': return true; 
+                case 'ف': return true; 
+                case 'ق': return true; 
+                case 'ك': return true; 
+                case 'ل': return true; 
+                case 'م': return true; 
+                case 'ه': return true; 
+                case 'ي': return true; 
+                case 'و': return true; 
+                case 'أ': return true; 
+                case 'إ': return true; 
+                case 'ؤ': return true; 
+                case 'ئ': return true; 
+                case 'آ': return true; 
+                case 'ى': return true; 
+                case 'ة': return true; 
+                case 'ﻻ': return true; 
+                case 'ن': return true; 
+                case 'ﻹ': return true; 
+                case 'ڭ': return true; 
+                case 'ە': return true; 
+                case 'ۇ': return true; 
+                case 'چ': return true; 
+                case 'ۈ': return true;  
+                case 'ھ': return true;    
+                case 'ک': return true;  
+                case 'ی': return true;   
+                case 'ہ': return true; 
+                case 'ڑ': return true;  
+                case 'ے': return true; 
+                case 'ې': return true;
+                case 'ۆ': return true;
+                case 'ں': return true;
+                case 'گ': return true;
+              //  case 'ﻢ': return true; 
+              //  case 'ء': return true; 
             }
+         //   Debug.WriteLine(ch+" is not arabic");
+            return false;
         }
 
-        public float MeasureX() {
-            if (Length>1) {
-                DrawingChar dch=Chars[Length-1];
-                return dch.Pos.X-Chars[0].Pos.X+dch.Rectangle.Width;
-            }
-            if (/*Chars.*/Length==1) return Chars[0].Rectangle.Width;
-            return 0;
+        void BuildTextArabic(string txt){ 
+            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            char[] chs=BuildArabicText(txt);
+            int posx=X;
+          
+            Glyph g;
+            for (int ch = 0; ch<chs.Length; ch++) {
+                #if DEBUG
+                bool add=false;
+                #endif
+
+                for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
+                    
+                        if (g.visible) {
+                            tmpChs.Add(
+                                new DrawingChar{
+                                    Pos=new Vector2(posx+g.X,Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W;
+                        } else {
+                            posx+=g.W;
+                        }
+                        #if DEBUG
+                        add=true;
+                        #endif
+                        break;
+                    }
+                }
+           
+                // Unknown char
+                #if DEBUG
+                if (!add){
+                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                            tmpChs.Add(
+                                new DrawingChar {
+                                    Pos=new Vector2(posx+g.X, Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W;
+                            Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
+                            break;
+                        }
+                    } 
+                }
+                #endif
+            } 
+            //Debug.WriteLine(" ");
+            Chars=tmpChs.ToArray();
+            //X=x;
+            //Y=y;
+
+            Length=Chars.Length;
         }
-
-      //  public float MeasureY() => font.Size*2;
-
-        public void ChangePosition(int newX, int newY) {
-        //    if (newX!=X || newY!=Y) {
-            int deltaX=newX-X,
-                deltaY=newY-Y;
-
-            foreach (DrawingChar ch in Chars) {
-                ch.Pos.X+=deltaX;
-                ch.Pos.Y+=deltaY;
-            }
-
-            X=newX;
-            Y=newY;
-        }
-
-        //bool IsUjgur(string s) {
-        //    if (Lang.IsUjgur) {
-        //        return true;
-        //    } else {
-        //        foreach (char ch in s) {
-        //            switch (ch) {
-        //                case 'ى':
-        //                    return true;
-        //                case 'ل':
-        //                    return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
-        //bool IsArabic(string s) {
-        //    if (Lang.IsArabic) {
-
-        //        return true;
-        //    } else {
-        //        foreach (char ch in s) {
-        //            switch (ch) {
-        //                case 'ى':
-        //                    return true;
-        //                case 'ل':
-        //                    return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
-        //bool isArabic(string s){
-        //    if (Lang.IsUjgur){
-
-        //        return true;
-        //    }else{
-        //        foreach (char ch in s) {
-        //            switch (ch) {
-        //                case 'ى': return true;
-        //                case 'ل': return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
 
         static int ArabicFinalFormConventer(int s){
             switch (s){
@@ -613,74 +529,13 @@ namespace rabcrClient {
             return true;
             #endif
         }
-               
-        static bool IsArabicLetter(char ch){ 
-            switch (ch){ 
-                case 'ا': return true; 
-                case 'ب': return true; 
-                case 'ت': return true; 
-                case 'ث': return true; 
-                case 'ج': return true; 
-                case 'ح': return true; 
-                case 'خ': return true; 
-                case 'د': return true; 
-                case 'ذ': return true; 
-                case 'ر': return true; 
-                case 'ز': return true; 
-                case 'س': return true; 
-                case 'ش': return true; 
-                case 'ص': return true; 
-                case 'ض': return true; 
-                case 'ط': return true; 
-                case 'ظ': return true; 
-                case 'ع': return true; 
-                case 'غ': return true; 
-                case 'ف': return true; 
-                case 'ق': return true; 
-                case 'ك': return true; 
-                case 'ل': return true; 
-                case 'م': return true; 
-                case 'ه': return true; 
-                case 'ي': return true; 
-                case 'و': return true; 
-                case 'أ': return true; 
-                case 'إ': return true; 
-                case 'ؤ': return true; 
-                case 'ئ': return true; 
-                case 'آ': return true; 
-                case 'ى': return true; 
-                case 'ة': return true; 
-                case 'ﻻ': return true; 
-                case 'ن': return true; 
-                case 'ﻹ': return true; 
-                case 'ڭ': return true; 
-                case 'ە': return true; 
-                case 'ۇ': return true; 
-                case 'چ': return true; 
-                case 'ۈ': return true;  
-                case 'ھ': return true;    
-                case 'ک': return true;  
-                case 'ی': return true;   
-                case 'ہ': return true; 
-                case 'ڑ': return true;  
-                case 'ے': return true; 
-                case 'ې': return true;
-                case 'ۆ': return true;
-                case 'ں': return true;
-                case 'گ': return true;
-              //  case 'ﻢ': return true; 
-              //  case 'ء': return true; 
-            }
-         //   Debug.WriteLine(ch+" is not arabic");
-            return false;
-        }
 
         public static char[] BuildArabicText(string txt) {
 
             // Detect if is arabic
             bool isArabic=false;
             foreach (char c in txt) { 
-                if (IsArabicLetter(c)){ 
+                if (IsArabicChar(c)){ 
                     isArabic=true;
                     break;
                 }
@@ -703,7 +558,7 @@ namespace rabcrClient {
 
             // start
             int ch /*= 0*/;
-            if (IsArabicLetter(chs[1])) {
+            if (IsArabicChar(chs[1])) {
                 if (HaveInitialForm(chs[1])) _out[0]=(char)ArabicFinalFormConventer((int)chs[0]);
                 else _out[0]=chs[0];
             } else _out[0]=chs[0];
@@ -716,8 +571,8 @@ namespace rabcrClient {
                 //bool s=start ? HaveInitialForm(chs[ch+1]) : false; 
 
                                   
-                bool e=IsArabicLetter(chs[ch-1])&&HaveFinalForm(chs[ch-1]);
-                bool s=IsArabicLetter(chs[ch+1])&&HaveInitialForm(chs[ch+1]); 
+                bool e=IsArabicChar(chs[ch-1])&&HaveFinalForm(chs[ch-1]);
+                bool s=IsArabicChar(chs[ch+1])&&HaveInitialForm(chs[ch+1]); 
 
                 //if (e) e=;
                 //if (s) s=;
@@ -731,13 +586,191 @@ namespace rabcrClient {
             } 
             ch=chs.Length-1;
             // end
-            if (IsArabicLetter(chs[chs.Length-1-1])) {
+            if (IsArabicChar(chs[chs.Length-1-1])) {
                 if (HaveFinalForm(chs[chs.Length-1-1])) _out[ch]=(char)ArabicInitialFormConventer((int)chs[ch]);
                 else _out[ch]=chs[ch];
             }else _out[ch]=chs[ch];
 
             return /*new string(*/_out/*)*/;
         }
+        #endregion
+
+        #region Normal
+        void BuildTextNormal(string txt){ 
+            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            char[] chs=txt.ToArray();
+            int posx=X;
+          
+            Glyph g;
+            for (int ch = 0; ch<chs.Length; ch++) {
+                #if DEBUG
+                bool add=false;
+                #endif
+
+                for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
+                    
+                        if (g.visible) {
+                            tmpChs.Add(
+                                new DrawingChar{
+                                    Pos=new Vector2(posx+g.X,Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W;
+                        } else {
+                            posx+=g.W;
+                        }
+                        #if DEBUG
+                        add=true;
+                        #endif
+                        break;
+                    }
+                }
+           
+                // Unknown char
+                #if DEBUG
+                if (!add){
+                    for (int gg = 0; gg<font.Glyphs.Length; gg++) {
+                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                            tmpChs.Add(
+                                new DrawingChar {
+                                    Pos=new Vector2(posx+g.X, Y+g.Y),
+                                    Rectangle=g.DrawRectangle,
+                                }
+                            );
+                            posx+=g.DrawRectangle.Width+g.X+g.W;
+                            Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
+                            break;
+                        }
+                    } 
+                }
+                #endif
+            } 
+            Chars=tmpChs.ToArray();
+
+            Length=Chars.Length;
+        }
+        #endregion
+
+        #region Draw
+        public void Draw(SpriteBatch sb) {
+            for (int i=0; i<Length; i++) {
+                DrawingChar ch=Chars[i];
+                sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, Color.Black);
+            }
+        }
+
+        public void Draw(SpriteBatch sb, Color c) {
+            for (int i=0; i<Length; i++) {
+                DrawingChar ch=Chars[i];
+                sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, c);
+            }
+        }
+        #endregion
+
+        #region Measure
+        public float MeasureX() {
+            if (Length>1) {
+                DrawingChar dch=Chars[Length-1];
+                return dch.Pos.X-Chars[0].Pos.X+dch.Rectangle.Width;
+            }
+            if (/*Chars.*/Length==1) return Chars[0].Rectangle.Width;
+            return 0;
+        }
+        #endregion
+
+        #region Change Pos
+        public void ChangePosition(int newX, int newY) {
+        //    if (newX!=X || newY!=Y) {
+            int deltaX=newX-X,
+                deltaY=newY-Y;
+
+            foreach (DrawingChar ch in Chars) {
+                ch.Pos.X+=deltaX;
+                ch.Pos.Y+=deltaY;
+            }
+
+            X=newX;
+            Y=newY;
+        }
+        #endregion
+
+        //bool IsUjgur(string s) {
+        //    if (Lang.IsUjgur) {
+        //        return true;
+        //    } else {
+        //        foreach (char ch in s) {
+        //            switch (ch) {
+        //                case 'ى':
+        //                    return true;
+        //                case 'ل':
+        //                    return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
+        //bool IsArabic(string s) {
+        //    if (Lang.IsArabic) {
+
+        //        return true;
+        //    } else {
+        //        foreach (char ch in s) {
+        //            switch (ch) {
+        //                case 'ى':
+        //                    return true;
+        //                case 'ل':
+        //                    return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
+        //bool isArabic(string s){
+        //    if (Lang.IsUjgur){
+
+        //        return true;
+        //    }else{
+        //        foreach (char ch in s) {
+        //            switch (ch) {
+        //                case 'ى': return true;
+        //                case 'ل': return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
+
+        // connect on the right side and never connect on the left side
+        //  static readonly char[] selfishArabicCharsL={' '};//, 'و', 'ز', 'ر', 'ذ', 'د', 'ا' ,/*?*/'ۇ','\uFEFB','ە'};//
+
+        // never connect on the right side and  onnect on the left side
+        // static readonly char[] selfishArabicCharsR = { ' ' };//, /*'و',*/ /*'ز',*/ /*'ر',*/ /*'ذ', 'د',*/ 'ا', /*?'ۇ',*/'ي' };
+        //  static readonly char[] arabicDisconnecters = {/* '\uFC62', '\u064B', '\u064C', '\u064D', '\u064E', '\u064F', '\u0650', '\u0651', '\u0652', '\u0653', '\u0654', '\u0655'*/ };
+
+        //static bool IsSelfishL(char ch) {
+        //    foreach (char c in selfishArabicCharsL) {
+        //        if (c==ch) return true;
+        //    }
+        //    return false;
+        //}
+
+        //static bool IsSelfishR(char ch) {
+        ////    if ((int)ch==ArabicFinalFormConventer((int)ch))return true;
+        //    foreach (char c in selfishArabicCharsR) {
+        //        if (c==ch) return true;
+        //    }
+        //    return false;
+        //}
+
+        //static bool IsAsrabicDisconecter(char ch) {
+        //  //  if ((int)ch==ArabicInitialFormConventer((int)ch))return true;
+        //    foreach (char c in arabicDisconnecters) {
+        //        if (c==ch) return true;
+        //    }
+        //    return false;
+        //}
     }
 
     public class TextWithMeasure{
@@ -1402,4 +1435,203 @@ namespace rabcrClient {
         public Rectangle Rectangle;
         public Vector2 Pos;
     }
-}
+
+    class RenderEnngineDevanagari {
+        char[] Consonants ={'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
+        char[] DevandariPreCh ={
+            'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई',
+        };
+
+
+        public char[][] tableMoveBack = new char[][]{
+            new char[]{'य', (char)2369},
+        };
+        public string Output;
+
+        (char[],char)[] Replacements=new (char[],char)[]{ 
+            // Nukta
+            (new char[]{ 'क', '़'}, 'क़'),
+            (new char[]{ 'फ', '़'}, 'फ़'),
+            (new char[]{ 'ज', '़'}, 'ज़'),
+            (new char[]{ 'ख', '़'}, 'ख़'),
+            (new char[]{ 'ग', '़'}, 'ग़'),
+            (new char[]{ 'ड', '़'}, 'ड़'),
+            (new char[]{ 'ढ', '़'}, 'ढ़'),
+            (new char[]{ 'य', '़'}, 'य़'),
+            (new char[]{ 'ळ', '़'}, 'ऴ'),
+            (new char[]{ 'न', '़'}, 'ऩ'),
+            (new char[]{ 'र', '़'}, 'ऱ'),
+
+         //   (new char[]{ 'न', '़'}, 'ऩ'),
+          //  (new char[]{ 'ळ', '़'}, 'ऴ'),
+
+            (new char[]{ 'ा', 'े'}, 'ो'),
+            (new char[]{ 'ा', 'ै'}, 'ौ'),
+
+            (new char[]{ 'अ', 'ा'}, 'आ'),
+            (new char[]{ 'अ', 'ो'}, 'ओ'),
+            (new char[]{ 'अ', 'ौ'}, 'औ'),
+            (new char[]{ 'ए', 'े'}, 'ऐ'),
+            //(new char[]{ '', ''}, ''),
+            //(new char[]{ '', ''}, ''),
+            //(new char[]{ 'झ', '़'}, 'झ़'),
+            //(new char[]{ '', '़'}, ''),
+        };
+
+        bool IdDevanagariChar(char ch){ 
+            foreach (char i in Consonants) { if (ch==i) return true;}
+            foreach (char i in DevandariPreCh) { if (ch==i) return true;}
+            return false;
+        }
+
+        public RenderEnngineDevanagari(string input) {
+            // Split text by Devanagari and other font text (combined text->noncombined parts)
+            List<(bool,string)> DevanagariWords=new List<(bool, string)>();
+            bool WasLastDevanagari=false;
+            int lastpos=-1;
+            
+            for (int i=0; i<input.Length; i++) { 
+                char ch=input[i];
+                bool nowDev=IdDevanagariChar(ch);
+                if (lastpos==-1) { 
+                    WasLastDevanagari=nowDev;
+                    lastpos=0;
+                }
+
+                if (nowDev == WasLastDevanagari){ 
+                //   lastpos++;
+                } else { 
+                    DevanagariWords.Add((WasLastDevanagari,input.Substring(lastpos,i-lastpos)));
+                    WasLastDevanagari=nowDev; 
+                    lastpos=i;
+                }     
+            }
+            DevanagariWords.Add((WasLastDevanagari,input.Substring(lastpos)));
+
+            Output="";
+            // Parse devanagari words into syllables
+            foreach ((bool, string) h in DevanagariWords) {
+                if (h.Item1) { 
+                    string[] Syllables=ToSyllables(h.Item2);
+
+                    foreach (string s in Syllables) Output+=/*"s"+*/s/*+"e"*/;
+                } else { 
+                    Output+=/*"S"+*/h.Item2/*+"E"*/;
+                }
+            }
+
+            //string LastSyllable="";
+            //bool Devanagari;
+            
+            string[] ToSyllables(string txt){ 
+                List<string> Syllables=null;
+                string LastSyllable="";
+
+                for (int i = 0; i<txt.Length; i++) {
+                    char ch = txt[i];
+                      
+                    foreach (char con in Consonants) {
+                        if (ch==con) {
+                            if (Syllables==null) {
+                                Syllables=new List<string>();
+                            } else {
+                                Syllables.Add(TryReplaceSyllable(LastSyllable));
+                                LastSyllable="";
+                            }
+                            break;
+                        }
+                    }
+                    LastSyllable+=ch;
+                }
+
+                Syllables.Add(TryReplaceSyllable(LastSyllable));
+                return Syllables.ToArray();
+            }
+
+            string TryReplaceSyllable(string s) { 
+                if (s.Length>1){
+                    foreach ((char[], char) r in Replacements) {
+                        bool make=true;
+                        foreach (char x in r.Item1) { 
+                            if (s.Contains(x)){ 
+                            } else { 
+                                make=false;
+                                break;
+                            }
+                        }
+                        if (make) { 
+                            string g=s.Replace(r.Item1[0],r.Item2);
+                            g=g.Replace(r.Item1[1].ToString(),"");
+                            return r.Item2.ToString();
+                        }
+                    }
+                    if (s.Contains('ा')){ //f
+                       return s.Replace('ा'.ToString(),"发");
+                    } 
+                    if (s.Contains('ो')){ //T´
+                        return s.Replace('ो'.ToString(),"飞");
+                    }
+                    if (s.Contains('ी')){ // o + obraceny f
+                      return s.Replace('ी'.ToString(),"汉");
+                    }
+                    if (s.Contains('ु')){ // o + obraceny f
+                      return s.Replace('ु'.ToString(),"习");
+                    }
+                    if (s.Contains('ू')){ // o + obraceny f
+                      return s.Replace('ू'.ToString(),"韦");
+                    }
+                    if (s.Contains('्')){ // o + obraceny f
+                      return s.Replace('्'.ToString(),"专");
+                    }
+                    if (s.Contains('े')){ // o + obraceny f
+                      return s.Replace('े'.ToString(),"车");
+                    }
+                    if (s.Contains('ं')){ // tečka nad
+                      return s.Replace('ं'.ToString(),"见");
+                    }
+                    if (s.Contains('ै')){ // dvojte carka nad
+                      return s.Replace('ै'.ToString(),"齿");
+                    }
+                     if (s.Contains('ृ')){ //m ृ
+                      return s.Replace('ृ'.ToString(),"义");
+                    }
+                    if (s.Contains('ॄ')){ //m ॄ
+                      return s.Replace('ॄ'.ToString(),"宾");
+                    }
+                    if (s.Contains('ॢ')){ //m ॢ
+                      return s.Replace('ॢ'.ToString(),"继");
+                    }
+                    if (s.Contains('ॣ')){ // o + obraceny f
+                      return s.Replace('ॣ'.ToString(),"历");
+                    }
+                    if (s.Contains('ॅ')){ //m ॅ
+                      return s.Replace('ॅ'.ToString(),"妇");
+                    }
+                    if (s.Contains('ॉ')){ // o + obraceny f
+                      return s.Replace('ॉ'.ToString(),"焕");
+                    }
+
+                    if (s.Contains('ौ')){ //m ौ o + obraceny f
+                      return s.Replace('ौ'.ToString(),"头");
+                    }
+                    // f+o
+                    if (s.Contains('ि')){ 
+                        string o=s.Replace('ि'.ToString(),"");
+                        return '媪'+o;
+                    } 
+                  //   'ि'  
+                }
+
+                return s;
+            }
+        }
+
+
+
+      
+            //class Replace{ 
+            //    public char[] From;
+            //    public char To;
+            //}
+        }
+    }

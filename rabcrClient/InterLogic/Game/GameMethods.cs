@@ -731,6 +731,7 @@ namespace rabcrClient {
                 case (ushort)Items.Rubber: return 1327;
                 case (ushort)Items.Rope: return 1179;
                 case (ushort)Items.AnimalRabbit: return 1329;
+                case (ushort)Items.AnimalParrot: return 1584;
                 case (ushort)Items.ItemBattery: return 1264;
                 case (ushort)Items.PlateIron: return 1234;
                 case (ushort)Items.PlateGold: return 1238;
@@ -1390,6 +1391,7 @@ namespace rabcrClient {
                 case (ushort)Items.AnimalRabbit: return (ushort)BlockId.Rabbit;
                 case (ushort)Items.AnimalChicken: return (ushort)BlockId.Chicken;
                 case (ushort)Items.AnimalFish: return (ushort)BlockId.Fish;
+                case (ushort)Items.AnimalParrot: return (ushort)BlockId.MobParrot;
             }
 
             return (ushort)BlockId.None;
@@ -5060,6 +5062,7 @@ namespace rabcrClient {
                 case (ushort)Items.Ash: return true;
                 case (ushort)Items.KapokFibre: return true;
                 case (ushort)Items.AnimalRabbit: return true;
+                case (ushort)Items.AnimalParrot: return true;
                 case (ushort)Items.AnimalChicken: return true;
                 case (ushort)Items.AnimalFish: return true;
                 case (ushort)Items.Barrel: return true;

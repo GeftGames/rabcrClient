@@ -21,6 +21,8 @@ namespace rabcrClient {
 
 		#region Textures
 		Texture2D
+			TextureParrotStill,
+			TextureParrotFly,
 			TextureBin,
 			TextureEggDrop,TextureOxygenMachine, TextureAirTank, TextureAirTank2, TextureBarrel, TextureIngotSteel,
 			TextureItemEgg, TextureItemBoiledEgg, TextureWaterGraystyle, TextureChristmasStar,
@@ -1412,6 +1414,9 @@ namespace rabcrClient {
 			TextureChristmasBallLightGreenWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/LightGreen");
 			TextureChristmasBallBlueWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Blue");
 			TextureChristmasBallTealWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Teal");
+
+			TextureParrotStill=GetDataTexture(@"Animals/Parrot/Still");
+			TextureParrotFly=GetDataTexture(@"Animals/Parrot/Flying");
 
 			CreateGradientTexture();
 		
@@ -9405,22 +9410,23 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										if (NotExists) {
-											// m;// = GetMobFromId((byte)mobId,(byte)y,random.Bool(),x);
 											switch (mobId) {
 												case (ushort)BlockId.Fish:
-													chunk.Mobs.Add(new Fish(mobId, y, x,random.Bool(), fishTexture0, fishTexture1));
-													// m);
+													chunk.Mobs.Add(new Fish(/*mobId,*/ y, x,random.Bool(), fishTexture0, fishTexture1));
 													break;
 
 												case (ushort)BlockId.Chicken:
-													chunk.Mobs.Add(new Chicken(mobId, y,x, random.Bool(), chickenWalkTexture, chickenEatTexture));
+													chunk.Mobs.Add(new Chicken(y, x, random.Bool(), chickenWalkTexture, chickenEatTexture));
 													break;
 
 												case (ushort)BlockId.Rabbit:
-													chunk.Mobs.Add(new Rabbit(mobId,y, x, random.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
+													chunk.Mobs.Add(new Rabbit(y, x, random.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
+													break;
+														
+												case (ushort)BlockId.MobParrot:
+													chunk.Mobs.Add(new Parrot(y, x, random.Bool(), random.Bool(), TextureParrotStill, TextureParrotFly));
 													break;
 											}
-											//   if (m!=null)
 										}
 									}
 								}
@@ -11927,6 +11933,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)BlockId.Rabbit: return 30*DestroyKnife();
 				case (ushort)BlockId.Chicken: return 30*DestroyKnife();
 				case (ushort)BlockId.Fish: return 30*DestroyKnife();
+				case (ushort)BlockId.MobParrot: return 30*DestroyKnife();
 			}
 
 			return 0;
@@ -12123,6 +12130,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.Rabbit:
+					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
+					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
+					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
+					DropItemToPos(new ItemNonInvBasic((ushort)Items.RabbitMeat, 1), X16, Y16);
+					return;
+					
+				case (ushort)BlockId.MobParrot:
 					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
 					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
 					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
@@ -12987,13 +13003,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				bytes.Add((byte)chunk.Mobs.Count);
 				if (chunk.Mobs.Count>0) {
 					foreach (Mob m in chunk.Mobs) {
-						ushort id=m.Id;
-						byte* mbytes= (byte*)&id;
-						bytes.Add(mbytes[1]);
-						bytes.Add(mbytes[0]);
+						bytes.AddRange(m.Save());
+						//ushort id=m.Id;
+						//byte* mbytes= (byte*)&id;
+						//bytes.Add(mbytes[1]);
+						//bytes.Add(mbytes[0]);
 
-						bytes.Add(m.Height);
-						bytes.Add(m.Dir ? (byte)1 : (byte)0);
+						//bytes.Add(m.Height);
+						//bytes.Add(m.Dir ? (byte)1 : (byte)0);
 					}
 				}
 			}
@@ -14513,17 +14530,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								switch (id) {
 									case (ushort)BlockId.Fish:
-										chunk.Mobs.Add(new Fish(id, *current++, pos,*current++==1, fishTexture0, fishTexture1));
+										chunk.Mobs.Add(new Fish(/*id,*/ *current++, pos,*current++==1, fishTexture0, fishTexture1));
 										break;
 
 									case (ushort)BlockId.Chicken:
-										chunk.Mobs.Add(new Chicken(id, *current++, pos, *current++==1, chickenWalkTexture, chickenEatTexture));
+										chunk.Mobs.Add(new Chicken(/*id,*/ *current++, pos, *current++==1, chickenWalkTexture, chickenEatTexture));
 										break;
 
 									case (ushort)BlockId.Rabbit:
-										chunk.Mobs.Add(new Rabbit(id,*current++, pos, *current++==1, rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
+										chunk.Mobs.Add(new Rabbit(/*id,*/*current++, pos, *current++==1, rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
 										break;
-
+									
+									case (ushort)BlockId.MobParrot:
+										chunk.Mobs.Add(new Parrot(/*id,*/*current++, pos, *current++==1,  *current++==1, TextureParrotStill, TextureParrotFly));
+										break;
 										#if DEBUG
 									default:
 										throw new Exception("mob is null");
@@ -19562,6 +19582,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				(ushort)Items.AnimalRabbit,
 				(ushort)Items.AnimalChicken,
+				(ushort)Items.AnimalParrot,
 				(ushort)Items.AnimalFish,
 			};
 			creativeScrollbar.scale=0;
@@ -20306,6 +20327,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)Items.StoneMudstone: return mudstoneTexture;
 				case (ushort)Items.StoneAnorthosite: return anorthositeTexture;
 				case (ushort)Items.AnimalRabbit: return rabbitStillTexture;
+				case (ushort)Items.AnimalParrot: return TextureParrotStill;
 				case (ushort)Items.AnimalChicken: return chickenStillTexture;
 				case (ushort)Items.Rod: return RodTexture;
 				case (ushort)Items.TorchElectricOFF: return LightElectricTexture;

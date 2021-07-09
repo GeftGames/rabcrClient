@@ -371,6 +371,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\FontInfo devanagari 18.bin" />
+    <None Include="Resources\FontInfo devanagari 34.bin" />
     <None Include="Resources\stones.png" />
     <None Include="Resources\SpaceStation.png" />
     <None Include="Default\Textures\Blocks\Mashines\Desk.png" />

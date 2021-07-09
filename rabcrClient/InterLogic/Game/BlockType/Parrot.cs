@@ -1,127 +1,90 @@
-﻿//using Microsoft.Xna.Framework;
-//using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
-//namespace rabcrClient {
-//    class Parrot:Mob {
+namespace rabcrClient {
+    class Parrot:Mob {
+        
+        #region Varibles
+        const float BirdSpeed=5f;
 
-//        public byte Frame;
-//        public bool needToChangeChunk;
-//        public bool move;
-//        public short lastChunkID;
-//        public byte moveCount;
-//        public bool switchtoWalk;
-//        public MoveType moveType;
+        bool Flying;
+        Vector2 SpeedVector;
+        Texture2D TextureStill, TextureFlying;
 
-//        readonly Texture2D TextureWalk, TextureEat, TextureJump;
-//        public Texture2D thisTexture;
+        public bool FlyRight;
+        public int Frame;
+        public Vector2 PositionFlyTo;
 
-//        public Parrot(ushort id, byte height, int x, bool dir, Texture2D textureStill, Texture2D textureFlying) {
-//          //  Height=height;
-//            Position.Y=height*16;
-//            Position=new Vector2(x*16,Height*16);
-//            TextureWalk = textureWalk;
-//            TextureEat = textureEat;
-//            TextureJump = textureJump;
-//         //   Lives=lives;
-//            Frame=0;
-//            Dir=dir;
-//            Id=id;
-//            thisTexture=TextureEat;
-//        }
+        public delegate bool EventStopFly();
+        public EventStopFly StopFlying;
+        #endregion
 
-//        public Rabbit(ushort id, int height, /*byte lives,*/ int x, bool dir, Texture2D textureWalk, Texture2D textureEat,Texture2D textureJump) {
-//           // Height=height;
-//            Position.Y=height*16;
-//            Position=new Vector2(x*16,Height*16);
-//            TextureWalk = textureWalk;
-//            TextureEat = textureEat;
-//            TextureJump = textureJump;
-//         //   Lives=lives;
-//            Frame=0;
-//            Dir=dir;
-//            Id=id;
-//            thisTexture=TextureEat;
-//        }
+        public Parrot(byte height, int x, bool dir, bool Flying, Texture2D textureStill, Texture2D textureFlying) {
+          //  Position.Y=height*16;
+            Position=new Vector2(x*16, height*16);
+            TextureStill = textureStill;
+            TextureFlying = textureFlying;
+          
+            Frame=0;
+            FlyRight=dir;
+            Id=(ushort)BlockId.MobParrot;
+        } 
+        public unsafe override byte[] Save(){ 
+            ushort id=Id;
+			byte* mbytes=(byte*)&id ;
+ 
+            return new byte[]{ mbytes[1], mbytes[0], Height, Dir ? (byte)1 : (byte)0, Flying? (byte)1 : (byte)0 };
+        }
+        
+        public Parrot(int height, int x, bool dir, bool Flying, Texture2D textureStill, Texture2D textureFlying) {
+          //  Position.Y=height*16;
+            Position=new Vector2(x*16, height*16);
+            TextureStill = textureStill;
+            TextureFlying = textureFlying;
+          
+            Frame=0;
+            FlyRight=dir;
+            Id=(ushort)BlockId.MobParrot;
+        }
 
-//        public override void Draw() {
-//            Frame+=/*4*/10;
-//            if (move) {
-//                switch (moveType){
-//                    case MoveType.Walk:
-//                        if (Dir) Position.X+=0.25f;
-//                        else Position.X-=0.25f;
+        public void UpdateFlying() { 
+            if (FastMath.DistanceInt(Position.X,Position.Y,PositionFlyTo.X,PositionFlyTo.Y)<BirdSpeed*2) { 
+                
+                // invoke to check existence of destination flight
+                if (StopFlying.Invoke()) { 
+                    Flying=false;    
+                    Position=PositionFlyTo;
+                }
 
-//                        moveCount--;
-//                        if (moveCount==0) {
-//                            move=false;
-//                            needToChangeChunk=true;
-//                            thisTexture=TextureEat;
-//                        }
+            } else { 
+                Position+=SpeedVector;
+            }
+        }
 
-//                        if (Frame>=thisTexture.Width) {
-//                            Frame=0;
-//                        }
-//                        break;
+        public void SetFlying(int x, int y) { 
+            Flying=true;
+           
+            PositionFlyTo.X=x;
+            PositionFlyTo.Y=y;
 
-//                    case MoveType.Fall:
-//                        if (Dir){ Position.X+=0.25f; Position.Y+=0.25f; }
-//                        else {Position.X-=0.25f; Position.Y+=0.25f; }
+            Vector2 RawSpeedVector=new Vector2(PositionFlyTo.X-Position.X, PositionFlyTo.X-Position.X);
+            float vecSize=RawSpeedVector.X*RawSpeedVector.X+RawSpeedVector.X*RawSpeedVector.X;
 
-//                        moveCount--;
-//                        if (moveCount==0) {
-//                            move=false;
-//                            needToChangeChunk=true;
-//                            thisTexture=TextureEat;
-//                        }
+            SpeedVector=RawSpeedVector/vecSize*BirdSpeed;
+            FlyRight=SpeedVector.X>0;
+        }
 
-//                        if (Frame>=thisTexture.Width) {
-//                            Frame=0;
-//                        }
-//                        break;
+        public override void Draw() {
+            if (Flying) {
 
-//                    case MoveType.Jump:
-//                        if (Dir) {Position.X+=0.25f; Position.Y-=0.25f; }
-//                        else {Position.X-=0.25f; Position.Y-=0.25f; }
+                // Frames
+                Frame+=10;
+                if (Frame>TextureFlying.Width)Frame-=TextureFlying.Width;
 
-//                        moveCount--;
-//                        if (moveCount==0) {
-//                            move=false;
-//                            needToChangeChunk=true;
-//                            thisTexture=TextureEat;
-//                        }
-
-//                        if (Frame>=thisTexture.Width) {
-//                            Frame=0;
-//                        }
-//                        break;
-
-//                }
-//            } else {
-//                if (Frame>=thisTexture.Width){
-//                    Frame=0;
-
-//                    if (switchtoWalk){
-//                        move=true;
-//                        thisTexture=TextureJump;
-//                        switchtoWalk=false;/*System.Console.WriteLine("switch walk");*/
-//                    } else {
-//                      //  System.Console.WriteLine(thisTexture.Name);
-//                       if (Rabcr.random.Bool()){
-//                        if (thisTexture==TextureEat) {
-//                            if (Rabcr.random.Bool()){thisTexture=TextureWalk; /*System.Console.WriteLine("switch tex jump");*/}
-//                        }else{ //System.Console.WriteLine("?");
-//                             thisTexture=TextureEat;//System.Console.WriteLine("switch tex eat");
-//                        }
-//                            if (Rabcr.random.Bool()){Dir=!Dir;/*System.Console.WriteLine("switch dir");*/ }
-//                        }
-
-
-//                    }
-//                }
-//            }
-
-//            if (Dir) Rabcr.spriteBatch.Draw(thisTexture, Position,new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White);
-//            else Rabcr.spriteBatch.Draw(thisTexture, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
-//        }
-//    }
-//}
+                if (FlyRight) Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
+                else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            } else Rabcr.spriteBatch.Draw(TextureStill, Position, Color.White);
+        }
+    }
+}

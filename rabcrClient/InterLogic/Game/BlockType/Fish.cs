@@ -8,7 +8,7 @@ namespace rabcrClient {
         bool Frame;
         readonly Texture2D Texture1, Texture2;
 
-        public Fish(ushort id, byte height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
+        public Fish(/*ushort id, */byte height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
           //  Height=height;
             Position=new Vector2(x*16+2,/*Height*/height*16+3);
             Texture1 = fishTexture1;
@@ -18,10 +18,10 @@ namespace rabcrClient {
             //Lives=lives;
             Frame=false;
             speed = 1;
-            Id=id;
+            Id=(ushort)BlockId.Fish;
         }
 
-        public Fish(ushort id, int height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
+        public Fish(/*ushort id,*/ int height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
           //  Height=height;
             Position=new Vector2(x*16+2,/*Height*/height*16+3);
             Texture1 = fishTexture1;
@@ -31,7 +31,7 @@ namespace rabcrClient {
             //Lives=lives;
             Frame=false;
             speed = 1;
-            Id=id;
+          Id=(ushort)BlockId.Fish;
         }
 
         public override void Update() {

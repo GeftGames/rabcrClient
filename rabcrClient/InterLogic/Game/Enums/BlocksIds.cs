@@ -338,4 +338,5 @@
     ChristmasBallPink,
     ChristmasBallPurple,
     ChristmasBallLightGreen,
+    MobParrot,
 }

@@ -59,6 +59,12 @@
 #begin Default/Fonts/Font cyrillic 34.png
 /copy:Default/Fonts/Font cyrillic 34.png
 
+#begin Default/Fonts/Font devanagari 18.png
+/copy:Default/Fonts/Font devanagari 18.png
+
+#begin Default/Fonts/Font devanagari 34.png
+/copy:Default/Fonts/Font devanagari 34.png
+
 #begin Default/Fonts/Font japanese 18.png
 /copy:Default/Fonts/Font japanese 18.png
 
@@ -263,7 +269,7 @@
 /processorParam:TextureFormat=Color
 /build:Default/Textures/Animals/Fish/Fish1.png
 
-#begin Default/Textures/Animals/Parrot/flying.png
+#begin Default/Textures/Animals/Parrot/Flying.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -273,9 +279,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Default/Textures/Animals/Parrot/flying.png
+/build:Default/Textures/Animals/Parrot/Flying.png
 
-#begin Default/Textures/Animals/Parrot/still.png
+#begin Default/Textures/Animals/Parrot/Still.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -285,7 +291,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Default/Textures/Animals/Parrot/still.png
+/build:Default/Textures/Animals/Parrot/Still.png
 
 #begin Default/Textures/Animals/Rabbit/Eating.png
 /importer:TextureImporter
