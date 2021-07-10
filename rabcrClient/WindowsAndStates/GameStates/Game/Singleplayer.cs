@@ -9425,9 +9425,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 													break;
 														
 												case (ushort)BlockId.MobParrot:
-													chunk.Mobs.Add(new Parrot(y, x, random.Bool(), random.Bool(), TextureParrotStill, TextureParrotFly));
+													chunk.Mobs.Add(new Parrot(y, x, random.Bool(), false, TextureParrotStill, TextureParrotFly));
 													break;
 											}
+											InventoryRemoveSelectedItem();
 										}
 									}
 								}
@@ -14543,7 +14544,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										break;
 									
 									case (ushort)BlockId.MobParrot:
-										chunk.Mobs.Add(new Parrot(/*id,*/*current++, pos, *current++==1,  *current++==1, TextureParrotStill, TextureParrotFly));
+										{ 
+											bool fly=*current++==1;
+											if (fly) chunk.Mobs.Add(new Parrot(*current++, pos,*current++==1, new Vector2( ((*current++<<8) | *current++)*16, (*current++)*16),TextureParrotStill, TextureParrotFly));
+											else chunk.Mobs.Add(new Parrot(*current++, pos,  *current++==1, TextureParrotStill, TextureParrotFly));
+										}
 										break;
 										#if DEBUG
 									default:

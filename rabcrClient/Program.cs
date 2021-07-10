@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management;
@@ -11,43 +12,113 @@ namespace rabcrClient {
 
         [STAThread]
         static void Main(string[] args) {
-          //   new Message("Player", Global.MessageGedoInfo).Run();
-
+          
 
            // // Testing speed of code
-           //// #if DEBUG
-           // int max=1000000;
+           // // #if DEBUG
+           // int max = 10000;
            // System.Threading.Thread.Sleep(4000);
-           // long _1=0, _2=0;
-           // Stopwatch sw=new Stopwatch();
-           // _1Code();
-           // _2Code();
-           // _1Code();
-           // _2Code();
-           // Console.WriteLine("1: "+_1);
-           // Console.WriteLine("2: "+_2);
+           // long 
+           //     _1 = 0,
+           //     _2 = 0,
+           //     _3 = 0,
+           //   //  _4 = 0,
+           //     _5 = 0,
+           //     _6 = 0,
+           //     _7 = 0;
+           // Stopwatch sw = new Stopwatch();
+           // for (float i = 0; i < 5; i++) {
+           //     //_1Code();
+           //     //_2Code();
+           //     _3Code();
+           //   //  _4Code();
+           //     //_5Code();
+           //     //_6Code();
+           //     _7Code();
+           // }
+           // Console.WriteLine("1: " + _1);
+           // Console.WriteLine("2: " + _2);
+           // Console.WriteLine("3: " + _3);
+           //// Console.WriteLine("4: " + _4);
+           // //Console.WriteLine("5: " + _5);
+           // //Console.WriteLine("6: " + _6);
+           // Console.WriteLine("7: " + _7);
 
-           // void _1Code(){
+           // //void _1Code() {
+           // //    sw.Start();
+           // //    float l=0;
+           // //    for (float i = 0; i < max; i+=0.0015f) l+=FastMath.InvSqrt(i);
+           // //    sw.Stop();
+           // //    Console.WriteLine(l);
+           // //    _1 += sw.ElapsedMilliseconds;
+           // //    sw.Reset();
+           // //}
+
+           // //void _2Code() {
+           // //    float l=0;
+           // //    sw.Start();
+           // //    for (float i = 0; i < max; i+=0.0015f)l+=FastMath.InvSqrt2(i);
+           // //    sw.Stop();
+           // //     Console.WriteLine(l);
+           // //    _2 += sw.ElapsedMilliseconds;
+           // //    sw.Reset();
+           // //}
+
+           //  void _3Code() {
+           //     float l=0;
            //     sw.Start();
-           //     for (int i=0; i<max; i++) BitConverter.GetBytes(i);
+           //     for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt3(i);
            //     sw.Stop();
-           //     _1+=sw.ElapsedMilliseconds;
+           //      Console.WriteLine(l);
+           //     _3 += sw.ElapsedMilliseconds;
            //     sw.Reset();
            // }
 
-           // void _2Code(){
-           //     sw.Start();
-           //     for (int i=0; i<max; i++) FastBitConverter.GetBytes(i);
-           //     sw.Stop();
-           //     _2+=sw.ElapsedMilliseconds;
-           //      sw.Reset();
-           // }
+           // //void _4Code() {
+           // //    float l=0;
+           // //    sw.Start();
+           // //    for (float i = 20; i < max; i+=0.00015f)l+=FastMath.InvSqrt4(i);
+           // //    sw.Stop();
+           // //     Console.WriteLine(l);
+           // //    _4 += sw.ElapsedMilliseconds;
+           // //    sw.Reset();
+           // //}
 
-           //// #endif
-           
-            #if !DEBUG
+           // //void _5Code() {
+           // //    float l=0;
+           // //    sw.Start();
+           // //    for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt5(i);
+           // //    sw.Stop();
+           // //     Console.WriteLine(l);
+           // //    _5 += sw.ElapsedMilliseconds;
+           // //    sw.Reset();
+           // //}
+
+           // //void _6Code() {
+           // //    float l=0;
+           // //    sw.Start();
+           // //    for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt6(i);
+           // //    sw.Stop();
+           // //     Console.WriteLine(l);
+           // //    _6 += sw.ElapsedMilliseconds;
+           // //    sw.Reset();
+           // //}     
+            
+           // void _7Code() {
+           //     float l=0;
+           //     sw.Start();
+           //     for (float i = 20; i < max; i+=0.0015f)
+           //         l+=1f/(float)Math.Sqrt(i);
+           //     sw.Stop();
+           //      Console.WriteLine(l);
+           //     _7 += sw.ElapsedMilliseconds;
+           //     sw.Reset();
+           // }
+            // #endif
+
+#if !DEBUG
             try{
-            #endif
+#endif
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);

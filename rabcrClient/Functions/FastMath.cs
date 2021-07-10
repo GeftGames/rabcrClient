@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 
 namespace rabcrClient {
     static class FastMath {
@@ -98,5 +99,13 @@ namespace rabcrClient {
             else return -2*(input-1)*(input-1)+1;
         }
 
+        public unsafe static float InvSqrt3 (float x) {
+           float xhalf = 0.5f*x;
+           int i = *(int*)&x;
+           i = 0x5f3759df - (i>>1);
+           x = *(float*)&i;
+           x *= (1.5f - xhalf*x*x);
+           return x;
+        }
     }
 }
