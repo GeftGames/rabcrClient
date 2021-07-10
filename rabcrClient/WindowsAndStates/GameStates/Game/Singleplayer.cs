@@ -5783,6 +5783,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						// Start mooving
 						MoveChicken();
 						MoveRabbit();
+						MoveParrot();
 
 						// Finish mooving
 						FinishMooving();
@@ -22271,7 +22272,59 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void FinishMooving() {
+		void MoveParrot() {
+			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX);
+			Terrain chunk=terrain[Xran];
+			if (chunk.Mobs.Count!=0) {
+				foreach (Mob mob in chunk.Mobs) {
+					if (mob.Id==(ushort)BlockId.MobParrot) {
+						int height=mob.Height;
+
+						Parrot r=(Parrot)mob;
+						if (!r.Flying) {
+							// Sort random near chunks
+							List<(int, float)> rndChunks=new List<(int, float)>();
+							int src=(int)(r.Position.X)/16;
+							for (int i=1; i<20; i++){ 
+								(int, float) ch1 = (src+i, random.Float());
+								(int, float) ch2 = (src-i, random.Float());
+								rndChunks.Add(ch1);
+								rndChunks.Add(ch2);
+							}
+					
+							// sort chunks randomly 
+							rndChunks.Sort((i1, i2) => i1.Item2.CompareTo(i2.Item2));
+
+							// find leaves and move to
+							foreach ((int, float) ch in rndChunks) { 
+								Terrain chunkJ=terrain[ch.Item1];
+								for (int i=chunkJ.StartSomething; i<125; i++) { 
+									if (chunkJ.IsTopBlocks[i]){ 
+										if (GameMethods.IsLeaves(chunkJ.TopBlocks[i].Id)) {
+                                            r.StopFlying +=  delegate() { 
+												Terrain dscChunk=terrain[(int)r.Position.X/16];
+
+                                                if (dscChunk.IsTopBlocks[(int)r.Position.Y/16]) {
+													return true;
+                                                }
+                                    
+												return false; 
+											};
+                               
+                                            r.SetFlying(ch.Item1*16,i*16);
+											return;
+										}
+									}	
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+        void FinishMooving() {
 			foreach (Mob mob in movingAnimals) {
 				switch (mob.Id) {
 					case (ushort)BlockId.Chicken:

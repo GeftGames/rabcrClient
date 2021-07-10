@@ -8,7 +8,7 @@ namespace rabcrClient {
         #region Varibles
         const float BirdSpeed=5f;
 
-        bool Flying;
+       public bool Flying;
         Vector2 SpeedVector;
         Texture2D TextureStill, TextureFlying;
 
@@ -17,7 +17,7 @@ namespace rabcrClient {
         public Vector2 PositionFlyTo;
 
         public delegate bool EventStopFly();
-        public EventStopFly StopFlying;
+        public event EventStopFly StopFlying;
         #endregion
 
         public Parrot(byte height, int x, bool dir, bool Flying, Texture2D textureStill, Texture2D textureFlying) {
@@ -51,10 +51,10 @@ namespace rabcrClient {
         public void UpdateFlying() { 
             if (FastMath.DistanceInt(Position.X,Position.Y,PositionFlyTo.X,PositionFlyTo.Y)<BirdSpeed*2) { 
                 
+                Position=PositionFlyTo;
                 // invoke to check existence of destination flight
                 if (StopFlying.Invoke()) { 
                     Flying=false;    
-                    Position=PositionFlyTo;
                 }
 
             } else { 
@@ -68,8 +68,8 @@ namespace rabcrClient {
             PositionFlyTo.X=x;
             PositionFlyTo.Y=y;
 
-            Vector2 RawSpeedVector=new Vector2(PositionFlyTo.X-Position.X, PositionFlyTo.X-Position.X);
-            float vecSize=RawSpeedVector.X*RawSpeedVector.X+RawSpeedVector.X*RawSpeedVector.X;
+            Vector2 RawSpeedVector=new Vector2(PositionFlyTo.X-Position.X, PositionFlyTo.Y-Position.Y);
+            float vecSize=RawSpeedVector.X*RawSpeedVector.X+RawSpeedVector.Y*RawSpeedVector.Y;
 
             SpeedVector=RawSpeedVector/vecSize*BirdSpeed;
             FlyRight=SpeedVector.X>0;
@@ -77,13 +77,13 @@ namespace rabcrClient {
 
         public override void Draw() {
             if (Flying) {
-
+                UpdateFlying();
                 // Frames
                 Frame+=10;
                 if (Frame>TextureFlying.Width)Frame-=TextureFlying.Width;
 
-                if (FlyRight) Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
-                else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                if (FlyRight) Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/35f)*16,0,35,35), Color.White, 0, Vector2.Zero, .5f, SpriteEffects.FlipHorizontally, 0);
+                else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/35f)*16,0,35,35), Color.White, 0, Vector2.Zero, .5f, SpriteEffects.None, 0);
             } else Rabcr.spriteBatch.Draw(TextureStill, Position, Color.White);
         }
     }
