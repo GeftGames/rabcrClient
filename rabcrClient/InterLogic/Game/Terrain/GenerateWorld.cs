@@ -2996,6 +2996,7 @@ namespace rabcrClient {
 
                     // Add animals
                     if (random.Int(15)==1) chunk.AddChicken((byte)(terrainHeight-1));
+                   
                 
                     switch (random.Int(9)) {
                         case 1:
@@ -5872,6 +5873,10 @@ namespace rabcrClient {
             SetLeave(chunkX,   x  , y-9 , (ushort)BlockId.PineLeaves, tree);
             SetLeave(chunkXM1, x-1, y-10, (ushort)BlockId.PineLeaves, tree);
             SetLeave(chunkXP1, x+1, y-10, (ushort)BlockId.PineLeaves, tree);
+
+            //if (random.Int(15)==1) chunkX.AddParrot((byte)(y-10));
+            //if (random.Int(15)==1) chunkXP2.AddParrot((byte)(y-8));
+            //if (random.Int(15)==1) chunkXM1.AddParrot((byte)(y-10));
         }
 
         void TreeKapok(int x, int y) {
@@ -5955,6 +5960,14 @@ namespace rabcrClient {
             SetLeave(chunkX,   x  , y-18, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
             SetLeave(chunkXM1, x-1, y-18, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP1, x+1, y-18, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFibre, tree);
+
+            if (random.Int(15)==1) chunkXM3.AddParrot((byte)(y-17));
+            if (random.Int(15)==1) chunkXM2.AddParrot((byte)(y-17));
+            if (random.Int(15)==1) chunkXM1.AddParrot((byte)(y-18));
+            if (random.Int(15)==1) chunkX.AddParrot((byte)(y-18));
+            if (random.Int(15)==1) chunkXP1.AddParrot((byte)(y-18));
+            if (random.Int(15)==1) chunkXP2.AddParrot((byte)(y-17));
+            if (random.Int(15)==1) chunkXP3.AddParrot((byte)(y-17));
         }
 
         void TreeSpruceBig(int x,int y) {
@@ -6561,6 +6574,9 @@ namespace rabcrClient {
 
             byteRabbit0=(byte)(ushort)BlockId.Rabbit,
             byteRabbit1=(byte)(ushort)(((ushort)BlockId.Rabbit)>>8),
+            
+            byteParrot0=(byte)(ushort)BlockId.MobParrot,
+            byteParrot1=(byte)(ushort)(((ushort)BlockId.MobParrot)>>8),
 
             byteChicken0=(byte)(ushort)BlockId.Chicken,
             byteChicken1=(byte)(ushort)(((ushort)BlockId.Chicken)>>8);
@@ -6586,6 +6602,19 @@ namespace rabcrClient {
             Mobs.Add(byteChicken0);
             Mobs.Add(height);
             Rabcr.random.Byte2(Mobs);
+            MobsCount++;
+        }
+
+        public unsafe void AddParrot(byte height) {
+            Mobs.Add(byteParrot1);
+            Mobs.Add(byteParrot0);
+
+            // no flying
+            Mobs.Add(0);
+
+            Mobs.Add(height);
+            Rabcr.random.Byte2(Mobs);
+
             MobsCount++;
         }
 

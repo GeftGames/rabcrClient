@@ -48,7 +48,12 @@ namespace rabcrClient {
             ushort id=Id;
 			byte* mbytes=(byte*)&id ;
  
-            return new byte[]{ mbytes[1], mbytes[0], Height, Dir ? (byte)1 : (byte)0 };
+            return new byte[]{ 
+                mbytes[1], 
+                mbytes[0], 
+                Height, 
+                Dir ? (byte)1 : (byte)0 
+            };
         }
 
         public override void Draw() {

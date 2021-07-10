@@ -6890,6 +6890,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerWalkingMoustage, new Vector2(vector.X-1, vector.Y), Setting.moustageColor);
 									if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerWalkingHair, new Vector2(vector.X-1, vector.Y), Setting.hairColor);
 
+									// Legs
+									if (ClothesLegs!=null) {
+										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
+										spriteBatch.Draw(ClothesLegs.TextureWalking, vector, curImg, ClothesLegs.Color);
+									} else {
+										spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
+										if (ClothesUnderwearDown!=null) {
+											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
+											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
+										} else {
+											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite);
+										}
+									}
 									// Chest
 									if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
 										if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, vector, null, ClothesChest.Color);
@@ -6909,19 +6922,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (ClothesChestTop!=null) spriteBatch.Draw(ClothesChestTop.TextureWalking, vector, null, ClothesChestTop.Color);
 									if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureWalkingOrSwimming, new Vector2(vector.X-1, vector.Y), ClothesHead.Color);
 
-									// Legs
-									if (ClothesLegs!=null) {
-										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
-										spriteBatch.Draw(ClothesLegs.TextureWalking, vector, curImg, ClothesLegs.Color);
-									} else {
-										spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
-										if (ClothesUnderwearDown!=null) {
-											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
-											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
-										} else {
-											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite);
-										}
-									}
 
 									if (ClothesChestTop is null) {
 										if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
@@ -7037,6 +7037,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureWalkingOrSwimming, new Vector2(vector.X-1,vector.Y), null, ClothesHead.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 
+									// Legs
+									if (ClothesLegs!=null) {
+										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
+										spriteBatch.Draw(ClothesLegs.TextureWalking, vector, curImg, ClothesLegs.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									} else {
+										spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+										if (ClothesUnderwearDown!=null) {
+											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+										} else {
+											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+										}
+									}
 									// Chest
 									if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
 										if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, new Vector2(vector.X-2, vector.Y) , null, ClothesChest.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
@@ -7054,19 +7067,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 									if (ClothesChestTop!=null) spriteBatch.Draw(ClothesChestTop.TextureWalking, vector, null, ClothesChestTop.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 									
-									// Legs
-									if (ClothesLegs!=null) {
-										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin);
-										spriteBatch.Draw(ClothesLegs.TextureWalking, vector, curImg, ClothesLegs.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-									} else {
-										spriteBatch.Draw(TexturePlayerWalkingLegs, vector, curImg, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-										if (ClothesUnderwearDown!=null) {
-											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-										} else {
-											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-										}
-									}
 
 									if (ClothesChestTop is null) {
 										if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
@@ -14545,9 +14545,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									
 									case (ushort)BlockId.MobParrot:
 										{ 
-											bool fly=*current++==1;
-											if (fly) chunk.Mobs.Add(new Parrot(*current++, pos,*current++==1, new Vector2( ((*current++<<8) | *current++)*16, (*current++)*16),TextureParrotStill, TextureParrotFly));
-											else chunk.Mobs.Add(new Parrot(*current++, pos,  *current++==1, TextureParrotStill, TextureParrotFly));
+										//	bool fly=;
+											if (*current++==1) chunk.Mobs.Add(new Parrot(*current++, pos, *current++==1, new Vector2( ((*current++<<8) | *current++)*16, (*current++)*16),TextureParrotStill, TextureParrotFly));
+											else chunk.Mobs.Add(new Parrot(*current++, pos, *current++==1, TextureParrotStill, TextureParrotFly));
 										}
 										break;
 										#if DEBUG
@@ -22286,7 +22286,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						int height=mob.Height;
 
 						Parrot r=(Parrot)mob;
-						if (!r.Flying) {
+						//if (!r.Flying) {
 							// Sort random near chunks
 							List<(int, float)> rndChunks=new List<(int, float)>();
 							int src=(int)(r.Position.X)/16;
@@ -22321,7 +22321,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 									}	
 								}
-							}
+						//	}
 						}
 					}
 				}

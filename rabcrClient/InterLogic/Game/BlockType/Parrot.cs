@@ -78,27 +78,32 @@ namespace rabcrClient {
         //} 
 
         public unsafe override byte[] Save(){ 
-            ushort id=Id;
-			byte* mbytes=(byte*)&id;
-            int FlyToX=(int)(PositionFlyTo.X/16f);
+            ushort 
+                id=Id, 
+                flyToX=(ushort)PositionFlyTo.X;
+			byte* 
+                mbytes=(byte*)&id,
+                mbytesFlyToX=(byte*)&flyToX;
+
             if (Flying) 
                 return new byte[]{ 
                         mbytes[1], 
                         mbytes[0], 
+                        Flying? (byte)1 : (byte)0, 
                         Height, 
                         Dir ? (byte)1 : (byte)0, 
-                        Flying? (byte)1 : (byte)0, 
-                        (byte)FlyToX, 
-                        (byte)(FlyToX>>8), 
+
+                        mbytesFlyToX[1], 
+                        mbytesFlyToX[0], 
                         (byte)(PositionFlyTo.Y/16f)
                     };
             else return 
                 new byte[]{ 
                     mbytes[1], 
                     mbytes[0], 
+                    Flying? (byte)1 : (byte)0, 
                     Height, 
                     Dir ? (byte)1 : (byte)0, 
-                    Flying? (byte)1 : (byte)0 
                 };
         }
         
@@ -116,9 +121,9 @@ namespace rabcrClient {
             if (FastMath.DistanceInt(Position.X,Position.Y, PositionFlyTo.X,PositionFlyTo.Y)<=BirdSpeed*2) { 
                 
                 Position=PositionFlyTo;
+                    Flying=false;    
                 // invoke to check existence of destination flight
                 if (StopFlying.Invoke()) { 
-                    Flying=false;    
                 }
 
             } else { 
