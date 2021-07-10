@@ -5,20 +5,20 @@ namespace rabcrClient{
         public const int 
             VersionMajor    = 0, 
             VersionMinor    = 1, 
-            VersionBuild    = 24, 
+            VersionBuild    = 25, 
             VersionRevision = 0;
 
-        public const string VersionString = "0.1.24.0";
+        public const string VersionString = "0.1.25.0";
 
         // Special name of version
         public const string VersionSpecialName = "";
 
         // Release date
-        public const string Date="30.12.2020";
+        public const string Date="xx.xx.2021";
 
 
 
-        // Full name of game
+        // Full def name of game
         public const string GameName = "RabigonCraft The most of my World";
 
         // Short name of game
@@ -31,7 +31,7 @@ namespace rabcrClient{
        // public const string CheckNewVersion="http://geftgames.sweb.cz/system/rabcrGameVersions.txt";
 
 
-        // Authors (for more people use "Henry,James,John", char ',' will be replaced depending on the language)
+        // Authors
         public const string Authors="Geft";
 
         // Company
@@ -50,69 +50,69 @@ namespace rabcrClient{
         // - If live in these states (system detection: System.Globalization.RegionInfo.CurrentRegion), switch to english (only first run and if is supported language)
         // - Show message on startup - not supported in your region, hovever allow users to run game (10% chance in normal days and 100% show in some days)
         // - Cannot log in
-        public static string[] BannedStates={
-            "KP", // North Korea
-            "RU", // Russia
-            "CN", // China
-            "BY", // Belarus
-            "SA", // Saudi Arabia
-            "SY", // Syria
-            "TM", // Turkmenistan
-            "ER", // Eritrea
-            "EG", // Egypt
-            "ET", // Ethiopia
-            "CU", // Cuba
-            "SD", // Sudan
-            "TD", // Chad
-            "CG", // Republic of the Congo
-            "SS", // South Sudan
-            "AE"   // United Arab Emirates
-        };
+        //public static string[] BannedStates={
+        //    "KP", // North Korea
+        //    "RU", // Russia
+        //    "CN", // China
+        //    "BY", // Belarus
+        //    "SA", // Saudi Arabia
+        //    "SY", // Syria
+        //    "TM", // Turkmenistan
+        //    "ER", // Eritrea
+        //    "EG", // Egypt
+        //    "ET", // Ethiopia
+        //    "CU", // Cuba
+        //    "SD", // Sudan
+        //    "TD", // Chad
+        //    "CG", // Republic of the Congo
+        //    "SS", // South Sudan
+        //    "AE"   // United Arab Emirates
+        //};
 
         // Limited states (low banned)
         // - In some days show message - not supported in your region, however allow users to run game (33%)
         // - Don't show flag in languages
-        public static string[] LimitedStates={
-            "AO", // Angola
-            "SV", // El salvador
-            "KG", // Kyrgyzstan
-            "PK", // Pakistan
-            "VN", // Vietnam
-            "PG", // Papua New Guinea
-            "AZ", // Azerbaijan
-            "BH", // Bahrain
-            "KH", // Cambodia
-            "MM", // Myanmar
-            "CM", // Cameroon
-            "CD", // Democratic Republic of the Congo
-            "LA", // Laos
-            "TJ", // Tajikistan
-            "KZ", // Kazakhstan
-            "CF", // Central African Republic
-            "GA", // Gabon
-            "BI", // Burundi
-            "VE", // Venezuela
-            "SZ", // Eswatini
-            "YE", // Yemen
-            "SO", // Somalia
-            "BN"  // Brunei
-        };
+        //public static string[] LimitedStates={
+        //    "AO", // Angola
+        //    "SV", // El salvador
+        //    "KG", // Kyrgyzstan
+        //    "PK", // Pakistan
+        //    "VN", // Vietnam
+        //    "PG", // Papua New Guinea
+        //    "AZ", // Azerbaijan
+        //    "BH", // Bahrain
+        //    "KH", // Cambodia
+        //    "MM", // Myanmar
+        //    "CM", // Cameroon
+        //    "CD", // Democratic Republic of the Congo
+        //    "LA", // Laos
+        //    "TJ", // Tajikistan
+        //    "KZ", // Kazakhstan
+        //    "CF", // Central African Republic
+        //    "GA", // Gabon
+        //    "BI", // Burundi
+        //    "VE", // Venezuela
+        //    "SZ", // Eswatini
+        //    "YE", // Yemen
+        //    "SO", // Somalia
+        //    "BN"  // Brunei
+        //};
 
         // "in some days" meaning
-        public static GDay[] Sometime = {
-            new GDay { Day=12, Month=2,  Name="Red Hand Day" },
-            new GDay { Day=3,  Month=5,  Name="World Press Freedom Day" },
-            new GDay { Day=10, Month=10, Name="World Day Against the Death Penalty" },
-            new GDay { Day=15, Month=10, Name="International Day of Democracy" },
-            new GDay { Day=17, Month=10, Name="International Students' Day" },
-            new GDay { Day=9,  Month=12, Name="International Anti-Corruption Day" },
-            new GDay { Day=10, Month=12, Name="Human Rights Day" },
-        };
+        //public static GDay[] Sometime = {
+        //    new GDay { Day=12, Month=2,  Name="Red Hand Day" },
+        //    new GDay { Day=3,  Month=5,  Name="World Press Freedom Day" },
+        //    new GDay { Day=10, Month=10, Name="World Day Against the Death Penalty" },
+        //    new GDay { Day=15, Month=10, Name="International Day of Democracy" },
+        //    new GDay { Day=17, Month=10, Name="International Students' Day" },
+        //    new GDay { Day=9,  Month=12, Name="International Anti-Corruption Day" },
+        //    new GDay { Day=10, Month=12, Name="Human Rights Day" },
+        //};
 
-        public class GDay{
-            public int Day, Month;
-            public string Name;
-        }
+        //public class GDay{
+        //    public int Day, Month;
+        //    public string Name;
+        //}
         #endregion
 
         // StartUp Items

@@ -65,7 +65,7 @@ namespace rabcrClient {
                 "<DarkGreen>"+Lang.Texts[203]+"</DarkGreen>: <Link|url="+Release.WebFullGame+">"+Release.WebShortGame+"</Link>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[204]+"</DarkGreen>: <Link|url=mailto:"+Release.Email+">"+Release.Email+"</Link>" + Environment.NewLine +
 
-                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+" 2019</Green> (<Green>C#</Green>)" + Environment.NewLine +
+                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+"</Green> (<Green>C#</Green>)" + Environment.NewLine +
                 "      (<Green>"+Lang.Texts[207]+" 3.8.0.1641</Green>)" +Environment.NewLine + Environment.NewLine +
 
                 "<DarkGreen>"+Lang.Texts[360]+"</DarkGreen>"+ Environment.NewLine +

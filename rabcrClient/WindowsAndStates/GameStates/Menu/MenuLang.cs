@@ -845,7 +845,7 @@ namespace rabcrClient {
                     } else {
                         LLanguage lang=(LLanguage)c;
                         if (lang.Quality==0 || lang.Quality==1) {
-                            System.Windows.Forms.DialogResult dr = System.Windows.Forms.MessageBox.Show("This translation of the game is not very good. The font may not be completely rendered correctly or the translations may not be good. Do you want to switch?","Low quality language", System.Windows.Forms.MessageBoxButtons.YesNo);
+                            System.Windows.Forms.DialogResult dr = System.Windows.Forms.MessageBox.Show("This translation of the game is not very good. Some parts of text may not be rendered correctly or the translations may not be good. Do you want to switch?","Low quality translation", System.Windows.Forms.MessageBoxButtons.YesNo);
                             if (dr==System.Windows.Forms.DialogResult.Yes)SetNewLanguage(lang);
                         }else SetNewLanguage(lang);
                     }
