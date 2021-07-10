@@ -65,6 +65,8 @@ namespace rabcrClient {
             int wayIndex=0;
             bool cl;
 
+            public int Quality;
+
             public override bool Update() {
                 cl=id==Setting.CurrentLanguage;
                 if (multipleFlags){
@@ -154,8 +156,24 @@ namespace rabcrClient {
                 sb.Draw(Rabcr.Pixel, recBack, back);
 
                 // Name of language
-                Text.Draw(sb);
+                   switch (Quality){
+                        default: 
+                            Text.Draw(sb);
+                            break;
 
+                        case 0: 
+                            Text.Draw(sb, Color.Red);
+                            break;
+
+                        case 1: 
+                            Text.Draw(sb, Color.Orange);
+                            break;
+
+                        //case 2: 
+                        //    Text.Draw(sb, Color.Orange);
+                         //   break;
+
+                }
                 ////// Flag
                 ////if (Flag!=null) sb.Draw(Flag, flagPos, Color.White);
 
@@ -199,7 +217,7 @@ namespace rabcrClient {
                 //}
 
                 if (cl){
-                     sb.Draw(TextureOK, new Vector2(X+5, Y+5), Color.White);
+                    sb.Draw(TextureOK, new Vector2(X+5, Y+5), Color.White);
                 }
             }
         }
@@ -485,7 +503,7 @@ namespace rabcrClient {
                                 if (lang.Flags!=null) {
 
                                     if (lang.Flags.Length>0) {
-
+                                        l.Quality=lang.Quality;
                                         l.Flag=new List<Texture2D>();
                                         foreach (string s in lang.Flags) {
                                             var pth = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -676,8 +694,9 @@ namespace rabcrClient {
                 if (displayEnglishName) {
                     dis+= " ("+langO.EnglishName+")";
                 }
-                     l.Text=new Text(dis, xxx, y, BitmapFont.bitmapFont18);
+                l.Text=new Text(dis, xxx, y, BitmapFont.bitmapFont18);
 
+                l.Quality=lang.Quality;
            
                 if (lang.Flags!=null) {
 
@@ -824,7 +843,11 @@ namespace rabcrClient {
                         Resize();
                         Move(null,null);
                     } else {
-                        SetNewLanguage((LLanguage)c);
+                        LLanguage lang=(LLanguage)c;
+                        if (lang.Quality==0 || lang.Quality==1) {
+                            System.Windows.Forms.DialogResult dr = System.Windows.Forms.MessageBox.Show("This translation of the game is not very good. The font may not be completely rendered correctly or the translations may not be good. Do you want to switch?","Low quality language", System.Windows.Forms.MessageBoxButtons.YesNo);
+                            if (dr==System.Windows.Forms.DialogResult.Yes)SetNewLanguage(lang);
+                        }else SetNewLanguage(lang);
                     }
                 }
             }
@@ -922,6 +945,7 @@ namespace rabcrClient {
 
                     if (ll.EnglishName==ll.NativeName) displayEnglishName=false;
                     else if (ll.Name=="eng" || ll.Name=="enu" || ll.Name=="ena" || ll.Name=="enc") displayEnglishName=false;
+                    //else if (ll.Base.Name=="eng"/* || ll.Name=="enu" || ll.Name=="ena" || ll.Name=="enc"*/) displayEnglishName=false;
                     else if (DocumentSize<450) displayEnglishName=false;
 
                     string dis=ll.NativeName;

@@ -65,14 +65,15 @@ namespace rabcrClient {
                 "<DarkGreen>"+Lang.Texts[203]+"</DarkGreen>: <Link|url="+Release.WebFullGame+">"+Release.WebShortGame+"</Link>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[204]+"</DarkGreen>: <Link|url=mailto:"+Release.Email+">"+Release.Email+"</Link>" + Environment.NewLine +
 
-                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+" 2020</Green> (<Green>C#</Green>)" + Environment.NewLine +
+                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+" 2019</Green> (<Green>C#</Green>)" + Environment.NewLine +
                 "      (<Green>"+Lang.Texts[207]+" 3.8.0.1641</Green>)" +Environment.NewLine + Environment.NewLine +
 
                 "<DarkGreen>"+Lang.Texts[360]+"</DarkGreen>"+ Environment.NewLine +
-                "     <Link|url=https://fonts.google.com/specimen/M+PLUS+Rounded+1c>M PLUS Rounded 1c</Link> (<Green>"+Lang.Texts[363]+"</Green>)" + Environment.NewLine+
-                "     <Link|url=https://fonts.google.com/specimen/Sunflower>Sunflower</Link> (<Green>"+Lang.Texts[361]+"</Green>)" + Environment.NewLine +
-                "     <Link|url=https://fonts.google.com/specimen/Tajawal?subset=arabic>Tajawal</Link> (<Green>"+Lang.Texts[365]+"</Green>)" + Environment.NewLine +
-                "     <Link|url=https://www.freechinesefont.com/traditional-han-wang-yen-light-rounded-font-download>HanWangYenLight</Link> (<Green>"+Lang.Texts[362]+"</Green>)";
+                "     <Link|url=https://fonts.google.com/specimen/M+PLUS+Rounded+1c|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>M PLUS Rounded 1c</Link> (<Green>"+Lang.Texts[363]+"</Green>)" + Environment.NewLine+
+                "     <Link|url=https://fonts.google.com/specimen/Sunflower|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>Sunflower</Link> (<Green>"+Lang.Texts[361]+"</Green>)" + Environment.NewLine +
+                "     <Link|url=https://fonts.google.com/specimen/Tajawal?subset=arabic|info=Licence: Open-Source>Tajawal</Link> (<Green>"+Lang.Texts[365]+"</Green>)" + Environment.NewLine +
+                "     <Link|url=https://www.freechinesefont.com/traditional-han-wang-yen-light-rounded-font-download|info=Licence: Free for personal and commercial-use.>HanWangYenLight</Link> (<Green>"+Lang.Texts[362]+"</Green>)"+ Environment.NewLine +
+                "     <Link|url=https://github.com/Omnibus-Type/Jaldi|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>Jaldi</Link> (<Green>"+Lang.Texts[1585]+"</Green>)";
 
 
             geDo=new GeDo(24, 10-(int)(scrollbar.scale*(BitmapFont.bitmapFont18.MeasureTextMultiLineY(strMain)+10-(Global.WindowHeight-75-40-65)))) {
@@ -84,7 +85,7 @@ namespace rabcrClient {
             strKeys=
                 "<Bold>"+Lang.Texts[227]+"</Bold>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyLeft)+"</DarkBlue> a <DarkBlue>"+KeyName(Setting.KeyRight)+"</DarkBlue>: <Blue>"+Lang.Texts[230]+"</Blue>" + Environment.NewLine +
-                "<DarkBlue>"+KeyName(Setting.KeyJump)+"</DarkBlue>: <Blue>"+Lang.Texts[105]+"</Blue>" + Environment.NewLine +
+                "<DarkBlue>"+KeyName(Setting.KeyJump)+"</DarkBlue>: <Blue>"+Lang.Texts[104]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyDropItem)+"</DarkBlue>: <Blue>"+Lang.Texts[112]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyInventory)+"</DarkBlue>: <Blue>"+Lang.Texts[108]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyMessage)+"</DarkBlue>: <Blue>"+Lang.Texts[111]+"</Blue>" + Environment.NewLine +

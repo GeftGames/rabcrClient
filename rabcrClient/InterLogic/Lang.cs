@@ -86,13 +86,16 @@ namespace rabcrClient {
                             EnglishName=n.Attributes["EnglishName"].Value,
                             NativeName=n.Attributes["NativeName"].Value,
                             Name=n.Attributes["Name"].Value,
+                           
                             FontFile=n.Attributes["FontFile"]?.Value,
                             _Base=n.Attributes["Base"]?.Value,
                            // TwoLetterISOLanguageName=n.Attributes["TwoLetterISOLanguageName"]?.Value,
                          //   ThreeLetterISOLanguageName=n.Attributes["ThreeLetterISOLanguageName"]?.Value,
                           //  TranslationQuality=int.Parse(n.Attributes["TranslationQuality"]?.Value),
                         //    UseBase=n.Attributes["UseBase"]?.Value=="true",
-                        };
+                        }; 
+                       if (n.Attributes["Quality"]!=null) int.TryParse(n.Attributes["Quality"].Value, out ll.Quality);
+                        
                         {
                             // Solve category
                             XmlAttribute cat=n.Attributes["Flag"];
@@ -305,6 +308,7 @@ namespace rabcrClient {
         ///"cze", "eng", ...
         ///</summary>
         public string Name;
+        public int Quality=-1;
 
         ///<summary>
         ///"cs"

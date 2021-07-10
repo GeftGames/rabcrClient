@@ -1,113 +1,113 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XMLFile>
   <Langs>
-    <Lang EnglishName="British english" NativeName="British english" Name="eng" Flag="GB" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Czech" NativeName="Čeština (Spisovná)" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Moravian" NativeName="Moravština" Name="mor" Flag="mor" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="German" NativeName="Deutsch" Name="deu" Flag="DE,AT,CH,LI,BE,LU" Base="eng" alphabet="AÄBCDEFGHIJKLMNOÖPQRSTUÜVWXYZaäbcdefghijklmnoöpqrstuüvwxyzß" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Japanese" NativeName="日本語 (標準語)" Name="jpn" Flag="JP" Base="enu" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="American english" NativeName="American english" Name="enu" Flag="US" Base="eng" UseBase="true" Category="Worldwide;American" FontFile="latin" />
-    <Lang EnglishName="Slovak" NativeName="Slovenčina" Flag="SK" Name="slk" Base="ces" Category="European&gt;Slavic" alphabet="AÁÄBCČDĎDzDžEÉFGHChIÍJKLĹĽaáäbcčdďdzdžeéfghchiíjklĺľMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽmnňoóôpqrŕsštťuúvwxyýzž" FontFile="latin" />
-    <Lang EnglishName="Spanish" NativeName="Español" Flag="ES,CO,AR,PE,EC,DO,SV,PA,UY" Name="spa" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" FontFile="latin" />
-    <Lang EnglishName="Italian" NativeName="Italiano" Name="ita" Flag="IT" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="АÀBCDEÉÈFGHIÌJKLMNOÒPQRSTUÙVWXYZaàbcdeéèfghiìjklmnoòpqrstuùvwxyz" FontFile="latin" />
-    <Lang EnglishName="French" NativeName="Français" Name="fra" Flag="FR,KM,DJ,GA,CF,TG,CH,HT,BJ,BE,RW,RG,SN,ML" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="AaÀàÂâÆæBbCcÇçDdEeÉéÈèÊêËëFfGgHhIiÎîÏïJjKkLlMmNnOoÔôŒœPpQqRrSsTtUuÙùÛûÜüVvWwXxYykŸÿZz" FontFile="latin" />
-    <Lang EnglishName="Polish" NativeName="Polski" Flag="PL" Name="pol" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄĆĘŁŃÓŚŹŻąćęłńóśźż" Category="European&gt;Slavic" FontFile="latin" />
-    <Lang EnglishName="Portuguese" NativeName="Português" Flag="PL,BR,ST,MZ,GW,TL,CV" Name="por" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzáâãàçéêíóôõúÁÂÃÀÇÉÊÍÓÔÕÚ" Category="Worldwide;European&gt;Romance" FontFile="latin" />
-    <Lang EnglishName="Bulgarian" NativeName="Български език" Name="bul" Flag="BG" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЕеЖжЗзИиЙйКкkЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЬьЮюЯя" FontFile="cyrillic" />
-    <Lang EnglishName="Macedonian" NativeName="Македонски" Flag="MK" Name="mkd" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЃѓЕеЖжЗзЅѕИиЈјКкЛлЉљМмНнЊњОоПпРрСсТтЌќУуФфХхЦцЧчЏџШш" FontFile="cyrillic" />
-    <Lang EnglishName="Latin" NativeName="Lingua Latina" Flag="LA" Name="la" Base="eng" Category="Worldwide;European" FontFile="latin" />
-    <Lang EnglishName="Catalan language" NativeName="Català" Flag="cat" Name="cat" Base="eng" Category="European&gt;Romance" alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÉÈÍÏÓÒÚÜÇàéèíïóòúüç" FontFile="latin" />
-    <Lang EnglishName="Danish language" NativeName="Dansk" Flag="DK" Name="dan" Base="eng" Category="Worldwide;European&gt;Germanic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÆæØøÅå" FontFile="latin" />
-    <Lang EnglishName="Esperanto" NativeName="Esperanto" Name="eo" Flag="EO" Base="eng" Category="Worldwide;Constructed" alphabet="ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZabcĉdefgĝhĥijĵklmnoprsŝtuŭvz" FontFile="latin" />
-    <Lang EnglishName="Finnish language" NativeName="Suomi" Flag="FI" Name="fin" Base="eng" Category="European&gt;Finno-Ugric" alphabet="abcdefghijklmnopqrstuvwxyzåäjaöšžABCDEFGHIJKLMNOPQRSTUVWXYZÅÄJAÖŠŽ" FontFile="latin" />
-    <Lang EnglishName="Irish" NativeName="An Ghaeilge" Name="gle" Flag="IE" Base="eng" Category="European&gt;Celtic" alphabet="aábcdeéfghiílmnoóprstuúAÁBCDEÉFGHIÍLMNOÓPRSTUÚjkqvwxyzJKQVWXYZ" FontFile="latin" />
-    <Lang EnglishName="Ukrainian" NativeName="Українська" Flag="UA" Name="ukr" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя" FontFile="cyrillic" />
-    <Lang EnglishName="Serbian" NativeName="Српски" Name="srp" Flag="RS,XK,BA,ME" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЂђЕеЖжЗзИиЈјКкЛлЉљМмНнЊњОоПпРрСсТтЋћУуФфХхЦцЧчЏџШш" FontFile="cyrillic" />
-    <Lang EnglishName="Hungarian" NativeName="Magyar nyelv" Name="hun" Base="eng" Category="European&gt;Finno-Ugric" alphabet="AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZaábcdeéfghiíjkllymnoóöőpqrstuúüűvwxyz" FontFile="latin" />
-    <Lang EnglishName="Filipino" NativeName="Wikang Filipino" Name="fil" Flag="PH" Base="eng" Category="Asian" alphabet="ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" FontFile="latin" />
-    <Lang EnglishName="Lithuanian" NativeName="Lietuvių" Name="lit" Flag="LT" Base="eng" Category="European&gt;Baltic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄąĖėĘęĮįŲųŪūČčŠšŽž" FontFile="latin" />
-    <Lang EnglishName="Slovene" NativeName="Slovenščina" Name="svl" Flag="SI" Base="eng" Category="European&gt;Slavic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzČčŠšŽžđćĐĆ" FontFile="latin" />
-    <Lang EnglishName="Croatian" NativeName="Hrvatski" Name="hrv" Flag="HR,BA,RS,ME" Base="eng" Category="European&gt;Slavic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzČčŠšŽžđćĐĆ" FontFile="latin" />
-    <Lang EnglishName="Indonesian" NativeName="Bahasa Indonesia" Name="ind" Flag="ID" Base="eng" Category="Asian" FontFile="latin" />
-    <Lang EnglishName="Luxembourgish" NativeName="Lëtzebuergesch" Name="ltz" Flag="LU" Base="eng" Category="European&gt;Germanic" alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZÄËÉabcdefghijklmnopqrstuvwxyzäëé" FontFile="latin" />
-    <Lang EnglishName="Latvian" NativeName="latviešu valoda" Name="lav" Flag="LV" Base="eng" Category="European&gt;Baltic" alphabet="AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽaābcčdeēfgģhiījkķlļmnņoprsštuūvzž" FontFile="latin" />
-    <Lang EnglishName="Maltese" NativeName="Malti" Name="mlt" Flag="MT" Base="eng" Category="European" alphabet="ABĊDEFĠGGħHĦIIeJKLMNOPQRSTUVWXŻZabċdefġggħhħiiejklmnopqrstuvwxżz" FontFile="latin" />
-    <Lang EnglishName="Norwegian" NativeName="Norsk" Name="nor" Flag="NO" Base="eng" Category="European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Dutch" NativeName="Nederlands" Name="nld" Flag="NL,SR,BE" Base="eng" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Romanian" NativeName="Romani" Name="ron" Flag="RO,MD" Base="eng" Category="European&gt;Romance" alphabet="AaĂăÂâBbCcDdEeFfGgHhIiÎîȘșaTtȚțUuVvWwXxYyZzJjKkLlMmNnOoPpQqRrSs" FontFile="latin" />
-    <Lang EnglishName="Albanian" NativeName="Shqip" Name="alb" Flag="AL,XK,MK,ME" Base="eng" Category="European" alphabet="ABCÇDEËFGHIJKLMNOPQRSTUVXYZabcçdeëfghijklmnopqrstuvxyz" FontFile="latin" />
-    <Lang EnglishName="Swedish" NativeName="Svenska" Name="swe" Flag="SE,FI,AX" Base="eng" Category="European&gt;Germanic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÅåÄäÖö" FontFile="latin" />
-    <Lang EnglishName="Kurdish" NativeName="Kurdî" Name="kur" Flag="IQ,ROJ,KRD" Base="eng" Category="Asian" alphabet="ABCÇDEÊFGHIÎJKLMNOPQRSŞTUÛVWXYZabcçdeêfghiîjklmnopqrsştuûvwxyz" FontFile="latin" />
-    <Lang EnglishName="Scottish Gaelic" NativeName="Beurla Ghallda" Name="gla" Flag="NS,SCO" Base="eng" Category="European&gt;Celtic" alphabet="ABCDEFGHILMNOPRSTUJKQVWXYabcdefghilmnoprstujkqvwxyZàèìòùáéóÀÈÌÒÙÁÉÓ" FontFile="latin" />
-    <Lang EnglishName="Zulu" NativeName="IsiZulu" Name="zul" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Swahili" NativeName="Kiswahili" Name="swa" Flag="KE,TZ,CD" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Afrikaans" NativeName="Afrikaans" Name="afk" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Xhosa" NativeName="IsiXhosa" Name="xho" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Kinyarwanda" NativeName="Ikinyarwanda" Name="kin" Flag="RW" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Maori" NativeName="Reo Māori" Name="mri" Flag="MRI,NZ" Base="eng" Category="Australian" FontFile="latin" />
-    <Lang EnglishName="Basque" NativeName="Euskara" Flag="ES-NA,ES-PV,ES" Name="eus" Base="eng" Category="European&gt;Romance" FontFile="latin" />
-    <Lang EnglishName="Bosnian" NativeName="Bosanski jezik" Name="bos" Flag="ME,BA" Base="eng" Category="European&gt;Slavic" FontFile="latin" />
-    <Lang EnglishName="Cebuano" NativeName="Sinugboanon" Name="ceb" Flag="PH" Base="eng" Category="Asian" FontFile="latin" />
-    <Lang EnglishName="Chewa" NativeName="Chichewa" Name="nya" Flag="ZM,MW" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="British english" Quality="5" NativeName="British english" Name="eng" Flag="GB" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Czech" Quality="5" NativeName="Čeština (Spisovná)" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Slovak" Quality="4" NativeName="Slovenčina" Flag="SK" Name="slk" Base="ces" Category="European&gt;Slavic" alphabet="AÁÄBCČDĎDzDžEÉFGHChIÍJKLĹĽaáäbcčdďdzdžeéfghchiíjklĺľMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽmnňoóôpqrŕsštťuúvwxyýzž" FontFile="latin" />
+    <Lang EnglishName="Moravian" Quality="3" NativeName="Moravština" Name="mor" Flag="mor" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Polish" Quality="3" NativeName="Polski" Flag="PL" Name="pol" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄĆĘŁŃÓŚŹŻąćęłńóśźż" Category="European&gt;Slavic" FontFile="latin" />
+    <Lang EnglishName="German" Quality="3" NativeName="Deutsch" Name="deu" Flag="DE,AT,CH,LI,BE,LU" Base="eng" alphabet="AÄBCDEFGHIJKLMNOÖPQRSTUÜVWXYZaäbcdefghijklmnoöpqrstuüvwxyzß" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Japanese" Quality="3" NativeName="日本語 (標準語)" Name="jpn" Flag="JP" Base="enu" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="American english" Quality="3" NativeName="American english" Name="enu" Flag="US" Base="eng" UseBase="true" Category="Worldwide;American" FontFile="latin" />
+    <Lang EnglishName="Spanish" Quality="3" NativeName="Español" Flag="ES,CO,AR,PE,EC,DO,SV,PA,UY" Name="spa" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" FontFile="latin" />
+    <Lang EnglishName="Italian" Quality="3" NativeName="Italiano" Name="ita" Flag="IT" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="АÀBCDEÉÈFGHIÌJKLMNOÒPQRSTUÙVWXYZaàbcdeéèfghiìjklmnoòpqrstuùvwxyz" FontFile="latin" />
+    <Lang EnglishName="French" Quality="3" NativeName="Français" Name="fra" Flag="FR,KM,DJ,GA,CF,TG,CH,HT,BJ,BE,RW,RG,SN,ML" Base="eng" Category="Worldwide;European&gt;Romance" alphabet="AaÀàÂâÆæBbCcÇçDdEeÉéÈèÊêËëFfGgHhIiÎîÏïJjKkLlMmNnOoÔôŒœPpQqRrSsTtUuÙùÛûÜüVvWwXxYykŸÿZz" FontFile="latin" />
+    <Lang EnglishName="Portuguese" Quality="3" NativeName="Português" Flag="PL,BR,ST,MZ,GW,TL,CV" Name="por" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzáâãàçéêíóôõúÁÂÃÀÇÉÊÍÓÔÕÚ" Category="Worldwide;European&gt;Romance" FontFile="latin" />
+    <Lang EnglishName="Danish language" Quality="3" NativeName="Dansk" Flag="DK" Name="dan" Base="eng" Category="Worldwide;European&gt;Germanic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÆæØøÅå" FontFile="latin" />
+    <Lang EnglishName="Catalan language" Quality="3" NativeName="Català" Flag="cat" Name="cat" Base="eng" Category="European&gt;Romance" alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÉÈÍÏÓÒÚÜÇàéèíïóòúüç" FontFile="latin" />
+    <Lang EnglishName="Bulgarian" Quality="2" NativeName="Български език" Name="bul" Flag="BG" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЕеЖжЗзИиЙйКкkЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЬьЮюЯя" FontFile="cyrillic" />
+    <Lang EnglishName="Macedonian" Quality="2" NativeName="Македонски" Flag="MK" Name="mkd" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЃѓЕеЖжЗзЅѕИиЈјКкЛлЉљМмНнЊњОоПпРрСсТтЌќУуФфХхЦцЧчЏџШш" FontFile="cyrillic" />
+    <Lang EnglishName="Latin" Quality="2" NativeName="Lingua Latina" Flag="LA" Name="la" Base="eng" Category="Worldwide;European" FontFile="latin" />
+    <Lang EnglishName="Esperanto" Quality="2" NativeName="Esperanto" Name="eo" Flag="EO" Base="eng" Category="Worldwide;Constructed" alphabet="ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZabcĉdefgĝhĥijĵklmnoprsŝtuŭvz" FontFile="latin" />
+    <Lang EnglishName="Finnish language" Quality="2" NativeName="Suomi" Flag="FI" Name="fin" Base="eng" Category="European&gt;Finno-Ugric" alphabet="abcdefghijklmnopqrstuvwxyzåäjaöšžABCDEFGHIJKLMNOPQRSTUVWXYZÅÄJAÖŠŽ" FontFile="latin" />
+    <Lang EnglishName="Irish" Quality="2" NativeName="An Ghaeilge" Name="gle" Flag="IE" Base="eng" Category="European&gt;Celtic" alphabet="aábcdeéfghiílmnoóprstuúAÁBCDEÉFGHIÍLMNOÓPRSTUÚjkqvwxyzJKQVWXYZ" FontFile="latin" />
+    <Lang EnglishName="Ukrainian" Quality="2" NativeName="Українська" Flag="UA" Name="ukr" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя" FontFile="cyrillic" />
+    <Lang EnglishName="Serbian" Quality="2" NativeName="Српски" Name="srp" Flag="RS,XK,BA,ME" Base="eng" Category="European&gt;Slavic" alphabet="АаБбВвГгДдЂђЕеЖжЗзИиЈјКкЛлЉљМмНнЊњОоПпРрСсТтЋћУуФфХхЦцЧчЏџШш" FontFile="cyrillic" />
+    <Lang EnglishName="Hungarian" Quality="2" NativeName="Magyar nyelv" Name="hun" Base="eng" Category="European&gt;Finno-Ugric" alphabet="AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZaábcdeéfghiíjkllymnoóöőpqrstuúüűvwxyz" FontFile="latin" />
+    <Lang EnglishName="Filipino" Quality="2" NativeName="Wikang Filipino" Name="fil" Flag="PH" Base="eng" Category="Asian" alphabet="ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" FontFile="latin" />
+    <Lang EnglishName="Lithuanian" Quality="2" NativeName="Lietuvių" Name="lit" Flag="LT" Base="eng" Category="European&gt;Baltic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄąĖėĘęĮįŲųŪūČčŠšŽž" FontFile="latin" />
+    <Lang EnglishName="Slovene" Quality="2" NativeName="Slovenščina" Name="svl" Flag="SI" Base="eng" Category="European&gt;Slavic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzČčŠšŽžđćĐĆ" FontFile="latin" />
+    <Lang EnglishName="Croatian" Quality="2" NativeName="Hrvatski" Name="hrv" Flag="HR,BA,RS,ME" Base="eng" Category="European&gt;Slavic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzČčŠšŽžđćĐĆ" FontFile="latin" />
+    <Lang EnglishName="Indonesian" Quality="2" NativeName="Bahasa Indonesia" Name="ind" Flag="ID" Base="eng" Category="Asian" FontFile="latin" />
+    <Lang EnglishName="Luxembourgish" Quality="2" NativeName="Lëtzebuergesch" Name="ltz" Flag="LU" Base="eng" Category="European&gt;Germanic" alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZÄËÉabcdefghijklmnopqrstuvwxyzäëé" FontFile="latin" />
+    <Lang EnglishName="Latvian" Quality="2" NativeName="latviešu valoda" Name="lav" Flag="LV" Base="eng" Category="European&gt;Baltic" alphabet="AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽaābcčdeēfgģhiījkķlļmnņoprsštuūvzž" FontFile="latin" />
+    <Lang EnglishName="Maltese" Quality="2" NativeName="Malti" Name="mlt" Flag="MT" Base="eng" Category="European" alphabet="ABĊDEFĠGGħHĦIIeJKLMNOPQRSTUVWXŻZabċdefġggħhħiiejklmnopqrstuvwxżz" FontFile="latin" />
+    <Lang EnglishName="Norwegian" Quality="2" NativeName="Norsk" Name="nor" Flag="NO" Base="eng" Category="European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Dutch" Quality="2" NativeName="Nederlands" Name="nld" Flag="NL,SR,BE" Base="eng" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Romanian" Quality="2" NativeName="Romani" Name="ron" Flag="RO,MD" Base="eng" Category="European&gt;Romance" alphabet="AaĂăÂâBbCcDdEeFfGgHhIiÎîȘșaTtȚțUuVvWwXxYyZzJjKkLlMmNnOoPpQqRrSs" FontFile="latin" />
+    <Lang EnglishName="Albanian" Quality="2" NativeName="Shqip" Name="alb" Flag="AL,XK,MK,ME" Base="eng" Category="European" alphabet="ABCÇDEËFGHIJKLMNOPQRSTUVXYZabcçdeëfghijklmnopqrstuvxyz" FontFile="latin" />
+    <Lang EnglishName="Swedish" Quality="2" NativeName="Svenska" Name="swe" Flag="SE,FI,AX" Base="eng" Category="European&gt;Germanic" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÅåÄäÖö" FontFile="latin" />
+    <Lang EnglishName="Kurdish" Quality="2" NativeName="Kurdî" Name="kur" Flag="IQ,ROJ,KRD" Base="eng" Category="Asian" alphabet="ABCÇDEÊFGHIÎJKLMNOPQRSŞTUÛVWXYZabcçdeêfghiîjklmnopqrsştuûvwxyz" FontFile="latin" />
+    <Lang EnglishName="Scottish Gaelic" Quality="2" NativeName="Beurla Ghallda" Name="gla" Flag="NS,SCO" Base="eng" Category="European&gt;Celtic" alphabet="ABCDEFGHILMNOPRSTUJKQVWXYabcdefghilmnoprstujkqvwxyZàèìòùáéóÀÈÌÒÙÁÉÓ" FontFile="latin" />
+    <Lang EnglishName="Zulu" Quality="2" NativeName="IsiZulu" Name="zul" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Swahili" Quality="2" NativeName="Kiswahili" Name="swa" Flag="KE,TZ,CD" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Afrikaans" Quality="2" NativeName="Afrikaans" Name="afk" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Xhosa" Quality="2" NativeName="IsiXhosa" Name="xho" Flag="ZA" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Kinyarwanda" Quality="2" NativeName="Ikinyarwanda" Name="kin" Flag="RW" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Maori" Quality="2" NativeName="Reo Māori" Name="mri" Flag="MRI,NZ" Base="eng" Category="Australian" FontFile="latin" />
+    <Lang EnglishName="Basque" Quality="2" NativeName="Euskara" Flag="ES-NA,ES-PV,ES" Name="eus" Base="eng" Category="European&gt;Romance" FontFile="latin" />
+    <Lang EnglishName="Bosnian" Quality="2" NativeName="Bosanski jezik" Name="bos" Flag="ME,BA" Base="eng" Category="European&gt;Slavic" FontFile="latin" />
+    <Lang EnglishName="Cebuano" Quality="2" NativeName="Sinugboanon" Name="ceb" Flag="PH" Base="eng" Category="Asian" FontFile="latin" />
+    <Lang EnglishName="Chewa" Quality="2" NativeName="Chichewa" Name="nya" Flag="ZM,MW" Base="eng" Category="African" FontFile="latin" />
     <Lang EnglishName="Frisian" NativeName="Fryske" Name="fris" Flag="NL" Base="eng" Category="European&gt;Germanic" alfabet="AÂBCDEÊFGHIJKLMNOÔPRSTUÛÚVWYZaâbcdeêfghijklmnoôprstuûúvwyz" FontFile="latin" />
-    <Lang EnglishName="Galician" NativeName="Galego" Name="glg" Flag="GLG" Base="por" Category="European&gt;Romance" FontFile="latin" />
-    <Lang EnglishName="Haitian Creole" NativeName="Kreyòl ayisyen" Name="hat" Flag="HT" Category="American" Base="eng" FontFile="latin" />
-    <Lang EnglishName="Hausa" NativeName="Hawsaa" Name="hau" Flag="NE,NG,GH" Category="African" Base="eng" FontFile="latin" />
-    <Lang EnglishName="Hawaiian" NativeName="Ōlelo Hawai‘i" Name="haw" Flag="US-HI" Base="eng" Category="American;Oceanic" alfabet="ʻāēīōūĀĒĪŌŪ" FontFile="latin" />
-    <Lang EnglishName="Hmong" NativeName="Lus Hmoob" Name="hmn" ThreeLetterISOLanguageName="hmn" Category="Asian" Base="eng" FontFile="latin" />
-    <Lang EnglishName="Igbo" NativeName="Asụsụ Igbo" Name="ibo" Flag="NG" Category="African" Base="eng" FontFile="latin" />
-    <Lang EnglishName="Mongolian" NativeName="монгол хэл" Name="mon" Flag="MN" Category="Asian" Base="eng" alfabet="ӨөҮү" FontFile="cyrillic" />
-    <Lang EnglishName="Malagasy" NativeName="Fiteny malagasy" Name="mlg" Flag="MG" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Malay" NativeName="Bahasa Melayu" Name="msa" Flag="ID,MY,SG" Base="eng" Category="Asian" FontFile="latin" />
-    <Lang EnglishName="Tatar" NativeName="Tатар теле" Name="tat" Flag="RU-TA" Base="eng" Category="Asian" FontFile="cyrillic" />
-    <Lang EnglishName="Maya" NativeName="Yucatec Maya" Name="yua" Flag="MX" Base="eng" Category="American" FontFile="latin" />
-    <Lang EnglishName="Canadian english" NativeName="Canadian english" Name="enc" Flag="CA" Base="eng" Category="American" FontFile="latin" />
-    <Lang EnglishName="Australian english" NativeName="Australian english" Name="ena" Flag="AU" Base="eng" Category="Australian" FontFile="latin" />
-    <Lang EnglishName="Javanese language" NativeName="Basa jawa" Name="jav" Flag="ID" Base="eng" Category="Asian" FontFile="latin" />
-    <Lang EnglishName="Yoruba" NativeName="Èdè Yorùbá" Name="yor" Flag="ID,RT,NG" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Corsican" NativeName="Corsu" Name="cos" Flag="FR-COR" Base="ita" Category="European&gt;Romance" FontFile="latin" />
-    <Lang EnglishName="Icelandic" NativeName="Íslenska" Name="isl" Flag="IS" Base="eng" Category="European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Kazakh" NativeName="Қазақша" Name="kaz" Flag="RU-AL,KZ" Base="eng" Category="European;Asian" FontFile="latin" />
-    <Lang EnglishName="Ujgur" NativeName="ئۇيغۇر تىلى" Name="uig" Flag="uig" Base="eng" Category="Asian" FontFile="arabic" />
-    <Lang EnglishName="Shona" NativeName="chiShona" Name="sna" Flag="ZW" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Sotho" NativeName="Sesotho" Name="sot" Flag="ZW,LS,ZA" Base="eng" Category="African" FontFile="latin" />
-    <Lang EnglishName="Arabic" NativeName="عربى" Name="ara" Flag="TN,DJ,IQ,IL,JO,QA,KE,KM,KW,CY,LB,ML,TZ,smtl,SP,PS,NG" Base="eng" Category="Worldwide;African;European;Asian" FontFile="arabic" />
-    <Lang EnglishName="Urdu" NativeName="اُردُةُ" Name="urd" Flag="IN" Base="eng" Category="Asian" FontFile="arabic" alphabet="ﮟﮞں" dev="true" />
-    <Lang EnglishName="Vietnamese" NativeName="Tiếng Việt" Name="vie" Flag="VN" Base="eng" Category="Asian" FontFile="latin" />
-    <Lang EnglishName="Estonian" NativeName="eesti keel" Name="est" Flag="EE" Base="eng" Category="European&gt;Finno-Ugric" FontFile="latin" />
-    <Lang EnglishName="Ōita dialect" NativeName="大分弁" Name="jpn-oita" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Kjoto dialect" NativeName="京言葉" Name="jpn-kyot" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Hakata dialect" NativeName="博多弁" Name="jpn-haka" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Saga dialect" NativeName="佐賀弁" Name="jpn-saga" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Nagasaki dialect" NativeName="長崎弁" Name="jpn-naga" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Kumamoto dialect" NativeName="熊本弁" Name="jpn-kuma" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Miyazaki dialect" NativeName="宮崎弁" Name="jpn-miya" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Kagoshima dialect" NativeName="薩摩弁" Name="jpn-kago" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Ryukyuan" NativeName="琉球語" Name="jpn-ryuk" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Tsugaru dialect" NativeName="津軽弁" Name="jpn-tsug" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Izumo dialect" NativeName="出雲弁" Name="jpn-izum" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Hiroshima dialect" NativeName="広島弁" Name="jpn-hiro" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Okayama dialect" NativeName="岡山弁" Name="jpn-okay" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Yamaguchi dialect" NativeName="山口弁" Name="jpn-yama" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Iyo dialect" NativeName="伊予弁" Name="jpn-iyo" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Awa dialect" NativeName="阿波弁" Name="jpn-awa" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Tosa dialect" NativeName="土佐弁" Name="jpn-tosa" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
-    <Lang EnglishName="Otomi" NativeName="Ar hñä hñäñho" Name="oto" Flag="MX" Category="American" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
-    <Lang EnglishName="Tajik" NativeName="Tajik" Name="tgk" Category="Asian" FontFile="cyrillic" info="https://translation2.paralink.com/English-Tajik-Translation/" />
-    <Lang EnglishName="Welsh" NativeName="Cymraeg" Name="cym" Base="eng" UseBase="true" Category="European&gt;Celtic" FontFile="latin" info="https://translation2.paralink.com/English-Welsh-Translation/" />
-    <Lang EnglishName="Tongan" NativeName="lea faka-Tonga" Name="ton" Category="Oceanic" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
-    <Lang EnglishName="Tahitian" NativeName="Reo Tahiti" Name="tah" Category="Oceanic" FontFile="latin" />
-    <Lang EnglishName="Czech for kids" NativeName="Čeština pro děti" Name="ces-kids" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Haná dialect" NativeName="Hanácke nářečí" Name="ces-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Slovacko dialect" NativeName="Slovácký dialekt" Name="ces-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Valašsko dialect" NativeName="Valašský dialekt" Name="ces-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Hantec slang" NativeName="Brněnský hantec" Name="ces-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Prague interdialect" NativeName="Pražská mluva" Name="ces-pr" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Korean" NativeName="한국어" Name="kor" Base="eng" Flag="KO" Category="Asian" FontFile="korean" />
-    <Lang EnglishName="Traditional Chinese" NativeName="繁體字" Name="zch" Base="eng" Flag="TW" Category="Asian" FontFile="traditionalChinese" />
-    <Lang EnglishName="Hindi" NativeName="हिन्दी" Name="hin" Base="eng" Flag="IN" Category="Asian" FontFile="devanagari" dev="true" />
-    <Lang EnglishName="Nepali" NativeName="नेपाली" Name="nep" Base="eng" Flag="NEP,IN" Category="Asian" FontFile="devanagari" dev="true" />
-    <Lang EnglishName="Marathi" NativeName="मराठी" Name="mar" Base="eng" Flag="IN" Category="Asian" FontFile="devanagari" dev="true" />
+    <Lang EnglishName="Galician" Quality="2" NativeName="Galego" Name="glg" Flag="GLG" Base="por" Category="European&gt;Romance" FontFile="latin" />
+    <Lang EnglishName="Haitian Creole" Quality="2" NativeName="Kreyòl ayisyen" Name="hat" Flag="HT" Category="American" Base="eng" FontFile="latin" />
+    <Lang EnglishName="Hausa" Quality="2" NativeName="Hawsaa" Name="hau" Flag="NE,NG,GH" Category="African" Base="eng" FontFile="latin" />
+    <Lang EnglishName="Hawaiian" Quality="2" NativeName="Ōlelo Hawai‘i" Name="haw" Flag="US-HI" Base="eng" Category="American;Oceanic" alfabet="ʻāēīōūĀĒĪŌŪ" FontFile="latin" />
+    <Lang EnglishName="Hmong" Quality="2" NativeName="Lus Hmoob" Name="hmn" ThreeLetterISOLanguageName="hmn" Category="Asian" Base="eng" FontFile="latin" />
+    <Lang EnglishName="Igbo" Quality="1" NativeName="Asụsụ Igbo" Name="ibo" Flag="NG" Category="African" Base="eng" FontFile="latin" />
+    <Lang EnglishName="Mongolian" Quality="2" NativeName="монгол хэл" Name="mon" Flag="MN" Category="Asian" Base="eng" alfabet="ӨөҮү" FontFile="cyrillic" />
+    <Lang EnglishName="Malagasy" Quality="2" NativeName="Fiteny malagasy" Name="mlg" Flag="MG" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Malay" Quality="2" NativeName="Bahasa Melayu" Name="msa" Flag="ID,MY,SG" Base="eng" Category="Asian" FontFile="latin" />
+    <Lang EnglishName="Tatar" Quality="1" NativeName="Tатар теле" Name="tat" Flag="RU-TA" Base="eng" Category="Asian" FontFile="cyrillic" />
+    <Lang EnglishName="Maya" Quality="1" NativeName="Yucatec Maya" Name="yua" Flag="MX" Base="eng" Category="American" FontFile="latin" />
+    <Lang EnglishName="Canadian english" Quality="2" NativeName="Canadian english" Name="enc" Flag="CA" Base="eng" Category="American" FontFile="latin" />
+    <Lang EnglishName="Australian english" Quality="2" NativeName="Australian english" Name="ena" Flag="AU" Base="eng" Category="Australian" FontFile="latin" />
+    <Lang EnglishName="Javanese language" Quality="2" NativeName="Basa jawa" Name="jav" Flag="ID" Base="eng" Category="Asian" FontFile="latin" />
+    <Lang EnglishName="Yoruba" Quality="2" NativeName="Èdè Yorùbá" Name="yor" Flag="ID,RT,NG" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Corsican" Quality="2" NativeName="Corsu" Name="cos" Flag="FR-COR" Base="ita" Category="European&gt;Romance" FontFile="latin" />
+    <Lang EnglishName="Icelandic" Quality="1" NativeName="Íslenska" Name="isl" Flag="IS" Base="eng" Category="European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Kazakh" Quality="2" NativeName="Қазақша" Name="kaz" Flag="RU-AL,KZ" Base="eng" Category="European;Asian" FontFile="latin" />
+    <Lang EnglishName="Ujgur" Quality="1" NativeName="ئۇيغۇر تىلى" Name="uig" Flag="uig" Base="eng" Category="Asian" FontFile="arabic" />
+    <Lang EnglishName="Shona" Quality="2" NativeName="chiShona" Name="sna" Flag="ZW" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Sotho" Quality="2" NativeName="Sesotho" Name="sot" Flag="ZW,LS,ZA" Base="eng" Category="African" FontFile="latin" />
+    <Lang EnglishName="Arabic" Quality="2" NativeName="عربى" Name="ara" Flag="TN,DJ,IQ,IL,JO,QA,KE,KM,KW,CY,LB,ML,TZ,smtl,SP,PS,NG" Base="eng" Category="Worldwide;African;European;Asian" FontFile="arabic" />
+    <Lang EnglishName="Urdu" Quality="0" NativeName="اُردُةُ" Name="urd" Flag="IN" Base="eng" Category="Asian" FontFile="arabic" alphabet="ﮟﮞں" dev="true" />
+    <Lang EnglishName="Vietnamese" Quality="2" NativeName="Tiếng Việt" Name="vie" Flag="VN" Base="eng" Category="Asian" FontFile="latin" />
+    <Lang EnglishName="Estonian" Quality="2" NativeName="eesti keel" Name="est" Flag="EE" Base="eng" Category="European&gt;Finno-Ugric" FontFile="latin" />
+    <Lang EnglishName="Ōita dialect" Quality="2" NativeName="大分弁" Name="jpn-oita" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Kjoto dialect" Quality="2" NativeName="京言葉" Name="jpn-kyot" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Hakata dialect" Quality="2" NativeName="博多弁" Name="jpn-haka" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Saga dialect" Quality="2" NativeName="佐賀弁" Name="jpn-saga" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Nagasaki dialect" Quality="2" NativeName="長崎弁" Name="jpn-naga" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Kumamoto dialect" Quality="2" NativeName="熊本弁" Name="jpn-kuma" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Miyazaki dialect" Quality="2" NativeName="宮崎弁" Name="jpn-miya" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Kagoshima dialect" Quality="2" NativeName="薩摩弁" Name="jpn-kago" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Ryukyuan"  Quality="2" NativeName="琉球語" Name="jpn-ryuk" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Tsugaru dialect"  Quality="2" NativeName="津軽弁" Name="jpn-tsug" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Izumo dialect" Quality="2" NativeName="出雲弁" Name="jpn-izum" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Hiroshima dialect" Quality="2" NativeName="広島弁" Name="jpn-hiro" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Okayama dialect" Quality="2" NativeName="岡山弁" Name="jpn-okay" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Yamaguchi dialect" Quality="2" NativeName="山口弁" Name="jpn-yama" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Iyo dialect" Quality="2" NativeName="伊予弁" Name="jpn-iyo" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Awa dialect" Quality="2" NativeName="阿波弁" Name="jpn-awa" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Tosa dialect" Quality="2" NativeName="土佐弁" Name="jpn-tosa" Base="jpn" UseBase="true" Category="Asian&gt;Japanese" FontFile="japanese" />
+    <Lang EnglishName="Otomi" Quality="1" NativeName="Ar hñä hñäñho" Name="oto" Flag="MX" Category="American" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
+    <Lang EnglishName="Tajik" Quality="2" NativeName="Tajik" Name="tgk" Category="Asian" FontFile="cyrillic" info="https://translation2.paralink.com/English-Tajik-Translation/" />
+    <Lang EnglishName="Welsh" Quality="2" NativeName="Cymraeg" Name="cym" Base="eng" UseBase="true" Category="European&gt;Celtic" FontFile="latin" info="https://translation2.paralink.com/English-Welsh-Translation/" />
+    <Lang EnglishName="Tongan" Quality="2" NativeName="lea faka-Tonga" Name="ton" Category="Oceanic" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
+    <Lang EnglishName="Tahitian" Quality="2" NativeName="Reo Tahiti" Name="tah" Category="Oceanic" FontFile="latin" />
+    <Lang EnglishName="Czech for kids" Quality="2" NativeName="Čeština pro děti" Name="ces-kids" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanácke nářečí" Name="ces-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácký dialekt" Name="ces-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Valašsko dialect" Quality="1" NativeName="Valašský dialekt" Name="ces-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Hantec slang" Quality="1" NativeName="Brněnský hantec" Name="ces-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Prague interdialect" quality="2" NativeName="Pražská mluva" Name="ces-pr" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Korean" Quality="2" NativeName="한국어" Name="kor" Base="eng" Flag="KO" Category="Asian" FontFile="korean" />
+    <Lang EnglishName="Traditional Chinese" Quality="2" NativeName="繁體字" Name="zch" Base="eng" Flag="TW" Category="Asian" FontFile="traditionalChinese" />
+    <Lang EnglishName="Hindi" NativeName="हिन्दी" Name="hin" Base="eng" Flag="IN" Category="Asian" FontFile="devanagari" Quality="1" />
+    <Lang EnglishName="Nepali" NativeName="नेपाली" Name="nep" Base="eng" Flag="NEP,IN" Category="Asian" FontFile="devanagari" Quality="1" />
+    <Lang EnglishName="Marathi" NativeName="मराठी" Name="mar" Base="eng" Flag="IN" Category="Asian" FontFile="devanagari" Quality="1" />
   </Langs>
   <Data>
     <a id="0">
@@ -11960,41 +11960,12 @@ Under vilken tid reser den %length% km? s=v·t</swe>
       <nep>परम्परागत चीनियाँ</nep>
       <zul>IsiShayina sendabuko</zul>
     </a>
+
     <a id="363">
       <eng>Japanese</eng>
       <ces>Japonština</ces>
-      <ara>اليابانية</ara>
-      <uig>ياپون</uig>
-      <urd>جاپانی</urd>
-      <srp>Јапански</srp>
-      <cat>Japonès</cat>
-      <slk>Japončina</slk>
-      <jpn>日本人</jpn>
-      <fra>Japonais</fra>
-      <pol>Język japoński</pol>
-      <ukr>Японська</ukr>
-      <ita>Giapponese</ita>
-      <spa>Japonés</spa>
-      <deu>Japanisch</deu>
-      <svl>Japonski</svl>
-      <por>Japonês</por>
-      <mkd>Јапонски</mkd>
-      <bul>Японски</bul>
-      <eo>Japano</eo>
-      <nld>Japans</nld>
-      <fin>Japanilainen</fin>
-      <kor>일본어</kor>
-      <zch>日本</zch>
-      <swe>Japanska</swe>
-      <alb>Japoneze</alb>
-      <swa>Kijapani</swa>
-      <ltz>Japanesch</ltz>
-      <gla>Iapanach</gla>
-      <hin>जापानी</hin>
-      <mar>जपानी</mar>
-      <nep>जापानी</nep>
-      <zul>IsiJapane</zul>
     </a>
+
     <a id="364">
       <eng>&lt; Go to the category</eng>
       <ces>&lt; Zpět na kategorie jazyků</ces>
@@ -29542,7 +29513,8 @@ Under vilken tid reser den %length% km? s=v·t</swe>
       <mar>सर्व प्रकारचे टॅग लपवा</mar>
       <hin>सभी प्रकार के टैग छुपाएं</hin>
       <nep>सबै प्रकारका ट्यागहरू लुकाउनुहोस्</nep>
-    </a>  
+    </a> 
+    
     <a id="1584">
       <ces>Papoušek</ces>
       <eng>Parrot</eng>
@@ -29551,5 +29523,11 @@ Under vilken tid reser den %length% km? s=v·t</swe>
       <ces-va>Papúch</ces-va>
       <ces-sl>Papúch</ces-sl>
     </a>
+
+    <a id="1585">
+      <eng>Devanagari</eng>
+      <ces>Devanagari</ces>
+    </a>
+    
   </Data>
 </XMLFile>

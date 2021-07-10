@@ -625,6 +625,9 @@ namespace rabcrClient {
                             g.url=what;
                             g.action=GeDoStringLink.Action.Url;
                         }
+                        if (name=="info") {
+                            g.info=what;
+                        }
                         if (name=="event") {
                             g.action=GeDoStringLink.Action.Event;
                             if (GeDoEvents!=null){
@@ -1236,7 +1239,9 @@ namespace rabcrClient {
         Color color;
         int colorChanger;
         public int mouseAdd2;
-      // public int y2;
+        public string info;
+
+        // public int y2;
         public GeDoStringLink(string txt, int x, int y){
             text=new TextWithMeasure(txt, x, y/*,BitmapFont.bitmapFont18*/);
             X=x;
@@ -1263,8 +1268,11 @@ namespace rabcrClient {
 
                     if (click) {
                         click=false;
-
-                        if (Rabcr.ActiveWindow /*&& !selected*/) {   Console.WriteLine(action);
+                        if (Rabcr.ActiveWindow /*&& !selected*/) { 
+                            //Console.WriteLine(action);
+                            if (Menu.newKeyboardState.IsKeyDown(Keys.LeftControl)){ 
+                                System.Windows.Forms.MessageBox.Show(info,"Link info");    
+                            } else{
                             switch (action){
                                 case Action.Event:
                                     if (ev!=null) ev.Invoke(this, null);
@@ -1321,7 +1329,7 @@ namespace rabcrClient {
                                     //FormUpdate f = new FormUpdate();
                                 //f.Show/*Dialog*/();
                             }
-                        }
+                        } }
                     }
                 }
             } else needAlpha=0;
