@@ -60,7 +60,7 @@ namespace rabcrClient {
                 "<DarkGreen>"+Lang.Texts[209]+"</DarkGreen>: <Green>"+Lang.Texts[315]+"</Green>" +Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[205]+"</DarkGreen>: <Green>"+Release.Date+"</Green>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[121]+"</DarkGreen>: <Green>"+Lang.Languages[Setting.CurrentLanguage].NativeName+"</Green>" + Environment.NewLine +
-                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://geftgames.ga/Licence2020.txt>"+Lang.Texts[208]+" (GeftGames © 2020)</Link>" + Environment.NewLine+
+                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://creativecommons.org/share-your-work/public-domain/>"+Lang.Texts[208]+" (GeftGames © 2020)</Link>" + Environment.NewLine+
 
                 "<DarkGreen>"+Lang.Texts[203]+"</DarkGreen>: <Link|url="+Release.WebFullGame+">"+Release.WebShortGame+"</Link>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[204]+"</DarkGreen>: <Link|url=mailto:"+Release.Email+">"+Release.Email+"</Link>" + Environment.NewLine +
