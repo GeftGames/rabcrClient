@@ -1445,8 +1445,8 @@ namespace rabcrClient {
     }
 
     class RenderEnngineDevanagari {
-        char[] Consonants ={'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
-        char[] DevandariPreCh ={ 'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई', };
+        readonly char[] Consonants ={'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
+        readonly char[] DevandariPreCh ={ 'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई', };
 
 
         public char[][] tableMoveBack = new char[][]{
@@ -1454,8 +1454,8 @@ namespace rabcrClient {
         };
         public string Output;
 
-        (char[],char)[] Replacements=new (char[],char)[]{ 
-            // Nukta
+        readonly (char[],char)[] Replacements=new (char[],char)[]{ 
+            // Nukta...
             (new char[]{ 'क', '़'}, 'क़'),
             (new char[]{ 'फ', '़'}, 'फ़'),
             (new char[]{ 'ज', '़'}, 'ज़'),
@@ -1468,9 +1468,6 @@ namespace rabcrClient {
             (new char[]{ 'न', '़'}, 'ऩ'),
             (new char[]{ 'र', '़'}, 'ऱ'),
 
-         //   (new char[]{ 'न', '़'}, 'ऩ'),
-          //  (new char[]{ 'ळ', '़'}, 'ऴ'),
-
             (new char[]{ 'ा', 'े'}, 'ो'),
             (new char[]{ 'ा', 'ै'}, 'ौ'),
 
@@ -1478,10 +1475,6 @@ namespace rabcrClient {
             (new char[]{ 'अ', 'ो'}, 'ओ'),
             (new char[]{ 'अ', 'ौ'}, 'औ'),
             (new char[]{ 'ए', 'े'}, 'ऐ'),
-            //(new char[]{ '', ''}, ''),
-            //(new char[]{ '', ''}, ''),
-            //(new char[]{ 'झ', '़'}, 'झ़'),
-            //(new char[]{ '', '़'}, ''),
         };
 
         bool IdDevanagariChar(char ch){ 

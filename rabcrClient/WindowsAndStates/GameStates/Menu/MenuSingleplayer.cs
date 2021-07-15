@@ -7,73 +7,71 @@ using System.Diagnostics;
 using System.IO;
 
 namespace rabcrClient {
-    struct Singleworld{
+
+    // Item of world in the list in the menu
+    struct Singleworld {
         public string directoryName;
         public GeDo gedo;
         public bool generated;
         public ButtonCenter ButtonPlay;
         public ImgButton ButtonSetting;
-
-      //  public int TerrainType;
     }
 
     class MenuSingleplayer :MenuScreen {
-       // string header=Lang.Texts[6];
-        #region vars
+
+        #region Varibles
         RenderTarget2D worldsTarget;
         List<Singleworld> Worlds=new List< Singleworld>();
-      Text header;
-        ButtonCenter buttonNewWorld,  OpenfolderButton;
-Button buttonMenu;
+        Text header;
         int timer=1;
-        //KeyboardState newKeyboardState;
-        //MouseState newMouseState, oldMouseState;
         Effect effectBlur, effectColorize;
+
+        // Buttons
+        ButtonCenter buttonNewWorld,  OpenfolderButton;
+        Button buttonMenu;
+        Texture2D scrollbarTopTexture,scrollbarCenterTexture,scrollbarBottomTexture, buttonPlayTexture, buttonSettingTexture, buttonRightTexture,buttonLeftTexture, worldOpen;
         Scrollbar scrollbar;
-        Texture2D scrollbarTopTexture,scrollbarCenterTexture,scrollbarBottomTexture, buttonPlayTexture, buttonSettingTexture, buttonRightTexture,buttonLeftTexture,
-            /*worldFlat,worldIsland,*/ worldOpen;
-      //  bool mouse;
+        float smoothMouse=0;
         #endregion
-            float smoothMouse=0;
+
         public override void Init() {
-           // worldsTarget=new RenderTarget2D(GraphicsManager.GraphicsDevice,Global.WindowWidth,Global.WindowHeight-75-65-2);
 
-            //achievementTexture=GetDataTexture("Buttons/Other/Achievements");
-
+            // Load textures
             scrollbarTopTexture = GetDataTexture("Buttons/Scrollbar/Top");
             scrollbarCenterTexture = GetDataTexture("Buttons/Scrollbar/Center");
             scrollbarBottomTexture = GetDataTexture("Buttons/Scrollbar/Bottom");
 
+			buttonSettingTexture = GetDataTexture("Buttons/Other/Setting");
+
+            worldOpen=GetDataTexture("Menu/Worlds types/forest");
+
             buttonPlayTexture = Textures.ButtonPlay;
 			buttonLeftTexture = Textures.ButtonLeft;
             buttonRightTexture = Textures.ButtonRight;
-			buttonSettingTexture = GetDataTexture("Buttons/Other/Setting");
 
-            //worldFlat=GetDataTexture("Menu/Worlds types/plain");
-            //worldIsland=GetDataTexture("Menu/Worlds types/iceland");
-            worldOpen=GetDataTexture("Menu/Worlds types/forest");
+            // Set up buttons
+            buttonNewWorld = new ButtonCenter(buttonLeftTexture) {
+                Text = Lang.Texts[17]
+            };
+            OpenfolderButton = new ButtonCenter(buttonRightTexture) {
+                Text = Lang.Texts[18]
+            };
 
-			buttonNewWorld=new ButtonCenter(buttonLeftTexture/*, Fonts.Medium, Fonts.Big,true*/){ center=true };
- buttonNewWorld.Text=Lang.Texts[17];
-            OpenfolderButton=new ButtonCenter(buttonRightTexture/*, Fonts.Medium, Fonts.Big,true*/){ center=true };
- OpenfolderButton.Text=Lang.Texts[18];
-            buttonMenu=new Button(Textures.ButtonLongLeft,Lang.Texts[1]);
+            buttonMenu =new Button(Textures.ButtonLongLeft,Lang.Texts[1]);
             buttonMenu.Click+=ClickMenu;
-            ///*,Fonts.Medium,Fonts.Big,true*/) {
-            //    Text=Lang.Texts[26]
-            //};
-
-
 
             scrollbar=new Scrollbar(scrollbarTopTexture, scrollbarCenterTexture, scrollbarBottomTexture) {
                 PositionY=76
             };
 
+            // Setup menu white background
             effectBlur=Effects.BluredTopDownBounds;
-             effectColorize=Content.Load<Effect>("Default/Effects/Colorize");
-          //  effectBlur.Parameters["v"].SetValue(1f/(Global.WindowHeight-65-75));
-        //    effectBlur.Parameters["pos"].SetValue((1f/(Global.WindowHeight-65-75))*5);
+            effectColorize=Content.Load<Effect>("Default/Effects/Colorize");
+
+            // Header
             header=new Text(Lang.Texts[6], 10, 10,BitmapFont.bitmapFont34);
+
+            // Init
             PrepereWorlds();
             Resize();
             Move(null,new EventArgs());
@@ -83,7 +81,7 @@ Button buttonMenu;
         void ClickMenu(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
 
         void Move(object sender, EventArgs e) {
-             int yy=(int)(-(Worlds.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
+             int yy=(int)(-(Worlds.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65;
 
             for (int i = 0;i<Worlds.Count; i++) {
                 if (yy>-70-70 && yy<Global.WindowHeight-75-65-70) {
@@ -104,30 +102,18 @@ Button buttonMenu;
 
                     //Name
                     Worlds[i].gedo.SetPos(35+64+8,yy+73);
-                       Worlds[i].ButtonPlay.Position=new Vector2(105+38,yy+100);
-                 //   Worlds[i].gedo.DrawGedo(spriteBatch,/*35+64+8,yy+73,*/255);
-                   // Worlds[i].ButtonSetting.ButtonDraw(spriteBatch,Menu.mousePosX,Menu.mousePosY-75,105,yy+100,Menu.mouseDown);
-                    //Worlds[i].ButtonPlay.mou
-                  //  Worlds[i].ButtonPlay.Position=new Vector2(105+38,yy+100);
-                  //  Worlds[i].ButtonPlay.ButtonDrawCorectionY(spriteBatch,/*newMouseState.LeftButton==ButtonState.Pressed,*/1/*,new Vector2(newMouseState.X,newMouseState.Y-75)*/);
+                    Worlds[i].ButtonPlay.Position=new Vector2(105+38,yy+100);
                 }
                 yy+=100;
             }
         }
 
-        //public override void Shutdown() {
-        //    base.Shutdown();
-        //}
-
         public override void Update(GameTime gameTime) {
+            // Set controls keyboard and mouse
             MousePos.mouseRealPosX=Menu.mousePosX;
             MousePos.mouseRealPosY=Menu.mousePosYCorrection;
             MousePos.mouseLeftDown=Menu.mouseDown;
             MousePos.mouseLeftRelease=Menu.oldMouseState.LeftButton==ButtonState.Pressed && !Menu.mouseDown;
-            //oldMouseState=newMouseState;
-
-            //newMouseState=Mouse.GetState();
-            //newKeyboardState=Keyboard.GetState();
 
             if (Menu.newKeyboardState.IsKeyDown(Keys.Up)) scrollbar.Scroll(-2);
             if (Menu.newKeyboardState.IsKeyDown(Keys.Down)) scrollbar.Scroll(2);
@@ -135,10 +121,9 @@ Button buttonMenu;
             if (Menu.newKeyboardState.IsKeyDown(Keys.PageUp)) scrollbar.Scroll(-5);
             if (Menu.newKeyboardState.IsKeyDown(Keys.PageDown)) scrollbar.Scroll(5);
 
-            if (Menu.newMouseState.ScrollWheelValue!=Menu.oldMouseState.ScrollWheelValue) {
-                smoothMouse+=((Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/2f);
-                /*scrollbar.Scroll*/
-            }
+            if (Menu.newMouseState.ScrollWheelValue!=Menu.oldMouseState.ScrollWheelValue) smoothMouse+=(Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/2f;
+
+            // Scrollbar
             if (smoothMouse!=0){
                 scrollbar.Scroll(smoothMouse/1.25f);
                 smoothMouse/=1.4f;
@@ -151,18 +136,16 @@ Button buttonMenu;
 
             buttonMenu.Update();
 
+            // Foreach items in list with worlds
             int yy=(int)(-(Worlds.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65;
 
             for (int i = 0;i<Worlds.Count; i++) {
                 if (yy>-70-70 && yy<Global.WindowHeight-75-65-70) {
                     if (Worlds[i].ButtonSetting.Update()) {
                         EditSingleWorld(Worlds[i].directoryName);
-                        /*if (Worlds.Count==0)*/break;
+                        break;
                     }
-                   // try{
-                    if (Worlds[i].ButtonPlay.Click) {
-                        RunGame(Worlds[i].directoryName);
-                    } //}catch{ }
+                    if (Worlds[i].ButtonPlay.Click) RunGame(Worlds[i].directoryName);
                 }
             }
 
@@ -170,10 +153,6 @@ Button buttonMenu;
                 PrepereWorlds();
 				timer = 60;
 			} else timer--;
-
-            //if (buttonMenu.Click) {
-            //    ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
-            //}
 
             if (OpenfolderButton.Click) {
                 Process.Start(Setting.Path);
@@ -193,9 +172,6 @@ Button buttonMenu;
         }
 
         public override void PreDraw() {
-           // Rabcr.spriteBatch=spriteBatch;
-            // Set
-         //   mouse=newMouseState.LeftButton == ButtonState.Pressed;
 
             Graphics.SetRenderTarget(worldsTarget);
             Graphics.Clear(Color.Transparent);
@@ -220,20 +196,15 @@ Button buttonMenu;
                     //}
 
                     //Name
-                 //   Worlds[i].gedo.SetPos(35+64+8,yy+73);
-                 Worlds[i].gedo.mouseAdd=-75;
+                    Worlds[i].gedo.mouseAdd=-75;
                     Worlds[i].gedo.DrawGedo(/*35+64+8,yy+73,*/1f,spriteBatch);
-                //    Worlds[i].ButtonSetting.ButtonDraw(spriteBatch,Menu.mousePosX,Menu.mousePosY-75,105,yy+100,Menu.mouseDown);
-                    //Worlds[i].ButtonPlay.mou
-                //    Worlds[i].ButtonPlay.Position=new Vector2(105+38,yy+100);
-                  //  Worlds[i].ButtonPlay.ButtonDrawCorectionY(spriteBatch,/*newMouseState.LeftButton==ButtonState.Pressed,*/1/*,new Vector2(newMouseState.X,newMouseState.Y-75)*/);
                 }
                 yy+=100;
             }
             spriteBatch.End();
-            // Graphics.Clear(Color.Transparent);
+
             spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend);
-        yy=(int)(-(Worlds.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
+            yy=(int)(-(Worlds.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
 
             for (int i = 0;i<Worlds.Count; i++) {
                 if (yy>-70-70 && yy<Global.WindowHeight-75-65-70) {
@@ -253,14 +224,10 @@ Button buttonMenu;
                     //}
 
                     //Name
-                 //   Worlds[i].gedo.SetPos(35+64+8,yy+73);
-                  //  Worlds[i].gedo.DrawGedo(spriteBatch,/*35+64+8,yy+73,*/255);
                     Worlds[i].ButtonSetting.Position.X=105;
                     Worlds[i].ButtonSetting.Position.Y=yy+100;
-                    Worlds[i].ButtonSetting.ButtonDraw(/*spriteBatch,Menu.mousePosX,Menu.mousePosY-75,105,yy+100,Menu.mouseDown*/);
-                    //Worlds[i].ButtonPlay.mou
-                    //Worlds[i].ButtonPlay.Position=new Vector2(105+38,yy+100);
-                    Worlds[i].ButtonPlay.ButtonDrawCorectionY(spriteBatch,/*newMouseState.LeftButton==ButtonState.Pressed,*/1/*,new Vector2(newMouseState.X,newMouseState.Y-75)*/);
+                    Worlds[i].ButtonSetting.ButtonDraw();
+                    Worlds[i].ButtonPlay.ButtonDrawCorectionY(spriteBatch, 1);
                 }
                 yy+=100;
             }
@@ -271,31 +238,38 @@ Button buttonMenu;
         }
 
         public override void Draw(GameTime gameTime, float f) {
+
+            // draw stuff on full window
             spriteBatch.Begin();
-           // DrawTextHeader(10, 10, Lang.Texts[6],f);
+
             header.Draw(spriteBatch,Color.Black*f);
 
-            buttonNewWorld.ButtonDraw(spriteBatch, /*mouse,*/ f/*, Menu.mousePos*/);
-            OpenfolderButton.ButtonDraw(spriteBatch, /*mouse,*/ f/*, Menu.mousePos*/);
-            buttonMenu.ButtonDraw(spriteBatch,/* mouse,*/f/*, new Menu.mousePos*/);
+            buttonNewWorld.ButtonDraw(spriteBatch, f);
+            OpenfolderButton.ButtonDraw(spriteBatch,f);
+            buttonMenu.ButtonDraw(spriteBatch, f);
 
 			spriteBatch.End();
 
+            // Draw predraw (inside white rectangle)
             effectBlur.Parameters["alpha"].SetValue(f);
             spriteBatch.Begin(SpriteSortMode.Deferred,null,null,null,null,effectBlur);
             effectBlur.Techniques[0].Passes[0].Apply();
             spriteBatch.Draw(worldsTarget, new Vector2(0, 76), new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight-75-65-2), Color.White*f);
             spriteBatch.End();
 
+            // Dont mess with effects
             spriteBatch.Begin();
-            scrollbar.ButtonDraw(spriteBatch,/*mouse,*/f/*,Menu.mousePos,new Vector2(Global.WindowWidth-35,76)*/);
+            scrollbar.ButtonDraw(spriteBatch, f);
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
+        ///<summary>Creale list with worlds</summary>
         void PrepereWorlds() {
+            // Dir check
             if (!Directory.Exists(Setting.Path + "\\Worlds"))Directory.CreateDirectory(Setting.Path + "\\Worlds");
+
             string[] potencialWorlds = Directory.GetDirectories(Setting.Path + "\\Worlds");
             List<Singleworld>ret=new List<Singleworld>();
 
@@ -314,20 +288,20 @@ Button buttonMenu;
                     if (nexistsInList) {
                         Singleworld s=new Singleworld(){
                             generated=File.Exists(w+"\\EarthGenerated.txt"),
-                            gedo=new GeDo(/*Fonts.Small,*//*Fonts.SmallItalic,*/ File.ReadAllText(w+"\\SplashText.txt")/*,false*/,35+64+8,0+73/*,BitmapFont.bitmapFont18*/),
+                            gedo=new GeDo(File.ReadAllText(w+"\\SplashText.txt"),35+64+8,0+73),
                             directoryName=w,
 
                             ButtonSetting=new ImgButton(buttonSettingTexture),
                         };
 
                         if (s.generated){
-                              s.ButtonPlay=new ButtonCenter(buttonPlayTexture/*,Fonts.Medium,Fonts.Big,true*/){
-                                  Text=Lang.Texts[80]/*;Setting.czechLanguage ? "Hrát" : "Play"*/,
+                              s.ButtonPlay=new ButtonCenter(buttonPlayTexture) {
+                                  Text=Lang.Texts[80],
                                   center=true,
                             };
                         } else {
-                              s.ButtonPlay=new ButtonCenter(buttonRightTexture/*,Fonts.Medium,Fonts.Big,true*/){
-                                  Text=Lang.Texts[81]/*. Setting.czechLanguage ? "Vygenerovat" : "Generate"*/,
+                              s.ButtonPlay=new ButtonCenter(buttonRightTexture) {
+                                  Text=Lang.Texts[81],
                                   center=true,
                             };
                         }
@@ -372,29 +346,11 @@ Button buttonMenu;
 
         }
 
-        //void SetTexts() {
-        //    buttonMenu.Text=Lang.Texts[1);
-        //    buttonNewWorld.Text=Lang.Texts[17);
-        //    OpenfolderButton.Text=Lang.Texts[18);
-        //    if (Setting.czechLanguage) {
-        //        buttonMenu.Text="Zpět";
-        //        buttonNewWorld.Text="Nový svět";
-        //        OpenfolderButton.Text="Složka";
-        //    } else {
-        //        buttonMenu.Text="Back";
-        //        buttonNewWorld.Text="New world";
-        //        OpenfolderButton.Text="Folder";
-        //    }
-        //}
-
-     //   void AddSingleWorld(string worldName) => Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location,"/AddSingleWorld \""+worldName+"\"");
-
         void EditSingleWorld(string worldName) {
-            using (EditSingleWorld esw= new EditSingleWorld(worldName)){
+            using (EditSingleWorld esw = new EditSingleWorld(worldName)) {
                 esw.ShowDialog();
                 timer=60;
                 esw.news2.Stop();
-
             }
             Worlds.Clear();
             PrepereWorlds();
@@ -420,6 +376,7 @@ Button buttonMenu;
                         return;
                     }
                 }
+
                 #if DEBUG
                 Stopwatch sw=new Stopwatch();
                 sw.Start();

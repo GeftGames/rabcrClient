@@ -76,7 +76,7 @@ namespace rabcrClient {
         public static Microsoft.Xna.Framework.Input.Keys KeyShowInfo=Microsoft.Xna.Framework.Input.Keys.F1;
         #endregion
 
-        public static string StyleName="Default";
+        public const string StyleName="Default";
 
         public static float slideChangeTime=0.05f;
 

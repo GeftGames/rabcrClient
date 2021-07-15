@@ -8,41 +8,16 @@ namespace rabcrClient {
         #region Varibles
         const float BirdSpeed=1f;
 
-       public bool Flying;
-        Vector2 SpeedVector;
-        private readonly Texture2D TextureStill;
-        private Texture2D TextureFlying;
-      //  public bool FlyRight;
+        public bool Flying;
         public int Frame;
         public Vector2 PositionFlyTo;
 
         public delegate bool EventStopFly();
         public event EventStopFly StopFlying;
+
+        readonly Texture2D TextureStill, TextureFlying;
+        Vector2 SpeedVector;
         #endregion
-
-        //public Parrot(byte height, int x, bool dir, bool Flying, Texture2D textureStill, Texture2D textureFlying) {
-        //  //  Position.Y=height*16;
-        //    Position=new Vector2(x*16, height*16);
-        //    TextureStill = textureStill;
-        //    TextureFlying = textureFlying;
-        //  this.Flying=Flying;
-        //    Frame=0;
-        //    FlyRight=dir;
-        //    Id=(ushort)BlockId.MobParrot;
-        //} 
-        //public unsafe Parrot(byte* stream, int x, Texture2D textureStill, Texture2D textureFlying) {
-        //    Position=new Vector2(x*16, (*stream++)*16);
-        //    Dir=*stream++==1;
-
-        //    if (Flying = *stream++==1) { 
-        //        PositionFlyTo=new Vector2( ((*stream++<<8) | *stream++)*16, (*stream++)*16);
-        //    }
-
-        //    TextureStill = textureStill;
-        //    TextureFlying = textureFlying;
-        //    Frame=0;
-        //    Id=(ushort)BlockId.MobParrot;
-        //} 
 
         public unsafe Parrot(byte height, int x, bool dir, Texture2D textureStill, Texture2D textureFlying) {
            // PositionFlyTo=Pos;
@@ -65,17 +40,6 @@ namespace rabcrClient {
             Frame=0;
             Id=(ushort)BlockId.MobParrot;
         } 
-
-        //public Parrot(byte height, int x, bool dir, Texture2D textureStill, Texture2D textureFlying) {
-        //  //  Position.Y=height*16;
-        //    Position=new Vector2(x*16, height*16);
-        //    TextureStill = textureStill;
-        //    TextureFlying = textureFlying;
-        //    Flying=false;
-        //    Frame=0;
-        //    FlyRight=dir;
-        //    Id=(ushort)BlockId.MobParrot;
-        //} 
 
         public unsafe override byte[] Save(){ 
             ushort 
@@ -121,10 +85,11 @@ namespace rabcrClient {
             if (FastMath.DistanceInt(Position.X,Position.Y, PositionFlyTo.X,PositionFlyTo.Y)<=BirdSpeed*2) { 
                 
                 Position=PositionFlyTo;
-                    Flying=false;    
+                Flying=false;
+
                 // invoke to check existence of destination flight
-                if (StopFlying.Invoke()) { 
-                }
+                /*if (*/StopFlying.Invoke();//) {
+                //}
 
             } else { 
                 Position+=SpeedVector;
@@ -137,9 +102,9 @@ namespace rabcrClient {
             PositionFlyTo.X=x;
             PositionFlyTo.Y=y;
 
-            Vector2 RawSpeedVector=/*PositionFlyTo-Position;//*/new Vector2(PositionFlyTo.X-Position.X, PositionFlyTo.Y-Position.Y);
+            Vector2 RawSpeedVector=new Vector2(PositionFlyTo.X-Position.X, PositionFlyTo.Y-Position.Y);
             float vecSize=(float)Math.Sqrt(RawSpeedVector.X*RawSpeedVector.X+RawSpeedVector.Y*RawSpeedVector.Y);
-        //    Vector2.
+
             SpeedVector=RawSpeedVector/vecSize*BirdSpeed;
             Dir=SpeedVector.X>0;
         }
@@ -147,10 +112,12 @@ namespace rabcrClient {
         public override void Draw() {
             if (Flying) {
                 UpdateFlying();
+
                 // Frames
                 Frame+=10;
                 if (Frame>TextureFlying.Width-35)Frame-=TextureFlying.Width-35;
 
+                // Draw
                 if (Dir) Rabcr.spriteBatch.Draw(TextureFlying/*Rabcr.Pixel*/, Position, new Rectangle((int)(Frame/35)*35+4,0,35,35), Color.White, 0, Vector2.Zero, /*1f*/.5f, SpriteEffects.FlipHorizontally, 0);
                 else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/35f)*35+4,0,35,35), Color.White, 0, Vector2.Zero, .5f, SpriteEffects.None, 0);
             } else Rabcr.spriteBatch.Draw(TextureStill, new Vector2(Position.X+5,Position.Y-10), Color.White);

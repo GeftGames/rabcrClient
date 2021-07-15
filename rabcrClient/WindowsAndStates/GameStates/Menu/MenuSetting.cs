@@ -57,7 +57,7 @@ namespace rabcrClient {
                     if (start==-1)start=i;
                     end=i;
                     if (Global.WindowWidth>600){
-                        if (item  is SettingMessage) item.X=Global.WindowWidthHalf-DocumentSize+DocumentSize/*/2*/-((SettingMessage)item).centerDelta;
+                        if (item  is SettingMessage message) item.X=Global.WindowWidthHalf-DocumentSize+DocumentSize/*/2*/-message.centerDelta;
                       else  item.X=Global.WindowWidthHalf-DocumentSize/2;
                         item.ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
                     } else {

@@ -198,7 +198,6 @@
     <Compile Include="InterLogic\TextDrawer.cs" />
     <Compile Include="LiquidId.cs" />
     <Compile Include="GenLiveObject.cs" />
-    <Compile Include="Particles.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -206,7 +205,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RabcrGame.cs" />
     <Compile Include="Relase.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\GeneratePlanetSystem.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\GWorld.cs" />

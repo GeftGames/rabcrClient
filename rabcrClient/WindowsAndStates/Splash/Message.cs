@@ -12,7 +12,7 @@ namespace rabcrClient {
         MouseState newMouseState, oldMouseState;
         SpriteBatch spriteBatch;
         readonly GraphicsDeviceManager GraphicsManager;
-        readonly GraphicsDevice Graphics;
+        //readonly GraphicsDevice Graphics;
 
         GeDo gedo;
         GameButtonMedium ok;
@@ -47,71 +47,71 @@ namespace rabcrClient {
 
             oldMouseState=new MouseState();
 
-           //   if (runWithArgs) {
-           //         Setting.Name=Environment.GetCommandLineArgs()[3];
-           //      //   Global.Logged=true;
-           //        // Global.OnlineAccount=false;
-           //         Setting.Path=Environment.GetCommandLineArgs()[2]+"\\"+Setting.Name+"\\";
-           //         //if (!Directory.Exists(Setting.Path+"\\RabcrData")){
-           //         //    MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu","Nenalezeny data hry");
-           //         //    Environment.Exit(-1);
-           //         //    return;
-           //         //}
-           //      //   if (!File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.WriteAllText(Path.GetTempPath()+"\\rabcrLastPassword.txt",Setting.Name);
-           //     } else {
-           //         Setting.Name="Player";
-           //        // Global.Logged=false;
-           //        // Global.OnlineAccount=false;
+            //   if (runWithArgs) {
+            //         Setting.Name=Environment.GetCommandLineArgs()[3];
+            //      //   Global.Logged=true;
+            //        // Global.OnlineAccount=false;
+            //         Setting.Path=Environment.GetCommandLineArgs()[2]+"\\"+Setting.Name+"\\";
+            //         //if (!Directory.Exists(Setting.Path+"\\RabcrData")){
+            //         //    MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu","Nenalezeny data hry");
+            //         //    Environment.Exit(-1);
+            //         //    return;
+            //         //}
+            //      //   if (!File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.WriteAllText(Path.GetTempPath()+"\\rabcrLastPassword.txt",Setting.Name);
+            //     } else {
+            //         Setting.Name="Player";
+            //        // Global.Logged=false;
+            //        // Global.OnlineAccount=false;
 
-           //         Setting.Path=GetPathIfNotArgs();
-                    
-           //         //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
-           //     }
+            //         Setting.Path=GetPathIfNotArgs();
 
-           //     if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
-           ////     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
-           //     if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
-           //   //  if (!Directory.Exists(Setting.Path+"\\Servers"))Directory.CreateDirectory(Setting.Path+"\\Servers");
+            //         //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
+            //     }
 
-           //     //Log.Init();
+            //     if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
+            ////     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
+            //     if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
+            //   //  if (!Directory.Exists(Setting.Path+"\\Servers"))Directory.CreateDirectory(Setting.Path+"\\Servers");
 
-           //     if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
-           //         switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
-           //              default:
-           //                 MessageBox.Show("Game data not found, game was probably runned from archive"
-           //                 #if DEBUG
-           //                 +"\r\nCheck dir: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
-           //                 #endif
-           //                 ,"Error - Game data not found");
-           //                 break;
+            //     //Log.Init();
 
-           //              case "Czech":
-           //                 MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu"
-           //                 #if DEBUG
-           //                 +"\r\nZkontrolujte složku: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
-           //                 #endif
-           //                 ,"Chyba - Nenalezeny data hry");
-           //                 break;
-           //         }
-                   
+            //     if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
+            //         switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+            //              default:
+            //                 MessageBox.Show("Game data not found, game was probably runned from archive"
+            //                 #if DEBUG
+            //                 +"\r\nCheck dir: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
+            //                 #endif
+            //                 ,"Error - Game data not found");
+            //                 break;
 
-           //         Environment.Exit(-1);
-           //         return;
-           //     }
+            //              case "Czech":
+            //                 MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu"
+            //                 #if DEBUG
+            //                 +"\r\nZkontrolujte složku: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
+            //                 #endif
+            //                 ,"Chyba - Nenalezeny data hry");
+            //                 break;
+            //         }
 
-           //     if (!File.Exists(Setting.Path+@"\Setting.bin")) Setting.CreateSettings();
-           //     else {
-           //         try {
-           //             Setting.LoadSetting();
-           //         } catch {
-           //             Setting.CreateSettings();
-           //         }
-           //     }
+
+            //         Environment.Exit(-1);
+            //         return;
+            //     }
+
+            //     if (!File.Exists(Setting.Path+@"\Setting.bin")) Setting.CreateSettings();
+            //     else {
+            //         try {
+            //             Setting.LoadSetting();
+            //         } catch {
+            //             Setting.CreateSettings();
+            //         }
+            //     }
 
             //#endregion
 
-       
-            Graphics=GraphicsManager.GraphicsDevice;
+
+            //Graphics = GraphicsManager.GraphicsDevice;
 
            /* Rabcr.*/GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.66667f);
            /* Rabcr.*/GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.66667f);

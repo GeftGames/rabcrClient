@@ -32,7 +32,7 @@ namespace rabcrClient {
         public override void Init() {
             MediaPlayer.Volume=Setting.VolumeMusic;
 
-            back=new Background(/*Content,*/Graphics);
+            back=new Background(Graphics);
 
             menuScreen.Init();
         }
@@ -42,36 +42,42 @@ namespace rabcrClient {
         }
 
         public override void Update(GameTime gameTime) { 
+            // Set keyboard and mouse
             oldMouseState=newMouseState;
             newKeyboardState=Keyboard.GetState();
-            newMouseState=Rabcr.newMouseState;// Mouse.GetState();
+            newMouseState=Rabcr.newMouseState;
 
+            // background world update
             back.Update(gameTime);
 
+            // Set keyboard and mouse (full size and white rectangle, it's complicated)
             mouseDown=newMouseState.LeftButton == ButtonState.Pressed;
             mousePosX=newMouseState.X;
             mousePosY=newMouseState.Y;
             mousePosYCorrection=newMouseState.Y-75;
             UpdateTransform();
 
+            // draw menu on background
             menuScreen.Update(gameTime);
 
+            // Play songs
             if (Global.HasSoundGraphics){
                 if (playing < 0) {
                     Song play/*=null*/;
                     switch (Rabcr.random.Int4()) {
-                        case 0: play=Songs.Happend;break;
-                        case 1: play = Songs.Medium; break;
-                        case 2: play = Songs.Root; break;
-                        default: play = Songs.Storm; break;
+                        case 0:  play = Songs.Happend;  break;
+                        case 1:  play = Songs.Medium;   break;
+                        case 2:  play = Songs.Root;     break;
+                        default: play = Songs.Storm;    break;
                     }
 
-                    try{
+                    try {
                         MediaPlayer.Play(play);
-                        playing =(int)play.Duration.TotalMilliseconds;
-                    }catch{ }
+                        playing = (int)play.Duration.TotalMilliseconds;
+                    } catch{ }
                 } else playing-=16.66666666f;
             }
+
             base.Update(gameTime);
         }
 
@@ -105,7 +111,7 @@ namespace rabcrClient {
         void UpdateTransform() {
             if (goingA) {
                 glowIndex-=Setting.slideChangeTime;
-                if (glowIndex<0 ||Setting.slideChangeTime==0) {
+                if (glowIndex<0 || Setting.slideChangeTime==0) {
                     glowIndex=0;
                     goingA=false;
                     goingS=true;
@@ -113,7 +119,7 @@ namespace rabcrClient {
                 }
             } else if (goingS) {
                 glowIndex+=Setting.slideChangeTime;
-                if (glowIndex>1f||Setting.slideChangeTime==0) {
+                if (glowIndex>1f || Setting.slideChangeTime==0) {
                     glowIndex=1f;
                     goingS=false;
                 }

@@ -8,7 +8,7 @@ namespace rabcrClient {
 
         #region Varibles
         Process p;
-        Thread checker;
+        readonly Thread checker;
         bool exited;
         bool started;
         string get="";
