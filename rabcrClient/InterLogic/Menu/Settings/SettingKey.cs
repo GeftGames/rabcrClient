@@ -168,20 +168,20 @@ namespace rabcrClient {
                 case Keys.Multiply: return "*";
                 case Keys.Divide: return "/";
 
-                case Keys.OemPlus: return "+";//ΩPlus
-                case Keys.OemQuestion: return "?";//ΩQuestion
+                case Keys.OemPlus: return "+";
+                case Keys.OemQuestion: return "?";
                 case Keys.OemPipe: return "ΩLine";
-                case Keys.OemQuotes: return "\"";//ΩQuotes
-                case Keys.OemSemicolon: return ";";//ΩSemicolon
-                case Keys.OemPeriod: return ".";//ΩPeriod
-                case Keys.OemMinus: return "-";//ΩMinus
-                case Keys.OemComma: return ",";//ΩComma
+                case Keys.OemQuotes: return "\"";
+                case Keys.OemSemicolon: return ";";
+                case Keys.OemPeriod: return ".";
+                case Keys.OemMinus: return "-";
+                case Keys.OemComma: return ",";
                 case Keys.OemCloseBrackets: return ")";
-                case Keys.OemOpenBrackets: return "(";//ΩBracketsO
+                case Keys.OemOpenBrackets: return "(";
                 case Keys.PageUp: return Lang.Texts[262];
                 case Keys.PageDown: return Lang.Texts[263];
                 case Keys.OemTilde: return "~";
-                case Keys.Decimal: return Lang.Texts[271];//"Del"
+                case Keys.Decimal: return Lang.Texts[271];
 
                 case Keys.Escape: return Lang.Texts[269];
                 case Keys.Tab: return Lang.Texts[270];

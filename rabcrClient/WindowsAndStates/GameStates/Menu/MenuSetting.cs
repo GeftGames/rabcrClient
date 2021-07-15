@@ -365,6 +365,16 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
+            {
+                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
+                button.Click+=ClickFps;
+                settings.Add(button);
+
+                void ClickFps() {
+                    Setting.Fps=button.ON;
+                    Global.ChangedSettings=true;
+                }
+            }
             //{
             //    SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
             //    button.Click+=ClickGraphicsProfile;
@@ -404,16 +414,6 @@ namespace rabcrClient {
                 //    System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 //}
           //  }
-            {
-                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
-                button.Click+=ClickFps;
-                settings.Add(button);
-
-                void ClickFps() {
-                    Setting.Fps=button.ON;
-                    Global.ChangedSettings=true;
-                }
-            }
 
             // Hlasitost
             settings.Add(new SettingHeader(Lang.Texts[134]));

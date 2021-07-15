@@ -77,9 +77,9 @@ namespace rabcrClient {
         public void Dispose() {
             if (!exited) {
                 try {
-                p.Kill();
-                p.Close();
-                p.Dispose();
+                    p.Kill();
+                    p.Close();
+                    p.Dispose();
                 }catch {}
             }
             if (checker!=null) {

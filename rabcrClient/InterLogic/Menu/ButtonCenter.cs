@@ -87,7 +87,7 @@ namespace rabcrClient {
                 color=new Color(fill,fill,fill);
             }
 			if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch/*, blacksh*/); 
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch); 
             }
             spriteBatch.Draw(texture, position, color*f);
 
@@ -118,7 +118,7 @@ namespace rabcrClient {
                 color=new Color(fill,fill,fill);
             }
 			if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch/*,*/ /*Color.Black*0.05f*//*blacksh*/); 
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch); 
             }
             spriteBatch.Draw(texture, position, color*f);
 
@@ -149,7 +149,7 @@ namespace rabcrClient {
                 color=new Color(fill, fill, fill);
             }
             if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch/*,*/ /*Color.Black*0.05f*//*blacksh*/);
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch);
             }
             spriteBatch.Draw(texture, position, color);
 
@@ -181,17 +181,15 @@ namespace rabcrClient {
             }
 
             if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch/*,*/ /*Color.Black*0.05f*//*blacksh*/);
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch);
             }
             spriteBatch.Draw(texture, position, new Color(color.R*(fill/255f), color.G*(fill/255f), color.B*(fill/255f)));
 
             text.Draw(spriteBatch,Color.Black);
         }
 
-        void DrawShadow(SpriteBatch spriteBatch/*, Color c*/) {
-          //  if (!Constants.AnimationsControls) return;
-
-            Color ca=/*c*/blacksh*((fill-150)/105f);
+        void DrawShadow(SpriteBatch spriteBatch) {
+            Color ca=blacksh*((fill-150)/105f);
             Vector2 vec=new Vector2(position.X,position.Y);
 
             for (float x=0.5f; x<3; x+=0.5f) {

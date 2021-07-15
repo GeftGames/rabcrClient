@@ -9,6 +9,7 @@ namespace rabcrClient {
         int needBeFill=255;
         Color color;
 
+        Vector2 position;
         bool oldmouseState;
         bool click;
 
@@ -26,7 +27,6 @@ namespace rabcrClient {
             }
         }
         #endregion
-        Vector2 position;
 
         public  Vector2 Position{
             set {
@@ -55,7 +55,7 @@ namespace rabcrClient {
         void ReSet(){
             XP=(texture.Width-BitmapFont.bitmapFont18.MeasureTextSingleLineX(str))/2f;
             YP=(texture.Height-30)/2f;
-            text=new Text(str, (int)(position.X+XP), (int)(position.Y+YP),BitmapFont.bitmapFont18);
+            text=new Text(str, (int)(position.X+XP), (int)(position.Y+YP), BitmapFont.bitmapFont18);
         }
 
         public void ButtonDrawCorectionY(SpriteBatch spriteBatch) {
@@ -81,22 +81,13 @@ namespace rabcrClient {
                 else fill-=5;
                 color=new Color(fill,fill,fill);
             }
-			//if (needBeFill!=150)DrawShadow(spriteBatch,Color.Black*0.05f);
+
             spriteBatch.Draw(texture, position, color);
 
-            text.Draw(spriteBatch,/*color*/Color.Black);
+            text.Draw(spriteBatch, Color.Black);
 		}
 
-
-        //bool In(/*Vector2 mouse, DInt position*/) {
-        //    if (Menu.mousePosX < position.X) return false;
-        //    if (Menu.mousePosY < position.Y) return false;
-        //    if (Menu.mousePosX > position.X + texture.Width) return false;
-        //    if (Menu.mousePosY > position.Y + texture.Height) return false;
-        //    return true;
-        //}
-
-         bool InCY(/*Vector2 mouse, DInt position*/) {
+        bool InCY() {
             if (Menu.mousePosX < position.X) return false;
             if (Menu.mousePosYCorrection < position.Y) return false;
             if (Menu.mousePosX > position.X + texture.Width) return false;

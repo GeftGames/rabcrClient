@@ -99,8 +99,6 @@ namespace rabcrClient {
                     if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
                         Debug.Write(chs[ch]+" ");
                         if (g.visible) {
-                    //    if (chs[ch]=='媪') {g.Y-=1; }
-                      //      if (chs[ch]=='发') {posx-=3; }//ा
                             tmpChs.Add(
                                 new DrawingChar{
                                     Pos=new Vector2(posx+g.X,Y+g.Y),
@@ -108,8 +106,10 @@ namespace rabcrClient {
                                 }
                             );
                             posx+=g.DrawRectangle.Width+g.X+g.W-3;
+
+                            // Devanagari special character
                             if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
-                         //   if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
+                            // if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
                         } else {
                             posx+=g.W;
                         }
@@ -658,6 +658,14 @@ namespace rabcrClient {
             for (int i=0; i<Length; i++) {
                 DrawingChar ch=Chars[i];
                 sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, Color.Black);
+            }
+        }
+
+        public void DrawBold(SpriteBatch sb) {
+            for (int i=0; i<Length; i++) {
+                DrawingChar ch=Chars[i];
+                sb.Draw(font.Bitmap, ch.Pos, ch.Rectangle, Color.Black);
+                sb.Draw(font.Bitmap, new Vector2(ch.Pos.X+1, ch.Pos.Y), ch.Rectangle, Color.Black);
             }
         }
 
@@ -1438,9 +1446,7 @@ namespace rabcrClient {
 
     class RenderEnngineDevanagari {
         char[] Consonants ={'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
-        char[] DevandariPreCh ={
-            'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई',
-        };
+        char[] DevandariPreCh ={ 'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई', };
 
 
         public char[][] tableMoveBack = new char[][]{

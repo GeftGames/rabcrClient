@@ -44,15 +44,13 @@ namespace rabcrClient {
             Position.X=x;
             Position.Y=y;
 
-           // TText=new Text(Text, X, y,BitmapFont.bitmapFont18);
-
             DInt m=BitmapFont.bitmapFont18.MeasureTextSingleLine(Lang.Texts[335]);
-            text=new Text(Lang.Texts[335],x+(texture.Width-m.X)/2,y+(texture.Height-m.Y)/2,BitmapFont.bitmapFont18);
+            text=new Text(Lang.Texts[335],x+(texture.Width-m.X)/2, y+(texture.Height-m.Y)/2, BitmapFont.bitmapFont18);
 
             TText.ChangePosition(X,y);
 
             w2=(int)Position.X + texture.Width;
-            h2= (int)Position.Y + texture.Height;
+            h2=(int)Position.Y + texture.Height;
         }
 
         public override void Update() {
@@ -62,14 +60,14 @@ namespace rabcrClient {
                     oldmouseState=true;
                 } else {
 					if (oldmouseState) {
-                        if (Rabcr.Game.IsActive){
+                        if (Rabcr.Game.IsActive) {
                             oldmouseState=false;
-                            using (FormColors form = new FormColors(listColor)){
+                            using (FormColors form = new FormColors(listColor)) {
                                 form.ShowDialog();
                                 if (form.setted){
                                     if (form.ok){
-                                   selectedColor=/*color=*/form.current;
-                                    Click.Invoke();
+                                        selectedColor=/*color=*/form.current;
+                                        Click.Invoke();
                                     }
                                 }
                             }

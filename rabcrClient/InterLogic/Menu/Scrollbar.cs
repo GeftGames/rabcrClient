@@ -54,8 +54,8 @@ namespace rabcrClient {
                 bscale=scale;
                 MoveScollBar?.Invoke(this,ea);
             }
-            if (height>maxheight)return;
-            if (height<19)return;
+            if (height>maxheight) return;
+            if (height<19) return;
 
             drawingAmought=(int)((float)height/maxheight*(height-19));
             drawingPos=(int)((height-drawingAmought-8)*/*scale*/drawscale);
@@ -68,15 +68,10 @@ namespace rabcrClient {
                         move=true;
                         pressHeight=Menu.mousePosY-drawingPos-PositionY;
                     }
-                }else{
-                    shoundBeFill=230;
-                }
+                } else shoundBeFill=230;
+            } else shoundBeFill=255;
 
-            }else{
-                shoundBeFill=255;
-            }
-
-            if (move){
+            if (move) {
                 float msH=Menu.mousePosY-PositionY;
 
                drawscale= scale =(msH-pressHeight)/(height-drawingAmought-8);
@@ -87,27 +82,26 @@ namespace rabcrClient {
                 shoundBeFill=200;
             }
 
-            if (!Menu.mouseDown){
-                move=false;
-            }
+            if (!Menu.mouseDown) move=false;
+
             oldmouseState=Menu.mouseDown;
 
 
-            if (shoundBeFill!=fill){
-                if (shoundBeFill<fill){
+            if (shoundBeFill!=fill) {
+                if (shoundBeFill<fill) {
                     fill-=5;
                 } else {
                     fill+=5;
                 }
-                color=new Color(fill,fill,fill);
+                color=new Color(fill, fill, fill);
             }
 
             int _drawingPos=(int)((height-drawingAmought-8)*/*scale*/drawscale);
 
             Color c=color*f;
-            spriteBatch.Draw(textureTop,new Vector2(PositionX,PositionY+_drawingPos),c);
-            spriteBatch.Draw(textureCenter,new Rectangle(PositionX,PositionY+_drawingPos+9,20,drawingAmought-9),c);
-            spriteBatch.Draw(textureBottom,new Vector2(PositionX,PositionY+_drawingPos+9+drawingAmought-9),c);
+            spriteBatch.Draw(textureTop,new Vector2(PositionX, PositionY+_drawingPos),c);
+            spriteBatch.Draw(textureCenter,new Rectangle(PositionX, PositionY+_drawingPos+9,20,drawingAmought-9),c);
+            spriteBatch.Draw(textureBottom,new Vector2(PositionX, PositionY+_drawingPos+9+drawingAmought-9),c);
 	    }
 
         public void ButtonDraw(SpriteBatch spriteBatch, float f, int mouseY) {
@@ -117,21 +111,16 @@ namespace rabcrClient {
             drawingAmought=(int)((float)height/maxheight*(height-19));
             drawingPos=(int)((height-drawingAmought-8)*/*scale*/drawscale);
 
-            if (In(mouseY)){
-                if (Menu.mouseDown){
+            if (In(mouseY)) {
+                if (Menu.mouseDown) {
                     shoundBeFill=220;
 
-                    if (!oldmouseState && Rabcr.ActiveWindow){
+                    if (!oldmouseState && Rabcr.ActiveWindow) {
                         move=true;
                         pressHeight=Menu.mousePosY-drawingPos-PositionY;
                     }
-                }else{
-                    shoundBeFill=230;
-                }
-
-            }else{
-                shoundBeFill=255;
-            }
+                } else shoundBeFill=230;
+            } else shoundBeFill=255;
 
             if (move){
                 float msH=Menu.mousePosY-PositionY;
@@ -143,27 +132,24 @@ namespace rabcrClient {
                 shoundBeFill=200;
             }
 
-            if (!Menu.mouseDown){
-                move=false;
-            }
+            if (!Menu.mouseDown) move=false;
+
             oldmouseState=Menu.mouseDown;
 
 
             if (shoundBeFill!=fill){
-                if (shoundBeFill<fill){
-                    fill-=5;
-                }else{
-                    fill+=5;
-                }
+                if (shoundBeFill<fill) fill-=5;
+                else fill+=5;
+
                 color=new Color(fill,fill,fill);
             }
 
             int _drawingPos=(int)((height-drawingAmought-8)*/*scale*/drawscale);
 
             Color c=color*f;
-            spriteBatch.Draw(textureTop,new Vector2(PositionX,PositionY+_drawingPos),c);
-            spriteBatch.Draw(textureCenter,new Rectangle(PositionX,PositionY+_drawingPos+9,20,drawingAmought-9),c);
-            spriteBatch.Draw(textureBottom,new Vector2(PositionX,PositionY+_drawingPos+9+drawingAmought-9),c);
+            spriteBatch.Draw(textureTop, new Vector2(PositionX, PositionY+_drawingPos), c);
+            spriteBatch.Draw(textureCenter, new Rectangle(PositionX, PositionY+_drawingPos+9, 20, drawingAmought-9), c);
+            spriteBatch.Draw(textureBottom, new Vector2(PositionX, PositionY+_drawingPos+9+drawingAmought-9), c);
 		}
 
         bool In() {
