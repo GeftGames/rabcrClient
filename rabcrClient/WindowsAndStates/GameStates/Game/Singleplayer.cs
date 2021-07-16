@@ -3793,12 +3793,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 
-					if (mouseLeftDown) {
-						if (destroing) {
-							if (destroyBlockX==mousePosDiv16.X && destroyBlockY==mousePosDiv16.Y) {
-								destroingIndex++;
+						if (mouseLeftDown) {
+							if (destroing) {
+								if (destroyBlockX==mousePosDiv16.X && destroyBlockY==mousePosDiv16.Y) {
+									destroingIndex++;
 
-								if (destroingIndex>destringMaxIndex) {
+									if (destroingIndex>destringMaxIndex) {
 									//if (Global.WorldDifficulty==2) {
 									//    switch (destroingBlockDepth) {
 									//        case BlockType.Back:
@@ -12352,22 +12352,42 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void RemovePartTool() {
 			if (InventoryNormal[boxSelected].Id!=0) {
 				switch (InventoryNormal[boxSelected]) {
-					case ItemInvTool16 it:
-						if (it.GetCount==1) {
+					case ItemInvTool16 it16:
+						if (it16.GetCount==1) {
 							ushort newId=GameMethods.ToolToBasic(InventoryNormal[boxSelected].Id);
 							if (newId==InventoryNormal[boxSelected].Id) InventoryNormal[boxSelected]=itemBlank;
 							else {
 								if (GameMethods.IsItemInvTool16(newId)) {
-									InventoryNormal[boxSelected]=new ItemInvTool16(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), it.posTex.X, it.posTex.Y);
+									InventoryNormal[boxSelected]=new ItemInvTool16(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), (int)it16.posTex.X, (int)it16.posTex.Y);
 									return;
 								}
 								if (GameMethods.IsItemInvTool32(newId)) {
-									InventoryNormal[boxSelected]=new ItemInvTool32(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), it.posTex.X, it.posTex.Y);
+									InventoryNormal[boxSelected]=new ItemInvTool32(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), (int)it16.posTex.X, (int)it16.posTex.Y);
 									return;
 								}
 							}
 						} else {
-							it.SetCount=it.GetCount-1;
+							it16.SetCount=it16.GetCount-1;
+							return;
+						}
+						break;
+
+					case ItemInvTool32 it32:
+						if (it32.GetCount==1) {
+							ushort newId=GameMethods.ToolToBasic(InventoryNormal[boxSelected].Id);
+							if (newId==InventoryNormal[boxSelected].Id) InventoryNormal[boxSelected]=itemBlank;
+							else {
+								if (GameMethods.IsItemInvTool16(newId)) {
+									InventoryNormal[boxSelected]=new ItemInvTool16(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), (int)it32.posTex.X, (int)it32.posTex.Y);
+									return;
+								}
+								if (GameMethods.IsItemInvTool32(newId)) {
+									InventoryNormal[boxSelected]=new ItemInvTool32(ItemIdToTexture(newId),newId,1,GameMethods.ToolMax(newId), (int)it32.posTex.X, (int)it32.posTex.Y);
+									return;
+								}
+							}
+						} else {
+							it32.SetCount=it32.GetCount-1;
 							return;
 						}
 						break;
@@ -19006,14 +19026,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				(ushort)Items.HammerCopper,
 
 				// Bronze
-				(ushort)Items.PickaxeCopper,
-				(ushort)Items.AxeCopper,
-				(ushort)Items.ShovelCopper,
-				(ushort)Items.HoeCopper,
-				(ushort)Items.KnifeCopper,
-				(ushort)Items.ShearsCopper,
-				(ushort)Items.SawCopper,
-				(ushort)Items.HammerCopper,
+				(ushort)Items.PickaxeBronze,
+				(ushort)Items.AxeBronze,
+				(ushort)Items.ShovelBronze,
+				(ushort)Items.HoeBronze,
+				(ushort)Items.KnifeBronze,
+				(ushort)Items.ShearsBronze,
+				(ushort)Items.SawBronze,
+				(ushort)Items.HammerBronze,
 
 				// Gold
 				(ushort)Items.PickaxeGold,
