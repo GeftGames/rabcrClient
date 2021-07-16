@@ -3770,26 +3770,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Game - destruction + place blocks + drop item
 						bool notshot=true;
-						if (Rabcr.Game.IsActive){
-						if (mouseRightDown) MouseRightAction(); 
-						if (mouseRightPress) ItemEat(); 
+						if (Rabcr.Game.IsActive) {
+							if (mouseRightDown) MouseRightAction(); 
+							if (mouseRightPress) ItemEat(); 
 
-						if (mouseLeftPress) {
-							if (InventoryNormal[boxSelected].Id==(ushort)Items.Gun) {
-								foreach (ItemInv i in InventoryNormal) {
-									if (i.Id==(ushort)Items.Ammo) {
-										ItemInvBasic32 ammo=(ItemInvBasic32)i;
-										notshot=false;
-										ammo.SetCount=ammo.GetCount-1;
-										if (ammo.GetCount==0) InventoryNormal[boxSelected]=itemBlank;
-										if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth,Global.WindowHeight)) {
-											if (Game.IsActive) CreateShot();
+							if (mouseLeftPress) {
+								if (InventoryNormal[boxSelected].Id==(ushort)Items.Gun) {
+									foreach (ItemInv i in InventoryNormal) {
+										if (i.Id==(ushort)Items.Ammo) {
+											ItemInvBasic32 ammo=(ItemInvBasic32)i;
+											notshot=false;
+											ammo.SetCount=ammo.GetCount-1;
+											if (ammo.GetCount==0) InventoryNormal[boxSelected]=itemBlank;
+											if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth,Global.WindowHeight)) {
+												if (Game.IsActive) CreateShot();
+											}
+											break;
 										}
-										break;
 									}
 								}
 							}
-						}
 
 					if (mouseLeftDown) {
 						if (destroing) {
@@ -10512,7 +10512,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 
 						if (random.Bool_20Percent()) {
 							switch (random.Int(5)) {
@@ -10556,15 +10556,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumLeavesWithPlums, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum, 1), X16, Y16);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
 						}
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
 
 						if (random.Bool_20Percent()) {
 							switch (random.Int(5)) {
@@ -10654,15 +10654,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeavesWithOranges, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange, 1), X16, Y16);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 						}
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 
 						if (random.Bool_20Percent()) {
 							switch (random.Int(6)) {
@@ -10691,15 +10691,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleLeavesWithApples, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple, 1), X16, Y16);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 						}
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 
 						if (random.Bool_20Percent()) {
 							switch (random.Int(5)) {
@@ -10758,15 +10758,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
 						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherryLeavesWithCherries, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry, 1), X16, Y16);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 						}
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 
 						if (random.Bool_20Percent()) {
 							switch (random.Int(5)) {
@@ -10814,6 +10814,36 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								case 4:
 									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
+									return;
+							}
+						}
+					}
+					return;
+
+				case (ushort)BlockId.MangroveLeaves:
+					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
+						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
+						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
+					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.Leave,1), X16, Y16);
+					} else {
+						if (random.Bool_20Percent()) {
+							switch (random.Int(5)) {
+								case 1:
+									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
+									return;
+
+								case 2:
+									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
+									return;
+
+								case 3:
+									DropItemToPos(new ItemNonInvBasic((ushort)Items.Leave,1), X16, Y16);
+									return;
+
+								case 4:
+									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
 									return;
 							}
 						}
