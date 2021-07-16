@@ -4412,8 +4412,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					DescayInventory(InventoryClothes);
-					DescayInventory(InventoryNormal);
+					//DescayInventory(InventoryClothes);
+				//	DescayInventory(InventoryNormal);
 
 
 				// do not write here
@@ -5794,6 +5794,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				if (_secondTimer<0) {
 					{
+						// Descay
+						DescayInventory(InventoryNormal);
+						DescayInventory(InventoryClothes);
+
 						int totalammo=TotalItemsInInventoryItemBasic16((ushort)Items.Ammo);
 						if (totalammo>99)totalammo=99;
 						if (totalammo==0) totalammo=1;
@@ -6729,7 +6733,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								{
 									Vector2 vector=new Vector2((int)PlayerX-11, (int)PlayerY-(int)(39*0.5f));
 
-									Vector2 pointing=new Vector2(mouseRealPosX-Global.WindowWidthHalf,mouseRealPosY-Global.WindowHeightHalf);
+									Vector2 pointing=new Vector2(mouseRealPosX-Global.WindowWidthHalf, mouseRealPosY-Global.WindowHeightHalf);
 									Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2, vector.Y-39/2+12-1+38/2);
 									Vector2 hand=Vector2.Normalize(pointing)*HandSize;
 									hand.X+=rameno.X;
@@ -6786,10 +6790,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									if (ClothesChestTop is null) {
 										if (ClothesChest is null)DrawItemInHand(null, Color.White, 0);
-										else DrawItemInHand(ClothesChest?.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest?.handSize);
-									} else DrawItemInHand(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
+										else DrawItemInHand(ClothesChest?.Texture2DClothHand, ClothesChest.Color, (int)ClothesChest?.handSize);
+									} else DrawItemInHand(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color, (int)ClothesChestTop.handSize);
 									
-									void DrawItemInHand(Texture2D texCloth, Color colorCloth, int size){
+									void DrawItemInHand(Texture2D texCloth, Color colorCloth, int size) {
 										Rectangle recHand= new Rectangle(0,0,4,HandSize-size), recCloth=new Rectangle(0,0,4,size);
 										Vector2 vecOrigin=new Vector2(2,2-size);
 										
@@ -8887,111 +8891,113 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				#region Get food
 				if (chunk.IsTopBlocks[y]) {
-					switch (chunk.TopBlocks[y].Id) {
-						case (ushort)BlockId.BucketWithLatex:
-							DropItemFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Resin,1), mousePosRoundX, mousePosRoundY);
+					if (Global.WorldDifficulty!=1 || FastMath.DistanceInt(mousePosDiv16.X,mousePosDiv16.Y,PlayerX,PlayerY) < 8*16){
+						switch (chunk.TopBlocks[y].Id) {
+							case (ushort)BlockId.BucketWithLatex:
+								DropItemFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Resin,1), mousePosRoundX, mousePosRoundY);
 
-							//if (chunk.IsBackground[y]){
-							//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
-							//} else {
-							//    chunk.SolidBlocks[y]=new AirSolidBlock{
-							//        Top=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY))
-							//    };
-							//}
-							//chunk.IsTopBlocks[y]=true;
+								//if (chunk.IsBackground[y]){
+								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
+								//} else {
+								//    chunk.SolidBlocks[y]=new AirSolidBlock{
+								//        Top=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY))
+								//    };
+								//}
+								//chunk.IsTopBlocks[y]=true;
 
-						  //  ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
-							bucketRubber.Add(new ShortAndByte(x, y));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							  //  ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
+								bucketRubber.Add(new ShortAndByte(x, y));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.PlumLeavesWithPlums:
-							DropFoodFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum,1), mousePosRoundX, mousePosRoundY);
-							////((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
+							case (ushort)BlockId.PlumLeavesWithPlums:
+								DropFoodFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum,1), mousePosRoundX, mousePosRoundY);
+								////((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
 
-							//if (chunk.IsBackground[y]){
-							//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-							//} else {
-							//    chunk.SolidBlocks[y]=new AirSolidBlock{
-							//        Top=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY))
-							//    };
-							//}
+								//if (chunk.IsBackground[y]){
+								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
+								//} else {
+								//    chunk.SolidBlocks[y]=new AirSolidBlock{
+								//        Top=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY))
+								//    };
+								//}
 
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.CherryLeavesWithCherries:
-							DropFoodFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry,1), mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.CherryLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							case (ushort)BlockId.CherryLeavesWithCherries:
+								DropFoodFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry,1), mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.CherryLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.AppleLeavesWithApples:
-							DropFoodFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple,1), mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.AppleLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							case (ushort)BlockId.AppleLeavesWithApples:
+								DropFoodFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple,1), mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.AppleLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.LemonLeavesWithLemons:
-							DropFoodFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon,1),mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.LemonLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							case (ushort)BlockId.LemonLeavesWithLemons:
+								DropFoodFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon,1),mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.LemonLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.OrangeLeavesWithOranges:
-							DropFoodFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange,1),mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OrangeLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							case (ushort)BlockId.OrangeLeavesWithOranges:
+								DropFoodFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange,1),mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OrangeLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.OliveLeavesWithOlives:
-							DropFoodFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive,1),mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OliveLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
+							case (ushort)BlockId.OliveLeavesWithOlives:
+								DropFoodFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive,1),mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OliveLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
 
-						case (ushort)BlockId.KapokLeacesFibre:
-							DropItemFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
-							//DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre,1),mousePosRoundX, mousePosRoundY);
-							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.KapokLeaces,new Vector2(mousePosRoundX, mousePosRoundY));
-							//barEnergy+=0.02f;
-							//if (barEnergy>32) barEnergy=32;
-							return;
-					}
+							case (ushort)BlockId.KapokLeacesFibre:
+								DropItemFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
+								//DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre,1),mousePosRoundX, mousePosRoundY);
+								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.KapokLeaces,new Vector2(mousePosRoundX, mousePosRoundY));
+								//barEnergy+=0.02f;
+								//if (barEnergy>32) barEnergy=32;
+								return;
+						}
 
-					void DropFoodFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
-						DropItemToPos(new ItemNonInvFood(itemId, 1, GameMethods.FoodMaxDescay(itemId)), mousePosRoundX, mousePosRoundY);
+						void DropFoodFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
+							DropItemToPos(new ItemNonInvFood(itemId, 1, GameMethods.FoodMaxDescay(itemId)), mousePosRoundX, mousePosRoundY);
 
-						LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
-						leaves.Id=newLeavesId;
-						leaves.Texture=leavesTexture;
+							LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
+							leaves.Id=newLeavesId;
+							leaves.Texture=leavesTexture;
 
-						barEnergy+=0.02f;
-						if (barEnergy>32) barEnergy=32;
-					}
-					void DropItemFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
-						DropItemToPos(new ItemNonInvBasic(itemId), mousePosRoundX, mousePosRoundY);
+							barEnergy+=0.02f;
+							if (barEnergy>32) barEnergy=32;
+						}
+						void DropItemFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
+							DropItemToPos(new ItemNonInvBasic(itemId), mousePosRoundX, mousePosRoundY);
 
-						LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
-						leaves.Id=newLeavesId;
-						leaves.Texture=leavesTexture;
+							LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
+							leaves.Id=newLeavesId;
+							leaves.Texture=leavesTexture;
 
-						barEnergy+=0.02f;
-						if (barEnergy>32) barEnergy=32;
+							barEnergy+=0.02f;
+							if (barEnergy>32) barEnergy=32;
+						}
 					}
 				}
 
