@@ -12058,9 +12058,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return;
 
 					case (ushort)BlockId.Carrot:
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Carrot,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Carrot,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Carrot,1), pos);
+						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
+						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
+						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
 						return;
 
 					case (ushort)BlockId.Peas:
