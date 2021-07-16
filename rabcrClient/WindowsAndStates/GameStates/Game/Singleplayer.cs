@@ -6800,6 +6800,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None,1f);
 										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None,1f);
 
+										// Right
+										rameno.X+=17;
+										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, 0, vecOrigin, 1, SpriteEffects.None,1f);
+										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, 0, Vector2_2, 1, SpriteEffects.None,1f);
+										rameno.X-=17;
+
 										if (InventoryNormal[boxSelected]!=null){
 											if (InventoryNormal[boxSelected].Id!=0) {
 												Rectangle recItem=new Rectangle(
@@ -6853,10 +6859,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											}
 										}
 
-										// Right
-										rameno.X+=17;
-										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, 0, vecOrigin, 1, SpriteEffects.None,1f);
-										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, 0, Vector2_2, 1, SpriteEffects.None,1f);
 									}
 								}
 								break;
