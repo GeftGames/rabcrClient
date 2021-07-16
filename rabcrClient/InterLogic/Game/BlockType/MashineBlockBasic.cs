@@ -29,9 +29,9 @@ namespace rabcrClient {
         public override void Draw() {
 			screen+=imageSpeed;
 			if (screen>=divideC) screen = 0;
-            if (Working)Energy--;
+          //  if (Working)Energy--;
 
-            int e=(int)(Energy*0.18f);
+            int e=(int)(Energy*18f);
 
 			Rabcr.spriteBatch.Draw(Texture, Position, new Rectangle(16*((int)screen),0,16,16), ColorWhite);
 			Rabcr.spriteBatch.Draw(Rabcr.Pixel, new Rectangle((int)Position.X-2, (int)Position.Y-6,20,5), Color.Black);
@@ -40,7 +40,7 @@ namespace rabcrClient {
         }
 
         public void AddEnergy() {
-            if (Energy<100) Energy+=5;
+            if (Energy<1f) Energy+=0.05f;
         }
 
         public override Block CloneDown() {

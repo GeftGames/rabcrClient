@@ -924,7 +924,7 @@ namespace rabcrClient {
 		int weatherWindowWidth, weatherWindowHeight;
 		
 		float Temperature=float.NaN;
-		const float DescaySpeed=0.001f;
+		const float DescaySpeed=0.0001f;
 		List<FallingLeave> FallingLeaves;
 
 		int waveGrassIndex=-1;
@@ -4725,9 +4725,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								if (buttonInvTabFood.Update()) SetInvBakeFood();
 								if (buttonInvTabTools.Update()) SetInvBakeTools();
 
-								if (buttonClose.Update()) inventory=0;CraftingEvents();
+								if (buttonClose.Update()) inventory=0;
+								CraftingEvents();
 
-								if (((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy>0) CraftingEventsCraft();
+								ItemInv[] inv=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
+								float energy=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy;
+
+								//for (int i=0; i<3; i++){ 
+								//	if (inv[i].Id!=0) { 
+								//		float ammout=GameMethods.FurnaceStoneBurnWood(inv[i].Id); 
+									
+								//		if (energy+ammout<1f) {
+								//			((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy+=ammout;
+								//			break;
+								//		}
+								//	}	
+								//}
+
+								if (((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy>0.05f) CraftingEventsCraft();
 								if (buttonClose.Update()) inventory=0;
 							}
 							break;
@@ -5702,47 +5717,52 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 
 						if (block.Inv[0].Id!=0 || block.Inv[1].Id!=0 || block.Inv[2].Id!=0) {
-								if (block.Inv[3] is ItemInvBasic16 inv3)
-									if (inv3.GetCount<99&&(inv3.Id==0||inv3.Id==(ushort)Items.Ash)) {
-										//0
-										int add = GameMethods.BurnWoodInFurnace(block.Inv[0].Id);
-										if (add!=0) {
-											if (add+block.Energy<100) {
-												block.Energy+=add;
+							if (block.Inv[3].Id==(ushort)Items.None) Do();
+							else if (block.Inv[3].Id==(ushort)Items.Ash) { 
+								if (((ItemInvBasic16)block.Inv[3]).GetCount<99) Do();
+							} 
 
-												switch (block.Inv[0]) {
-													case ItemInvBasic16 inv0: {
-														if (inv0.GetCount==1) {
-															block.Inv[0]=itemBlank;
-														} else {
-															inv0.SetCount=inv0.GetCount-1;
-														}
-													}
-													break;
-												}
+							void Do() { 
+								for (int i=0; i<3; i++) {
+									//0
+									float add = GameMethods.FurnaceStoneBurnWood(block.Inv[i].Id);
+									if (add!=-1f) {
+										if (add+block.Energy<1f) {
+											block.Energy+=add;
 
+											ItemInvBasic16 invI=(ItemInvBasic16)block.Inv[i];
+
+											if (invI.GetCount==1) {
+												block.Inv[i]=itemBlank;
+												AddAsh();
+												return;
+											} else {
+												invI.SetCount=invI.GetCount-1;
+												AddAsh();
+												return;
+											}
+										
+											void AddAsh() {
 												if (block.Inv[3].Id==(ushort)Items.Ash) {
-													ItemInvBasic16 o = (ItemInvBasic16)block.Inv[3];
-													o.SetCount=o.GetCount+1;
+													ItemInvBasic16 inv3 = (ItemInvBasic16)block.Inv[3];
+													inv3.SetCount=inv3.GetCount+1;
 												} else {
-													block.Inv[3]=new ItemInvBasic16(ashTexture, (ushort)Items.Ash, 1, 0, 0);
-												}
-
-												// Ash
-												if (random.Bool_33_333Percent()) {
-													if (block.Inv[3].Id==(ushort)Items.Ash) {
-														ItemInvBasic16 o = (ItemInvBasic16)block.Inv[3];
-														o.SetCount=o.GetCount+1;
-													} else {
-														block.Inv[3]=new ItemInvBasic16(ashTexture, (ushort)Items.Ash, 1, 0, 0);
-													}
+													DInt pos=InventoryGetPosFurnaceStone(3);
+													block.Inv[3]=new ItemInvBasic16(ashTexture, (ushort)Items.Ash, 1, pos.X, pos.Y);
+												
 												}
 											}
 										}
 									}
+								}
 							}
-
-						if (block.Energy>0)block.Energy-=0.03f;
+						}
+						if (block.Energy>0) {
+							block.Energy-=0.001f;
+							block.Energy-=0.001f;
+						}else if (block.Energy<0) {
+							block.Energy=0;
+						}
 					}
 					#endregion
 
@@ -6155,7 +6175,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 //	Graphics.Clear(ColorNightColorBack);
 
                 // Sun rising (before sun)
-  if (Constants.AnimationsGame) {
+			if (Constants.AnimationsGame) {
            /* } else */if (time>=dayStart*hour&&time<=(dayStart+0.5f)*hour) {
              //   if (Constants.AnimationsGame) {
                     float a = -(dayStart*hour-time)/(hour);
@@ -7491,8 +7511,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								spriteBatch.Draw(furnaceStoneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200),new Rectangle(energy>0 ?0 :16,0,16,16), ColorWhite);
 
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-2, Global.WindowHeightHalf-200+2+4-6,202+2,5),black);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1, Global.WindowHeightHalf-200+2+4-5,(int)(energy*2.02),3),Color.Green);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1+(int)(energy*2.02),Global.WindowHeightHalf-200+2+4-5,202-(int)(energy*2.02),3),Color.Red);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1, Global.WindowHeightHalf-200+2+4-5,(int)(energy*2.02*100),3),Color.Green);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1+(int)(energy*2.02*100),Global.WindowHeightHalf-200+2+4-5,202-(int)(energy*2.02*100),3),Color.Red);
 								textOpenInventory.Draw(spriteBatch);
 
 								DrawInventoryWithMoving();
@@ -13092,7 +13112,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case (ushort)BlockId.FurnaceStone:
 						{
 							MashineBlockBasic fs=(MashineBlockBasic)block;
-							tmpBytes.Add((byte)(fs.Energy*255));
+							tmpBytes.Add((byte)(fs.Energy*255f+0.4999f));
+
 							ItemInv[] inv=fs.Inv;
 							for (int i = 0; i<4; i++) inv[i].SaveBytes(tmpBytes);
 							return;
@@ -14419,9 +14440,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.FurnaceStone:
 										{
 											MashineBlockBasic fs = (MashineBlockBasic)block;
-											LoadInventoryMashine(fs.Inv,InvMaxFurnaceStone);
 
 											fs.Energy=*current++/255f;
+
+											LoadInventoryMashine(fs.Inv,InvMaxFurnaceStone);
 
 											FurnaceStone.Add(new ShortAndByte(pos, length));
 										}
@@ -16107,7 +16129,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 			}
 			if (inventory==InventoryType.FurnaceStone) {
-				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+				if (IsSameArray(inv, ((MashineBlockBasic )terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosFurnaceStone(i);
 					if (p!=null) return p;
 				}
@@ -16972,7 +16994,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			return -1;
 		}
+		int InvFurnaceStoneMoveId() {
+			if (In40(Global.WindowWidthHalf-300+4+1+40,      Global.WindowHeightHalf-200+2+4+60)) return 0;
+			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60)) return 1;
+			if (In40(Global.WindowWidthHalf-300+4+1+40*2+40, Global.WindowHeightHalf-200+2+4+60)) return 2;
+			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60+40+8)) return 3;
 
+			return -1;
+		}
 		int InvWoodenBoxMoveId() {
 			// Wooden box
 			if (In(Global.WindowWidthHalf-300+59, Global.WindowHeightHalf+59, Global.WindowWidthHalf-300+59+(12*40), Global.WindowHeightHalf+59+40*2)) {
@@ -17057,6 +17086,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								return;
 							}
 						}
+						
+						// FurnaceStone
+						if (inventory==InventoryType.FurnaceStone) {
+							if ((i=InvFurnaceStoneMoveId())>=0) {
+								InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+								return;
+							}
+						}
 
 						// BoxWooden
 						if (inventory==InventoryType.BoxWooden) {
@@ -17136,6 +17173,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 
+							// FurnaceStone
+							if (inventory==InventoryType.FurnaceStone) {
+								if ((i=InvFurnaceStoneMoveId())>=0) {
+									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+									return;
+								}
+							}
+
 							// BoxWooden
 							if (inventory==InventoryType.BoxWooden) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
@@ -17211,6 +17256,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 							if ((i=InvClothesMoveId())>=0) {
 								InvMoveHalf(InventoryClothes,i);
+								return;
+							}
+						}
+
+						// FurnaceStone
+						if (inventory==InventoryType.FurnaceStone) {
+							if ((i=InvFurnaceStoneMoveId())>=0) {
+								InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
 								return;
 							}
 						}
@@ -17309,6 +17362,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 
+							// FurnaceStone
+							if (inventory==InventoryType.FurnaceStone) {
+								if ((i=InvFurnaceStoneMoveId())>=0) {
+									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+									return;
+								}
+							}
+
 							// BoxWooden
 							if (inventory==InventoryType.BoxWooden) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
@@ -17401,6 +17462,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
+					// FurnaceStone
+					if (inventory==InventoryType.FurnaceStone) {
+						if ((i=InvFurnaceStoneMoveId())>=0) {
+							StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+							return;
+						}
+					}
+
 					// BoxWooden
 					if (inventory==InventoryType.BoxWooden) {
 						if ((i=InvWoodenBoxMoveId())>=0) {
@@ -17489,6 +17558,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						}
 
+						// FurnaceStone
+						if (inventory==InventoryType.FurnaceStone) {
+							if ((i=InvFurnaceStoneMoveId())>=0) {
+								StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+								return;
+							}
+						}
+
 						// BoxWooden
 						if (inventory==InventoryType.BoxWooden) {
 							if ((i=InvWoodenBoxMoveId())>=0) {
@@ -17566,6 +17643,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
 								if ((i=InvShelfMoveId())>=0) {
 									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
+									return;
+								}
+							}
+
+							// FurnaceStone
+							if (inventory==InventoryType.FurnaceStone) {
+								if ((i=InvFurnaceStoneMoveId())>=0) {
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*, i*/);
 									return;
 								}
 							}
@@ -23347,10 +23432,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		static DInt InventoryGetPosFurnaceStone(int ix) {
 			switch (ix) {
-				case 0: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40, Y=Global.WindowHeightHalf-200+2+4+60     };
-				case 1: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40, Y=Global.WindowHeightHalf-200+2+4+60    };
-				case 2: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40*2+40, Y=Global.WindowHeightHalf-200+2+4+60    };
-				case 3: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40, Y=Global.WindowHeightHalf-200+2+4+60+40+8   };
+				case 0: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4    };
+				case 1: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4   };
+				case 2: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40*2+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4   };
+				case 3: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40+4, Y=Global.WindowHeightHalf-200+2+4+60+40+8 +4  };
 			}
 			#if DEBUG
 			throw new Exception("Unknown pos id of stone frurnace inv");
@@ -23361,10 +23446,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
 			switch (ix) {
-				case 0: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40,      Y=Global.WindowHeightHalf-200+2+4+60};
-				case 1: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40,   Y=Global.WindowHeightHalf-200+2+4+60};
-				case 2: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40*2+40, Y=Global.WindowHeightHalf-200+2+4+60};
-				case 3: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40,   Y=Global.WindowHeightHalf-200+2+4+60+40+8};
+				case 0: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+4,      Y=Global.WindowHeightHalf-200+2+4+60+4};
+				case 1: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40+4,   Y=Global.WindowHeightHalf-200+2+4+60+4};
+				case 2: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40*2+40+4, Y=Global.WindowHeightHalf-200+2+4+60+4};
+				case 3: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40+4,   Y=Global.WindowHeightHalf-200+2+4+60+40+8+4};
 			}
 			#if DEBUG
 			throw new Exception("Unknown pos id of stone frurnace inv");
