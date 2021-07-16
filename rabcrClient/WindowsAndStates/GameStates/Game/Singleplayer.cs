@@ -16106,6 +16106,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (p!=null) return p;
 				}
 			}
+			if (inventory==InventoryType.FurnaceStone) {
+				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+					DInt p=InventoryGetPosFurnaceStone(i);
+					if (p!=null) return p;
+				}
+			}
 			if (inventory==InventoryType.BoxAdv) {
 				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosAdvBox(i);
@@ -23337,6 +23343,34 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		static DInt InventoryGetPosClothes(int ix) {
 			if (ix<4) return new DInt{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
 			else      return new DInt{ X=Global.WindowWidthHalf-300+4+60+4+40, Y=Global.WindowHeightHalf-200+2+4+4+40*(ix-4) };
+		}
+
+		static DInt InventoryGetPosFurnaceStone(int ix) {
+			switch (ix) {
+				case 0: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40, Y=Global.WindowHeightHalf-200+2+4+60     };
+				case 1: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40, Y=Global.WindowHeightHalf-200+2+4+60    };
+				case 2: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40*2+40, Y=Global.WindowHeightHalf-200+2+4+60    };
+				case 3: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40, Y=Global.WindowHeightHalf-200+2+4+60+40+8   };
+			}
+			#if DEBUG
+			throw new Exception("Unknown pos id of stone frurnace inv");
+			#else
+			return null;
+			#endif
+		}
+
+		static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
+			switch (ix) {
+				case 0: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40,      Y=Global.WindowHeightHalf-200+2+4+60};
+				case 1: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40,   Y=Global.WindowHeightHalf-200+2+4+60};
+				case 2: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40*2+40, Y=Global.WindowHeightHalf-200+2+4+60};
+				case 3: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40,   Y=Global.WindowHeightHalf-200+2+4+60+40+8};
+			}
+			#if DEBUG
+			throw new Exception("Unknown pos id of stone frurnace inv");
+			#else
+			return null;
+			#endif
 		}
 
 		static Vector2 InventoryGetPosClothesVector2(int ix) {
