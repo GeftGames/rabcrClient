@@ -118,8 +118,8 @@ namespace rabcrClient {
                 if (Frame>TextureFlying.Width-35)Frame-=TextureFlying.Width-35;
 
                 // Draw
-                if (Dir) Rabcr.spriteBatch.Draw(TextureFlying/*Rabcr.Pixel*/, Position, new Rectangle((int)(Frame/35)*35+4,0,35,35), Color.White, 0, Vector2.Zero, /*1f*/.5f, SpriteEffects.FlipHorizontally, 0);
-                else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/35f)*35+4,0,35,35), Color.White, 0, Vector2.Zero, .5f, SpriteEffects.None, 0);
+                if (Dir) Rabcr.spriteBatch.Draw(TextureFlying/*Rabcr.Pixel*/, Position, new Rectangle((int)(Frame/16)*16,0,16,16), Color.White, 0, Vector2.Zero, 1f, SpriteEffects.FlipHorizontally, 0);
+                else Rabcr.spriteBatch.Draw(TextureFlying, Position, new Rectangle((int)(Frame/16)*16,0,16,16), Color.White);
             } else Rabcr.spriteBatch.Draw(TextureStill, new Vector2(Position.X+5,Position.Y-10), Color.White);
         }
     }
