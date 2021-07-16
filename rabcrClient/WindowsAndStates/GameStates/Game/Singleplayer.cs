@@ -3539,7 +3539,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									//Console.WriteLine("a touch Playerx"+PlayerX);
 									speed=0;
 									playerState=0;
-								} changePosition=true;
+								} 
+								changePosition=true;
 
 
 							//left
@@ -3564,7 +3565,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									speed=0;
 									playerState=0;
-								} changePosition=true;
+								} 
+								changePosition=true;
 							}
 
 							playerImg+=(int)(speed*5);
@@ -15728,7 +15730,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (gravitySpeed<0) {
 				int yy = ((int)PlayerY-20-4)/16;
 				if (yy>=0) {
-					for (int xx = ((int)PlayerX-11)/16; xx<(PlayerX+11+16)/16; xx++) {
+					for (int xx = ((int)PlayerX-11)/16; xx<(PlayerX+11/*+16*/)/16; xx++) {
 						Terrain chunk=terrain[xx];
 						if (chunk!=null) {
 							if (chunk.IsSolidBlocks[yy]) {
