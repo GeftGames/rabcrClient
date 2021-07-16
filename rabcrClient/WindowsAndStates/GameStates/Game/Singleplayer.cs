@@ -4645,21 +4645,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								//        }
 								//    }
 								//}
-								 if (inventoryScrollbarValueCraftingMax>6*4) {
-											if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
-												int d=previousScrollValue-newMouseState.ScrollWheelValue;
-												if (d>0) {
-													inventoryScrollbarValueCrafting+=6;
-													if (inventoryScrollbarValueCrafting>inventoryScrollbarValueCraftingMax-6*3) inventoryScrollbarValueCrafting=inventoryScrollbarValueCraftingMax-6*3;
-													ReSetCraftingInventoryPositions();
-												}
-												if (d<0) {
-													inventoryScrollbarValueCrafting-=6;
-													if (inventoryScrollbarValueCrafting<0) inventoryScrollbarValueCrafting=0;
-													ReSetCraftingInventoryPositions();
-												}
-											}
+								if (inventoryScrollbarValueCraftingMax>6*4) {
+									if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
+										int d=previousScrollValue-newMouseState.ScrollWheelValue;
+										if (d>0) {
+											inventoryScrollbarValueCrafting+=6;
+											if (inventoryScrollbarValueCrafting>inventoryScrollbarValueCraftingMax-6*3) inventoryScrollbarValueCrafting=inventoryScrollbarValueCraftingMax-6*3;
+											ReSetCraftingInventoryPositions();
 										}
+										if (d<0) {
+											inventoryScrollbarValueCrafting-=6;
+											if (inventoryScrollbarValueCrafting<0) inventoryScrollbarValueCrafting=0;
+											ReSetCraftingInventoryPositions();
+										}
+									}
+								}
 
 
 								ChangeInventory();
@@ -8889,7 +8889,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (chunk.IsTopBlocks[y]) {
 					switch (chunk.TopBlocks[y].Id) {
 						case (ushort)BlockId.BucketWithLatex:
-							DropSomethingFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
+							DropItemFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Resin,1), mousePosRoundX, mousePosRoundY);
 
 							//if (chunk.IsBackground[y]){
@@ -8908,7 +8908,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.PlumLeavesWithPlums:
-							DropSomethingFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
+							DropFoodFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum,1), mousePosRoundX, mousePosRoundY);
 							////((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
 
@@ -8925,7 +8925,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.CherryLeavesWithCherries:
-							DropSomethingFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
+							DropFoodFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry,1), mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.CherryLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8933,7 +8933,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.AppleLeavesWithApples:
-							DropSomethingFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
+							DropFoodFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple,1), mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.AppleLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8941,7 +8941,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.LemonLeavesWithLemons:
-							DropSomethingFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
+							DropFoodFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon,1),mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.LemonLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8949,7 +8949,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.OrangeLeavesWithOranges:
-							DropSomethingFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
+							DropFoodFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange,1),mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OrangeLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8957,7 +8957,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.OliveLeavesWithOlives:
-							DropSomethingFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
+							DropFoodFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive,1),mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OliveLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8965,7 +8965,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 
 						case (ushort)BlockId.KapokLeacesFibre:
-							DropSomethingFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
+							DropItemFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
 							//DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre,1),mousePosRoundX, mousePosRoundY);
 							//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.KapokLeaces,new Vector2(mousePosRoundX, mousePosRoundY));
 							//barEnergy+=0.02f;
@@ -8973,21 +8973,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							return;
 					}
 
-					void DropSomethingFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
-						DropItemToPos(new ItemNonInvFood(itemId, 1, 0f), mousePosRoundX, mousePosRoundY);
+					void DropFoodFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
+						DropItemToPos(new ItemNonInvFood(itemId, 1, GameMethods.FoodMaxDescay(itemId)), mousePosRoundX, mousePosRoundY);
 
 						LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
 						leaves.Id=newLeavesId;
 						leaves.Texture=leavesTexture;
 
-						//chunk.TopBlocks[y]= new LeavesBlock(leavesTexture, newLeavesId, new Vector2(mousePosRoundX, mousePosRoundY)) {
-						//    tree=((LeavesBlock)chunk.TopBlocks[y]).tree
-						//};
-					   // block;
-						//if (chunk.IsBackground[y]) ((AirSolidBlock)chunk.SolidBlocks[y]).Top=block;
-						//else chunk.SolidBlocks[y]=new AirSolidBlock{ Top=block };
+						barEnergy+=0.02f;
+						if (barEnergy>32) barEnergy=32;
+					}
+					void DropItemFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
+						DropItemToPos(new ItemNonInvBasic(itemId), mousePosRoundX, mousePosRoundY);
 
-					  //  chunk.TopBlocks[y]=block;
+						LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
+						leaves.Id=newLeavesId;
+						leaves.Texture=leavesTexture;
 
 						barEnergy+=0.02f;
 						if (barEnergy>32) barEnergy=32;
@@ -16408,6 +16409,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				return false;
 			}
+			if (GameMethods.IsItemInvFood16(index)) {
+				for (int i=0; i<maxInvCount; i++) {
+					if (InventoryNormal[i].Id == 0) {
+						DInt pos;
+						if (i<5) pos=InventoryGetPosNormal(i);
+						else pos=InventoryGetPosNormalInv(i);
+						InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(index),index,pos.X,pos.Y);
+						return true;
+					}
+				}
+				return false;
+			}
+			if (GameMethods.IsItemInvFood32(index)) {
+				for (int i=0; i<maxInvCount; i++) {
+					if (InventoryNormal[i].Id == 0) {
+						DInt pos;
+						if (i<5) pos=InventoryGetPosNormal(i);
+						else pos=InventoryGetPosNormalInv(i);
+						InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(index),index,pos.X,pos.Y);
+						return true;
+					}
+				}
+				return false;
+			}
 			#endregion
 
 			#region Stackable
@@ -16672,26 +16697,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			case ItemNonInvFood item:
 				if (GameMethods.IsItemInvFood16(it.Id)) {
 					int remain=item.Count;
-					for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
-							if (InventoryNormal[i].Id == it.Id) {
-								ItemInvFood16 item2=(ItemInvFood16)InventoryNormal[i];
-								if (item2.GetCount<item2.CountMaximum) {
-									int needToAdd=item2.CountMaximum-item2.GetCount;
-									if (needToAdd>remain) {
-										item2.SetCount=item2.GetCount+remain;
-										return null;
-									} else if (needToAdd==remain) {
-										item2.SetCount=item2.GetCount+remain;
-										return null;
-									} else {
-										item2.SetCount=item2.CountMaximum;
-										remain-=needToAdd;
-									}
-								}
-							}
-						}
-					}
+					//for (int i=0; i<maxInvCount; i++) {
+					//	if (InventoryNormal[i]!=null) {
+					//		if (InventoryNormal[i].Id == it.Id) {
+					//			ItemInvFood16 item2=(ItemInvFood16)InventoryNormal[i];
+					//			if (item2.GetCount<item2.CountMaximum) {
+					//				int needToAdd=item2.CountMaximum-item2.GetCount;
+					//				if (needToAdd>remain) {
+					//					item2.SetCount=item2.GetCount+remain;
+					//					return null;
+					//				} else if (needToAdd==remain) {
+					//					item2.SetCount=item2.GetCount+remain;
+					//					return null;
+					//				} else {
+					//					item2.SetCount=item2.CountMaximum;
+					//					remain-=needToAdd;
+					//				}
+					//			}
+					//		}
+					//	}
+					//}
 
 					for (int i=0; i<maxInvCount; i++) {
 						if (InventoryNormal[i]!=null) {
@@ -16712,26 +16737,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
 				} else { 
 				   int remain=item.Count;
-					for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
+					//for (int i=0; i<maxInvCount; i++) {
+					//	if (InventoryNormal[i]!=null) {
 
-						if (InventoryNormal[i].Id == it.Id) {
-							ItemInvFood32 item2=(ItemInvFood32)InventoryNormal[i];
-							if (item2.GetCount<item2.CountMaximum) {
-								int needToAdd=item2.CountMaximum-item2.GetCount;
-								if (needToAdd>remain) {
-									item2.SetCount=item2.GetCount+remain;
-									return null;
-								} else if (needToAdd==remain) {
-									item2.SetCount=item2.GetCount+remain;
-									return null;
-								} else {
-									item2.SetCount=item2.CountMaximum;
-									remain-=needToAdd;
-								}
-							}
-						}
-					} }
+					//	if (InventoryNormal[i].Id == it.Id) {
+					//		ItemInvFood32 item2=(ItemInvFood32)InventoryNormal[i];
+					//		if (item2.GetCount<item2.CountMaximum) {
+					//			int needToAdd=item2.CountMaximum-item2.GetCount;
+					//			if (needToAdd>remain) {
+					//				item2.SetCount=item2.GetCount+remain;
+					//				return null;
+					//			} else if (needToAdd==remain) {
+					//				item2.SetCount=item2.GetCount+remain;
+					//				return null;
+					//			} else {
+					//				item2.SetCount=item2.CountMaximum;
+					//				remain-=needToAdd;
+					//			}
+					//		}
+					//	}
+					//} }
 
 					for (int i=0; i<maxInvCount; i++) {
 						if (InventoryNormal[i]!=null) {
@@ -18365,15 +18390,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void DrawInventoryWithDIntMoving() {
 			int xx=0, yh=0;
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-			if (i>maxInvCount) break;
-				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), ColorWhite);
+				if (i>maxInvCount) break;
+				spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), ColorWhite);
+
+				xx+=40;
+
+				if (xx==9*40) {
+					xx=0;
+					yh+=40;
+				}
+			}
+			xx=0;
+			yh=0;
+
+			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+				if (i>maxInvCount) break;
 
 				if (InventoryNormal[i].Id!=0) {
-				   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryNormal[i])) {
-						InventoryNormal[i].Draw();
+					InventoryNormal[i].Draw();
 
-						if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh))MouseItemNameEvent(InventoryNormal[i].Id);
-				   // }
+					if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh)) MouseItemNameEvent(InventoryNormal[i].Id);
 				}
 				xx+=40;
 
@@ -18382,11 +18418,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					yh+=40;
 				}
 			}
+
 			if (maxInvCount>49) {
 				inventoryScrollbar.maxheight=((maxInvCount-5)/9)*40;
 				inventoryScrollbar.height=5*40;
-				inventoryScrollbar.ButtonDraw(/*newMouseState.X,newMouseState.Y,mouseLeftDown,*/Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
+				inventoryScrollbar.ButtonDraw(Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
 			}
+
 			if (inventory==InventoryType.BoxAdv
 			|| inventory==InventoryType.BoxWooden
 			|| inventory==InventoryType.Charger
@@ -18805,6 +18843,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void SetInvCraftingItems() {
 			ushort[] items={
 				(ushort)Items.Flag,
+				(ushort)Items.MediumStone,
+				(ushort)Items.SmallStone,
 
 				(ushort)Items.DyeOrange,
 				(ushort)Items.DyeDarkRed,
@@ -18830,6 +18870,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		// Crafting adv
 		void SetInvCraftingBlocksA() {
+			inventoryScrollbarValueCrafting=0;
 			ushort[] items={
 				(ushort)Items.Stonerubble,
 				(ushort)Items.Gravel,
@@ -18856,6 +18897,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void SetInvCraftingMashinesA() {
+			inventoryScrollbarValueCrafting=0;
 			 ushort[] items={
 				(ushort)Items.Desk,
 				(ushort)Items.Ladder,
@@ -18894,6 +18936,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void SetInvCraftingToolsA() {
+		inventoryScrollbarValueCrafting=0;
 			 ushort[] items={
 				(ushort)Items.StoneHead,
 
@@ -18980,6 +19023,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void SetInvCraftingNatureA() {
+		inventoryScrollbarValueCrafting=0;
 			 ushort[] items={
 				(ushort)Items.Stick,
 				(ushort)Items.Sticks,
@@ -18999,8 +19043,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void SetInvCraftingItemsA() {
+			inventoryScrollbarValueCrafting=0;
 			 ushort[] items={
 				(ushort)Items.Flag,
+				(ushort)Items.MediumStone,
+				(ushort)Items.SmallStone,
+
 				(ushort)Items.Nail,
 				(ushort)Items.Rod,
 				(ushort)Items.Ammo,
@@ -23867,14 +23915,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (GameMethods.IsItemInvFood16(id)) {
 				int max=GameMethods.FoodMaxCount(id);
 				float des=GameMethods.FoodMaxDescay(id);
-				inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, max, max, des, GameMethods.FoodMaxDescay(id), 0, 0);
+				inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
 				return;
 			}
 
 			if (GameMethods.IsItemInvFood32(id)) {
 				int max=GameMethods.FoodMaxCount(id);
 				float des=GameMethods.FoodMaxDescay(id);
-				inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, max, max, des, GameMethods.FoodMaxDescay(id), 0, 0);
+				inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
 				return;
 			}
 

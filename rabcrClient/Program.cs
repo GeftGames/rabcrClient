@@ -398,13 +398,13 @@ namespace rabcrClient {
                         } else send+="&h=";
                         
                       
-        System.Windows.Forms.Clipboard.SetText("https://geftgames.ga/rre.php"+send);
+        System.Windows.Forms.Clipboard.SetText(Release.stringRRE+send);
                         // Antispawn
                         System.Threading.Thread.Sleep(200);
-                        //Console.WriteLine("send.Length: "+("https://geftgames.ga/rre.php"+send).Length);
+                        //Console.WriteLine("send.Length: "+(Release.stringRRE+send).Length);
                         // Run
                         WebClient wc=new WebClient();
-                        string result=wc.DownloadString("https://geftgames.ga/rre.php"+send);
+                        string result=wc.DownloadString(Release.stringRRE+send);
                         //System.Diagnostics.Process.Start();
                     
                    

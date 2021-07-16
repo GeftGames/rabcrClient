@@ -1,4 +1,4 @@
-﻿//namespace rabcrClient.InterLogic.DrawComponents.Classic.Components {
+﻿namespace rabcrClient {
     partial class GTextBox {
         /// <summary>
         /// Required designer variable.
@@ -67,4 +67,4 @@
         public GPreTextBox textBox;
         public GBounds bounds;
     }
-//}
+}

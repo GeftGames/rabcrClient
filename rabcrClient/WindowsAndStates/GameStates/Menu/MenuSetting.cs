@@ -30,7 +30,7 @@ namespace rabcrClient {
             effectBlur=Effects.BluredTopDownBounds;
 
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")){
-                maxheight=PageHeight-Global.WindowHeight+60+60+90+30,
+                maxheight=PageHeight/*-Global.WindowHeight+60+60+90+30*/,
                 height=Global.WindowHeight-75-65-2
             };
             scrollbar.MoveScollBar+=Move;
@@ -49,7 +49,7 @@ namespace rabcrClient {
         void Move(object sender, EventArgs e) {
             start=-1;
 
-            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight));
+            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight+75+65));
 
             for (int i=0; i<settings.Count; i++){
                 SettingItem item=settings[i];
@@ -153,7 +153,7 @@ namespace rabcrClient {
 
             scrollbar.height=Global.WindowHeight-75-65-2;
             scrollbar.scale=0;
-            scrollbar.maxheight=PageHeight-Global.WindowHeight;
+          //  scrollbar.maxheight=PageHeight-Global.WindowHeight;
 
             buttonMenu.Position=new Vector2(Global.WindowWidth-400+70, Global.WindowHeight-54);
 

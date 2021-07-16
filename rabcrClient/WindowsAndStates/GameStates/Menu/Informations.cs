@@ -60,7 +60,7 @@ namespace rabcrClient {
                 "<DarkGreen>"+Lang.Texts[209]+"</DarkGreen>: <Green>"+Lang.Texts[315]+"</Green>" +Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[205]+"</DarkGreen>: <Green>"+Release.Date+"</Green>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[121]+"</DarkGreen>: <Green>"+Lang.Languages[Setting.CurrentLanguage].NativeName+"</Green>" + Environment.NewLine +
-                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://creativecommons.org/share-your-work/public-domain/>"+Lang.Texts[208]+"</Link> (For this version of the game)" + Environment.NewLine+
+                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://creativecommons.org/share-your-work/public-domain/>"+Lang.Texts[208]+"</Link> (Only this version of the game, except fonts bellow)" + Environment.NewLine+
 
                 "<DarkGreen>"+Lang.Texts[203]+"</DarkGreen>: <Link|url="+Release.WebFullGame+">"+Release.WebShortGame+"</Link>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[204]+"</DarkGreen>: <Link|url=mailto:"+Release.Email+">"+Release.Email+"</Link>" + Environment.NewLine +
@@ -75,13 +75,11 @@ namespace rabcrClient {
                 "     <Link|url=https://www.freechinesefont.com/traditional-han-wang-yen-light-rounded-font-download|info=Licence: Free for personal and commercial-use.>HanWangYenLight</Link> (<Green>"+Lang.Texts[362]+"</Green>)"+ Environment.NewLine +
                 "     <Link|url=https://github.com/Omnibus-Type/Jaldi|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>Jaldi</Link> (<Green>"+Lang.Texts[1585]+"</Green>)";
 
-
-            geDo=new GeDo(24, 10-(int)(scrollbar.scale*(BitmapFont.bitmapFont18.MeasureTextMultiLineY(strMain)+10-(Global.WindowHeight-75-40-65)))) {
-                mouseAdd=-76-40
-            };
+            geDo=new GeDo(24, 10-(int)(scrollbar.scale*(BitmapFont.bitmapFont18.MeasureTextMultiLineY(strMain)+10-(Global.WindowHeight-75-40-65)))) { mouseAdd=-76-40 };
 
             geDo.changeHeight=ChangeHeight;
             geDo.BuildString(strMain);
+
             strKeys=
                 "<Bold>"+Lang.Texts[227]+"</Bold>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyLeft)+"</DarkBlue> a <DarkBlue>"+KeyName(Setting.KeyRight)+"</DarkBlue>: <Blue>"+Lang.Texts[230]+"</Blue>" + Environment.NewLine +

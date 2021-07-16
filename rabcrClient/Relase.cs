@@ -23,12 +23,7 @@ namespace rabcrClient{
 
         // Short name of game
         public const string ShortGameName = "rabcr";
-        // Check new version?
-        // Sample of file:
-        // NewVersion=url to download
-        // OldVersion=url to download
-        // ...
-       // public const string CheckNewVersion="http://geftgames.sweb.cz/system/rabcrGameVersions.txt";
+
 
 
         // Authors
@@ -136,5 +131,16 @@ namespace rabcrClient{
             new ItemNonInvFood((ushort)Items.Bread,5,0),
             new ItemNonInvTool((ushort)Items.BottleWater),
         };
+
+
+        #region Links
+        public const string 
+            // Report error
+            stringRRE="https://geftgames.ga/rre.php",
+
+            // Send date through the anonymization gateway (hide ip) and check trolls
+            // ... or it can go direct if you don't want to do, but its better to have gamejolt api code safe on the sever, because code its hidden!
+            stringGameJoltServerGate="https://geftgames.ga/rabcrGameJoltSignature.php?";
+        #endregion
     }
 } 

@@ -42,7 +42,7 @@ namespace rabcrClient {
     class ChangeTerrain { 
         public DateTime sended;
 
-        enum ChangeTerrainType{ 
+        enum ChangeTerrainType:byte{ 
             BasicRemove,
             BasicAdd,
 

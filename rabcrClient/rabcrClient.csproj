@@ -374,6 +374,7 @@
     <None Include="Resources\Cloth.png" />
     <None Include="Resources\gold2.png" />
     <None Include="Resources\bronze.png" />
+    <Content Include="Resources\Fonts licence OFL.txt" />
     <Content Include="Resources\heart.png" />
     <None Include="Resources\IngotCopper.png" />
     <Content Include="Resources\page_left.png" />

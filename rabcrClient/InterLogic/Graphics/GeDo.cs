@@ -16,8 +16,7 @@ namespace rabcrClient {
         const int lineSize=30;
         public int mouseAdd;
         float TextW;
-        int X, Y, yy2;
-        int gedoLen;
+        int X, Y, yy2, gedoLen;
         bool changingPos=false;    
         public int width;
         public EventHandler changeHeight;
@@ -27,7 +26,7 @@ namespace rabcrClient {
             X=xx;
             yy2=Y=yy;
 
-            try{
+            try {
                 BuildString(text);
             } catch {
 
@@ -49,13 +48,12 @@ namespace rabcrClient {
             while (true) {
                 int gr=txtBody.IndexOf('<');
                 if (gr>=0) {
-                    if (!txtBody.Contains(">"))throw new Exception("Tag není jasně definován (chybí znak '>')");
+                    if (!txtBody.Contains(">"))throw new Exception("Tag is not cleary defined (missing symbol '>')");
                     int lw=txtBody.IndexOf('>');
                     string itag=txtBody.Substring(gr+1,lw-gr-1);
 
-                    if (gr!=0) {
-                        BuildNormal(Symbols(txtBody.Substring(0,gr)));
-                    }
+                    if (gr!=0) BuildNormal(Symbols(txtBody.Substring(0,gr)));
+
                     txtBody=txtBody.Substring(lw+1);
 
                     string moreInfo="";
@@ -66,7 +64,7 @@ namespace rabcrClient {
                     }
 
                     int x=txtBody.IndexOf("</"+itag+">");
-                    if (x==-1)throw new Exception("Chybí uzavření tagu "+itag);
+                    if (x==-1) throw new Exception("Missing tag close "+itag);
                     string inTag=txtBody.Substring(0, x);
 
                     if (Enum.TryParse(itag, out GeDoType tag)){
@@ -142,7 +140,7 @@ namespace rabcrClient {
                     if (i==0) {
                         GeDoStringNormal g = new GeDoStringNormal {
                             //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -152,7 +150,7 @@ namespace rabcrClient {
                     } else if (i==lines.Length-1) {
                         GeDoStringNormal g = new GeDoStringNormal {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         TextW=g.text.X;
@@ -161,7 +159,7 @@ namespace rabcrClient {
                     } else {
                         GeDoStringNormal g = new GeDoStringNormal {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -169,10 +167,7 @@ namespace rabcrClient {
                 }
             } else {
                 GeDoStringNormal g = new GeDoStringNormal {
-                    //X=(int)(X+TextW),
-                    //Y=Y,
-                   // str=tmpText,
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                    text=new TextWithMeasure(tmpText, X+(int)TextW, Y)
                 };
                 gedoBuilding.Add(g);
                 TextW+=g.text.X;

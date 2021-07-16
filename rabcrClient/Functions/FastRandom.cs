@@ -10,8 +10,7 @@ namespace rabcrClient {
         const double DOUBLE_UNIT = 1.0 / ( int.MaxValue + 1.0 );
 
         // State Fields
-        ulong x_;
-        ulong y_;
+        ulong x_, y_;
 
         // Buffer for optimized bit generation
         ulong buffer;
@@ -23,7 +22,8 @@ namespace rabcrClient {
 
         /// <summary>Constructs a new generator using two random Guid hash codes as a seed.</summary>
         public FastRandom() {
-             y_ = x_ = (ulong)Guid.NewGuid().GetHashCode();
+            y_ = (ulong)Guid.NewGuid().GetHashCode();
+            x_ = (ulong)Guid.NewGuid().GetHashCode();
         }
 
         /// <summary>Constructs a new generator with the supplied seed.</summary>

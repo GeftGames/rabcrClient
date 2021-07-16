@@ -36,15 +36,13 @@ namespace rabcrClient {
                 string secretKey="4k5s4df5g696sfdg4l65sk92f";
                 secretKey="url"+secretKey.Substring(1,9);
                 secretKey="";
-                
-                string startingWith="https://geftgames.ga/rabcrGameJoltSignature.php?";
 
                 switch (Level) { 
 
                     // Bronze
                     case 0:
                         {
-                            string url=startingWith+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134205&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134205&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -63,7 +61,7 @@ namespace rabcrClient {
                     // Silver
                     case 1:
                         {
-                            string url=startingWith+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=13407&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=13407&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -82,7 +80,7 @@ namespace rabcrClient {
                     // Gold
                     case 2:
                         {
-                            string url=startingWith+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134208&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134208&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -101,7 +99,7 @@ namespace rabcrClient {
                     // Platium
                     case 3:
                         {
-                            string url=startingWith+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134209&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134209&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 

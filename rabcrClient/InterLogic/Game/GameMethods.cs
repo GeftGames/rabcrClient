@@ -1532,6 +1532,47 @@ namespace rabcrClient {
 
         public static CraftingRecipe[] Craft(ushort id) {
             switch (id) {
+                case (ushort)Items.MediumStone:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.MediumStone,2)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 2)),
+                            },
+                            new ItemNonInvBasic((ushort)Items.MediumStone, 3)
+                        ),
+                    };
+
+                case (ushort)Items.SmallStone:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.MediumStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone,2)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone, 4)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.MediumStone, 2)),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone, 3)
+                        ),
+                    };
+
                 case (ushort)Items.HammerCopper:
                     return new CraftingRecipe[] {
                         new CraftingRecipe (

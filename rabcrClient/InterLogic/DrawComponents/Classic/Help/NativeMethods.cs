@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
-//namespace rabcrClient {
+namespace rabcrClient {
     static class NativeMethods{
      //   public static FontFamily ff;
    // public static PrivateFontCollection pf;
@@ -194,8 +194,8 @@ using System.Runtime.InteropServices;
             g.DrawString(text, f2, c, new PointF(x, y));
         }
 
-        public static int Abs(int x) {
-            return x>0 ? x: -x;
-        }
+        //public static int Abs(int x) {
+        //    return x>0 ? x: -x;
+        //}
     }
-//}
+}

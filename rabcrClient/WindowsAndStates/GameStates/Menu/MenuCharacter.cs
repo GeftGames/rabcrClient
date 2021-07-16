@@ -20,8 +20,8 @@ namespace rabcrClient {
         int DocumentSize=500;
         int start,end;
         float smoothMouse=0;
-        const int SettingsPageHeight=1000-60/*+70+60+70+60+90+90+90+30+60*/;
-        int PageHeight;
+        const int PageHeight=760 + 75/*+400*/;//  1000-60/*+70+60+70+60+90+90+90+30+60*/;
+      //  int PageHeight;
         Character character;
         int DocumentStartXPos;
         #endregion
@@ -29,14 +29,14 @@ namespace rabcrClient {
             bool pointerDir;
         float alpha=0;
         public override void Init() {
-            PageHeight=SettingsPageHeight+400;
+           // PageHeight=SettingsPageHeight /*+ 400*/;
             buttonMenu= new Button(Textures.ButtonLongLeft,Lang.Texts[1]);
             buttonMenu.Click+=ClickMenu;
             effectBlur=Effects.BluredTopDownBounds;
             character=new Character();
             character.Load(Content,Graphics);
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")){
-                maxheight=PageHeight/*-Global.WindowHeight+65+75*//*+90+30*/,
+                maxheight=PageHeight/*+Global.WindowHeight/2*//*-Global.WindowHeight+60+60+90+30*//*-Global.WindowHeight+65+75*//*+90+30*/,
                 height=Global.WindowHeight-75-65-2
             };
             scrollbar.MoveScollBar+=Move;
@@ -57,7 +57,7 @@ namespace rabcrClient {
         void Move(object sender, EventArgs e) {
             start=-1;
 
-            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight));
+            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight+76+65));
 
             for (int i=0; i<settings.Count; i++){
                 SettingItem item=settings[i];
@@ -205,7 +205,7 @@ namespace rabcrClient {
                 //}
                 if ((Global.WindowWidth-z.Width)-50>500)DocumentSize=500;
                 else DocumentSize=(Global.WindowWidth-z.Width)-50;
-                PageHeight=SettingsPageHeight;
+              //  PageHeight=PageHeight;
 
 
                DocumentStartXPos=0;
@@ -216,12 +216,12 @@ namespace rabcrClient {
                 int width=Global.WindowWidth/3;
 
                 Rectangle z= character.SetRegion(new Rectangle(0, /*75*/0, width,height));
-                PageHeight=SettingsPageHeight;
+                //PageHeight=SettingsPageHeight;
                 DocumentStartXPos=z.Width;
             }
 
-            scrollbar.maxheight=PageHeight/*-Global.WindowHeight+65+75*/;
-
+         //   scrollbar.maxheight=PageHeight/*-Global.WindowHeight+75+65*/;//+60+60+90+30/*-Global.WindowHeight+65+75*/;
+//scrollbar.maxheight=PageHeight+Global.WindowHeight/2;
             buttonMenu.Position=new Vector2(Global.WindowWidth-400+70, Global.WindowHeight-54);
 
             scrollbar.PositionX=Global.WindowWidth-35;
@@ -299,6 +299,7 @@ namespace rabcrClient {
 
             // Hair
             settings.Add(new SettingHeader(Lang.Texts[326]));
+
             //type
             {
                 SettingSwitcherTexture button=new SettingSwitcherTexture(tex, Lang.Texts[327],

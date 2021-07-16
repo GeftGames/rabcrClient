@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace rabcrClient {
-    public enum AstrO {
+    public enum AstrO:byte {
         Rocky,
         Gas,
         Life,

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-//namespace rabcrClient {
+namespace rabcrClient {
     public partial class GBar : Control {
         float fill=0;
         readonly Timer timer;
@@ -53,4 +53,4 @@ using System.Windows.Forms;
             base.Dispose(disposing);
         }
     }
-//}
+}

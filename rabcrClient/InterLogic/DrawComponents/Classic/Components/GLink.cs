@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
-//namespace rabcrClient {
-    class GLink : Control{
+namespace rabcrClient {
+    class GLink : Control {
 
         readonly Timer timer;
         int alpha=0;
@@ -20,7 +20,6 @@ using System.Drawing.Drawing2D;
                 Enabled=true,
                 Interval=40
             }).Tick+=Timer_Tick;
-          //  Font=new Font(Font.FontFamily,Font.Size,FontStyle.Underline);
 		}
 
         private void Timer_Tick(object sender, EventArgs e) {
@@ -28,20 +27,16 @@ using System.Drawing.Drawing2D;
 
             if (need!=alpha) {
                 if (need<alpha) {
-                    alpha-=4+NativeMethods.Abs(need-alpha)/6;
+                    alpha-=4+FastMath.Abs(need-alpha)/6;
                     Invalidate();
                 }
                 if (need>alpha) {
-                    alpha+=4+NativeMethods.Abs(need-alpha)/6;
+                    alpha+=4+FastMath.Abs(need-alpha)/6;
                     Invalidate();
                 }
                 if (alpha-need<4 && alpha-need>-4) alpha=need;
             }
         }
-
-        //int ToArt(int x) {
-        //    if (x>0) return x; else return -x;
-        //}
 
         protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
@@ -80,21 +75,6 @@ using System.Drawing.Drawing2D;
             SizeF s=g.MeasureString(Text,Constants.font14);
             Size=new Size((int)s.Width,(int)s.Height);
 			Brush b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(0, alpha, 255), Color.FromArgb(0, alpha, 230), 90);
-          //  Font=new Font(Constants.font14.FontFamily,Constants.font14.Size,FontStyle.Underline);
-            //g.TextContrast=0;
-            //g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.AntiAlias;
-            //if (Constants.Shadow) {
-            //    g.PixelOffsetMode = PixelOffsetMode.Half;
-
-            //    g.DrawString(Text, Font, brushShadow, new Point(1, 0));
-            //    g.DrawString(Text, Font, brushShadow, new Point(0, 1));
-            //    g.DrawString(Text, Font, brushShadow, new Point(1, 1));
-
-            //    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            //}
-
-            //g.DrawString(Text, Font, b, Point.Empty);
-
 
             g.CompositingQuality=CompositingQuality.HighQuality;
             g.InterpolationMode=InterpolationMode.HighQualityBicubic;
@@ -103,27 +83,25 @@ using System.Drawing.Drawing2D;
             g.PixelOffsetMode=PixelOffsetMode.None;
             g.TextContrast=0;
 
+          // if (Constants.sh)
+            using (Bitmap img = new Bitmap((int)g.MeasureString(Text, Constants.font14).Width+4, (int)g.MeasureString(Text, Constants.font14).Height+4)){
+                using (Graphics gg = Graphics.FromImage(img)) {
+                    gg.CompositingQuality=CompositingQuality.HighQuality;
+                    gg.InterpolationMode=InterpolationMode.HighQualityBicubic;
+                    gg.SmoothingMode=SmoothingMode.HighQuality;
+                    gg.TextContrast=0;
+                    gg.PixelOffsetMode=PixelOffsetMode.Half;
+                    gg.TextRenderingHint=System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-            //if (Constants.Shadow) {
-                using (Bitmap img = new Bitmap((int)g.MeasureString(Text, Constants.font14).Width+4, (int)g.MeasureString(Text, Constants.font14).Height+4)){
-                    using (Graphics gg = Graphics.FromImage(img)) {
-                        gg.CompositingQuality=CompositingQuality.HighQuality;
-                        gg.InterpolationMode=InterpolationMode.HighQualityBicubic;
-                        gg.SmoothingMode=SmoothingMode.HighQuality;
-                        gg.TextContrast=0;
-                        gg.PixelOffsetMode=PixelOffsetMode.Half;
-                        gg.TextRenderingHint=System.Drawing.Text.TextRenderingHint.AntiAlias;
+                    gg.DrawString(Text, Constants.font14, new SolidBrush(Color.Black), new PointF(Constants.TextBlur, Constants.TextBlur));
 
-                        gg.DrawString(Text, Constants.font14, new SolidBrush(Color.Black), new PointF(Constants.TextBlur, Constants.TextBlur));
-
-                        gg.PixelOffsetMode=PixelOffsetMode.HighQuality;
-                    }
-
-                    using (Bitmap img2 = new Bitmap(img, new Size((int)(img.Size.Width*Constants.TextBlur), (int)(img.Size.Height*Constants.TextBlur))))
-                        g.DrawImage(NativeMethods.SetBitmapOpacity(img2, Constants.TextTransparentry), new RectangleF(0, 0, img.Size.Width, img.Size.Height));
-                    g.DrawLine(new Pen(b),2,23,Width,23);
+                  //  gg.PixelOffsetMode=PixelOffsetMode.HighQuality;
                 }
-          //  }
+
+                using (Bitmap img2 = new Bitmap(img, new Size((int)(img.Size.Width*Constants.TextBlur), (int)(img.Size.Height*Constants.TextBlur))))
+                    g.DrawImage(NativeMethods.SetBitmapOpacity(img2, Constants.TextTransparentry), new RectangleF(0, 0, img.Size.Width, img.Size.Height));
+                g.DrawLine(new Pen(b),2,23,Width,23);
+            }
 
             g.DrawString(Text, Constants.font14, b, new Point(0, 0));
         }
@@ -139,10 +117,10 @@ using System.Drawing.Drawing2D;
         }
 
         protected override void Dispose(bool disposing) {
-        brushShadow?.Dispose();
-        if (timer.Enabled)timer.Stop();
-        timer?.Dispose();
-        base.Dispose(disposing);
-    }
-	//}
+            brushShadow?.Dispose();
+            if (timer.Enabled) timer.Stop();
+            timer?.Dispose();
+            base.Dispose(disposing);
+        }
+	}
 }
