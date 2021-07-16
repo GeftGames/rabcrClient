@@ -993,7 +993,7 @@ namespace rabcrClient {
 		string mouseItemName;
 		List<FallingBlockInfo> fallingBlocks;
 		bool dontDoGame=true;
-		int mouseItemId;
+		ushort mouseItemId;
 		int mouseItemNameWidth;
 		bool showMouseItemWhileMooving;
 		Text itemText;
@@ -7327,7 +7327,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							spriteBatch.Draw(TextureInventoryClothes,new Vector2(Global.WindowWidthHalf-300+4+60, Global.WindowHeightHalf-200+2+4), ColorWhite);
 							textOpenInventory.Draw(spriteBatch);
 
-							DrawInventoryWithDIntMoving();
+							DrawInventoryWithMoving();
 							InventoryDrawClothes();
 
 							#region Crafting
@@ -7493,7 +7493,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1+(int)(energy*2.02),Global.WindowHeightHalf-200+2+4-5,202-(int)(energy*2.02),3),Color.Red);
 								textOpenInventory.Draw(spriteBatch);
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								#region Bake
 								{
@@ -7733,7 +7733,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							textOpenInventory.Draw(spriteBatch);
 
 							int AddH=35;
-							DrawInventoryWithDIntMoving();
+							DrawInventoryWithMoving();
 							InventoryDrawClothes();
 
 							if (creativeTabCrafting) {
@@ -7821,7 +7821,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invShelf=((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -7877,7 +7877,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invBoxWooden=((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -7922,7 +7922,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invAdvBox=((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -8001,7 +8001,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								ItemInv[] invCharger=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								#region Place for charging
 								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), ColorWhite);
@@ -8038,7 +8038,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								ItemInv[] invMiner=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -8113,7 +8113,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								ItemInv[] invComposter=((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -8232,7 +8232,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								ItemInv[] invOxygenMachine=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								#region Place for charging
 								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), ColorWhite);
@@ -8267,7 +8267,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Barrel barrel=(Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
 								ItemInv[] invBarrel=barrel.Inv;
 
-								DrawInventoryWithDIntMoving();
+								DrawInventoryWithMoving();
 
 								DrawSideInventory();
 
@@ -17516,20 +17516,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							mouseDrawItemTextInfo=false;
 							// Basic right inventory
 							if ((i=InvSideMoveId())>=0) {
-								MouseItemNameEvent(InventoryNormal[i].Id);
+								MouseItemNameEvent(InventoryNormal[i]);
 								return;
 							}
 
 							// Inventory
 							if ((i=InvMoveId())>=0) {
-								MouseItemNameEvent(InventoryNormal[i].Id);
+								MouseItemNameEvent(InventoryNormal[i]);
 								return;
 							}
 
 							// Clothes
 							if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 								if ((i=InvClothesMoveId())>=0) {
-									if (i<8) MouseItemNameEvent(InventoryClothes[i].Id);
+									if (i<8) MouseItemNameEvent(InventoryClothes[i]/*.Id*/);
 									return;
 								}
 							}
@@ -17537,7 +17537,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Shelf
 							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
 								if ((i=InvShelfMoveId())>=0) {
-									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].Id);
+									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
 									return;
 								}
 							}
@@ -17545,7 +17545,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// BoxWooden
 							if (inventory==InventoryType.BoxWooden) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].Id);
+									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
 									return;
 								}
 							}
@@ -17553,7 +17553,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Adv box
 							if (inventory==InventoryType.BoxAdv) {
 								if ((i=InvAdvBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].Id);
+									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
 									return;
 								}
 							}
@@ -17561,7 +17561,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Miner
 							if (inventory==InventoryType.Miner) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].Id);
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
 									return;
 								}
 							}
@@ -17569,19 +17569,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Charger || OxygenMachine
 							if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
 								if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0].Id);
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]/*.Id*/);
 									return;
 								}
 							}
 
 							if (inventory==InventoryType.Barrel) {
 								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0].Id);
+									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]/*.Id*/);
 									return;
 								}
 
 								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1].Id);
+									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1]/*.Id*/);
 									return;
 								}
 							}
@@ -17590,7 +17590,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							if (inventory==InventoryType.Creative) {
 								if (!creativeTabCrafting){
 									if ((i=GetInventoryIdCreative())>=0) {
-										MouseItemNameEvent(InventoryCreative[i].Id);
+										MouseItemNameEvent(InventoryCreative[i]/*.Id*/);
 										return;
 									}
 								}
@@ -17605,7 +17605,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							 || inventory==InventoryType.FurnaceStone
 							 || inventory==InventoryType.FurnaceElectric) {
 								if ((i=GetCraftingInventoryId())>=0) {
-									MouseItemNameEvent(InventoryCrafting[i].Id);
+									MouseItemNameEvent(InventoryCrafting[i]/*.Id*/);
 									return;
 								}
 							}
@@ -18434,7 +18434,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void DrawInventoryWithDIntMoving() {
+		void DrawInventoryWithMoving() {
 			int xx=0, yh=0;
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
 				if (i>maxInvCount) break;
@@ -18456,7 +18456,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (InventoryNormal[i].Id!=0) {
 					InventoryNormal[i].Draw();
 
-					if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh)) MouseItemNameEvent(InventoryNormal[i].Id);
+					if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh)) MouseItemNameEvent(InventoryNormal[i]/*.Id*/);
 				}
 				xx+=40;
 
@@ -24139,21 +24139,59 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void MouseItemNameEvent(ushort newId) {
-			if (newId!=0)mouseDrawItemTextInfo=true;
-			if (mouseItemId!=newId) {
-				if (newId==0) {
-					mouseItemId=newId;
+		//void MouseItemNameEvent(ushort newId) {
+		//	if (newId!=0)mouseDrawItemTextInfo=true;
+		//	if (mouseItemId!=newId) {
+		//		if (newId==0) {
+		//			mouseItemId=newId;
+		//			mouseDrawItemTextInfo=false;
+		//			return;
+		//		}
+
+		//		int langid=GameMethods.GetItemNameId(newId);
+
+		//		if (langid==-1) {
+		//			#if DEBUG
+		//			mouseDrawItemTextInfo=true;
+		//			mouseItemId=newId;
+		//			mouseItemName=Lang.Texts[999];
+		//		   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
+
+		//			itemText=new Text(mouseItemName,0,0,BitmapFont.bitmapFont18);
+		//			mouseItemNameWidth=(int)itemText.MeasureX();
+		//			#else
+		//			mouseDrawItemTextInfo=false;
+		//			#endif
+		//		}else{
+		//			mouseDrawItemTextInfo=true;
+		//			mouseItemId=newId;
+		//			mouseItemName=Lang.Texts[langid];
+		//		   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
+
+		//			itemText=new Text(mouseItemName,0,0,BitmapFont.bitmapFont18);
+		//			mouseItemNameWidth=(int)itemText.MeasureX();
+		//		}
+		//	}
+		//}
+
+		void MouseItemNameEvent(ItemInv item) {
+			if (item==null) return;
+			ushort id= item.Id;
+			if (id!=0) mouseDrawItemTextInfo=true;
+
+			if (mouseItemId!=id) {
+				if (id==0) {
+					mouseItemId=id;
 					mouseDrawItemTextInfo=false;
 					return;
 				}
 
-				int langid=GameMethods.GetItemNameId(newId);
+				int langid=GameMethods.GetItemNameId(id);
 
 				if (langid==-1) {
 					#if DEBUG
 					mouseDrawItemTextInfo=true;
-					mouseItemId=newId;
+					mouseItemId=id;
 					mouseItemName=Lang.Texts[999];
 				   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
 
@@ -24162,18 +24200,38 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					#else
 					mouseDrawItemTextInfo=false;
 					#endif
-				}else{
+				} else {
 					mouseDrawItemTextInfo=true;
-					mouseItemId=newId;
+					mouseItemId=id;
 					mouseItemName=Lang.Texts[langid];
 				   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
+				    if (debug) {
+					   string add="";
+						switch (item) { 
+							case ItemInvFood16 food16:
+								add="ItemInvFood16";
+								add+='\n';
+								add=food16.GetCount+"/"+food16.CountMaximum;
+								add+='\n';
+								add+=food16.GetDescay+"/"+food16.DescayMaximum;
+								break;
 
-					itemText=new Text(mouseItemName,0,0,BitmapFont.bitmapFont18);
+							case ItemInvFood32 food32:
+								add="ItemInvFood32";
+								add+='\n';
+								add=food32.GetCount+"/"+food32.CountMaximum;
+								add+='\n';
+								add+=food32.GetDescay+"/"+food32.DescayMaximum;
+								break;
+						}
+						itemText=new Text(mouseItemName+'\n'+add, 0, 0, BitmapFont.bitmapFont18);
+					} else { 
+						itemText=new Text(mouseItemName, 0, 0, BitmapFont.bitmapFont18);
+					}
 					mouseItemNameWidth=(int)itemText.MeasureX();
 				}
 			}
 		}
-
 		float DetectSolidBlocksLeft(float npx, float npy) {
 			int to=((int)npy+20)/16;
 
@@ -24941,12 +24999,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				switch (inv[i]) {
 					case ItemInvFood16 food:
 						if (food.GetDescay<DescaySpeed) InventoryNormal[i]=itemBlank;
-						else food.SetDescay=food.GetDescay+DescaySpeed;
+						else food.SetDescay=food.GetDescay-DescaySpeed;
 						break;
 
 					case ItemInvFood32 food:
 						if (food.GetDescay<DescaySpeed) InventoryNormal[i]=itemBlank;
-						else food.SetDescay=food.GetDescay+DescaySpeed;
+						else food.SetDescay=food.GetDescay-DescaySpeed;
 						break;
 				}
 			}

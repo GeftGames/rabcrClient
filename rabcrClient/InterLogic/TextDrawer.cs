@@ -599,7 +599,7 @@ namespace rabcrClient {
         void BuildTextNormal(string txt){ 
             List<DrawingChar> tmpChs=new List<DrawingChar>();
             char[] chs=txt.ToArray();
-            int posx=X;
+            int posx=X, posY=Y;
           
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
@@ -613,7 +613,7 @@ namespace rabcrClient {
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
-                                    Pos=new Vector2(posx+g.X,Y+g.Y),
+                                    Pos=new Vector2(posx+g.X,posY+g.Y),
                                     Rectangle=g.DrawRectangle,
                                 }
                             );
@@ -627,6 +627,13 @@ namespace rabcrClient {
                         break;
                     }
                 }
+
+                if (chs[ch]=='\n') { 
+                    posx=X;
+                    posY+=30;
+                    add=true;
+                    continue;
+                }
            
                 // Unknown char
                 #if DEBUG
@@ -635,7 +642,7 @@ namespace rabcrClient {
                         if ('�'==(char)(g = font.Glyphs[gg]).Code) {
                             tmpChs.Add(
                                 new DrawingChar {
-                                    Pos=new Vector2(posx+g.X, Y+g.Y),
+                                    Pos=new Vector2(posx+g.X, posY+g.Y),
                                     Rectangle=g.DrawRectangle,
                                 }
                             );
@@ -648,7 +655,6 @@ namespace rabcrClient {
                 #endif
             } 
             Chars=tmpChs.ToArray();
-
             Length=Chars.Length;
         }
         #endregion
