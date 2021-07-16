@@ -12052,21 +12052,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return;
 
 					case (ushort)BlockId.Onion:
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Onion,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Onion,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Onion,1), pos);
+						{
+							float des=GameMethods.FoodMaxDescay((ushort)Items.Onion);
+							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+						}
 						return;
 
 					case (ushort)BlockId.Carrot:
-						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot, 1), pos);
+						{
+							float des=GameMethods.FoodMaxDescay((ushort)Items.Carrot);
+							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+						}
 						return;
 
 					case (ushort)BlockId.Peas:
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Peas,1), pos);
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Peas,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Peas,1), pos);
+						{
+							float des=GameMethods.FoodMaxDescay((ushort)Items.Peas);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
+							DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
+							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
+						}
 						return;
 
 					case (ushort)BlockId.Flax:
@@ -12098,11 +12107,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return;
 
 					case (ushort)BlockId.Onion:
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Onion,1), pos);
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantOnion,1), pos);
 						return;
 
 					case (ushort)BlockId.Carrot:
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.Carrot,1), pos);
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantCarrot,1), pos);
 						return;
 
 					case (ushort)BlockId.Peas:
