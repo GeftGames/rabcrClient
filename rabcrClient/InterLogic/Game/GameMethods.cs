@@ -1531,7 +1531,17 @@ namespace rabcrClient {
         }
 
         public static CraftingRecipe[] Craft(ushort id) {
-            switch (id) {
+            switch (id) { 
+                case (ushort)Items.AngelHair:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateGold, 1)),
+                                CraftingRecipe.AnyShears(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.AngelHair,2)
+                        ),
+                    };
                 case (ushort)Items.MediumStone:
                     return new CraftingRecipe[] {
                         new CraftingRecipe (
