@@ -136,11 +136,11 @@ namespace rabcrClient{
         #region Links
         public const string 
             // Report error
-            stringRRE="https://geftgames.ga/rre.php",
+            stringRRE="https://***.php",
 
             // Send date through the anonymization gateway (hide ip) and check trolls
             // ... or it can go direct if you don't want to do, but its better to have gamejolt api code safe on the sever, because code its hidden!
-            stringGameJoltServerGate="https://geftgames.ga/rabcrGameJoltSignature.php?";
+            stringGameJoltServerGate="https://***.php?";
         #endregion
     }
 } 
