@@ -17,7 +17,7 @@ A 2D game written with MonoGame that targets Win.
 
 
 ## What I use
-- Fonts: M PLUS Rounded, Sunflower, Tajawal, HanWangYenLight
+- Fonts: M PLUS Rounded, Sunflower, Tajawal, HanWangYenLight, Jaldi
 - Some parts translated by Google translate :)
 
 ## Programing
