@@ -4019,7 +4019,7 @@ namespace rabcrClient {
                                     new ItemNonInvBasic((ushort)Items.ShovelHeadIron, 2),
                                     new ItemNonInvBasic((ushort)Items.OreIron, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemIron,1)
+                            new ItemNonInvBasic((ushort)Items.IronIngot,1)
                         )
                     };
 
@@ -4047,7 +4047,7 @@ namespace rabcrClient {
                                 new ItemNonInvBasic((ushort)Items.BareLabel, 2),
                                 new ItemNonInvBasic((ushort)Items.OreCopper, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemCopper,1)
+                            new ItemNonInvBasic((ushort)Items.CopperIngot,1)
                         )
                     };
 
@@ -4061,7 +4061,7 @@ namespace rabcrClient {
                                     new ItemNonInvBasic((ushort)Items.PlateGold, 2),
                                     new ItemNonInvBasic((ushort)Items.OreGold, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemCopper,1)
+                            new ItemNonInvBasic((ushort)Items.GoldIngot,1)
                         )
                     };
 
