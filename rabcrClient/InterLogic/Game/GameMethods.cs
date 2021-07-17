@@ -191,6 +191,73 @@ namespace rabcrClient {
 
     static class GameMethods {
 
+
+        public static bool IsHalfShadowBlock(ushort id) { 
+			switch (id) { 
+				case (ushort)BlockId.AcaciaLeaves: return true;
+				case (ushort)BlockId.AppleLeaves: return true;
+				case (ushort)BlockId.AppleLeavesWithApples: return true;
+				case (ushort)BlockId.AppleLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeaves: return true;
+				case (ushort)BlockId.CherryLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeavesWithCherries: return true;
+				case (ushort)BlockId.EucalyptusLeaves: return true;
+				case (ushort)BlockId.KapokLeaves: return true;
+				case (ushort)BlockId.LemonLeaves: return true;
+				case (ushort)BlockId.LemonLeavesWithLemons: return true;
+				case (ushort)BlockId.LindenLeaves: return true;
+				case (ushort)BlockId.MangroveLeaves: return true;
+				case (ushort)BlockId.OakLeaves: return true;
+				case (ushort)BlockId.OliveLeaves: return true;
+				case (ushort)BlockId.OliveLeavesWithOlives: return true;
+				case (ushort)BlockId.OrangeLeaves: return true;
+				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
+				case (ushort)BlockId.PineLeaves: return true;
+				case (ushort)BlockId.PlumLeaves: return true;
+				case (ushort)BlockId.PlumLeavesBlossom: return true;
+				case (ushort)BlockId.PlumLeavesWithPlums: return true;
+				case (ushort)BlockId.RubberTreeLeaves: return true;
+				case (ushort)BlockId.SpruceLeaves: return true;
+				case (ushort)BlockId.WillowLeaves: return true;
+
+				case (ushort)BlockId.Ice: return true;
+				case (ushort)BlockId.WaterBlock: return true;
+				case (ushort)BlockId.WaterSalt: return true;
+			}
+			return false;
+		}
+
+        public static bool IsLeaves(ushort id) { 
+			switch (id) { 
+				case (ushort)BlockId.AcaciaLeaves: return true;
+				case (ushort)BlockId.AppleLeaves: return true;
+				case (ushort)BlockId.AppleLeavesWithApples: return true;
+				case (ushort)BlockId.AppleLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeaves: return true;
+				case (ushort)BlockId.CherryLeavesBlossom: return true;
+				case (ushort)BlockId.CherryLeavesWithCherries: return true;
+				case (ushort)BlockId.EucalyptusLeaves: return true;
+				case (ushort)BlockId.KapokLeaves: return true;
+				case (ushort)BlockId.LemonLeaves: return true;
+				case (ushort)BlockId.LemonLeavesWithLemons: return true;
+				case (ushort)BlockId.LindenLeaves: return true;
+				case (ushort)BlockId.MangroveLeaves: return true;
+				case (ushort)BlockId.OakLeaves: return true;
+				case (ushort)BlockId.OliveLeaves: return true;
+				case (ushort)BlockId.OliveLeavesWithOlives: return true;
+				case (ushort)BlockId.OrangeLeaves: return true;
+				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
+				case (ushort)BlockId.PineLeaves: return true;
+				case (ushort)BlockId.PlumLeaves: return true;
+				case (ushort)BlockId.PlumLeavesBlossom: return true;
+				case (ushort)BlockId.PlumLeavesWithPlums: return true;
+				case (ushort)BlockId.RubberTreeLeaves: return true;
+				case (ushort)BlockId.SpruceLeaves: return true;
+				case (ushort)BlockId.WillowLeaves: return true;
+			}
+			return false;
+		}
+
         public static bool IsSelectedShears(ushort id) { 
             switch (id) { 
                 case (ushort)Items.ShearsCopper: return true;	
@@ -695,6 +762,7 @@ namespace rabcrClient {
                 case (ushort)Items.Rubber: return 1327;
                 case (ushort)Items.Rope: return 1179;
                 case (ushort)Items.AnimalRabbit: return 1329;
+                case (ushort)Items.AnimalParrot: return 1584;
                 case (ushort)Items.ItemBattery: return 1264;
                 case (ushort)Items.PlateIron: return 1234;
                 case (ushort)Items.PlateGold: return 1238;
@@ -915,28 +983,28 @@ namespace rabcrClient {
             #endif
         }
 
-        public static int BurnWoodInFurnace(ushort id){
-            switch (id){
-                case (ushort)Items.ItemCoal: return 45;
-                case (ushort)Items.CoalWood: return 40;
-                case (ushort)Items.WoodOak: return 32;
-                case (ushort)Items.WoodLinden: return 32;
-                case (ushort)Items.WoodCherry: return 29;
-                case (ushort)Items.WoodApple: return 30;
-                case (ushort)Items.WoodLemon: return 29;
-                case (ushort)Items.WoodSpruce: return 30;
-                case (ushort)Items.WoodPlum: return 30;
-                case (ushort)Items.WoodPine: return 29;
-                case (ushort)Items.WoodOrange: return 30;
-                case (ushort)Items.Stick: return 11;
-                case (ushort)Items.CoalDust: return 10;
-                case (ushort)Items.Sticks: return 9;
-                case (ushort)Items.WoodDust: return 5;
-                case (ushort)Items.Paper: return 2;
-                case (ushort)Items.Gunpowder: return 1;
-            }
-            return 0;
-        }
+        //public static int BurnWoodInFurnace(ushort id){
+        //    switch (id){
+        //        case (ushort)Items.ItemCoal: return 45;
+        //        case (ushort)Items.CoalWood: return 40;
+        //        case (ushort)Items.WoodOak: return 32;
+        //        case (ushort)Items.WoodLinden: return 32;
+        //        case (ushort)Items.WoodCherry: return 29;
+        //        case (ushort)Items.WoodApple: return 30;
+        //        case (ushort)Items.WoodLemon: return 29;
+        //        case (ushort)Items.WoodSpruce: return 30;
+        //        case (ushort)Items.WoodPlum: return 30;
+        //        case (ushort)Items.WoodPine: return 29;
+        //        case (ushort)Items.WoodOrange: return 30;
+        //        case (ushort)Items.Stick: return 11;
+        //        case (ushort)Items.CoalDust: return 10;
+        //        case (ushort)Items.Sticks: return 9;
+        //        case (ushort)Items.WoodDust: return 5;
+        //        case (ushort)Items.Paper: return 2;
+        //        case (ushort)Items.Gunpowder: return 1;
+        //    }
+        //    return 0;
+        //}
 
         public static bool IsCompostable(ushort id) {
             switch (id) {
@@ -1354,6 +1422,7 @@ namespace rabcrClient {
                 case (ushort)Items.AnimalRabbit: return (ushort)BlockId.Rabbit;
                 case (ushort)Items.AnimalChicken: return (ushort)BlockId.Chicken;
                 case (ushort)Items.AnimalFish: return (ushort)BlockId.Fish;
+                case (ushort)Items.AnimalParrot: return (ushort)BlockId.MobParrot;
             }
 
             return (ushort)BlockId.None;
@@ -1462,7 +1531,58 @@ namespace rabcrClient {
         }
 
         public static CraftingRecipe[] Craft(ushort id) {
-            switch (id) {
+            switch (id) { 
+                case (ushort)Items.AngelHair:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateGold, 1)),
+                                CraftingRecipe.AnyShears(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.AngelHair,2)
+                        ),
+                    };
+                case (ushort)Items.MediumStone:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.MediumStone,2)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 2)),
+                            },
+                            new ItemNonInvBasic((ushort)Items.MediumStone, 3)
+                        ),
+                    };
+
+                case (ushort)Items.SmallStone:
+                    return new CraftingRecipe[] {
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.MediumStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone,2)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 1)),
+                                CraftingRecipe.AnyHammer(),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone, 4)
+                        ),
+                        new CraftingRecipe (
+                            new CraftingIn[]{
+                                new CraftingIn(new ItemNonInvBasic((ushort)Items.MediumStone, 2)),
+                            },
+                            new ItemNonInvBasic((ushort)Items.SmallStone, 3)
+                        ),
+                    };
+
                 case (ushort)Items.HammerCopper:
                     return new CraftingRecipe[] {
                         new CraftingRecipe (
@@ -3899,7 +4019,7 @@ namespace rabcrClient {
                                     new ItemNonInvBasic((ushort)Items.ShovelHeadIron, 2),
                                     new ItemNonInvBasic((ushort)Items.OreIron, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemIron,1)
+                            new ItemNonInvBasic((ushort)Items.IronIngot,1)
                         )
                     };
 
@@ -3927,7 +4047,7 @@ namespace rabcrClient {
                                 new ItemNonInvBasic((ushort)Items.BareLabel, 2),
                                 new ItemNonInvBasic((ushort)Items.OreCopper, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemCopper,1)
+                            new ItemNonInvBasic((ushort)Items.CopperIngot,1)
                         )
                     };
 
@@ -3941,7 +4061,7 @@ namespace rabcrClient {
                                     new ItemNonInvBasic((ushort)Items.PlateGold, 2),
                                     new ItemNonInvBasic((ushort)Items.OreGold, 1)})
                             },
-                            new ItemNonInvBasic((ushort)Items.ItemCopper,1)
+                            new ItemNonInvBasic((ushort)Items.GoldIngot,1)
                         )
                     };
 
@@ -5024,6 +5144,7 @@ namespace rabcrClient {
                 case (ushort)Items.Ash: return true;
                 case (ushort)Items.KapokFibre: return true;
                 case (ushort)Items.AnimalRabbit: return true;
+                case (ushort)Items.AnimalParrot: return true;
                 case (ushort)Items.AnimalChicken: return true;
                 case (ushort)Items.AnimalFish: return true;
                 case (ushort)Items.Barrel: return true;
@@ -6031,6 +6152,63 @@ namespace rabcrClient {
 
             }
             return;
+        }
+
+         public static float FurnaceStoneBurnWood(ushort id) { 
+            switch (id) {
+				case (ushort)Items.WoodOak: return 0.25f;
+				case (ushort)Items.WoodPine: return 0.25f;
+				case (ushort)Items.WoodLinden: return 0.25f;
+				case (ushort)Items.WoodSpruce: return 0.25f;
+
+				case (ushort)Items.WoodApple: return 0.2f;
+				case (ushort)Items.WoodCherry: return 0.2f;
+				case (ushort)Items.WoodPlum: return 0.2f;
+				case (ushort)Items.WoodLemon: return 0.2f;
+				case (ushort)Items.OliveWood: return 0.2f;
+				case (ushort)Items.WoodOrange: return 0.2f;
+
+				case (ushort)Items.MangroveWood: return 0.195f;
+				case (ushort)Items.WillowWood: return 0.195f;
+				case (ushort)Items.RubberTreeWood: return 0.195f;
+				case (ushort)Items.EucalyptusWood: return 0.225f;
+				case (ushort)Items.AcaciaWood: return 0.225f;
+				case (ushort)Items.KapokWood: return 0.22f;
+                         
+				case (ushort)Items.OreCoal: return 0.5f;
+				case (ushort)Items.Stick: return 0.02f;
+				case (ushort)Items.Paper: return 0.05f;
+				case (ushort)Items.CoalDust: return 0.02f;
+				case (ushort)Items.CoalWood: return 0.25f;
+				case (ushort)Items.ItemCoal: return 0.5f;
+				case (ushort)Items.Plastic: return 0.01f;
+				case (ushort)Items.Sticks: return 0.02f;
+				case (ushort)Items.FewSticks: return 0.1f;
+
+				case (ushort)Items.Shelf: return 0.3f;
+				case (ushort)Items.BoxWooden: return 0.3f;
+				case (ushort)Items.Flag: return 0.05f;
+				case (ushort)Items.Hay: return 0.01f;
+				case (ushort)Items.Ladder: return 0.2f;
+				case (ushort)Items.OakSapling: return 0.02f;
+				case (ushort)Items.OliveSapling: return 0.02f;
+				case (ushort)Items.OrangeSapling: return 0.02f;
+				case (ushort)Items.PineSapling: return 0.02f;
+				case (ushort)Items.PlumSapling: return 0.02f;
+				case (ushort)Items.RubberTreeSapling: return 0.02f;
+				case (ushort)Items.SpruceSapling: return 0.02f;
+				case (ushort)Items.WillowSapling: return 0.02f;
+				case (ushort)Items.MangroveSapling: return 0.02f;
+				case (ushort)Items.AcaciaSapling: return 0.02f;
+				case (ushort)Items.Yarn: return 0.02f;
+				case (ushort)Items.Bucket: return 0.05f;
+				case (ushort)Items.Cloth: return 0.05f;
+				case (ushort)Items.Desk: return 0.1f;
+				case (ushort)Items.Planks: return 0.1f;
+
+
+            }
+            return -1f;
         }
     }
 }

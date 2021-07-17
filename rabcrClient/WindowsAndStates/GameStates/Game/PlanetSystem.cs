@@ -174,31 +174,31 @@ namespace rabcrClient {
     //  const  int rocketFlyLineColor = 0;
       //  bool fly = false;
       //  Button buttonOpenPanel;
-        readonly string[] worlds = new string[] {
-            "Země","Měsíc", "Mars","Vesmírná stanice"
+        //readonly string[] worlds = new string[] {
+        //   Lang.Texts[1533],Lang.Texts[1534], Lang.Texts[1535],Lang.Texts[1536]
 
-
-          //  "Slunce",
-           // "Merkur",
-          //  "Venuše",
-             /*"Vesmírná stanice",*/
-          //  "Mars", /*"Phobos", "Deimos",*/
-          //  "Ceres",/*"Pallas","Vesta",*/
-          //  "Jupiter",/* "Io", "Europa", "Ganymed", "Callisto", */
-          //  "Saturn", /*"Titan", "Rhea", "Iapetus","Dione","Tethys","Enceladus","Mimas",*/
-          //  "Uran", /*"Titania","Oberon","Umbriel","Ariel","Miranda",*/
-          //  "Neptun", /*"Triton", "Proteus",*/
-          //  "Pluto", /*"Charon",*/
-            //"Eris","Dysnomia",
-            //"Makemake",
-            //"Haumea",
-            //"Sedna",
-            //"Orcus","Vanth",
-            //"2007 OR10",
-            //"Quaoar",
-            //"Salacia",
-            //"Actaea",
-            };
+        //    //
+        //  //  "Slunce",
+        //   // "Merkur",
+        //  //  "Venuše",
+        //     /*"Vesmírná stanice",*/
+        //  //  "Mars", /*"Phobos", "Deimos",*/
+        //  //  "Ceres",/*"Pallas","Vesta",*/
+        //  //  "Jupiter",/* "Io", "Europa", "Ganymed", "Callisto", */
+        //  //  "Saturn", /*"Titan", "Rhea", "Iapetus","Dione","Tethys","Enceladus","Mimas",*/
+        //  //  "Uran", /*"Titania","Oberon","Umbriel","Ariel","Miranda",*/
+        //  //  "Neptun", /*"Triton", "Proteus",*/
+        //  //  "Pluto", /*"Charon",*/
+        //    //"Eris","Dysnomia",
+        //    //"Makemake",
+        //    //"Haumea",
+        //    //"Sedna",
+        //    //"Orcus","Vanth",
+        //    //"2007 OR10",
+        //    //"Quaoar",
+        //    //"Salacia",
+        //    //"Actaea",
+        //    };
         string potencialLand;
 
         //   const string path="";
@@ -211,12 +211,12 @@ namespace rabcrClient {
         readonly List<DInt>Inventory=new List<DInt>();
         public PlanetSystem(string p)=>pathToWorld=p;
 
-        bool CanGenerateWorld(string nameCz) {
-            foreach (string w in worlds){
-                if (w==nameCz)return true;
-            }
-            return false;
-        }
+        //bool CanGenerateWorld(string nameCz) {
+        //    foreach (string w in worlds){
+        //        if (w==nameCz)return true;
+        //    }
+        //    return false;
+        //}
 
         public override void Init() {
             //random=Rabcr.random;
@@ -331,10 +331,10 @@ sun=new GeneratePlanetSystem().SunSystem();
         void SetAOTextures(AstronomicalObject[] o) {
 
             foreach (AstronomicalObject x in o){
-                if (!x.Builded){ if (File.Exists(pathToWorld+@"\Builded"+x.NameEn+".txt")) x.Builded=true;}
+                if (!x.Builded){ if (File.Exists(pathToWorld+@"\Builded"+x.Name+".txt")) x.Builded=true;}
                 if (x.Builded){
-                    if (string.IsNullOrEmpty(x.NameEn)) x.texture=GetDataTexture("Space/"+x.NameCz);
-                    else x.texture=GetDataTexture("Space/"+x.NameEn);
+                    if (string.IsNullOrEmpty(x.Name)) x.texture=GetDataTexture("Space/"+x.Name);
+                    else x.texture=GetDataTexture("Space/"+x.Name);
                 }else{
 
                     x.texture=GetDataTexture("Menu/Styles/Find");
@@ -422,7 +422,7 @@ sun=new GeneratePlanetSystem().SunSystem();
 
             if (dialogLand){
                 if (buttonLand.Update()){
-                    File.WriteAllText(pathToWorld+"LastWorld.txt",GetAOByName(potencialLand,sun).NameEn);
+                    File.WriteAllText(pathToWorld+"LastWorld.txt",GetAOByName(potencialLand,sun).Name);
                    // File.WriteAllText(pathToWorld+"UseRocket.txt","");
                     Rabcr.GoTo(new SinglePlayer(pathToWorld));
 
@@ -853,10 +853,11 @@ sun=new GeneratePlanetSystem().SunSystem();
                 spriteBatch.Draw(Rabcr.Pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-132,300,34), color_r10_g140_b255);
                 spriteBatch.Draw(Rabcr.Pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-98,300,230), Color.LightBlue);
 
+                buttonClose.Position=new Vector2( Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1);
                 buttonClose.ButtonDraw(/*spriteBatch,newMouseState.X,newMouseState.Y,Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1,newMouseState.LeftButton==ButtonState.Pressed*/);
 
                 AstronomicalObject o=GetAOByName(potencialLand,sun);
-                    DrawTextShadowMin(Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-125, /*Setting.czechLanguage ? o.NameCz :*/ o.NameEn);
+                    DrawTextShadowMin(Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-125, /*Setting.czechLanguage ? o.NameCz :*/ o.NameTranslated);
                  //   spriteBatch.Draw(rocketTexture,new Rectangle(Global.WindowWidthHalf-62, Global.WindowHeightHalf-190,123,380), Color.White);
                 string type="";
                 switch (o.astrO){
@@ -869,8 +870,8 @@ sun=new GeneratePlanetSystem().SunSystem();
                     case AstrO.MoonRocky:type="ke kamennému měsíci"; break;
                 }
                 if (o.Builded) {
-                    DrawTextShadowMin(Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-90, "Chcete přiletnout\r\n   "+type+"?");
-                    if (CanGenerateWorld(potencialLand)) {
+                    DrawTextShadowMin(Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-90, "Chcete přiletnout\r\n   %object%?".Replace("%object%",type));
+                    if (o.Landable/* CanGenerateWorld(potencialLand)*/) {
                         buttonLand.Position=new Vector2(Global.WindowWidthHalf-buttonLand.texture.Width/2, Global.WindowHeightHalf-98+230-buttonLand.texture.Height-5);
                         buttonLand.ButtonDraw(/*spriteBatch, newMouseState.LeftButton==ButtonState.Pressed, new DInt(newMouseState.X,newMouseState.Y)*/);
                     } else {
@@ -892,12 +893,12 @@ sun=new GeneratePlanetSystem().SunSystem();
 
                     if (ok) {
 
-                        if (CanGenerateWorld(potencialLand)) {
+                        if (o.Landable/*CanGenerateWorld(potencialLand)*/) {
                             buttonCreate.Position=new Vector2(Global.WindowWidthHalf-buttonCreate.texture.Width/2, Global.WindowHeightHalf-98+230-buttonCreate.texture.Height-5);
                             buttonCreate.ButtonDraw(/*spriteBatch, newMouseState.LeftButton==ButtonState.Pressed, new DInt(newMouseState.X,newMouseState.Y)*/);
                         }
                     } else {
-                        DrawTextShadowMin(Global.WindowWidthHalf-buttonCreate.texture.Width+20, Global.WindowHeightHalf-98+230-buttonCreate.texture.Height-5-20, "Nemáte dostatek materiálu\r\n   pro vytvoření");
+                        DrawTextShadowMin(Global.WindowWidthHalf-buttonCreate.texture.Width+20, Global.WindowHeightHalf-98+230-buttonCreate.texture.Height-5-20, Lang.Texts[1540]);
                     }
                 }
             }
@@ -1360,7 +1361,7 @@ sun=new GeneratePlanetSystem().SunSystem();
 
         AstronomicalObject GetAOByName(string name, AstronomicalObject[] x) {
             foreach (AstronomicalObject f in x){
-                if (f.NameCz==name){
+                if (f.Name==name){
                     return f;
                 }
                 if (f.Childs!=null){
@@ -1435,14 +1436,14 @@ sun=new GeneratePlanetSystem().SunSystem();
                           //   displayed=Displayed.PlanetSystem;
                         //selectedAO=o.NameCz;
 
-                             if (o.NameEn!="Sun"){
+                             if (o.Name!="Sun"){
                                 dialogLand=true;
-                                potencialLand=o.NameCz;
+                                potencialLand=o.Name;
 
                             }else displayed=Displayed.SolarSystem;
                         }else{
                              displayed=Displayed.PlanetSystem;
-                        selectedAO=o.NameCz;
+                        selectedAO=o.Name;
                         }
 
                         }
@@ -1451,8 +1452,8 @@ sun=new GeneratePlanetSystem().SunSystem();
                 }
 
                       //  Console.WriteLine(drawingRec);
-                    spriteBatch.DrawString(spriteFont_medium,o.NameCz,new Vector2((int)(drawingRec.X+o.Size-spriteFont_medium.MeasureString(o.NameCz).X/2d), (int)(drawingRec.Y/*+o.Size*2*/)),Color.Black,0,Vector2.Zero,1,SpriteEffects.None,1);
-                      spriteBatch.DrawString(spriteFont_medium,o.NameCz,new Vector2((int)(drawingRec.X+o.Size-spriteFont_medium.MeasureString(o.NameCz).X/2d), (int)(drawingRec.Y/*+o.Size*2*/)),Color.White,0,Vector2.Zero,1,SpriteEffects.None,1);
+                    spriteBatch.DrawString(spriteFont_medium,o.NameTranslated,new Vector2((int)(drawingRec.X+o.Size-spriteFont_medium.MeasureString(o.NameTranslated).X/2d), (int)(drawingRec.Y/*+o.Size*2*/)),Color.Black,0,Vector2.Zero,1,SpriteEffects.None,1);
+                      spriteBatch.DrawString(spriteFont_medium,o.NameTranslated,new Vector2((int)(drawingRec.X+o.Size-spriteFont_medium.MeasureString(o.NameTranslated).X/2d), (int)(drawingRec.Y/*+o.Size*2*/)),Color.White,0,Vector2.Zero,1,SpriteEffects.None,1);
              //   }
 
 

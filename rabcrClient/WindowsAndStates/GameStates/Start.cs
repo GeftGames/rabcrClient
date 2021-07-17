@@ -18,24 +18,19 @@ namespace rabcrClient {
             Ending,
             Finish,
         }
+
+        #region Varibles
         AnimationState CurrentAnimationState;
-      //  volatile int state;
+
         double LastChangeAnimation;
         double StartChangeAnimation;
-        private Thread checking;
 
         volatile bool finish;
-        //float disepearing;
-      //  volatile bool ready=false;
-        bool go=false;
-       // Bar bar;
-        float alpha;
 
-  //      public float Process() {
-  //          if (checking==null) return 1;
-  //          if (!checking.IsAlive) return 1;
-		//	//return state/1249f;
-		//}
+        bool go=false;
+
+        float alpha;
+        #endregion
 
         public override void Init() {
             CurrentAnimationState=AnimationState.No;
@@ -49,13 +44,14 @@ namespace rabcrClient {
                 System.Windows.Forms.MessageBox.Show(Lang.Texts[46]+":\r\n"+Lang.Texts[22]+".\r\n\r\n"+Lang.Texts[23]+":\r\n"+ex.Message);
                 Environment.Exit(ex.HResult);
             }
-          //  bar=new Bar();
-         //   bar.ChangePos(Global.WindowWidthHalf,Global.WindowHeightHalf+32);
+
             LoadData();
 
             if (Constants.AnimationsControls)alpha=0;
             else alpha=1;
 
+            // Thread with generating background world (I don't want to freeze my form)
+            Thread checking;
             (checking=new Thread(Check) {
                 Priority=ThreadPriority.Highest
             }).Start();
@@ -67,9 +63,6 @@ namespace rabcrClient {
                     go=true;
                     Rabcr.GoTo(new Menu());
                     CurrentAnimationState=AnimationState.Finish;
-                    //#if DEBUG
-                    //Debug.WriteLine("Total state load: "+state);
-                    //#endif
                 }
             }
 
@@ -96,7 +89,6 @@ namespace rabcrClient {
 
                 case AnimationState.StandBy:
                     if (finish) {
-
                         if (gameTime.TotalGameTime.TotalMilliseconds-StartChangeAnimation>2000+LastChangeAnimation) {
                             alpha=0;
                             CurrentAnimationState=AnimationState.Ending;
@@ -121,9 +113,6 @@ namespace rabcrClient {
                         if (!go) {
                             go=true;
                             Rabcr.GoTo(new Menu());
-                            //#if DEBUG
-                            //Debug.WriteLine("Total state load: "+state);
-                            //#endif
                         }
                     }
                     break;
@@ -133,8 +122,6 @@ namespace rabcrClient {
         public override void Draw(GameTime gameTime) {
             Graphics.Clear(Color.Black);
             spriteBatch.Begin();
-
-          //  for (int i=0; i<Global.WindowHeight; i++) spriteBatch.Draw(Rabcr.Pixel,new Rectangle(0,i,Global.WindowWidth,1), new Color(i/765f,1,1));
 
             if (Textures.Logo!=null) {
                 switch (CurrentAnimationState) {
@@ -157,14 +144,10 @@ namespace rabcrClient {
             base.Draw(gameTime);
         }
 
-       // public override void Resize() {
-            //bar.ChangePos(Global.WindowWidthHalf,Global.WindowHeightHalf+32);
-        //}
-
         void Check() {
-            if (File.Exists(Setting.Path+"GameStyle.txt")) {
-                Setting.StyleName=File.ReadAllText(Setting.Path+"GameStyle.txt");
-            }
+            //if (File.Exists(Setting.Path+"GameStyle.txt")) {
+            //    Setting.StyleName=File.ReadAllText(Setting.Path+"GameStyle.txt");
+            //}
 
             if (!File.Exists(Setting.Path+@"\\MenuBackground.ter")) {
                 BGenerateWorld gwm = new BGenerateWorld();
@@ -174,6 +157,7 @@ namespace rabcrClient {
             finish=true;
         }
 
+        #region Load content methods
         SpriteFont LoadDataFont(string str) => Content.Load<SpriteFont>(Setting.StyleName+"\\Fonts\\"+str);
 		
         Effect LoadDataEffect(string str) => Content.Load<Effect>(Setting.StyleName+"\\Effects\\"+str);
@@ -183,7 +167,8 @@ namespace rabcrClient {
         SoundEffect LoadDataSoundEffect(string str) => Content.Load<SoundEffect>(Setting.StyleName+"\\SoundEffects\\"+str);
 		
         Texture2D LoadDataTexture(string str) => Content.Load<Texture2D>(Setting.StyleName+"\\Textures\\"+str);
-		
+        #endregion
+
         void LoadData() {
             Fonts.Medium=LoadDataFont("Medium");
             Fonts.Small=LoadDataFont("Small");
@@ -213,6 +198,7 @@ namespace rabcrClient {
             Textures.ButtonRight=LoadDataTexture("Buttons/Menu/Right");
             Textures.ButtonLong=LoadDataTexture("Buttons/Menu/Long");
         }
+
         // void SetWindow() {
         //    if (Setting.currentWindow==Setting.Window.Fullscreen) {
         //        System.Windows.Forms.Form gameForm = (System.Windows.Forms.Form)System.Windows.Forms.Control.FromHandle(Game.Window.Handle);

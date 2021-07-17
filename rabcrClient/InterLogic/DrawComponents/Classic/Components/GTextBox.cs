@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
 
-//namespace rabcrClient {
+namespace rabcrClient {
     public partial class GTextBox:UserControl {
 
-        string placeholder;
-       public readonly Timer timer;
+     //  string placeholder;
+        public readonly Timer timer;
+        public string PlaceHolder;
 
         public GTextBox() {
             InitializeComponent();
@@ -58,7 +59,7 @@ using System.Windows.Forms;
         protected override void OnVisibleChanged(EventArgs e) {
             base.OnVisibleChanged(e);
 
-            if (Visible && !Disposing) NativeMethods.SetPlaceholder(placeholder, textBox.Handle);
+            if (Visible && !Disposing) NativeMethods.SetPlaceholder(PlaceHolder, textBox.Handle);
         }
 
         void TextBox_GotFocus(object sender, EventArgs e) {
@@ -79,29 +80,19 @@ using System.Windows.Forms;
             Height = textBox.Height+7;
         }
 
-        public string PlaceHolder {
-            get { return placeholder; }
-            set { placeholder=value;  }
-        }
 
         public string TextInTextBox {
-            get { return textBox.Text; }
+            get => textBox.Text; 
             set => textBox.Text=value;
         }
 
         public override string Text {
-            get { return textBox.Text; }
+            get => textBox.Text;
         }
 
         public GBounds.StateSelect StateSelect {
-            get { return bounds.state; }
+            get => bounds.state;
             set => bounds.state=value;
         }
-
-      //protected override void Dispose(bool disposing) {
-      //  if (timer.Enabled)timer.Stop();
-      //  timer?.Dispose();
-      //  base.Dispose(disposing);
     }
-    //}
-//}
+}

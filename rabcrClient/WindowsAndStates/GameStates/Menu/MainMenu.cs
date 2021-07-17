@@ -87,7 +87,7 @@ namespace rabcrClient {
                 var buttonMultiplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[7]);
                 buttonMultiplayer.Click+=GoToMultiplayer;
 
-			    var buttonSetting = new Button(Textures.ButtonLongLeft, Lang.Texts[8]);
+                var buttonSetting = new Button(Textures.ButtonLongLeft, Lang.Texts[8]);
                 buttonSetting.Click+=GoToSettings;
 
 			    var buttonInformation = new Button(Textures.ButtonLongLeft, Lang.Texts[5]);
@@ -101,7 +101,7 @@ namespace rabcrClient {
 
                 buttonsSide=new Button[]{
                     buttonSingleplayer,
-                    buttonMultiplayer,
+                 //   buttonMultiplayer,
                     buttonCharacter,
                     buttonSetting,
                     buttonLanguage,

@@ -2,6 +2,7 @@
 
 namespace rabcrClient {
 
+    //  waving leaves are living!
     public abstract class LiveObject {  
         public UShortAndByte Root;
         public float angle;
@@ -15,14 +16,11 @@ namespace rabcrClient {
             Titles=new List<UShortAndByte>();
         }
 
-        public void Add(int x, int y) { 
-            Titles.Add(new UShortAndByte((ushort)x, (byte)y));
-        }
+        public void Add(int x, int y) => Titles.Add(new UShortAndByte((ushort)x, (byte)y));
     }
 
     public class Tree : LiveObject { 
-        public List<UShortAndByte> TitlesLeaves;
-        public List<UShortAndByte> TitlesWood;
+        public List<UShortAndByte> TitlesLeaves, TitlesWood;
 
         public Tree(int x, int y) { 
             Root=new UShortAndByte((ushort)x, (byte)y);
@@ -30,13 +28,8 @@ namespace rabcrClient {
             TitlesWood=new List<UShortAndByte>();
         }
 
+        public void AddLeave(int x, int y) => TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
 
-        public void AddLeave(int x, int y) { 
-            TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
-        }
-
-        public void AddWood(int x, int y) { 
-            TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
-        }
+        public void AddWood(int x, int y) => TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
     }
 }

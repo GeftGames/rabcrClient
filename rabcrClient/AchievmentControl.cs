@@ -8,14 +8,14 @@ namespace rabcr {
 	class AchievmentControl : Control{
 
 		//const int SizeBounds=20;
-		int textX, textY;
+		//int textX, textY;
 		public bool Done;
-        Timer timer;
+        readonly Timer timer;
         int alpha=200;
         int need=255;
         Image image;
         
-		enum State {
+		enum State :byte{
 			None,
 			Enter,
 			Click
@@ -23,8 +23,8 @@ namespace rabcr {
 		State currentState;
 
 		public AchievmentControl() {
-			textX=5;
-			textY=5;
+			//textX=5;
+			//textY=5;
 
 			currentState =State.None;
             //currentOrientation=Orientation.Center;
@@ -68,8 +68,8 @@ namespace rabcr {
 
         protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
-			textX=Size.Width/2;
-			textY=Size.Height/2;
+			//textX=Size.Width/2;
+			//textY=Size.Height/2;
 			Refresh();
 		}
 
@@ -118,7 +118,7 @@ namespace rabcr {
 
 		protected override void OnPaint(PaintEventArgs e) {
 			Graphics g = e.Graphics;
-            Size buttonSize=new Size(Size.Width-3,Size.Height-3);
+           // Size buttonSize=new Size(Size.Width-3,Size.Height-3);
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			//g.SmoothingMode = SmoothingMode.None;
             Font=new Font(Font.FontFamily,14);
@@ -126,7 +126,7 @@ namespace rabcr {
          
 			Brush b = new LinearGradientBrush(ClientRectangle, Color.FromArgb((int)alpha,(int)alpha,(int)alpha), Color.FromArgb((int)alpha-40,(int)alpha-40,(int)alpha-40), 90);
           
-              Pen sb = new Pen(new SolidBrush(Color.Black));  
+          //    Pen sb = new Pen(new SolidBrush(Color.Black));  
        
             //Back
             g.DrawRectangle(new Pen(new LinearGradientBrush(ClientRectangle, Color.FromArgb(100,(int)alpha,(int)alpha,(int)alpha), Color.FromArgb(100,(int)alpha-40,(int)alpha-40,(int)alpha-40), 90)),new Rectangle(0, 0, Size.Width-1, Size.Height-1));
@@ -181,7 +181,8 @@ namespace rabcr {
                 //set the opacity  
                 matrix.Matrix33 = opacity;  
                 matrix.Matrix00=-1;
-               matrix.Matrix11 = matrix.Matrix22 = -1;
+                matrix.Matrix11 = matrix.Matrix22 = -1;
+
                 //create image attributes  
                 ImageAttributes attributes = new ImageAttributes();      
 

@@ -42,7 +42,7 @@ namespace rabcrClient {
                     // Bronze
                     case 0:
                         {
-                            string url="https://geftgames.ga/rabcrGameJoltSignature.php?username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134205&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134205&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -61,7 +61,7 @@ namespace rabcrClient {
                     // Silver
                     case 1:
                         {
-                            string url="https://geftgames.ga/rabcrGameJoltSignature.php?username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=13407&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=13407&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -80,7 +80,7 @@ namespace rabcrClient {
                     // Gold
                     case 2:
                         {
-                            string url="https://geftgames.ga/rabcrGameJoltSignature.php?username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134208&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134208&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 
@@ -99,7 +99,7 @@ namespace rabcrClient {
                     // Platium
                     case 3:
                         {
-                            string url="https://geftgames.ga/rabcrGameJoltSignature.php?username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134209&version="+Release.VersionString+secretKey;
+                            string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134209&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
                             if (get=="SUCCESS") { 

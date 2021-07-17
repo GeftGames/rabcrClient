@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
-//namespace rabcrClient {
+namespace rabcrClient {
     public partial class GChangeButton : Control {
 
 		int textX, textY;
@@ -51,11 +51,11 @@ using System.Drawing.Drawing2D;
 
             if (need!=alpha) {
                 if (need<alpha) {
-                    alpha-=1+NativeMethods.Abs(need-alpha)/6;
+                    alpha-=1+FastMath.Abs(need-alpha)/6;
                     Invalidate();
                 }
                 if (need>alpha) {
-                    alpha+=1+NativeMethods.Abs(need-alpha)/6;
+                    alpha+=1+FastMath.Abs(need-alpha)/6;
                     Invalidate();
                 }
                 if (alpha-need<4 && alpha-need>-4) alpha=need;
@@ -264,5 +264,5 @@ using System.Drawing.Drawing2D;
             timer?.Dispose();
             base.Dispose(disposing);
         }
-//	}
+	}
 }

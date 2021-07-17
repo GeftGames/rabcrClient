@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 
 namespace rabcrClient {
     static class FastMath {
@@ -51,7 +52,11 @@ namespace rabcrClient {
             float dx=x1-x2, dy=y1-y2;
             return (float)System.Math.Sqrt(dx*dx+dy*dy);
         }
-
+         /// <summary>
+        /// Smooth linear function
+        /// </summary>
+        /// <param name="input">If it's distance*sqrt(2)>comp </param>
+        /// <returns></returns>
         public static int DistanceInt(float x1, float y1, float x2, float y2) {
             float dx=x1-x2, dy=y1-y2;
             return (int)System.Math.Sqrt(dx*dx+dy*dy);
@@ -84,15 +89,24 @@ namespace rabcrClient {
         //     ╱                 ╱
         //    ╱                 〳
         //---┘                -╯
-        /// <summary>
-        /// Smooth linear function
-        /// </summary>
+        /// <summary>Smooth linear function</summary>
         /// <param name="input">From 0 to 1</param>
-        /// <returns></returns>
         public static float Smooth(float input) { 
             if (input<0.5f) return 2*input*input;
             else return -2*(input-1)*(input-1)+1;
         }
 
+        public unsafe static float InvSqrt3 (float x) {
+           float xhalf = 0.5f*x;
+           int i = *(int*)&x;
+           i = 0x5f3759df - (i>>1);
+           x = *(float*)&i;
+           x *= (1.5f - xhalf*x*x);
+           return x;
+        }
+        
+        public static int Abs(int input) => input>=0 ? input: -input;
+
+        public static float Abs(float input) => input>=0f ? input: -input;
     }
 }

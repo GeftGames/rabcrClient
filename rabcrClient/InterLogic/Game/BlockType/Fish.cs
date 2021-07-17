@@ -3,39 +3,51 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace rabcrClient {
     class Fish :Mob{
-        public bool IsLeft;
+     //   public bool IsLeft;
         public float speed;
         bool Frame;
         readonly Texture2D Texture1, Texture2;
 
-        public Fish(ushort id, byte height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
+        public Fish(/*ushort id, */byte height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
           //  Height=height;
             Position=new Vector2(x*16+2,/*Height*/height*16+3);
             Texture1 = fishTexture1;
             Texture2 = fishTexture2;
-            IsLeft=dir;
+            Dir=dir;
            // random=rnd;
             //Lives=lives;
             Frame=false;
             speed = 1;
-            Id=id;
+            Id=(ushort)BlockId.Fish;
         }
 
-        public Fish(ushort id, int height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
+        public Fish(/*ushort id,*/ int height, int x, bool dir, Texture2D fishTexture1, Texture2D fishTexture2) {
           //  Height=height;
             Position=new Vector2(x*16+2,/*Height*/height*16+3);
             Texture1 = fishTexture1;
             Texture2 = fishTexture2;
-            IsLeft=dir;
+            Dir=dir;
            // random=rnd;
             //Lives=lives;
             Frame=false;
             speed = 1;
-            Id=id;
+          Id=(ushort)BlockId.Fish;
+        }
+
+        public unsafe override byte[] Save(){ 
+            ushort id=Id;
+			byte* mbytes=(byte*)&id;
+ 
+            return new byte[]{ 
+                mbytes[1],
+                mbytes[0], 
+                Height, 
+                Dir ? (byte)1 : (byte)0 
+            };
         }
 
         public override void Update() {
-            if (IsLeft) Position.X-=speed;
+            if (Dir) Position.X-=speed;
             else Position.X+=speed;
 
 
@@ -47,10 +59,10 @@ namespace rabcrClient {
         public override void Draw() {
             if (Rabcr.random.Int(10)==1){
                 if (Rabcr.random.Bool_12_5Percent()) Frame=!Frame;
-                if (Rabcr.random.Int(20)==1) IsLeft=!IsLeft;
+                if (Rabcr.random.Int(20)==1) Dir=!Dir;
             }
 
-            if (IsLeft){
+            if (Dir){
                 if (Frame) Rabcr.spriteBatch.Draw(Texture1, Position, Color.White);
                 else Rabcr.spriteBatch.Draw(Texture2, Position, Color.White);
             } else {

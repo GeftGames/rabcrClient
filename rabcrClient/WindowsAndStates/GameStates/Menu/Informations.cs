@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rabcrClient {
-    class Informations :MenuScreen{
+    class Informations :MenuScreen {
 
         #region Varibles
         Scrollbar scrollbar;
@@ -60,31 +60,30 @@ namespace rabcrClient {
                 "<DarkGreen>"+Lang.Texts[209]+"</DarkGreen>: <Green>"+Lang.Texts[315]+"</Green>" +Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[205]+"</DarkGreen>: <Green>"+Release.Date+"</Green>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[121]+"</DarkGreen>: <Green>"+Lang.Languages[Setting.CurrentLanguage].NativeName+"</Green>" + Environment.NewLine +
-                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://geftgames.ga/Licence2020.txt>"+Lang.Texts[208]+" (GeftGames © 2020)</Link>" + Environment.NewLine+
+                "<DarkGreen>"+Lang.Texts[202]+"</DarkGreen>: <Link|url=https://creativecommons.org/share-your-work/public-domain/>"+Lang.Texts[208]+"</Link> (Only this version of the game, except fonts bellow)" + Environment.NewLine+
 
                 "<DarkGreen>"+Lang.Texts[203]+"</DarkGreen>: <Link|url="+Release.WebFullGame+">"+Release.WebShortGame+"</Link>" + Environment.NewLine +
                 "<DarkGreen>"+Lang.Texts[204]+"</DarkGreen>: <Link|url=mailto:"+Release.Email+">"+Release.Email+"</Link>" + Environment.NewLine +
 
-                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+" 2020</Green> (<Green>C#</Green>)" + Environment.NewLine +
+                "<DarkGreen>"+Lang.Texts[206]+"</DarkGreen>: <Green>"+Lang.Texts[210]+"</Green> (<Green>C#</Green>)" + Environment.NewLine +
                 "      (<Green>"+Lang.Texts[207]+" 3.8.0.1641</Green>)" +Environment.NewLine + Environment.NewLine +
 
                 "<DarkGreen>"+Lang.Texts[360]+"</DarkGreen>"+ Environment.NewLine +
-                "     <Link|url=https://fonts.google.com/specimen/M+PLUS+Rounded+1c>M PLUS Rounded 1c</Link> (<Green>"+Lang.Texts[363]+"</Green>)" + Environment.NewLine+
-                "     <Link|url=https://fonts.google.com/specimen/Sunflower>Sunflower</Link> (<Green>"+Lang.Texts[361]+"</Green>)" + Environment.NewLine +
-                "     <Link|url=https://fonts.google.com/specimen/Tajawal?subset=arabic>Tajawal</Link> (<Green>"+Lang.Texts[365]+"</Green>)" + Environment.NewLine +
-                "     <Link|url=https://www.freechinesefont.com/traditional-han-wang-yen-light-rounded-font-download>HanWangYenLight</Link> (<Green>"+Lang.Texts[362]+"</Green>)";
+                "     <Link|url=https://fonts.google.com/specimen/M+PLUS+Rounded+1c|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>M PLUS Rounded 1c</Link> (<Green>"+Lang.Texts[363]+"</Green>)" + Environment.NewLine+
+                "     <Link|url=https://fonts.google.com/specimen/Sunflower|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>Sunflower</Link> (<Green>"+Lang.Texts[361]+"</Green>)" + Environment.NewLine +
+                "     <Link|url=https://fonts.google.com/specimen/Tajawal?subset=arabic|info=Licence: Open-Source>Tajawal</Link> (<Green>"+Lang.Texts[365]+"</Green>)" + Environment.NewLine +
+                "     <Link|url=https://www.freechinesefont.com/traditional-han-wang-yen-light-rounded-font-download|info=Licence: Free for personal and commercial-use.>HanWangYenLight</Link> (<Green>"+Lang.Texts[362]+"</Green>)"+ Environment.NewLine +
+                "     <Link|url=https://github.com/Omnibus-Type/Jaldi|info=Licence: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL>Jaldi</Link> (<Green>"+Lang.Texts[1585]+"</Green>)";
 
-
-            geDo=new GeDo(24, 10-(int)(scrollbar.scale*(BitmapFont.bitmapFont18.MeasureTextMultiLineY(strMain)+10-(Global.WindowHeight-75-40-65)))) {
-                mouseAdd=-76-40
-            };
+            geDo=new GeDo(24, 10-(int)(scrollbar.scale*(BitmapFont.bitmapFont18.MeasureTextMultiLineY(strMain)+10-(Global.WindowHeight-75-40-65)))) { mouseAdd=-76-40 };
 
             geDo.changeHeight=ChangeHeight;
             geDo.BuildString(strMain);
+
             strKeys=
                 "<Bold>"+Lang.Texts[227]+"</Bold>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyLeft)+"</DarkBlue> a <DarkBlue>"+KeyName(Setting.KeyRight)+"</DarkBlue>: <Blue>"+Lang.Texts[230]+"</Blue>" + Environment.NewLine +
-                "<DarkBlue>"+KeyName(Setting.KeyJump)+"</DarkBlue>: <Blue>"+Lang.Texts[105]+"</Blue>" + Environment.NewLine +
+                "<DarkBlue>"+KeyName(Setting.KeyJump)+"</DarkBlue>: <Blue>"+Lang.Texts[104]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyDropItem)+"</DarkBlue>: <Blue>"+Lang.Texts[112]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyInventory)+"</DarkBlue>: <Blue>"+Lang.Texts[108]+"</Blue>" + Environment.NewLine +
                 "<DarkBlue>"+KeyName(Setting.KeyMessage)+"</DarkBlue>: <Blue>"+Lang.Texts[111]+"</Blue>" + Environment.NewLine +
@@ -250,20 +249,20 @@ namespace rabcrClient {
                 case Keys.Multiply: return "*";
                 case Keys.Divide: return "/";
 
-                case Keys.OemPlus: return "+";//ΩPlus
-                case Keys.OemQuestion: return "?";//ΩQuestion
+                case Keys.OemPlus: return "+";
+                case Keys.OemQuestion: return "?";
                 case Keys.OemPipe: return "ΩLine";
-                case Keys.OemQuotes: return "\"";//ΩQuotes
-                case Keys.OemSemicolon: return ";";//ΩSemicolon
-                case Keys.OemPeriod: return ".";//ΩPeriod
-                case Keys.OemMinus: return "-";//ΩMinus
-                case Keys.OemComma: return ",";//ΩComma
-                case Keys.OemCloseBrackets: return ")";//ΩBracketsC
-                case Keys.OemOpenBrackets: return "(";//ΩBracketsO
+                case Keys.OemQuotes: return "\"";
+                case Keys.OemSemicolon: return ";";
+                case Keys.OemPeriod: return ".";
+                case Keys.OemMinus: return "-";
+                case Keys.OemComma: return ",";
+                case Keys.OemCloseBrackets: return ")";
+                case Keys.OemOpenBrackets: return "(";
                 case Keys.PageUp: return Lang.Texts[262];
                 case Keys.PageDown: return Lang.Texts[263];
-                case Keys.OemTilde: return "~";//Tilde
-                case Keys.Decimal: return Lang.Texts[271];//"Del"
+                case Keys.OemTilde: return "~";
+                case Keys.Decimal: return Lang.Texts[271];
 
                 case Keys.Escape: return Lang.Texts[269];
                 case Keys.Tab: return Lang.Texts[270];

@@ -28,7 +28,7 @@ namespace rabcrClient {
         public abstract ItemNonInv ToNon();
     }
 
-    class ItemInvBlank :ItemInv{
+    class ItemInvBlank :ItemInv {
         public ItemInvBlank() {
             Id=(int)Items.None;
         }
@@ -75,10 +75,8 @@ namespace rabcrClient {
 
         public int SetCount {
             set {
-                GetCount=value;
-
                 if (drawText) {
-                    if (GetCount==1) {
+                    if (value==1) {
 
                         // Foget
                         strItem=null;
@@ -86,20 +84,22 @@ namespace rabcrClient {
                     } else {
 
                         // Rewrite bigger number
-                        strItem=GetCount.ToString();
+                        strItem=value.ToString();
                     }
                 } else {
 
                     // new big num
-                    if (GetCount!=1) {
-                        strItem=GetCount.ToString();
+                    if (value>1) {
+                        strItem=value.ToString();
                         drawText=true;
-                        if (posNum==null){
+                        if (GetCount==1) {
                             posNum=new Vector2(posTex.X, posTex.Y+20);
                             posNumSh=new Vector2(posNum.X+0.5f, posNum.Y+0.5f);
                         }
                     }
                 }
+
+                GetCount=value;
             }
         }
 
@@ -111,7 +111,7 @@ namespace rabcrClient {
             white=Color.White;
 
             if (c!=1) {
-                strItem=GetCount.ToString();
+                strItem=c.ToString();
                 drawText=true;
                 posNum=new Vector2(x, y+20);
                 posNumSh=new Vector2(posNum.X+0.5f, posNum.Y+0.5f);
@@ -216,30 +216,31 @@ namespace rabcrClient {
 
         public int SetCount {
             set {
-                GetCount=value;
-
                 if (drawText) {
-                    if (GetCount==1) {
+                    if (value==1) {
 
                         // Foget
                         strItem=null;
+                        drawText=false;
                     } else {
 
                         // Rewrite bigger number
-                        strItem=GetCount.ToString();
+                        strItem=value.ToString();
                     }
                 } else {
 
                     // new big num
-                    if (GetCount!=1) {
-                        strItem=GetCount.ToString();
+                    if (value>1) {
+                        strItem=value.ToString();
                         drawText=true;
-                        if (posNum==null){
+                        if (GetCount==1) {
                             posNum=new Vector2(posTex.X, posTex.Y+20);
                             posNumSh=new Vector2(posNum.X+0.5f, posNum.Y+0.5f);
                         }
                     }
                 }
+
+                GetCount=value;
             }
         }
 

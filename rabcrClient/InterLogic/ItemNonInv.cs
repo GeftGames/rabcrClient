@@ -86,13 +86,21 @@ namespace rabcrClient {
             Descay=descay;
         }
 
-        public ItemNonInvFood(ushort id, int count, float descay){
+        public ItemNonInvFood(ushort id, int count, float descay) {
             Id=id;
             DescayMaximum=GameMethods.FoodMaxDescay(id);
             CountMaximum=GameMethods.FoodMaxCount(id);
 
             Count=count;
             Descay=descay;
+        }
+
+        public ItemNonInvFood(ushort id, int count) {
+            Id=id;
+            Descay=DescayMaximum=GameMethods.FoodMaxDescay(id);
+            CountMaximum=GameMethods.FoodMaxCount(id);
+
+            Count=count;
         }
 
         #region Save

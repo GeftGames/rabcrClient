@@ -16,8 +16,7 @@ namespace rabcrClient {
         const int lineSize=30;
         public int mouseAdd;
         float TextW;
-        int X, Y, yy2;
-        int gedoLen;
+        int X, Y, yy2, gedoLen;
         bool changingPos=false;    
         public int width;
         public EventHandler changeHeight;
@@ -27,7 +26,7 @@ namespace rabcrClient {
             X=xx;
             yy2=Y=yy;
 
-            try{
+            try {
                 BuildString(text);
             } catch {
 
@@ -49,13 +48,12 @@ namespace rabcrClient {
             while (true) {
                 int gr=txtBody.IndexOf('<');
                 if (gr>=0) {
-                    if (!txtBody.Contains(">"))throw new Exception("Tag není jasně definován (chybí znak '>')");
+                    if (!txtBody.Contains(">"))throw new Exception("Tag is not cleary defined (missing symbol '>')");
                     int lw=txtBody.IndexOf('>');
                     string itag=txtBody.Substring(gr+1,lw-gr-1);
 
-                    if (gr!=0) {
-                        BuildNormal(Symbols(txtBody.Substring(0,gr)));
-                    }
+                    if (gr!=0) BuildNormal(Symbols(txtBody.Substring(0,gr)));
+
                     txtBody=txtBody.Substring(lw+1);
 
                     string moreInfo="";
@@ -66,7 +64,7 @@ namespace rabcrClient {
                     }
 
                     int x=txtBody.IndexOf("</"+itag+">");
-                    if (x==-1)throw new Exception("Chybí uzavření tagu");
+                    if (x==-1) throw new Exception("Missing tag close "+itag);
                     string inTag=txtBody.Substring(0, x);
 
                     if (Enum.TryParse(itag, out GeDoType tag)){
@@ -142,7 +140,7 @@ namespace rabcrClient {
                     if (i==0) {
                         GeDoStringNormal g = new GeDoStringNormal {
                             //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -152,7 +150,7 @@ namespace rabcrClient {
                     } else if (i==lines.Length-1) {
                         GeDoStringNormal g = new GeDoStringNormal {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         TextW=g.text.X;
@@ -161,7 +159,7 @@ namespace rabcrClient {
                     } else {
                         GeDoStringNormal g = new GeDoStringNormal {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -169,10 +167,7 @@ namespace rabcrClient {
                 }
             } else {
                 GeDoStringNormal g = new GeDoStringNormal {
-                    //X=(int)(X+TextW),
-                    //Y=Y,
-                   // str=tmpText,
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                    text=new TextWithMeasure(tmpText, X+(int)TextW, Y)
                 };
                 gedoBuilding.Add(g);
                 TextW+=g.text.X;
@@ -625,6 +620,9 @@ namespace rabcrClient {
                             g.url=what;
                             g.action=GeDoStringLink.Action.Url;
                         }
+                        if (name=="info") {
+                            g.info=what;
+                        }
                         if (name=="event") {
                             g.action=GeDoStringLink.Action.Event;
                             if (GeDoEvents!=null){
@@ -776,6 +774,9 @@ namespace rabcrClient {
             return s
                 .Replace("&g;",">")
                 .Replace("&l;","<")
+                .Replace("&h;","❤️")
+                .Replace("&s;","☺️")
+                .Replace("&w;","☹️")
                 .Replace("&t;","     ")
                 .Replace("&n;","\r\n");
                 //.Replace("&n;","\n")
@@ -1233,7 +1234,9 @@ namespace rabcrClient {
         Color color;
         int colorChanger;
         public int mouseAdd2;
-      // public int y2;
+        public string info;
+
+        // public int y2;
         public GeDoStringLink(string txt, int x, int y){
             text=new TextWithMeasure(txt, x, y/*,BitmapFont.bitmapFont18*/);
             X=x;
@@ -1260,12 +1263,17 @@ namespace rabcrClient {
 
                     if (click) {
                         click=false;
-
-                        if (Rabcr.ActiveWindow /*&& !selected*/) {   Console.WriteLine(action);
+                        if (Rabcr.ActiveWindow /*&& !selected*/) { 
+                            //Console.WriteLine(action);
+                            if (Menu.newKeyboardState.IsKeyDown(Keys.LeftControl)){ 
+                                System.Windows.Forms.MessageBox.Show(info,"Link info");    
+                            } else{
                             switch (action){
                                 case Action.Event:
                                     if (ev!=null) ev.Invoke(this, null);
                                     else System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location, " /Message \"<Red>Event nenalezen.</Red>\"");
+
+
                                     break;
 
                                 case Action.Url:
@@ -1316,7 +1324,7 @@ namespace rabcrClient {
                                     //FormUpdate f = new FormUpdate();
                                 //f.Show/*Dialog*/();
                             }
-                        }
+                        } }
                     }
                 }
             } else needAlpha=0;
@@ -1560,7 +1568,8 @@ namespace rabcrClient {
        int w;
         public GeDoStringArticle(string txt, int x, int y, int ww, int mouseAdd2, bool wr) {
             this.mouseAdd2=mouseAdd2;
-         wrap=wr; w=ww;
+            wrap=wr; 
+            w=ww;
             innerGedo=new GeDo(x, y) {
                 mouseAdd=mouseAdd2-Y
             };
@@ -1632,18 +1641,23 @@ namespace rabcrClient {
             if (!wrap) return rawGedo;
             float spaceWidth = BitmapFont.bitmapFont18.MeasureTextSingleLineX(" ");
             int maxLineWidth=w;
-            string[] words = rawGedo.Split(' ');
-            string sb = "";
-            float lineWidth = 0f;
+            string[] lines= rawGedo.Split('\n');
+ string sb = "";
+  foreach (string line in lines) {
 
+            string[] words = line.Replace('\r', ' ').Split(' ');
+           
+            float lineWidth = 0f;
+                int ii=0;
             foreach (string word in words) {
                 int size;
+                    ii++;
                 if (word.Contains("<") || word.Contains(">")) {
                   //  int countgr = word.Count(f => f == '>');
                   //  int countlw = word.Count(f => f == '<');
 
                     string e=word;
-                    for (int i=0; i<Enum.GetNames(typeof(GeDoType)).Length; i++){
+                    for (int i=0; i<Enum.GetNames(typeof(GeDoType)).Length; i++) {
                         e=e.Replace("<"+((GeDoType)i)+">","");
                         e=e.Replace("</"+((GeDoType)i)+">","");
                     }
@@ -1658,10 +1672,10 @@ namespace rabcrClient {
                     size = BitmapFont.bitmapFont18.MeasureTextSingleLineX(word);
                 }
 
-                if (word.Contains("\r\n")){
-                    sb+= word + " ";
-                    lineWidth = size + spaceWidth;
-                } else {
+                //if (word.Contains("\r\n")){
+                //    sb+= word + " ";
+                //    lineWidth = size + spaceWidth;
+                //} else {
                     if (lineWidth + size < maxLineWidth) {
                         sb+=word + " ";
                         lineWidth += size + spaceWidth;
@@ -1669,7 +1683,9 @@ namespace rabcrClient {
                         sb+="\r\n" + word + " ";
                         lineWidth = size + spaceWidth;
                     }
-                }
+               // }
+            }
+        /* if (ii<=lines.Length)*/ sb+=Environment.NewLine;
             }
           //  Console.WriteLine(sb);
             return sb;

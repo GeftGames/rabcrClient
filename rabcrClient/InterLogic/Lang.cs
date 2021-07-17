@@ -86,13 +86,16 @@ namespace rabcrClient {
                             EnglishName=n.Attributes["EnglishName"].Value,
                             NativeName=n.Attributes["NativeName"].Value,
                             Name=n.Attributes["Name"].Value,
+                           
                             FontFile=n.Attributes["FontFile"]?.Value,
                             _Base=n.Attributes["Base"]?.Value,
                            // TwoLetterISOLanguageName=n.Attributes["TwoLetterISOLanguageName"]?.Value,
                          //   ThreeLetterISOLanguageName=n.Attributes["ThreeLetterISOLanguageName"]?.Value,
                           //  TranslationQuality=int.Parse(n.Attributes["TranslationQuality"]?.Value),
                         //    UseBase=n.Attributes["UseBase"]?.Value=="true",
-                        };
+                        }; 
+                       if (n.Attributes["Quality"]!=null) int.TryParse(n.Attributes["Quality"].Value, out ll.Quality);
+                        
                         {
                             // Solve category
                             XmlAttribute cat=n.Attributes["Flag"];
@@ -171,13 +174,14 @@ namespace rabcrClient {
 
                 Texts=new string[max+1];
                 if (sameLanguageAsSystem){
-                    string ci = CultureInfo.InstalledUICulture.ThreeLetterWindowsLanguageName.ToLower();
+                    string ci = CultureInfo.InstalledUICulture.ThreeLetterISOLanguageName.ToLower();
+             //       if (ci=="csy") ci="ces"
                     int en=-1;
                     bool find=false;
 
                     for (int i=0; i<Languages.Length; i++) {
                         Language ll=Languages[i];
-
+                  
                         if (ll.Name=="eng") en=i;
 
                         if (ll.Name==ci) {
@@ -185,7 +189,6 @@ namespace rabcrClient {
                             find=true;
                             break;
                         }
-                        i++;
                     }
 
                     // find eng-US
@@ -204,7 +207,10 @@ namespace rabcrClient {
                     //    }
                     //}
 
-                    if (!find) Setting.CurrentLanguage=en;
+                    if (!find) {
+                        if (en==-1) en=0;
+                        Setting.CurrentLanguage=en;
+                    }
                 }
                 #if DEBUG
                 System.Diagnostics.Debug.WriteLine("Setting.CurrentLanguage is smaller than 0");
@@ -231,7 +237,7 @@ namespace rabcrClient {
             }
 
             Global.GameName=Texts[182]/*.Text*/;
-            Rabcr.Game.Window.Title = Global.GameName;
+    //     try{   Rabcr.Game.Window.Title = Global.GameName; }catch{ }
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -305,6 +311,7 @@ namespace rabcrClient {
         ///"cze", "eng", ...
         ///</summary>
         public string Name;
+        public int Quality=-1;
 
         ///<summary>
         ///"cs"

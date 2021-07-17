@@ -2,15 +2,15 @@
 using System.Windows.Forms;
 using System.Drawing;
 
-//namespace rabcrClient {
+namespace rabcrClient {
     public class GPreTextBox : TextBox {
         public int round=6;
+
         public GPreTextBox() {
             BorderStyle=BorderStyle.None;
             SetStyle(ControlStyles.SupportsTransparentBackColor,true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer,true);
             Resize+=RoundedTextBox_Resize;
-        //    Font=Constants.font14;
         }
 
         void RoundedTextBox_Resize(object sender, EventArgs e) => OnCreateControl();
@@ -22,9 +22,9 @@ using System.Drawing;
             } catch { }
         }
 
-        public void SetRound(int v){
+        public void SetRound(int v) {
             round=v;
             OnCreateControl();
         }
     }
-//}
+}

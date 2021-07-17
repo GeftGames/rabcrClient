@@ -18,7 +18,7 @@ namespace rabcrClient {
 
         public delegate void MoveEvent();
 
-        public event MoveEvent Move;
+       // public event MoveEvent Move;
 
         public void Scroll(float x){
             if (height>maxheight)return;

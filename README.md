@@ -2,7 +2,9 @@
 ## Download
 Releases here 
 - https://rabcr.ga/
-- [github](https://github.com/GeftGames/rabcrClient/releases)
+
+- github
+
 
 ## About
 A 2D game written with MonoGame that targets Win.
@@ -11,7 +13,8 @@ A 2D game written with MonoGame that targets Win.
 - Windows 10, Windows 7, Windows 8.1
 - 64-bit OS
 - DirectX
-- .NET Framework: 4.8
+- .NET Framework: 4.7.2
+
 
 ## What I use
 - Fonts: M PLUS Rounded, Sunflower, Tajawal, HanWangYenLight

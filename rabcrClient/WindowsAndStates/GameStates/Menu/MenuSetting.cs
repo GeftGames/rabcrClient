@@ -30,7 +30,7 @@ namespace rabcrClient {
             effectBlur=Effects.BluredTopDownBounds;
 
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")){
-                maxheight=PageHeight-Global.WindowHeight+60+60+90+30,
+                maxheight=PageHeight/*-Global.WindowHeight+60+60+90+30*/,
                 height=Global.WindowHeight-75-65-2
             };
             scrollbar.MoveScollBar+=Move;
@@ -49,7 +49,7 @@ namespace rabcrClient {
         void Move(object sender, EventArgs e) {
             start=-1;
 
-            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight));
+            yy=(int)(-scrollbar.scale*(PageHeight-Global.WindowHeight+75+65));
 
             for (int i=0; i<settings.Count; i++){
                 SettingItem item=settings[i];
@@ -57,7 +57,8 @@ namespace rabcrClient {
                     if (start==-1)start=i;
                     end=i;
                     if (Global.WindowWidth>600){
-                        item.X=Global.WindowWidthHalf-DocumentSize/2;
+                        if (item  is SettingMessage message) item.X=Global.WindowWidthHalf-DocumentSize+DocumentSize/*/2*/-message.centerDelta;
+                      else  item.X=Global.WindowWidthHalf-DocumentSize/2;
                         item.ChangePos(Global.WindowWidthHalf+DocumentSize/2-150,yy);
                     } else {
                         item.X=20;
@@ -69,7 +70,7 @@ namespace rabcrClient {
         }
 
         public override void Shutdown() {
-            Rabcr.SaveSetting();
+            Setting.SaveSetting();
         }
 
         public override void Update(GameTime gameTime) {
@@ -152,7 +153,7 @@ namespace rabcrClient {
 
             scrollbar.height=Global.WindowHeight-75-65-2;
             scrollbar.scale=0;
-            scrollbar.maxheight=PageHeight-Global.WindowHeight;
+          //  scrollbar.maxheight=PageHeight-Global.WindowHeight;
 
             buttonMenu.Position=new Vector2(Global.WindowWidth-400+70, Global.WindowHeight-54);
 
@@ -365,16 +366,26 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
-                button.Click+=ClickGraphicsProfile;
+                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
+                button.Click+=ClickFps;
                 settings.Add(button);
 
-                void ClickGraphicsProfile() {
-                    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+                void ClickFps() {
+                    Setting.Fps=button.ON;
                     Global.ChangedSettings=true;
-                    System.Windows.Forms.MessageBox.Show(Lang.Texts[343]);
                 }
             }
+            //{
+            //    SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
+            //    button.Click+=ClickGraphicsProfile;
+            //    settings.Add(button);
+
+            //    void ClickGraphicsProfile() {
+            //        Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+            //        Global.ChangedSettings=true;
+            //        System.Windows.Forms.MessageBox.Show(Lang.Texts[343]);
+            //    }
+            //}
             if (File.Exists(@"C:\Program Files\NVIDIA Corporation\Control Panel Client\nvcplui.exe")){
                 SettingButton button=new SettingButton(tex,Lang.Texts[342]);
                 button.Click+=ClickGraphicsProfile;
@@ -387,12 +398,12 @@ namespace rabcrClient {
                 //    Global.ChangedSettings=true;
                  //   System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 }
-            }else{
-                  SettingHeader button=new SettingHeader(Lang.Texts[340]);
-                    settings.Add(button);
+            } else {
+                SettingMessage button=new SettingMessage(Lang.Texts[340]);
+                settings.Add(button);
             }
 
-            {
+           // {
                // SettingHeader button=new SettingHeader(Lang.Texts[319]);
                 //button.Click+=ClickGraphicsProfile;
                 //settings.Add(button);
@@ -402,17 +413,7 @@ namespace rabcrClient {
                 //    Global.ChangedSettings=true;
                 //    System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 //}
-            }
-            {
-                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
-                button.Click+=ClickFps;
-                settings.Add(button);
-
-                void ClickFps() {
-                    Setting.Fps=button.ON;
-                    Global.ChangedSettings=true;
-                }
-            }
+          //  }
 
             // Hlasitost
             settings.Add(new SettingHeader(Lang.Texts[134]));

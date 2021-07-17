@@ -5,17 +5,23 @@ using System.Windows.Forms;
 namespace rabcrClient {
     public class GeDoPanel : Control{
 
+        #region Varibles
         GGeDo gedo;
         readonly Timer timer;
         Point point=Point.Empty;
-
+        #if DEBUG
         readonly bool designMode;
+        #endif
+        #endregion
 
-		public GeDoPanel() {
+        public GeDoPanel() {
             TabStop=false;
+
+            #if DEBUG
             designMode=System.Diagnostics.Process.GetCurrentProcess().ProcessName == "devenv";
 
             if (!designMode) {
+            #endif
 			    ResizeRedraw = true;
 			    DoubleBuffered = true;
 			    SetStyle(ControlStyles.UserPaint, true);
@@ -27,14 +33,16 @@ namespace rabcrClient {
                 }).Tick+=Timer_Tick;
 
                 gedo=new GGeDo(0,4);
+            #if DEBUG
             }
+            #endif
             Disposed+=GeDoPanel_Disposed;
 		}
 
         private void GeDoPanel_Disposed(object sender, EventArgs e) {
             timer.Enabled=false;
+           // gedo.Dispose();
             gedo=null;
-           // timer.Dispose();
         }
 
         public void AddEvent(GeDoEvent e) {
@@ -62,8 +70,6 @@ namespace rabcrClient {
                 gedo.mouseX=point.X;
                 gedo.mouseY=point.Y;
             }
-
-          //  Font=new Font(Global.basicFont.FontFamily,14);
 
             Invalidate();
         }
@@ -111,9 +117,13 @@ namespace rabcrClient {
 		protected override void OnPaint(PaintEventArgs e) {
 			Graphics g=e.Graphics;
             g.Clear(BackColor);
+            #if DEBUG
             if (!designMode) {
+            #endif
                 if (gedo!=null) gedo.DrawGedo(1,g/*g,0,2*/);
+            #if DEBUG
             }
+            #endif
         }
 
         protected override void OnCreateControl() {

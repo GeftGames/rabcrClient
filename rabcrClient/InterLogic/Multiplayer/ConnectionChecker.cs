@@ -8,7 +8,7 @@ namespace rabcrClient {
 
         #region Varibles
         Process p;
-        Thread checker;
+        readonly Thread checker;
         bool exited;
         bool started;
         string get="";
@@ -38,11 +38,12 @@ namespace rabcrClient {
             try {  if (checker!=null) {
                 if (started) {
                     if (checker.IsAlive) {
+                            if (p!=null){
                 if ((int)(DateTime.Now-p.StartTime).TotalSeconds>5) {
                     Error=true;
                     ErrorText="Server nenalezen v časovém intervalu";
                     ErrorDeep=2;
-                }
+                } }
 
 
                     } else {
@@ -76,9 +77,9 @@ namespace rabcrClient {
         public void Dispose() {
             if (!exited) {
                 try {
-                p.Kill();
-                p.Close();
-                p.Dispose();
+                    p.Kill();
+                    p.Close();
+                    p.Dispose();
                 }catch {}
             }
             if (checker!=null) {

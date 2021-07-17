@@ -854,6 +854,9 @@ namespace rabcrClient {
             return s
                 .Replace("&g;",">")
                 .Replace("&l;","<")
+                .Replace("&h;","♥")
+                .Replace("&s;","☺")
+                .Replace("&w;","☹")
                 .Replace("&t;","     ")
                 .Replace("&n;","\r\n");
                 //.Replace("&n;","\n")

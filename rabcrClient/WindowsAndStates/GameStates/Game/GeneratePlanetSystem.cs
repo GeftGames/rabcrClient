@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace rabcrClient {
-    public enum AstrO {
+    public enum AstrO:byte {
         Rocky,
         Gas,
         Life,
@@ -18,7 +18,7 @@ namespace rabcrClient {
 
     public class AstronomicalObject {
 //        public Color Colorful;
-        public string NameCz;
+        public string NameTranslated;
         public double fakeMeanDiameter;
         public double MeanDiameter;//poloměr
         public double Mass;
@@ -29,7 +29,7 @@ namespace rabcrClient {
         public double dis,pos;
         public double fakeSemiMajorAxis;
         public double Speed;// km/s
-        public string NameEn;
+        public string Name;
         public double Eccentricity;
         public double SemiMajorAxis;// km
 //        public double OrbitalPeriod;//In days
@@ -41,12 +41,13 @@ namespace rabcrClient {
         public double DayLenght;
         public double Perihelion,Aphelion;
         public bool Builded=true;
+        public bool Landable;
     //}
         public  string GetNamesChilds(){
-            if (Childs==null) return "{Žádné}";
+            if (Childs==null) return "{"+1558+"}";
         string ret="";
             foreach (AstronomicalObject a in Childs){
-                ret+=a.NameCz+", ";
+                ret+=a.Name+", ";
             }
             if (ret.Length>20) return ret.Substring(0,20)+"...";
             return ret;
@@ -120,7 +121,7 @@ namespace rabcrClient {
 //}
 
         public Double2 GetPos(){
-            if (NameCz=="Slunce")return new Double2(0,0);
+            if (Name=="Sun")return new Double2(0,0);
 
        //     if (LongitudeOfAscendingNode==0)Console.WriteLine(NameCz+" LongitudeOfAscendingNode");
 
@@ -209,10 +210,16 @@ namespace rabcrClient {
         //    }
         //}
 
+
+        /*random names
+        "Arhode", "Aether", "Eros", "Hypne", "Hypnethea", "Apoa", "Plutonia", "Semidea", "Plutode", "Plutothea", "Polynome", "Polyneme", "Hestia", "Hesthes", "Hemidea", "Symdea", "Phedea", "Xedeus", "Arthene", "Demeon", "Hadea", "Furirhoe", "Enyodene", "Europa", "Flora", "Fledus", "Solos", "Helemis", "Iophene", "Hiacinia", "Hiacinede", "Iris", "Irius", "Zeu", "Let"
+
+        */
+
         public AstronomicalObject[] SunSystem(/*Random r*/){ //jupiter 69173,25
             return new AstronomicalObject[]{new AstronomicalObject {
-                NameCz="Slunce",
-                NameEn="Sun",
+                NameTranslated=Lang.Texts[1537],
+                Name="Sun",
                 Mass=1.9891e30,// 2*10^30
                 //Colorful=Color.Orange,
                 MeanDiameter=696342,
@@ -221,8 +228,8 @@ namespace rabcrClient {
                // texture=SunTexture,
                 Childs=new AstronomicalObject[] {
                     new AstronomicalObject {
-                        NameCz="Merkur",
-                        NameEn="Mercur",
+                        NameTranslated=Lang.Texts[1538],
+                        Name="Mercur",
                         Mass=3.3e23,// 3,3×10^23
                         //Colorful=Color.LightGray,
                         MeanDiameter=4800d,
@@ -238,8 +245,8 @@ namespace rabcrClient {
                          DayLenght=1.408,
                     },
                     new AstronomicalObject {
-                        NameCz="Venuše",
-                        NameEn="Venus",
+                        NameTranslated=Lang.Texts[1539],
+                        Name="Venus",
                         Mass=4.8685e24,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=6051.5d,
@@ -255,8 +262,8 @@ namespace rabcrClient {
                         DayLenght=5.832,
                     },
                     new AstronomicalObject {
-                        NameCz="Země",
-                        NameEn="Earth",
+                        NameTranslated=Lang.Texts[1533],
+                        Name="Earth",
                         Mass=5.9736e24,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=6367.4425d,
@@ -271,10 +278,11 @@ namespace rabcrClient {
                         Inclination=0.124878308d,
                         LongitudeOfAscendingNode=-0.196535244d,
                         Eccentricity=0.0167086,
+                        Landable=true,
                         Childs=new AstronomicalObject[] {
-  new AstronomicalObject {
-                                NameCz="Vesmírná stanice",
-                                NameEn="Space station",
+                            new AstronomicalObject {
+                                NameTranslated=Lang.Texts[1536],
+                                Name="Space station",
                                 Mass=125e17d,// 3,3×10^23
                                 //Colorful=Color.Gray,
                                 Builded=false,
@@ -285,14 +293,15 @@ namespace rabcrClient {
                                 Speed=100d,
                                 MeanDiameter=1000d,
                                 Eccentricity=0.01d,
+                                Landable=true,
                                 LongitudeOfAscendingNode=1d,
                                 //OrbitalPeriod=0.506090278d,
                                // Inclination=0.901288026d,
                             },
 
                             new AstronomicalObject {
-                                NameCz="Měsíc",
-                                NameEn="Moon",
+                                NameTranslated=Lang.Texts[1534],
+                                Name="Moon",
                                // Mass=*(10^ ),// 3,3×10^23
                                 //Colorful=Color.Gray,
                                 //Size=,
@@ -304,6 +313,7 @@ namespace rabcrClient {
                                 Speed=1.022d,
                                 DayLenght=28,
                                 MeanDiameter=1737.1d,
+                                Landable=true,
                                 //OrbitalPeriod=27.321661d,
                                 Inclination=0.08979719d,
                                 LongitudeOfAscendingNode=5d,
@@ -313,8 +323,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Mars",
-                        NameEn="Mars",
+                        NameTranslated=Lang.Texts[1535],
+                        Name="Mars",
                         Mass=6.4185e23,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=3389.5d,
@@ -324,13 +334,15 @@ namespace rabcrClient {
                         Speed=29.783d,
                         DayLenght=24.62,
                         //OrbitalPeriod=779.96d,
+                        Landable=true,
                         Eccentricity=0.0934,
                         Inclination=0.0322885912d,
                         LongitudeOfAscendingNode=0.864950271d,
                         astrO=AstrO.Rocky,
                         Childs=new AstronomicalObject[] {
                             new AstronomicalObject {
-                                NameCz="Phobos",
+                                Name="Phobos",
+                                NameTranslated=Lang.Texts[1541],
                                 Mass=1*(10^16),
                                 //Colorful=Color.Gray,
                                 MeanDiameter=22.2d,
@@ -343,7 +355,8 @@ namespace rabcrClient {
                                 Inclination=0.454483737d,
                             },
                             new AstronomicalObject {
-                                NameCz="Deimos",
+                                Name="Deimos",
+                                NameTranslated=Lang.Texts[1542],
                                 Mass=2.244e15,
                                 //Colorful=Color.Gray,
                                 MeanDiameter=6.2d,
@@ -401,7 +414,8 @@ namespace rabcrClient {
                     //},
 
                     new AstronomicalObject {
-                        NameCz="Jupiter",
+                        Name="Jupiter",
+                        NameTranslated=Lang.Texts[1542],
                         Mass=1.8982e27,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=69911d,
@@ -417,8 +431,9 @@ namespace rabcrClient {
                         //OrbitalPeriod=4332.59d,
                         astrO=AstrO.Gas,
                          Childs=new AstronomicalObject[] {
-                              new AstronomicalObject {
-                                NameCz="Io",
+                            new AstronomicalObject {
+                                NameTranslated=Lang.Texts[1543],
+                                Name="Io",
                                 Mass=8931900e16,
                                 //Colorful=Color.White,
                                 MeanDiameter=3637.4,
@@ -429,8 +444,9 @@ namespace rabcrClient {
                                 //OrbitalPeriod=1.7691,
                                 Inclination=0.050,
                             },
- new AstronomicalObject {
-                                NameCz="Europa",
+                            new AstronomicalObject {
+                                Name="Europa",
+                                NameTranslated=Lang.Texts[1544],
                                 Mass=4800000e16,
                                // Colorful=Color.White,
                                 MeanDiameter=3121.6,
@@ -442,7 +458,8 @@ namespace rabcrClient {
                                 Inclination=0.471,
                             },
                               new AstronomicalObject {
-                                NameCz="Ganymed",
+                                Name="Ganymed",
+                                NameTranslated=Lang.Texts[1545],
                                 Mass=14819000e16,
                                 //Colorful=Color.White,
                                 MeanDiameter=5262.4,
@@ -454,7 +471,8 @@ namespace rabcrClient {
                                 Inclination=0.204,
                             },
                             new AstronomicalObject {
-                                NameCz="Callisto",
+                                Name="Callisto",
+                                NameTranslated=Lang.Texts[1546],
                                 Mass=10759000e16,
                                 //Colorful=Color.White,
                                 MeanDiameter=4820.6,
@@ -470,7 +488,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Saturn",
+                        Name="Saturn",
+                        NameTranslated=Lang.Texts[1547],
                         Mass=5.9736e24,// 3,3×10^23
                         //Colorful=Color.Orange,
                         MeanDiameter=58232d,
@@ -486,7 +505,8 @@ namespace rabcrClient {
                          astrO=AstrO.Gas,
                         Childs=new AstronomicalObject[]{
                             new AstronomicalObject{
-                                NameCz="Titan",
+                                NameTranslated=Lang.Texts[1548],
+                                Name="Titan",
                                 MeanDiameter=5149.46d,
                                 Mass=134520000e15,
                                 SemiMajorAxis=1221930d,
@@ -551,8 +571,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Uran",
-                        NameEn="Uranus",
+                        NameTranslated=Lang.Texts[1549],
+                        Name="Uranus",
                         Mass=5.9736e24,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=6367.4425d,
@@ -568,7 +588,8 @@ namespace rabcrClient {
                         Inclination=0.113097336d,
                         Childs=new AstronomicalObject[]{
                             new AstronomicalObject{
-                                NameCz="Titania",
+                                Name="Titania",
+                                NameTranslated=Lang.Texts[1550],
                                 MeanDiameter=1576.8d,
                                 Mass=3527e18,
                                 SemiMajorAxis=435910,
@@ -615,8 +636,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Neptun",
-                        NameEn="Neptune",
+                        NameTranslated=Lang.Texts[1551],
+                        Name="Neptune",
                         Mass=1.02413e26,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=24622d,
@@ -632,7 +653,8 @@ namespace rabcrClient {
                         Speed=5.43d,
                         Childs=new AstronomicalObject[]{
                             new AstronomicalObject{
-                                NameCz="Proteus",
+                                Name="Proteus",
+                                NameTranslated=Lang.Texts[1552],
                                 MeanDiameter=210d,
                                 Mass=5035e16,
                                 SemiMajorAxis=117646d,
@@ -641,7 +663,8 @@ namespace rabcrClient {
                                 Eccentricity=8.72664626e-6,
                             },
                             new AstronomicalObject{
-                                NameCz="Triton",
+                                Name="Triton",
+                                NameTranslated=Lang.Texts[1553],
                                 MeanDiameter=2705.2d,
                                 Mass=2140800e16,
                                 SemiMajorAxis=354759d,
@@ -652,7 +675,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Pluto",
+                        Name="Pluto",
+                        NameTranslated=Lang.Texts[1554],
                         Mass=1.3e22,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=2376.6d,
@@ -668,7 +692,8 @@ namespace rabcrClient {
                         LongitudeOfAscendingNode=1.92508071d,
                         Childs=new AstronomicalObject[] {
                             new AstronomicalObject {
-                                NameCz="Charon",
+                                Name="Charon",
+                                NameTranslated=Lang.Texts[1555],
                                 MeanDiameter=1212,
                                 SemiMajorAxis=17536,
                                 //OrbitalPeriod=6.387230d,
@@ -679,7 +704,8 @@ namespace rabcrClient {
                         }
                     },
                     new AstronomicalObject {
-                        NameCz="Eris",
+                        NameTranslated=Lang.Texts[1556],
+                        Name="Eris",
                         Mass=5.9736e24,// 3,3×10^23
                         //Colorful=Color.OrangeRed,
                         MeanDiameter=2326d,
@@ -693,7 +719,8 @@ namespace rabcrClient {
                         LongitudeOfAscendingNode=0.627499971d,
                         Childs=new AstronomicalObject[]{
                             new AstronomicalObject{
-                                NameCz="Dysnomia",
+                                Name="Dysnomia",
+                                NameTranslated=Lang.Texts[1557],
                                 Eccentricity=0.013d,
                                 //OrbitalPeriod=15.774d,
                                 Speed=0.172d,

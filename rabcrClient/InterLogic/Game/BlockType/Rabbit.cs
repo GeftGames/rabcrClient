@@ -15,21 +15,21 @@ namespace rabcrClient {
         readonly Texture2D TextureWalk, TextureEat, TextureJump;
         public Texture2D thisTexture;
 
-        public Rabbit(ushort id, byte height, /*byte lives,*/ int x, bool dir, Texture2D textureWalk, Texture2D textureEat,Texture2D textureJump) {
+        public Rabbit(/*ushort id,*/ byte height, /*byte lives,*/ int x, bool dir, Texture2D textureWalk, Texture2D textureEat,Texture2D textureJump) {
           //  Height=height;
-            Position.Y=height*16;
-            Position=new Vector2(x*16,Height*16);
+         //   Position.Y=height*16;
+            Position=new Vector2(x*16,height*16);
             TextureWalk = textureWalk;
             TextureEat = textureEat;
             TextureJump = textureJump;
          //   Lives=lives;
             Frame=0;
             Dir=dir;
-            Id=id;
+            Id=(ushort)BlockId.Rabbit;
             thisTexture=TextureEat;
         }
 
-        public Rabbit(ushort id, int height, /*byte lives,*/ int x, bool dir, Texture2D textureWalk, Texture2D textureEat,Texture2D textureJump) {
+        public Rabbit(/*ushort id,*/ int height, /*byte lives,*/ int x, bool dir, Texture2D textureWalk, Texture2D textureEat,Texture2D textureJump) {
            // Height=height;
             Position.Y=height*16;
             Position=new Vector2(x*16,Height*16);
@@ -39,8 +39,20 @@ namespace rabcrClient {
          //   Lives=lives;
             Frame=0;
             Dir=dir;
-            Id=id;
+             Id=(ushort)BlockId.Rabbit;
             thisTexture=TextureEat;
+        }
+
+        public unsafe override byte[] Save() { 
+            ushort id=Id;
+			byte* mbytes=(byte*)&id ;
+ 
+            return new byte[]{ 
+                mbytes[1], 
+                mbytes[0], 
+                Height, 
+                Dir ? (byte)1 : (byte)0 
+            };
         }
 
         public override void Draw() {

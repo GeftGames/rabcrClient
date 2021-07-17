@@ -1,63 +1,184 @@
 ﻿using Microsoft.Xna.Framework;
+using MessageBox=System.Windows.Forms.MessageBox;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.IO;
 
 namespace rabcrClient {
     class Message: Game {
 
         #region Varibles
-        GraphicsDeviceManager graphics;
-        MouseState newMouseState/*, oldMouseState*/;
-      //  SpriteFont spriteFont_small,spriteFont_medium,spriteFont_small_italic;
+        MouseState newMouseState, oldMouseState;
         SpriteBatch spriteBatch;
-       // Texture2D buttonTexture;
+        readonly GraphicsDeviceManager GraphicsManager;
+        //readonly GraphicsDevice Graphics;
 
-        //readonly Color
-        //    black5=Color.Black*0.5f,
-        //    black25=Color.Black*0.25f;
         GeDo gedo;
-        string _txt;
         GameButtonMedium ok;
+        readonly string Text;
+        readonly Effect effectColorize;
         #endregion
-        Effect  effectColorize;
-        public Message(string Error) {
-            Constants.AnimationsControls=true;
-            if (Error=="") {
-                 _txt=Environment.GetCommandLineArgs()[2].Replace("\r\n","<NewLine>")+"<NewLine>";
-            }
-            else {
-                _txt=Error;
-            }
-            Rabcr.Game=this;
-        /* Rabcr.Game.GraphicsDevice= */ /* Rabcr.GraphicsManager =*/graphics = Rabcr.GraphicsManager=  new GraphicsDeviceManager(this);
-         //  new GraphicsDeviceManager(this);
-          //  GraphicsDevice=
 
+        public Message(int language, string text, string Header="Message") {
+            Rabcr.Game=this;
+
+            GraphicsManager= new GraphicsDeviceManager(this);
             Content.RootDirectory = "RabcrData";
             IsMouseVisible = true;
-            Window.Title = "Zpráva";
+
+            // Set up settings
+            Setting.CurrentLanguage=language;
+            Constants.AnimationsControls=true;
+            Text=text;
+
+            Lang.SetUp(false);
+
+        //    Text=Environment.GetCommandLineArgs()[2].Replace("\r\n","<NewLine>")+"<NewLine>";
 
 
+            Window.Title = Header;
+
+            GraphicsManager.ApplyChanges();
+
+            SetLangUp();
+          //  BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_latin_18);
+            effectColorize=Content.Load<Effect>("Default/Effects/Colorize");
+
+            oldMouseState=new MouseState();
+
+            //   if (runWithArgs) {
+            //         Setting.Name=Environment.GetCommandLineArgs()[3];
+            //      //   Global.Logged=true;
+            //        // Global.OnlineAccount=false;
+            //         Setting.Path=Environment.GetCommandLineArgs()[2]+"\\"+Setting.Name+"\\";
+            //         //if (!Directory.Exists(Setting.Path+"\\RabcrData")){
+            //         //    MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu","Nenalezeny data hry");
+            //         //    Environment.Exit(-1);
+            //         //    return;
+            //         //}
+            //      //   if (!File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.WriteAllText(Path.GetTempPath()+"\\rabcrLastPassword.txt",Setting.Name);
+            //     } else {
+            //         Setting.Name="Player";
+            //        // Global.Logged=false;
+            //        // Global.OnlineAccount=false;
+
+            //         Setting.Path=GetPathIfNotArgs();
+
+            //         //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
+            //     }
+
+            //     if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
+            ////     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
+            //     if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
+            //   //  if (!Directory.Exists(Setting.Path+"\\Servers"))Directory.CreateDirectory(Setting.Path+"\\Servers");
+
+            //     //Log.Init();
+
+            //     if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
+            //         switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+            //              default:
+            //                 MessageBox.Show("Game data not found, game was probably runned from archive"
+            //                 #if DEBUG
+            //                 +"\r\nCheck dir: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
+            //                 #endif
+            //                 ,"Error - Game data not found");
+            //                 break;
+
+            //              case "Czech":
+            //                 MessageBox.Show("Nenalezeny data hry, pravděpodobně hra byla spuštěna z archivu"
+            //                 #if DEBUG
+            //                 +"\r\nZkontrolujte složku: "+new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName
+            //                 #endif
+            //                 ,"Chyba - Nenalezeny data hry");
+            //                 break;
+            //         }
 
 
+            //         Environment.Exit(-1);
+            //         return;
+            //     }
 
-             Rabcr.GraphicsManager.ApplyChanges();
+            //     if (!File.Exists(Setting.Path+@"\Setting.bin")) Setting.CreateSettings();
+            //     else {
+            //         try {
+            //             Setting.LoadSetting();
+            //         } catch {
+            //             Setting.CreateSettings();
+            //         }
+            //     }
 
-     BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_latin_18);
-             effectColorize=Content.Load<Effect>("Default/Effects/Colorize");
-        //    DInt x= BitmapFont.bitmapFont18.MeasureText(_txt.Replace("<NewLine>","\n"));
+            //#endregion
 
-            //graphics.PreferredBackBufferHeight = 200;
-           // graphics.PreferredBackBufferWidth = x.X+10/*640*/;
-          //   Rabcr.GraphicsManager.ApplyChanges();
-           //  GC.Collect();
-            //GC.WaitForPendingFinalizers();
 
+            //Graphics = GraphicsManager.GraphicsDevice;
+
+           /* Rabcr.*/GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.66667f);
+           /* Rabcr.*/GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.66667f);
+           
+
+            try {
+                GraphicsManager.ApplyChanges();
+            } catch{ }
+
+            //Lang.Load();
+            //SetLangUp();
+
+          
         }
 
+        
+        public static void SetLangUp(){
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
+            switch (Lang.Languages[Setting.CurrentLanguage].FontFile) {
+                case "arabic":
+                 //   BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_arabic_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_arabic_18);
+                    break;
 
+                case "cyrillic":
+                    //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_cyrillic_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_cyrillic_18);
+                    break;
+
+                case "japanese":
+                    //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_japanese_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_japanese_18);
+                    break;
+
+                case "traditionalChinese":
+                    //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_traditionalChinese_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_traditionalChinese_18);
+                    break;
+                    
+                case "korean":
+                    //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_korean_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_korean_18);
+                    break;
+
+                default:
+                    //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_latin_34);
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_latin_18);
+                    break;
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Rabcr.random=new FastRandom();
@@ -65,17 +186,16 @@ namespace rabcrClient {
             (Rabcr.Pixel=new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
             Textures.ButtonCenter=GetDataTexture(@"Buttons\Menu\Center");
-            //Fonts.Small = GetDataFont(@"Small");
-            //Fonts.Medium = GetDataFont(@"Medium");
-            //Fonts.SmallItalic = GetDataFont(@"SmallItalic");
-            //Fonts.Big= GetDataFont(@"Big");
-            gedo=new GeDo(/*Fonts.Small,*//*Fonts.SmallItalic,*//*,false*/5,5/*,BitmapFont.bitmapFont18*/);
-           gedo.changeHeight+=ChangeH;
-            gedo.width=graphics.PreferredBackBufferWidth-10-20;
+          
+            GraphicsManager.PreferredBackBufferWidth=840;
+
+            gedo=new GeDo(5, 5);
+            gedo.changeHeight+=ChangeH;
+            gedo.width=GraphicsManager.PreferredBackBufferWidth-10-20;
             #if !DEBUG
             try{
             #endif
-                gedo.BuildString(_txt.Replace("<NewLine>","\r\n"));
+            gedo.BuildString(Text.Replace("<NewLine>","\r\n"));
             #if !DEBUG
             }catch (Exception ex){
 
@@ -83,35 +203,30 @@ namespace rabcrClient {
             }
             #endif
 
-            ok=new GameButtonMedium(Textures.ButtonCenter/*, Fonts.Small, Fonts.Medium*/) {
-
-               // center=true
+            ok=new GameButtonMedium(Textures.ButtonCenter) {
+                Text=Lang.Texts[1498]
             };
 
-            ok.Text="OK";
+            GraphicsManager.PreferredBackBufferHeight=50+gedo.GetHeight;
 
-            graphics.PreferredBackBufferHeight = 50+gedo.GetHeight;
-            graphics.PreferredBackBufferWidth = 840;
-
-            ok.Position=new Vector2(245+100, graphics.PreferredBackBufferHeight-50);
-            graphics.ApplyChanges();
+            ok.Position=new Vector2(245+100, GraphicsManager.PreferredBackBufferHeight-50);
+            GraphicsManager.ApplyChanges();
         }
+
+        //string GetPathIfNotArgs(){
+        //    return new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\"+Setting.Name+"\\";
+        //}
 
         private void ChangeH(object sender, EventArgs e) {
-            graphics.PreferredBackBufferHeight = 50+gedo.GetHeight;
-            graphics.PreferredBackBufferWidth = 840;
-
-            ok.Position=new Vector2(245+100, graphics.PreferredBackBufferHeight-50);
-            graphics.ApplyChanges();
+            GraphicsManager.PreferredBackBufferHeight = 50+gedo.GetHeight;
+            GraphicsManager.PreferredBackBufferWidth = 840;
+          
+            ok.Position=new Vector2(245+100, GraphicsManager.PreferredBackBufferHeight-50);
+            GraphicsManager.ApplyChanges();
         }
 
-        protected override void Initialize() {
-			//oldMouseState = Mouse.GetState();
-			base.Initialize();
-		}
-
         protected override void Update(GameTime gameTime) {
-         Rabcr.ActiveWindow=IsActive;
+            Rabcr.ActiveWindow=IsActive;
             ok.Update();
 
             base.Update(gameTime);
@@ -119,40 +234,26 @@ namespace rabcrClient {
 
         protected override void Draw(GameTime gameTime) {
             Rabcr.newMouseState=newMouseState =Mouse.GetState();
-        //    GraphicsDevice.Clear(Color.White);
-graphics.GraphicsDevice.Clear(Color.White);
+            Rabcr.spriteBatch=spriteBatch;
+            MousePos.mouseLeftDown=newMouseState.LeftButton==ButtonState.Pressed;
+            MousePos.mouseLeftRelease=newMouseState.LeftButton==ButtonState.Released && oldMouseState.LeftButton==ButtonState.Pressed;
+            MousePos.mouseRealPosX=newMouseState.X;
+            MousePos.mouseRealPosY=newMouseState.Y;
+            GraphicsManager.GraphicsDevice.Clear(Color.White);
             effectColorize.CurrentTechnique.Passes[0].Apply();
 
-            //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            //Vector2 vec=new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf);
-
             spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,null,null,null,effectColorize,null);
-           // graphics.GraphicsDevice.Clear(Color.White);
 
-  gedo.DrawGedo(/*5,5,*/255,spriteBatch);
- spriteBatch.End();
+            gedo.DrawGedo(255, spriteBatch);
+            spriteBatch.End();
 
             spriteBatch.Begin();
 
-            ok.ButtonDraw(/*spriteBatch,newMouseState.LeftButton==ButtonState.Pressed,new DInt(newMouseState.X, newMouseState.Y)*/);
-            if (ok.Update()){Exit(); /*Environment.Exit(0);*/ }
+            ok.ButtonDraw();
+            if (ok.Update()){Exit();  }
 
-
-
-            //if (newMouseState.X>245 && newMouseState.Y>150 && newMouseState.X<397 && newMouseState.Y<180) {
-            //    if (newMouseState.LeftButton==ButtonState.Pressed) {
-            //        spriteBatch.Draw(Textures.ButtonCenter, new Vector2(245, 150), Color.LightGray);
-            //    } else {
-            //        if (oldMouseState.LeftButton==ButtonState.Pressed && IsActive) Environment.Exit(0);
-            //        spriteBatch.Draw(Textures.ButtonCenter, new Vector2(245, 150), Color.WhiteSmoke);
-            //    }
-            //    DrawTextShadowMax(Fonts.Medium, new Vector2(302, 152), "OK");
-            //} else {
-            //    spriteBatch.Draw(Textures.ButtonCenter, new Vector2(245, 150), Color.White);
-            //    DrawTextShadowMin(Fonts.Medium, new Vector2(302, 152), "OK");
-            //}
             spriteBatch.End();
-            //oldMouseState=newMouseState;
+            oldMouseState=newMouseState;
         }
 
         Texture2D GetDataTexture(string path) {
@@ -165,31 +266,5 @@ graphics.GraphicsDevice.Clear(Color.White);
 
             return null;
         }
-
-
-
-        //    SpriteFont GetDataFont(string path) {
-        //        try {
-        //            return Content.Load<SpriteFont>(Setting.StyleName+"\\Fonts\\"+path);
-        //        } catch {
-        //            Console.WriteLine("Nelze načíst písmo: "+Setting.StyleName+"\\Fonts\\"+path+Environment.NewLine);
-        //Environment.Exit(0);
-        //        }
-
-        //        return null;
-        //    }
-
-        //void DrawTextShadowMax(SpriteFont newSpriteFont, Vector2 position, string str) {
-        //    spriteBatch.DrawString(newSpriteFont, str, position, Color.Black);
-
-        //    spriteBatch.DrawString(newSpriteFont, str, new Vector2(position.X+1.5f, position.Y+1.5f), black25);
-        //    spriteBatch.DrawString(newSpriteFont, str, new Vector2(position.X+0.75f, position.Y+0.75f), black25);
-        //    spriteBatch.DrawString(newSpriteFont, str, new Vector2(position.X+1, position.Y+1), black25);
-        //}
-
-        //void DrawTextShadowMin(SpriteFont newSpriteFont, Vector2 position, string str) {
-        //    spriteBatch.DrawString(newSpriteFont, str, position, Color.Black);
-        //    spriteBatch.DrawString(newSpriteFont, str, new Vector2(position.X+0.5f, position.Y+0.5f), black5);
-        //}
     }
 }

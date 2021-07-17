@@ -13,7 +13,7 @@
     <AssemblyName>rabcrClient</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -39,7 +39,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Publish\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>WINDOWS</DefineConstants>
     <ErrorReport>none</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -77,6 +77,7 @@
     <Compile Include="InterLogic\Game\BlockType\BasicWavingPlant.cs" />
     <Compile Include="InterLogic\Game\BlockType\Parrot.cs" />
     <Compile Include="InterLogic\Game\BlockType\WavingPlant.cs" />
+    <Compile Include="InterLogic\Menu\Settings\SettingMessage.cs" />
     <Compile Include="InterLogic\Multiplayer\CheckServer.cs" />
     <Compile Include="InterLogic\Multiplayer\ConnectionChecker.cs" />
     <Compile Include="InterLogic\Multiplayer\MultiplayerSystem.cs" />
@@ -197,7 +198,6 @@
     <Compile Include="InterLogic\TextDrawer.cs" />
     <Compile Include="LiquidId.cs" />
     <Compile Include="GenLiveObject.cs" />
-    <Compile Include="Particles.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -205,7 +205,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RabcrGame.cs" />
     <Compile Include="Relase.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\GeneratePlanetSystem.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\GWorld.cs" />
@@ -317,9 +316,6 @@
     <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
@@ -354,6 +350,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\FontInfo devanagari 18.bin" />
+    <None Include="Resources\FontInfo devanagari 34.bin" />
     <None Include="Resources\stones.png" />
     <None Include="Resources\SpaceStation.png" />
     <None Include="Default\Textures\Blocks\Mashines\Desk.png" />
@@ -376,6 +374,7 @@
     <None Include="Resources\Cloth.png" />
     <None Include="Resources\gold2.png" />
     <None Include="Resources\bronze.png" />
+    <Content Include="Resources\Fonts licence OFL.txt" />
     <Content Include="Resources\heart.png" />
     <None Include="Resources\IngotCopper.png" />
     <Content Include="Resources\page_left.png" />
@@ -472,16 +471,14 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets'))" />
   </Target>
-  <PropertyGroup>
-    <PreBuildEvent>Xcopy "C:\Users\GeftGames\source\repos\GeftGames\rabcrClient\rabcrClient\Default" "C:\Users\GeftGames\source\repos\GeftGames\rabcrClient\rabcrClient\Publish\RabcrData\Default" /E /I</PreBuildEvent>
-  </PropertyGroup>
+  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
+
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

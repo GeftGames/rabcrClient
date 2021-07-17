@@ -15,10 +15,10 @@ namespace rabcrClient {
         public bool needToChangeChunk;
         public MoveType moveType;
 
-        public Chicken(ushort id, byte height, /*byte lives, */int x, bool dir, Texture2D chTextureWalk, Texture2D chTextureEat/*, Random rnd*/) {
+        public Chicken(/*ushort id,*/ byte height, /*byte lives, */int x, bool dir, Texture2D chTextureWalk, Texture2D chTextureEat/*, Random rnd*/) {
             //Height=height;
-            Position.Y=((float)height)*16;
-            Position=new Vector2(x*16,Height*16);
+        //    Position.Y=((float)height)*16;
+            Position=new Vector2(x*16,height*16);
             TextureWalk = chTextureWalk;
             TextureEat = chTextureEat;
 
@@ -26,14 +26,14 @@ namespace rabcrClient {
             Frame=0;
             Eat=false;
             Dir=dir;
-            Id=id;
+            Id=(ushort)BlockId.Chicken;
         }
 
-        public Chicken(ushort id, int height, int x, bool dir, Texture2D chTextureWalk, Texture2D chTextureEat) {
+        public Chicken(/*ushort id,*/ int height, int x, bool dir, Texture2D chTextureWalk, Texture2D chTextureEat) {
           //  Height=height;
-            Position.Y=/*((float)*/height/*)*/*16;
+         //   Position.Y=/*((float)*/height/*)*/*16;
 
-            Position=new Vector2(x*16,Height*16);
+            Position=new Vector2(x*16,height*16);
             TextureWalk = chTextureWalk;
             TextureEat = chTextureEat;
 
@@ -41,7 +41,19 @@ namespace rabcrClient {
             Frame=0;
             Eat=false;
             Dir=dir;
-            Id=id;
+            Id=(ushort)BlockId.Chicken;
+        }
+
+        public unsafe override byte[] Save() { 
+            ushort id=Id;
+			byte* mbytes=(byte*)&id ;
+ 
+            return new byte[]{ 
+                mbytes[1], 
+                mbytes[0], 
+                Height, 
+                Dir ? (byte)1 : (byte)0 
+            };
         }
 
         public override void Draw() {

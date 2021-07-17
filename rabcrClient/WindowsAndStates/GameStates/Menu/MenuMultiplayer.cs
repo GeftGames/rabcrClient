@@ -73,6 +73,11 @@ namespace rabcrClient {
         }
 
         public override void Update(GameTime gameTime) {
+              MousePos.mouseRealPosX=Menu.mousePosX;
+            MousePos.mouseRealPosY=Menu.mousePosYCorrection;
+            MousePos.mouseLeftDown=Menu.mouseDown;
+            MousePos.mouseLeftRelease=Menu.oldMouseState.LeftButton==ButtonState.Pressed && !Menu.mouseDown;
+
             //newMouseState=Mouse.GetState();
             //newKeyboardState=Keyboard.GetState();
 
@@ -85,6 +90,7 @@ namespace rabcrClient {
             if (Menu.newMouseState.ScrollWheelValue!=Menu.oldMouseState.ScrollWheelValue) {
                 scrollbar.Scroll((Menu.oldMouseState.ScrollWheelValue-Menu.newMouseState.ScrollWheelValue)/2f);
             }
+            buttonMenu.Update();
             //if (buttonProblems.Click) {
             //    new FormProblems().ShowDialog();
 
@@ -97,16 +103,17 @@ namespace rabcrClient {
             //    p.Start();
             //}
             int yy = (int)(-(servers.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
-
+          //  
             for (int i = 0; i<servers.Count; i++) {
                 //if (i>=Worlds.Count)break;
                 if (yy>-70-70&&yy<Global.WindowHeight-75-65-70) {
 
 
-
+               //    MousePos.mouseRealPosY+=130;
                     if (servers[i].setting.Update()/*.Click*/) {
                         //   EditSingleWorld(servers[i].directoryName);
                         EditServer(servers[i]);
+                      //  MousePos.mouseRealPosY-=130;
                         if (servers.Count==i) break;
                     }
                     if (servers[i].play.Click) {
@@ -117,7 +124,7 @@ namespace rabcrClient {
 
                 }
             }
-
+           //  
             //if (buttonMenu.Click) {
             //    ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
             //}
@@ -192,21 +199,25 @@ namespace rabcrClient {
             angleChecking+=0.02f;
 
             if (findingservers) {
+             //   connectionChecker=new ConnectionChecker(servers[foreachedServer].ip.ToString(), servers[foreachedServer].port);
                 connectionChecker.Check();
 
                 if (connectionChecker.Error) {
                     if (servers.Count>0) {
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
                         //   servers[foreachedServer].geDoMessage=new GeDo(Fonts.Small/*,Fonts.SmallItalic,Pixel*//*,false*/);
+                        
+                        if (!int.TryParse(connectionChecker.ErrorText, out int langErrorCode)) langErrorCode =1531;
+
                         if (connectionChecker.ErrorDeep==0) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                             //servers[foreachedServer].geDoMessage.BuildString("<Red>Chyba</Red> "+connectionChecker.ErrorText);
                         } else if (connectionChecker.ErrorDeep==1) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Red>"+Lang.Texts[241]+"</Red> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         } else if (connectionChecker.ErrorDeep==2) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Orange>"+Lang.Texts[241]+"</Orange> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Orange>"+Lang.Texts[241]+"</Orange> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         } else if (connectionChecker.ErrorDeep==3) {
-                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Yellow>"+Lang.Texts[241]+"</Yellow> "+connectionChecker.ErrorText, 100, yy+103/*, BitmapFont.bitmapFont18*/);
+                            servers[foreachedServer].geDoMessage=new GeDo(/*Fonts.Small,*/"<Yellow>"+Lang.Texts[241]+"</Yellow> "+Lang.Texts[langErrorCode], 100, yy+103/*, BitmapFont.bitmapFont18*/);
                         }
                         connectionChecker.Dispose();
                         findingservers=false;
@@ -235,7 +246,7 @@ namespace rabcrClient {
                     } else if (servers[foreachedServer].joinedPlayers==servers[foreachedServer].maxplayers) {
                         servers[foreachedServer].error=true;
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
-                        servers[foreachedServer].geDoMessage.BuildString("<Yellow>"+Lang.Texts[241]+"</Yellow> Server je plný");
+                        servers[foreachedServer].geDoMessage.BuildString("<Yellow>"+Lang.Texts[241]+"</Yellow> "+Lang.Texts[1530]);//Server je plný
                     } else {
                         servers[foreachedServer].currentConnection=Server.Connection.Ok;
                     }
@@ -444,10 +455,10 @@ namespace rabcrClient {
             base.Draw(gameTime);
         }
 
-        public override void Shutdown() {
-            worldsTarget.Dispose();
-            base.Shutdown();
-        }
+        //public override void Shutdown() {
+        //    worldsTarget.Dispose();
+        //    base.Shutdown();
+        //}
 
         void ClickMenu(object sender, EventArgs e){
            //  if (buttonMenu.Click) {
