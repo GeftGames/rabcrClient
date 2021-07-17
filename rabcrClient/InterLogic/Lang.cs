@@ -174,13 +174,14 @@ namespace rabcrClient {
 
                 Texts=new string[max+1];
                 if (sameLanguageAsSystem){
-                    string ci = CultureInfo.InstalledUICulture.ThreeLetterWindowsLanguageName.ToLower();
+                    string ci = CultureInfo.InstalledUICulture.ThreeLetterISOLanguageName.ToLower();
+             //       if (ci=="csy") ci="ces"
                     int en=-1;
                     bool find=false;
 
                     for (int i=0; i<Languages.Length; i++) {
                         Language ll=Languages[i];
-
+                  
                         if (ll.Name=="eng") en=i;
 
                         if (ll.Name==ci) {
@@ -188,7 +189,6 @@ namespace rabcrClient {
                             find=true;
                             break;
                         }
-                        i++;
                     }
 
                     // find eng-US
@@ -207,7 +207,10 @@ namespace rabcrClient {
                     //    }
                     //}
 
-                    if (!find) Setting.CurrentLanguage=en;
+                    if (!find) {
+                        if (en==-1) en=0;
+                        Setting.CurrentLanguage=en;
+                    }
                 }
                 #if DEBUG
                 System.Diagnostics.Debug.WriteLine("Setting.CurrentLanguage is smaller than 0");

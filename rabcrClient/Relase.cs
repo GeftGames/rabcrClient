@@ -14,7 +14,7 @@ namespace rabcrClient{
         public const string VersionSpecialName = "";
 
         // Release date
-        public const string Date="xx.xx.2021";
+        public const string Date="17.07.2021";
 
 
 
@@ -37,7 +37,7 @@ namespace rabcrClient{
         public const string WebFull="https://geftgames.ga/";
         public const string WebShortGame="rabcr.ga";
         public const string WebFullGame="https://rabcr.ga/";
-        public const string Email="geftgames@seznam.cz";
+        public const string Email="geftgames@gmail.com";
 
         #region Limitation for some countries
         // Banned states

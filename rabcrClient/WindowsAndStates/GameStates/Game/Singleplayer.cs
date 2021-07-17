@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -1143,11 +1144,12 @@ namespace rabcrClient {
 		readonly List<Rectangle> lightsHalf=new List<Rectangle>();
 
 		// Rain
-		int rainDuration;
+		//int rainDuration;
+		//int windDuration;
 		int changeRain = 1250;
 		List<ParticleRain> rainDots;
 		List<ParticleSnow> snowDots;
-		bool wind, rain;
+		bool wind, precipitation;
 
 		//Time
 		int day, timeToChageWind, timer5=1000;
@@ -1355,7 +1357,61 @@ namespace rabcrClient {
 	  //  Vector2 vector_x0_y4;
 		#endregion
 		#endregion
+		SoundEffectInstance SoundWind, SoundRain;
+		bool snowing;
+		enum Precipitation : byte { 
+			None,
+			Snowing,
+			Rain,
+		//	Storm
+		}
+		Precipitation CurrentPrecipitation=Precipitation.None;
 
+		void StopRaining() { 
+			if (Global.HasSoundGraphics) {
+				if (SoundRain.IsLooped){ 
+					SoundRain.IsLooped=false;
+					SoundRain.Stop();
+				}
+			}
+		}
+
+		void StartRaining() { 
+			if (Global.HasSoundGraphics) {
+				if (!SoundRain.IsLooped){ 
+					SoundRain.Play();
+					SoundRain.IsLooped=true;
+				}
+			}
+		}
+
+		void StopSnowing() { 
+			
+		}
+
+		void StartSnowing() { 
+		
+		}
+
+		void StopWind() { 
+			if (Global.HasSoundGraphics) {
+				if (SoundWind.IsLooped){ 
+					SoundWind.IsLooped=false;
+					SoundWind.Stop();
+				}
+			}
+		}
+
+		void StartWind() { 
+		if (Global.HasSoundGraphics) {
+				if (!SoundWind.IsLooped){ 
+					SoundWind.Play();
+					SoundWind.IsLooped=true;
+				}
+			}
+		}
+		
+		
 		public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 
 		public unsafe override void Init() {
@@ -1389,6 +1445,11 @@ namespace rabcrClient {
 
 			easter=IsEaster();
 	
+
+			SoundWind=SoundEffects.Wind.CreateInstance();
+			SoundRain=SoundEffects.Rain.CreateInstance();
+
+
 			#region Load textures
 			TextureTestTube=GetDataTexture(@"Items\Dye\TestTube");
 
@@ -2591,7 +2652,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					windForce= float.Parse(sr.ReadLine());
 					wind=bool.Parse(sr.ReadLine());
-					rain=bool.Parse(sr.ReadLine());
+					if (wind)StartWind();
+					precipitation=bool.Parse(sr.ReadLine());
+					//if (precipitation)StartRain();
+
 					windRirectionRight=bool.Parse(sr.ReadLine());
 					timeToChageWind =int.Parse(sr.ReadLine());
 
@@ -2612,7 +2676,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				SetPlayerPos(random.Int(TerrainLength*16), 600);
 				time=(int)(6.5f*hour);
 
-				rain=random.Bool();
+				precipitation=random.Bool();
 				changeRain=random.Int(1250);
 			}
 
@@ -3119,6 +3183,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		   
 			if (MediaPlayer.State==MediaState.Playing) MediaPlayer.Stop();
 
+			if (SoundWind.State==SoundState.Playing) SoundWind.Stop();
+			if (SoundRain.State==SoundState.Playing)  SoundRain.Stop();
+
 			#region Save data
 			Save();
 
@@ -3380,6 +3447,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				#endregion
+				if (precipitation) {
+					float bef=Temperature; 
+					Temperature=GetTemperature(BiomePlayer.Name);
+
+					if (Temperature<0 && bef>=0) { 
+						StopRaining();
+						StartSnowing();
+					}
+					if (Temperature>0 && bef<=0) { 
+						StartRaining();
+						StopSnowing();
+					}
+				}
 
 				#region Movement
 				if (inventory==InventoryType.Normal) {
@@ -3424,7 +3504,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							DetectLava=CheckLava();
 							BiomePlayer=GetBiomeByPos((int)(PlayerX/16));
 							changePosition=false;
-							Temperature=GetTemperature(BiomePlayer.Name);
+
+							
 							//swimmingTicks+=0.016f;
 							//if (swimmingTicks>1)swimmingTicks-=1;
 
@@ -4352,7 +4433,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Block block=chunk.TopBlocks[rh];
 								if (block is LeavesBlock lb){
 									if (lb.Id==(ushort)BlockId.SpruceLeaves){ 
-										FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,rain, new Rectangle(0,0,2+random.Int2(),1)){
+										FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2+random.Int2(),1)){
 											texture=lb.Texture,
 											Color=lb.Color,
 										};
@@ -4392,7 +4473,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										|| lb.Id==(ushort)BlockId.MangroveLeaves
 										) { 
-											FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,rain, new Rectangle(0,0,2,2+random.Int2())){
+											FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2,2+random.Int2())){
 												texture=lb.Texture
 											};
 											FallingLeaves.Add(fl);
@@ -4742,7 +4823,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								//	}	
 								//}
 
-								if (((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy>0.05f) CraftingEventsCraft();
+								if (energy/*((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy*/>0.05f) 
+									CraftingEventsCraft();
 								if (buttonClose.Update()) inventory=0;
 							}
 							break;
@@ -5255,10 +5337,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 							if (Global.HasSoundGraphics) {
-								if (rainDuration==0) {
-									SoundEffects.Wind.Play();
-									rainDuration=(int)(SoundEffects.Wind.Duration.TotalMilliseconds/16.3333334d);
-								} else rainDuration--;
+								SoundWind.Play();
+								SoundWind.IsLooped=true;
 							}
 						} else {
 							for (int i=0; i<(weatherWindowWidth+10)/300; i++){ 
@@ -5278,15 +5358,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						}
 						if (Global.HasSoundGraphics) {
-							if (rainDuration==0) {
-								if (wind){ 
-									SoundEffects.Wind.Play();
-									rainDuration=(int)(SoundEffects.Wind.Duration.TotalMilliseconds/16.3333334d);
-								} else { 
-									SoundEffects.Rain.Play();
-									rainDuration=(int)(SoundEffects.Rain.Duration.TotalMilliseconds/16.3333334d);
-								}
-							} else rainDuration--;
+							if (wind) { 
+								SoundWind.Play();
+								SoundWind.IsLooped=true;
+							}
+							if (precipitation) {
+								SoundRain.Play();
+								SoundRain.IsLooped=true;
+							}
 						}
 					}
 				}
@@ -5397,7 +5476,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					//else if (random.Bool()) rainWaveForce+=0.05f;
 					//else rainWaveForce-=0.05f;
 
-					if (rain || changeRain<5f) { 
+					if (precipitation || changeRain<5f) { 
 						if (actualRainForce<1f)actualRainForce+=0.05f;
 					} else if (actualRainForce>0f)actualRainForce-=0.05f;
 
@@ -5428,7 +5507,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						}
 
-						if (rain) { 
+						if (precipitation) { 
 							int rid=random.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
 							if (rid<TerrainLength){
 								Terrain chunk=terrain[rid];
@@ -5952,7 +6031,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					#region Weather
 					if (changeRain<0) {
 						changeRain=100+random.Int(50);
-						if (rain) rain=false; else rain=true;
+						if (precipitation) {
+							precipitation=false; 
+							if (CurrentPrecipitation==Precipitation.Rain) StopRaining();
+							if (CurrentPrecipitation==Precipitation.Snowing) StopSnowing();
+							CurrentPrecipitation=Precipitation.None;
+						} else {
+							precipitation=true;
+
+							if (Temperature<0) {
+								CurrentPrecipitation=Precipitation.Snowing;
+								StartSnowing();
+							} else {
+								CurrentPrecipitation=Precipitation.Rain;
+								StartRaining();
+							}
+						}
 					} else changeRain--;
 
 					if (timeToChageWind <0) {
@@ -5960,6 +6054,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						wind=!wind;
 						if (!wind){ 
 							StopWavingTrees();
+							StopWind();
+						}else{ 
+							StartWind();
 						}
 					} else timeToChageWind--;
 
@@ -6154,13 +6251,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
   
 				#region Draw background
 				if (changeRain<10) {
-					if (rain) { 
+					if (precipitation) { 
 						Graphics.Clear(FastMath.Lerp(GetColorBackNoRain(), GetColorBackRain(), changeRain/10f));
 					} else {
 						Graphics.Clear(FastMath.Lerp(GetColorBackRain(), GetColorBackNoRain(), changeRain/10f));
 					}
 				} else { 
-					if (rain) { 
+					if (precipitation) { 
 						Graphics.Clear(GetColorBackRain());
 					} else { 
 						Graphics.Clear(GetColorBackNoRain());
@@ -6238,7 +6335,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					// Night
 					if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
-						if (rain) {
+						if (precipitation) {
 							if (moonSpeed/46<4) ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNightRain, moonSpeed/(46*4));
 							else ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNightRain, 1-moonSpeed/(46*4));
 						} else {
@@ -6248,7 +6345,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					// Day
 					} else if (time>=7f*hour && time<=17f*hour) {
-						if (rain) {
+						if (precipitation) {
 							if (changeRain<100) {
 								ColorColorize=FastMath.Lerp(ColorDayRain,ColorDay, changeRain/100f);
 							} else ColorColorize=ColorDayRain;
@@ -6260,13 +6357,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					// Sun rise
 					} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour){ 
-						if (rain) {
+						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, (time-dayStart*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, (time-dayStart*hour)/(hour*2));
 						}
 					} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour){ 
-						if (rain) {
+						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
@@ -6274,13 +6371,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					// Sun setting
 					} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) { 
-						if (rain) {
+						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, (time-dayEnd*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, (time-dayEnd*hour)/(hour*2));
 						}
 					} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) { 
-						if (rain) {
+						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
@@ -8709,6 +8806,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					buttonInvTabTools.Position.X=xx;
 					buttonInvTabTools.Position.Y=Global.WindowHeightHalf+20+32+64+32+8-2;
+
+					for (int i=0; i<4; i++) { 
+						((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
+					}
 				}
 				break;
 
@@ -14444,7 +14545,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											fs.Energy=*current++/255f;
 
 											LoadInventoryMashine(fs.Inv,InvMaxFurnaceStone);
-
+											
 											FurnaceStone.Add(new ShortAndByte(pos, length));
 										}
 									break;
@@ -15916,6 +16017,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					case InventoryType.FurnaceStone:
 						SetInvBakeIngots();
+						for (int i=0; i<4; i++) { 
+							((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
+						}
 						break;
 
 					case InventoryType.FurnaceElectric:
@@ -18703,7 +18807,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)Items.Olive:
 					barEat -=2;
-					  barWater -=0.1f;
+					barWater -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
@@ -23454,7 +23558,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			#if DEBUG
 			throw new Exception("Unknown pos id of stone frurnace inv");
 			#else
-			return null;
+			return Vector2.Zero;
 			#endif
 		}
 
@@ -23653,6 +23757,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case InventoryType.FurnaceStone:
 					textOpenInventory=new Text(Lang.Texts[170],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+					//for (int i=0; i<4; i++) { 
+					//	((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
+					//}
 					return;
 
 				case InventoryType.FurnaceElectric:
@@ -23767,7 +23874,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								if (chunk.IsTopBlocks[iy-1]) {
 									if (chunk.TopBlocks[iy-1].Id==id) {
 
-										if (rain) {
+										if (precipitation) {
 											Water w=(Water)chunk.TopBlocks[iy];
 											if (w.GetMass<255) {
 												if (random.Bool_1Percent())w.Mass(w.GetMass+1);
@@ -24970,7 +25077,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				windForce+"\r\n"+
 				wind+"\r\n"+
-				rain+"\r\n"+
+				precipitation+"\r\n"+
 				windRirectionRight+"\r\n"+
 				timeToChageWind+"\r\n"+
 

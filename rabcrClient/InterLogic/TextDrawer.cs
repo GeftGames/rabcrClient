@@ -631,7 +631,9 @@ namespace rabcrClient {
                 if (chs[ch]=='\n') { 
                     posx=X;
                     posY+=30;
+                    #if DEBUG
                     add=true;
+                    #endif
                     continue;
                 }
            

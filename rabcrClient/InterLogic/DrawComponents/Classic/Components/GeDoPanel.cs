@@ -117,9 +117,13 @@ namespace rabcrClient {
 		protected override void OnPaint(PaintEventArgs e) {
 			Graphics g=e.Graphics;
             g.Clear(BackColor);
+            #if DEBUG
             if (!designMode) {
+            #endif
                 if (gedo!=null) gedo.DrawGedo(1,g/*g,0,2*/);
+            #if DEBUG
             }
+            #endif
         }
 
         protected override void OnCreateControl() {

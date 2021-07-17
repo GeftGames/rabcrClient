@@ -153,7 +153,7 @@ namespace rabcrClient {
             GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
             GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
            
-
+     
             try {
                 GraphicsManager.ApplyChanges();
             } catch{ }
@@ -304,9 +304,9 @@ namespace rabcrClient {
 
         protected override void LoadContent() {
             spriteBatch=new SpriteBatch(GraphicsDevice);
- IsMouseVisible = true;
+            IsMouseVisible = true;
             Window.AllowUserResizing = true;
-
+            
             GoTo(new Start());
             base.LoadContent();
         }

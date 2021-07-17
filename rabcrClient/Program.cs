@@ -14,107 +14,6 @@ namespace rabcrClient {
         static void Main(string[] args) {
           
 
-           // // Testing speed of code
-           // // #if DEBUG
-           // int max = 10000;
-           // System.Threading.Thread.Sleep(4000);
-           // long 
-           //     _1 = 0,
-           //     _2 = 0,
-           //     _3 = 0,
-           //   //  _4 = 0,
-           //     _5 = 0,
-           //     _6 = 0,
-           //     _7 = 0;
-           // Stopwatch sw = new Stopwatch();
-           // for (float i = 0; i < 5; i++) {
-           //     //_1Code();
-           //     //_2Code();
-           //     _3Code();
-           //   //  _4Code();
-           //     //_5Code();
-           //     //_6Code();
-           //     _7Code();
-           // }
-           // Console.WriteLine("1: " + _1);
-           // Console.WriteLine("2: " + _2);
-           // Console.WriteLine("3: " + _3);
-           //// Console.WriteLine("4: " + _4);
-           // //Console.WriteLine("5: " + _5);
-           // //Console.WriteLine("6: " + _6);
-           // Console.WriteLine("7: " + _7);
-
-           // //void _1Code() {
-           // //    sw.Start();
-           // //    float l=0;
-           // //    for (float i = 0; i < max; i+=0.0015f) l+=FastMath.InvSqrt(i);
-           // //    sw.Stop();
-           // //    Console.WriteLine(l);
-           // //    _1 += sw.ElapsedMilliseconds;
-           // //    sw.Reset();
-           // //}
-
-           // //void _2Code() {
-           // //    float l=0;
-           // //    sw.Start();
-           // //    for (float i = 0; i < max; i+=0.0015f)l+=FastMath.InvSqrt2(i);
-           // //    sw.Stop();
-           // //     Console.WriteLine(l);
-           // //    _2 += sw.ElapsedMilliseconds;
-           // //    sw.Reset();
-           // //}
-
-           //  void _3Code() {
-           //     float l=0;
-           //     sw.Start();
-           //     for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt3(i);
-           //     sw.Stop();
-           //      Console.WriteLine(l);
-           //     _3 += sw.ElapsedMilliseconds;
-           //     sw.Reset();
-           // }
-
-           // //void _4Code() {
-           // //    float l=0;
-           // //    sw.Start();
-           // //    for (float i = 20; i < max; i+=0.00015f)l+=FastMath.InvSqrt4(i);
-           // //    sw.Stop();
-           // //     Console.WriteLine(l);
-           // //    _4 += sw.ElapsedMilliseconds;
-           // //    sw.Reset();
-           // //}
-
-           // //void _5Code() {
-           // //    float l=0;
-           // //    sw.Start();
-           // //    for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt5(i);
-           // //    sw.Stop();
-           // //     Console.WriteLine(l);
-           // //    _5 += sw.ElapsedMilliseconds;
-           // //    sw.Reset();
-           // //}
-
-           // //void _6Code() {
-           // //    float l=0;
-           // //    sw.Start();
-           // //    for (float i = 20; i < max; i+=0.0015f)l+=FastMath.InvSqrt6(i);
-           // //    sw.Stop();
-           // //     Console.WriteLine(l);
-           // //    _6 += sw.ElapsedMilliseconds;
-           // //    sw.Reset();
-           // //}     
-            
-           // void _7Code() {
-           //     float l=0;
-           //     sw.Start();
-           //     for (float i = 20; i < max; i+=0.0015f)
-           //         l+=1f/(float)Math.Sqrt(i);
-           //     sw.Stop();
-           //      Console.WriteLine(l);
-           //     _7 += sw.ElapsedMilliseconds;
-           //     sw.Reset();
-           // }
-            // #endif
 
 #if !DEBUG
             try{
@@ -129,7 +28,7 @@ namespace rabcrClient {
             
             
             */
-            //var otherWindow = Microsoft.Xna.Framework.GameWindow.Create(myGame, sizeX, sizeY);
+         
 
             if (args.Length>0) {
                 switch (args[0]) {
@@ -172,27 +71,10 @@ namespace rabcrClient {
                                 }
                             } 
                             
-                            using (Message message = new Message(language: language, Header: Header,/*langFilePath: langFilePath,*/ text: Text)) message.Run();
+                            using (Message message = new Message(language: language, Header: Header, text: Text)) message.Run();
                         }
 
-                        //if (args.Length==3) {
-                        //    Setting.Name=args[2];
-                        //    Setting.Path=args[1]+"\\"+Setting.Name+"\\";
-                        //    new Message().Run();
-                        //} else if (args.Length==4&&(args[2].ToLower()=="geft"||args[2].ToLower()=="geftgames")&&args[3].StartsWith("%")&&args[3].Replace("%", "")==DateTime.Now.Day.ToString()) {
-                        //    Setting.Name="Geft";
-                        //    Setting.Path=args[1]+"\\"+Setting.Name+"\\";
-                        //    using (var game = new Message())
-                        //        game.Run();
-                        //} else
-                        //    ShowError("Zkontrolujte si dvojté uvozovky v argumentu programu");
-
-                        //if (args.Length==1) {
-                        //    new Message("<Red>Error</Red> Missing text").Run();
-                        //} else {
-                        //    new Message(args[1]).Run();
-                        //    // else new Message("").Run();
-                        //}
+                      
                         break;
 
                     case "/CheckServer":
@@ -204,9 +86,7 @@ namespace rabcrClient {
                         break;
 
                     default:
-                     //   if (File.Exists(args[0]))new Message(File.ReadAllText(args[0])).Run();
-                      //  else 
-                            ShowError("Chybný 1. argument");
+                        ShowError("Chybný 1. argument");
                         break;
                 }
             } else {
@@ -278,27 +158,7 @@ namespace rabcrClient {
 
             #if !DEBUG
             } catch (Exception ex) {
-                //if (Release.EditedVersion) {
-                //    Environment.Exit(-1);
-                //    return;
-                //}
-
-                // if today aready send (antispawn)
-              //  try{
-                  //  File.WriteAllText(Path.GetTempPath()+"\\rabcrErrorDetail.txt", ex.StackTrace);
-              //  }catch{ }
-              //  try {
-                    //string temp=Path.GetTempPath()+"\\rabcrError.txt";
-                    //if (File.Exists(temp)) {
-                    //    string rawday=File.ReadAllText(temp);
-                    //    int day=int.Parse(rawday);
-                    //    if (day==DateTime.Now.Day) {
-                    //        Environment.Exit(-1);
-                    //        return;
-                    //    }
-                    //}
-                    //File.WriteAllText(temp, DateTime.Now.Day.ToString());
-              //  } catch { }
+             
 
                 CultureInfo ci = CultureInfo.InstalledUICulture;
                 string cap, text, details;
@@ -381,8 +241,7 @@ namespace rabcrClient {
                         if (count>1) {
                             System.Diagnostics.StackFrame sf2=st.GetFrame(1);
                             FileInfo fi2 =new FileInfo(sf2.GetFileName());
-                            string trace="&r="+/*sf.GetFileName()*/fi2.Name+"-method: "+sf2.GetMethod().Name.ToString()+ ", line: "+sf2.GetFileLineNumber() +Environment.NewLine;
-                            //trace=trace.Replace(@"C:\Users\GeftGames\rabcr\rabcrClient\rabcrClient","...");
+                            string trace="&r="+fi2.Name+"-method: "+sf2.GetMethod().Name.ToString()+ ", line: "+sf2.GetFileLineNumber() +Environment.NewLine;
                             trace=trace.Replace(" ","%20");
                             send+=trace;
                         } else send+="&r=";
@@ -391,22 +250,23 @@ namespace rabcrClient {
                         if (count>0) {
                             System.Diagnostics.StackFrame sf = st.GetFrame(0);
                             FileInfo fi = new FileInfo(sf.GetFileName());
-                            string trace = "&h="+/*sf.GetFileName()*/fi.Name+"-method: "+sf.GetMethod().Name.ToString()+", line: "+sf.GetFileLineNumber()+Environment.NewLine;
-                            //trace=trace.Replace(@"C:\Users\GeftGames\rabcr\rabcrClient\rabcrClient","...");
+                            string trace = "&h="+fi.Name+"-method: "+sf.GetMethod().Name.ToString()+", line: "+sf.GetFileLineNumber()+Environment.NewLine;
                             trace=trace.Replace(" ", "%20");
                             send+=trace;
                         } else send+="&h=";
                         
                       
-        System.Windows.Forms.Clipboard.SetText(Release.stringRRE+send);
+        Clipboard.SetText(Release.stringRRE+send);
                         // Antispawn
                         System.Threading.Thread.Sleep(200);
-                        //Console.WriteLine("send.Length: "+(Release.stringRRE+send).Length);
+
                         // Run
                         WebClient wc=new WebClient();
                         string result=wc.DownloadString(Release.stringRRE+send);
                         //System.Diagnostics.Process.Start();
-                    
+                        if (result.StartsWith("O|")){ 
+                            Console.WriteLine("send");
+                        }else Console.WriteLine("not send");
                    
 
                         // Antispawn
@@ -436,7 +296,7 @@ namespace rabcrClient {
                             }
                         }
                     }
-              //  } catch { }
+
             }
             #endif
         }
