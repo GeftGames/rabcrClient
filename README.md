@@ -4,7 +4,7 @@
 - https://rabcr.ga/
 - github
 
-# Wiki
+## Wiki
 - https://github.com/GeftGames/rabcrClient/wiki
 
 ## About
