@@ -4,6 +4,9 @@
 - https://rabcr.ga/
 - github
 
+# Wiki
+- https://github.com/GeftGames/rabcrClient/wiki
+
 ## About
 A 2D game written with MonoGame that targets Win.
 
