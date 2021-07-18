@@ -39,7 +39,7 @@ namespace rabcrClient {
 
                     // Run
                     Thread.Sleep(1000);
-                    System.Diagnostics.Process.Start("https://geftgames.ga/rbt.php"+send);
+                    System.Diagnostics.Process.Start(Release.stringBadTranslate+send);
                 } else MessageBox.Show(Lang.Texts[352], Lang.Texts[241]);
             } else MessageBox.Show(Lang.Texts[353], Lang.Texts[241]);
             Close();
