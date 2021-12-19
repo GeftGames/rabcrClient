@@ -33,18 +33,18 @@ namespace rabcrClient {
 
             buttonMenu.Click+=ClickMenu;
             buttonInfoMain=new ButtonCenter(Textures.ButtonLeft) {
-                center=true,
+              //  center=true,
                 Text=Lang.Texts[2]
             };
             buttonInfoKeyBoard=new ButtonCenter(Textures.ButtonCenter) {
-                center=true,
+               // center=true,
                 Text=Lang.Texts[3]
             };
             buttonInfoHow=new ButtonCenter(Textures.ButtonRight) {
-                center=true,
+               // center=true,
                 Text=Lang.Texts[4]
             };
-               
+
             effectBlur=Effects.BluredTopDownBounds;
 
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")) {
@@ -52,7 +52,7 @@ namespace rabcrClient {
             };
 
             strMain="<DarkGreen>"+Lang.Texts[199]+"</DarkGreen>: <Green>"+Release.Authors+"</Green>" + Environment.NewLine;
-     
+
             strMain+="<DarkGreen>"+Lang.Texts[201]+"</DarkGreen>: <Green>"+Release.VersionString+"</Green>"+ (Release.VersionSpecialName!="" ? " (<Green>"+Release.VersionSpecialName+"</Green>)": "") +Environment.NewLine;
 
             strMain+=
@@ -159,7 +159,7 @@ namespace rabcrClient {
                 geDo.BuildString(strHowTo);
                 ChangeHeight(null,null);
             }
-          
+
             base.Update(gameTime);
         }
 
@@ -201,12 +201,12 @@ namespace rabcrClient {
             // Button back
 			buttonMenu.ButtonDraw(spriteBatch, a);
 			header.Draw(spriteBatch,Color.Black*a);
-         
+
             #region Category Buttons
             buttonInfoMain.ButtonDraw(spriteBatch, a);
             buttonInfoKeyBoard.ButtonDraw(spriteBatch, a);
             buttonInfoHow.ButtonDraw(spriteBatch, a);
-          
+
             #endregion
 
             scrollbar.ButtonDraw(spriteBatch, a);
@@ -296,7 +296,7 @@ namespace rabcrClient {
                 case Keys.NumPad8: return "8";
                 case Keys.NumPad9: return "9";
                 default: return Key.ToString();
-                  
+
             }
         }
 

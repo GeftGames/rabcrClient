@@ -17,7 +17,7 @@ namespace rabcrClient {
             Id=id;
             Inv=new ItemInv[max];
             ColorItem=ColorWhite;
-            SmalItemRectangle=new Rectangle((int)position.X+2,(int)position.Y+2,12,12);
+            SmalItemRectangle=new Rectangle((int)position.X+2, (int)position.Y+2, 12, 12);
         }
 
         public override void Draw() {

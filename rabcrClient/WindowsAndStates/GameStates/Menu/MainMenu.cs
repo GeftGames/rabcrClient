@@ -17,13 +17,15 @@ namespace rabcrClient {
         const float divider255=1/255f;
 
         public XColor() {
-            if (Rabcr.random.Bool()) dir = 1; else dir = -1;
-            speed=Rabcr.random.Int(3, 10) * 0.0001f;
-            rotation=Rabcr.random.Int(360)*0.0174533f;
+            dir=FastRandom.IntPlusMinusOne();
+         //   Console.WriteLine(dir);
+           // if (Rabcr.random.Bool()) dir = 1; else dir = -1;
+            speed=(FastRandom.Float()*5+5f) * 0.0001f;
+            rotation=FastRandom.Rotatin();//.Int(360)*0.0174533f;
 
-            gR=R=Rabcr.random.Float();
-            gG=G=Rabcr.random.Float();
-            gB=B=Rabcr.random.Float();
+            gR=R=FastRandom.Float();
+            gG=G=FastRandom.Float();
+            gB=B=FastRandom.Float();
 
             change=120;
         }
@@ -38,9 +40,9 @@ namespace rabcrClient {
             change--;
 
             if (change<0) {
-                gR=Rabcr.random.Float();
-                gG=Rabcr.random.Float();
-                gB=Rabcr.random.Float();
+                gR=FastRandom.Float();
+                gG=FastRandom.Float();
+                gB=FastRandom.Float();
 
                 deltaR=(gR-R)*divider255;
                 deltaG=(gG-G)*divider255;
@@ -101,7 +103,11 @@ namespace rabcrClient {
 
                 buttonsSide=new Button[]{
                     buttonSingleplayer,
-                 //   buttonMultiplayer,
+
+                    #if DEBUG
+                    buttonMultiplayer,
+                    #endif
+
                     buttonCharacter,
                     buttonSetting,
                     buttonLanguage,

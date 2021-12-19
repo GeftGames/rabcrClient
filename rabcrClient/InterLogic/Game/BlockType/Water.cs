@@ -11,27 +11,28 @@ namespace rabcrClient {
         Vector2 pos;
         public Rectangle rec;
 
-        public void Mass(int value){
-            if ((GetMass=value)==255){
+        public void Mass(int value) {
+            if ((GetMass=value)==255) {
                 Fill=true;
                 return;
             } else {
                 Fill=false;
                 int h=(int)(16*(GetMass/255f));
-                pos = new Vector2(Position.X,Position.Y+16-h);
+                pos = new Vector2(Position.X, Position.Y+16-h);
                 rec = new Rectangle(0, 16-h, 16, h);
             }
         }
-        public void MassNoFill(int value){
+
+        public void MassNoFill(int value) {
             GetMass=value;
 
             Fill=false;
             int h=(int)(16*(GetMass/255f));
-            pos = new Vector2(Position.X,Position.Y+16-h);
+            pos = new Vector2(Position.X, Position.Y+16-h);
             rec = new Rectangle(0, 16-h, 16, h);
         }
 
-        public Water(){ }
+        private Water(){ }
 
         public Water(Texture2D texture, ushort type, Vector2 position) {
             Texture = texture;
@@ -67,7 +68,7 @@ namespace rabcrClient {
         }
 
         public override Block CloneDown() {
-            Water w = new Water{
+            Water w = new Water {
                 Texture=Texture,
                 Id=Id,
                 Position=Position,

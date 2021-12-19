@@ -14,7 +14,7 @@ namespace rabcr {
         int alpha=200;
         int need=255;
         Image image;
-        
+
 		enum State :byte{
 			None,
 			Enter,
@@ -123,23 +123,23 @@ namespace rabcr {
 			//g.SmoothingMode = SmoothingMode.None;
             Font=new Font(Font.FontFamily,14);
             Size =new Size(Size.Width,64);
-         
+
 			Brush b = new LinearGradientBrush(ClientRectangle, Color.FromArgb((int)alpha,(int)alpha,(int)alpha), Color.FromArgb((int)alpha-40,(int)alpha-40,(int)alpha-40), 90);
-          
-          //    Pen sb = new Pen(new SolidBrush(Color.Black));  
-       
+
+          //    Pen sb = new Pen(new SolidBrush(Color.Black));
+
             //Back
             g.DrawRectangle(new Pen(new LinearGradientBrush(ClientRectangle, Color.FromArgb(100,(int)alpha,(int)alpha,(int)alpha), Color.FromArgb(100,(int)alpha-40,(int)alpha-40,(int)alpha-40), 90)),new Rectangle(0, 0, Size.Width-1, Size.Height-1));
 			g.DrawRectangle(new Pen(new LinearGradientBrush(ClientRectangle, Color.FromArgb(200,(int)alpha,(int)alpha,(int)alpha), Color.FromArgb(200,(int)alpha-40,(int)alpha-40,(int)alpha-40), 90)),new Rectangle(1, 1, Size.Width-3, Size.Height-3));
 			g.FillRectangle(b,new Rectangle(2, 2, Size.Width-4, Size.Height-4));
             g.InterpolationMode=InterpolationMode.NearestNeighbor;
-           
+
             if (Image!=null)g.DrawImage(image, 0,0,64,64);
             if (Done) {
                 g.DrawImage(rabcrClient.Properties.Resources.Done,new Point(Width-60,6));
-            } 
+            }
            g.InterpolationMode=InterpolationMode.HighQualityBicubic;
-          
+
             g.TextContrast=0;
             g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.AntiAlias;
            // if (Setting.TextShadow) {
@@ -147,7 +147,7 @@ namespace rabcr {
                 //g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(50, 0, 0, 0)), new Point(textX + 1 - (int)(g.MeasureString(Text, Font).Width / 2), textY + 1 - (int)(g.MeasureString(Text, Font).Height / 2)));
                 //g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(50, 0, 0, 0)), new Point(textX + 1 - (int)(g.MeasureString(Text, Font).Width / 2), textY - (int)(g.MeasureString(Text, Font).Height / 2)));
                 //g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(50, 0, 0, 0)), new Point(textX - (int)(g.MeasureString(Text, Font).Width / 2), textY + 1 - (int)(g.MeasureString(Text, Font).Height / 2)));
-              
+
                     g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(30, 0, 0, 0)), new Point(70+1, 32 - (int)(g.MeasureString(Text, Font).Height / 2)+0));
                     g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(30, 0, 0, 0)), new Point(70+0, 32 - (int)(g.MeasureString(Text, Font).Height / 2)+1));
                     g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(30, 0, 0, 0)), new Point(70+1, 32 - (int)(g.MeasureString(Text, Font).Height / 2)+1));
@@ -157,42 +157,42 @@ namespace rabcr {
 
                     //g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(30, 0, 0, 0)), new Point(textX - (int)(g.MeasureString(Text, Font).Width / 2)+2, textY - (int)(g.MeasureString(Text, Font).Height / 2)+1));
                     //g.DrawString(Text, Font, new SolidBrush(Color.FromArgb(30, 0, 0, 0)), new Point(textX - (int)(g.MeasureString(Text, Font).Width / 2)+1, textY - (int)(g.MeasureString(Text, Font).Height / 2)+2));
-                
+
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
           //}
   //Draw.Text(g, Font, Text, textX + 1 - (int)(g.MeasureString(Text, Font).Width / 2), textY + 1 - (int)(g.MeasureString(Text, Font).Height / 2));
             //Draw.TextBig(g,Text, (int)((buttonSize.Width - g.MeasureString(Text, Font).Width)/2), (int)((buttonSize.Height - g.MeasureString(Text, Font).Height) / 2));
-          
+
                 g.DrawString(Text, Font, new SolidBrush(Color.Black), new Point(70, 32 - (int)(g.MeasureString(Text, Font).Height / 2)));
             //ds.DrawText(g, textX - (int)(g.MeasureString(Text, Font).Width / 2), textY - (int)(g.MeasureString(Text, Font).Height / 2), new SolidBrush(Color.Gray));
             //else ds.DrawText(g, textX - (int)(g.MeasureString(Text, Font).Width / 2), textY - (int)(g.MeasureString(Text, Font).Height / 2), new SolidBrush(Color.Black));
         }
 
-        public static Bitmap SetBitmapOpacity(Bitmap image, float opacity) {  
-            //create a Bitmap the size of the image provided  
-            Bitmap bmp = new Bitmap(image.Width, image.Height);  
+        public static Bitmap SetBitmapOpacity(Bitmap image, float opacity) {
+            //create a Bitmap the size of the image provided
+            Bitmap bmp = new Bitmap(image.Width, image.Height);
 
-            //create a graphics object from the image  
-            using (Graphics gfx = Graphics.FromImage(bmp)) {  
+            //create a graphics object from the image
+            using (Graphics gfx = Graphics.FromImage(bmp)) {
 
-                //create a color matrix object  
-                ColorMatrix matrix = new ColorMatrix();      
+                //create a color matrix object
+                ColorMatrix matrix = new ColorMatrix();
 
-                //set the opacity  
-                matrix.Matrix33 = opacity;  
+                //set the opacity
+                matrix.Matrix33 = opacity;
                 matrix.Matrix00=-1;
                 matrix.Matrix11 = matrix.Matrix22 = -1;
 
-                //create image attributes  
-                ImageAttributes attributes = new ImageAttributes();      
+                //create image attributes
+                ImageAttributes attributes = new ImageAttributes();
 
-                //set the color(opacity) of the image  
-                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);    
+                //set the color(opacity) of the image
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                //now draw the image  
+                //now draw the image
                 gfx.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
             }
             return bmp;
-        }  
+        }
 	}
 }

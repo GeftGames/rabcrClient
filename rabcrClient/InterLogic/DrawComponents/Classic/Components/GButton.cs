@@ -68,18 +68,18 @@ namespace rabcrClient{
         }
 
         public Orientation SetOrientation {
-		    get => currentOrientation; 
-		    set { 
+		    get => currentOrientation;
+		    set {
                 currentOrientation = value;
                 Invalidate();
             }
 	    }
 
         public bool Disamble {
-            get => disamble; 
-            set { 
-                disamble = value; 
-                Invalidate(); 
+            get => disamble;
+            set {
+                disamble = value;
+                Invalidate();
             }
         }
 
@@ -150,8 +150,8 @@ namespace rabcrClient{
                 sb = new Pen(new SolidBrush(Color.Black));
             }
 
-            int SizeBounds3=SizeBounds/3, 
-                SizeBounds6=SizeBounds/6, 
+            int SizeBounds3=SizeBounds/3,
+                SizeBounds6=SizeBounds/6,
                 SizeBounds2=SizeBounds/2;
 
             using (Bitmap nb=new Bitmap(buttonSize.Width, buttonSize.Height)) {
@@ -279,7 +279,7 @@ namespace rabcrClient{
             Size buttonSize=new Size(Size.Width-3,Size.Height-3);
 		    Pen sb = new Pen(new SolidBrush(Color.Black));
 		    Brush b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(alpha, alpha, alpha), Color.FromArgb(alpha-40, alpha-40, alpha-40), 90);
-           
+
             using (Bitmap nb=new Bitmap(buttonSize.Width,buttonSize.Height)) {
                 if (Orientation.Left==currentOrientation) {
                     using (Graphics g2 = Graphics.FromImage(nb)) {
@@ -328,7 +328,7 @@ namespace rabcrClient{
                     }
                 }
 
-                int smallW=(int)(buttonSize.Width*Constants.TextBlur)+2, 
+                int smallW=(int)(buttonSize.Width*Constants.TextBlur)+2,
                     smallH=(int)(buttonSize.Height*Constants.TextBlur)+2;
 
                 shadow?.Dispose();
@@ -343,13 +343,13 @@ namespace rabcrClient{
                 }
 
                 BitmapData bdout=shadow.LockBits(new Rectangle(0, 0, smallW, smallH), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-            
+
                 byte* pointer = (byte*)bdout.Scan0.ToPointer();
-              
+
                 // one third of alpha
                 byte* max=pointer+smallW*smallH*4;
                 for (pointer+=3; pointer<max; pointer+=4) *pointer=(byte)((*pointer)/3);
-       
+
                 shadow.UnlockBits(bdout);
             }
         }

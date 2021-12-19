@@ -76,7 +76,7 @@ namespace rabcrClient {
             //     //Log.Init();
 
             //     if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
-            //         switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+            //         switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){
             //              default:
             //                 MessageBox.Show("Game data not found, game was probably runned from archive"
             //                 #if DEBUG
@@ -115,7 +115,7 @@ namespace rabcrClient {
 
            /* Rabcr.*/GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.66667f);
            /* Rabcr.*/GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.66667f);
-           
+
 
             try {
                 GraphicsManager.ApplyChanges();
@@ -124,10 +124,10 @@ namespace rabcrClient {
             //Lang.Load();
             //SetLangUp();
 
-          
+
         }
 
-        
+
         public static void SetLangUp(){
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -160,7 +160,7 @@ namespace rabcrClient {
                     //GC.WaitForPendingFinalizers();
                     BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_traditionalChinese_18);
                     break;
-                    
+
                 case "korean":
                     //BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_korean_34);
                     //GC.Collect();
@@ -181,12 +181,12 @@ namespace rabcrClient {
         }
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Rabcr.random=new FastRandom();
+        //    Rabcr.random=new FastRandom();
             Rabcr.ActiveWindow=IsActive;
             (Rabcr.Pixel=new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
             Textures.ButtonCenter=GetDataTexture(@"Buttons\Menu\Center");
-          
+
             GraphicsManager.PreferredBackBufferWidth=840;
 
             gedo=new GeDo(5, 5);
@@ -220,7 +220,7 @@ namespace rabcrClient {
         private void ChangeH(object sender, EventArgs e) {
             GraphicsManager.PreferredBackBufferHeight = 50+gedo.GetHeight;
             GraphicsManager.PreferredBackBufferWidth = 840;
-          
+
             ok.Position=new Vector2(245+100, GraphicsManager.PreferredBackBufferHeight-50);
             GraphicsManager.ApplyChanges();
         }

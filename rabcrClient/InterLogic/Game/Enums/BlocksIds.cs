@@ -22,14 +22,14 @@
 
     WaterBlock,
     WaterSalt,
-        
-    Barrel, 
-        
 
-    _MoreInLoad,  
-        
+    Barrel,
+
+
+    _MoreInLoad,
+
     Lava,
-        
+
     #region Trees
     OakLeaves,
     OakWood,
@@ -339,4 +339,6 @@
     ChristmasBallPurple,
     ChristmasBallLightGreen,
     MobParrot,
+    Spawner, // for server, place where are players spawned
+    Teleporter // for gates - other places in current world or another world
 }

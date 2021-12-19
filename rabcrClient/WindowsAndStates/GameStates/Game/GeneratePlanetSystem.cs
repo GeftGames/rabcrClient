@@ -162,7 +162,7 @@ namespace rabcrClient {
     ////////  double h=(CurrentTime/OrbitalPeriod)*Math.PI*2;
     ////////if (CurrentTime>OrbitalPeriod)CurrentTime-=OrbitalPeriod;
     //////////  double p=SemiMajorAxis-(Eccentricity*SemiMajorAxis/2)+(Eccentricity*SemiMajorAxis);
-    ////////          //double v=Speed;//;;
+    ////////          //double v=Speed;//;
     ////////        //double TrueAnomaly=h;//(Math.Sqrt(1-Eccentricity*Eccentricity)*Math.Sin(v))/(1+Eccentricity*Math.Cos(v));
     ////////     //   v=TrueAnomaly;
     ////////       // TrueAnomaly=p;

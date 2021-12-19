@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 #endif
 
-
 namespace rabcrClient {
     public class CraftingIn{
         public ItemNonInv[] ItemSlot;
@@ -192,96 +191,95 @@ namespace rabcrClient {
     static class GameMethods {
 
 
-        public static bool IsHalfShadowBlock(ushort id) { 
-			switch (id) { 
-				case (ushort)BlockId.AcaciaLeaves: return true;
-				case (ushort)BlockId.AppleLeaves: return true;
-				case (ushort)BlockId.AppleLeavesWithApples: return true;
-				case (ushort)BlockId.AppleLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeaves: return true;
-				case (ushort)BlockId.CherryLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeavesWithCherries: return true;
-				case (ushort)BlockId.EucalyptusLeaves: return true;
-				case (ushort)BlockId.KapokLeaves: return true;
-				case (ushort)BlockId.LemonLeaves: return true;
-				case (ushort)BlockId.LemonLeavesWithLemons: return true;
-				case (ushort)BlockId.LindenLeaves: return true;
-				case (ushort)BlockId.MangroveLeaves: return true;
-				case (ushort)BlockId.OakLeaves: return true;
-				case (ushort)BlockId.OliveLeaves: return true;
-				case (ushort)BlockId.OliveLeavesWithOlives: return true;
-				case (ushort)BlockId.OrangeLeaves: return true;
-				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
-				case (ushort)BlockId.PineLeaves: return true;
-				case (ushort)BlockId.PlumLeaves: return true;
-				case (ushort)BlockId.PlumLeavesBlossom: return true;
-				case (ushort)BlockId.PlumLeavesWithPlums: return true;
-				case (ushort)BlockId.RubberTreeLeaves: return true;
-				case (ushort)BlockId.SpruceLeaves: return true;
-				case (ushort)BlockId.WillowLeaves: return true;
+        public static bool IsHalfShadowBlock(ushort id) {
+            return id switch {
+                (ushort)BlockId.AcaciaLeaves => true,
+                (ushort)BlockId.AppleLeaves => true,
+                (ushort)BlockId.AppleLeavesWithApples => true,
+                (ushort)BlockId.AppleLeavesBlossom => true,
+                (ushort)BlockId.CherryLeaves => true,
+                (ushort)BlockId.CherryLeavesBlossom => true,
+                (ushort)BlockId.CherryLeavesWithCherries => true,
+                (ushort)BlockId.EucalyptusLeaves => true,
+                (ushort)BlockId.KapokLeaves => true,
+                (ushort)BlockId.LemonLeaves => true,
+                (ushort)BlockId.LemonLeavesWithLemons => true,
+                (ushort)BlockId.LindenLeaves => true,
+                (ushort)BlockId.MangroveLeaves => true,
+                (ushort)BlockId.OakLeaves => true,
+                (ushort)BlockId.OliveLeaves => true,
+                (ushort)BlockId.OliveLeavesWithOlives => true,
+                (ushort)BlockId.OrangeLeaves => true,
+                (ushort)BlockId.OrangeLeavesWithOranges => true,
+                (ushort)BlockId.PineLeaves => true,
+                (ushort)BlockId.PlumLeaves => true,
+                (ushort)BlockId.PlumLeavesBlossom => true,
+                (ushort)BlockId.PlumLeavesWithPlums => true,
+                (ushort)BlockId.RubberTreeLeaves => true,
+                (ushort)BlockId.SpruceLeaves => true,
+                (ushort)BlockId.WillowLeaves => true,
+                (ushort)BlockId.Ice => true,
+                (ushort)BlockId.WaterBlock => true,
+                (ushort)BlockId.WaterSalt => true,
+                _ => false,
+            };
+        }
 
-				case (ushort)BlockId.Ice: return true;
-				case (ushort)BlockId.WaterBlock: return true;
-				case (ushort)BlockId.WaterSalt: return true;
-			}
-			return false;
-		}
+        public static bool IsLeaves(ushort id) {
+            return id switch {
+                (ushort)BlockId.AcaciaLeaves => true,
+                (ushort)BlockId.AppleLeaves => true,
+                (ushort)BlockId.AppleLeavesWithApples => true,
+                (ushort)BlockId.AppleLeavesBlossom => true,
+                (ushort)BlockId.CherryLeaves => true,
+                (ushort)BlockId.CherryLeavesBlossom => true,
+                (ushort)BlockId.CherryLeavesWithCherries => true,
+                (ushort)BlockId.EucalyptusLeaves => true,
+                (ushort)BlockId.KapokLeaves => true,
+                (ushort)BlockId.LemonLeaves => true,
+                (ushort)BlockId.LemonLeavesWithLemons => true,
+                (ushort)BlockId.LindenLeaves => true,
+                (ushort)BlockId.MangroveLeaves => true,
+                (ushort)BlockId.OakLeaves => true,
+                (ushort)BlockId.OliveLeaves => true,
+                (ushort)BlockId.OliveLeavesWithOlives => true,
+                (ushort)BlockId.OrangeLeaves => true,
+                (ushort)BlockId.OrangeLeavesWithOranges => true,
+                (ushort)BlockId.PineLeaves => true,
+                (ushort)BlockId.PlumLeaves => true,
+                (ushort)BlockId.PlumLeavesBlossom => true,
+                (ushort)BlockId.PlumLeavesWithPlums => true,
+                (ushort)BlockId.RubberTreeLeaves => true,
+                (ushort)BlockId.SpruceLeaves => true,
+                (ushort)BlockId.WillowLeaves => true,
+                _ => false,
+            };
+        }
 
-        public static bool IsLeaves(ushort id) { 
-			switch (id) { 
-				case (ushort)BlockId.AcaciaLeaves: return true;
-				case (ushort)BlockId.AppleLeaves: return true;
-				case (ushort)BlockId.AppleLeavesWithApples: return true;
-				case (ushort)BlockId.AppleLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeaves: return true;
-				case (ushort)BlockId.CherryLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeavesWithCherries: return true;
-				case (ushort)BlockId.EucalyptusLeaves: return true;
-				case (ushort)BlockId.KapokLeaves: return true;
-				case (ushort)BlockId.LemonLeaves: return true;
-				case (ushort)BlockId.LemonLeavesWithLemons: return true;
-				case (ushort)BlockId.LindenLeaves: return true;
-				case (ushort)BlockId.MangroveLeaves: return true;
-				case (ushort)BlockId.OakLeaves: return true;
-				case (ushort)BlockId.OliveLeaves: return true;
-				case (ushort)BlockId.OliveLeavesWithOlives: return true;
-				case (ushort)BlockId.OrangeLeaves: return true;
-				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
-				case (ushort)BlockId.PineLeaves: return true;
-				case (ushort)BlockId.PlumLeaves: return true;
-				case (ushort)BlockId.PlumLeavesBlossom: return true;
-				case (ushort)BlockId.PlumLeavesWithPlums: return true;
-				case (ushort)BlockId.RubberTreeLeaves: return true;
-				case (ushort)BlockId.SpruceLeaves: return true;
-				case (ushort)BlockId.WillowLeaves: return true;
-			}
-			return false;
-		}
-
-        public static bool IsSelectedShears(ushort id) { 
-            switch (id) { 
-                case (ushort)Items.ShearsCopper: return true;	
+        public static bool IsSelectedShears(ushort id) {
+            switch (id) {
+                case (ushort)Items.ShearsCopper: return true;
                 case (ushort)Items.ShearsBronze: return true;
 			    case (ushort)Items.ShearsGold: return true;
 			    case (ushort)Items.ShearsIron: return true;
 			    case (ushort)Items.ShearsSteel: return true;
 			    case (ushort)Items.ShearsAluminium: return true;
             }
-	
+
 			return false;
 		}
 
-		public static bool IsSelectedKnife(ushort id) { 
-            switch (id) {
-			    case (ushort)Items.KnifeCopper: return true;
-			    case (ushort)Items.KnifeBronze: return true;
-			    case (ushort)Items.KnifeGold: return true;
-			    case (ushort)Items.KnifeIron: return true;
-			    case (ushort)Items.KnifeSteel: return true;
-			    case (ushort)Items.KnifeAluminium: return true;
-            }
-			return false;
-		}
+		public static bool IsSelectedKnife(ushort id) {
+            return id switch {
+                (ushort)Items.KnifeCopper => true,
+                (ushort)Items.KnifeBronze => true,
+                (ushort)Items.KnifeGold => true,
+                (ushort)Items.KnifeIron => true,
+                (ushort)Items.KnifeSteel => true,
+                (ushort)Items.KnifeAluminium => true,
+                _ => false,
+            };
+        }
 
         public static int GetItemNameId(ushort id) {
             switch (id) {
@@ -855,132 +853,119 @@ namespace rabcrClient {
         }
 
         public static ushort ToolToBasic(ushort i) {
-            switch (i) {
-                case (ushort)Items.BucketOil: return (ushort)Items.Bucket;
-                case (ushort)Items.BucketWater: return (ushort)Items.Bucket;
-                case (ushort)Items.TorchElectricON: return (ushort)Items.TorchElectricOFF;
-                case (ushort)Items.LighterON: return (ushort)Items.LighterOFF;
-
-                case (ushort)Items.BottleOil: return (ushort)Items.Bottle;
-                case (ushort)Items.BottleWater: return (ushort)Items.Bottle;
-
-                case (ushort)Items.ElectricDrill: return (ushort)Items.ElectricDrillOff;
-                case (ushort)Items.ElectricSaw: return (ushort)Items.ElectricSawOff;
-            }
-            return (ushort)Items.None;
+            return i switch {
+                (ushort)Items.BucketOil => (ushort)Items.Bucket,
+                (ushort)Items.BucketWater => (ushort)Items.Bucket,
+                (ushort)Items.TorchElectricON => (ushort)Items.TorchElectricOFF,
+                (ushort)Items.LighterON => (ushort)Items.LighterOFF,
+                (ushort)Items.BottleOil => (ushort)Items.Bottle,
+                (ushort)Items.BottleWater => (ushort)Items.Bottle,
+                (ushort)Items.ElectricDrill => (ushort)Items.ElectricDrillOff,
+                (ushort)Items.ElectricSaw => (ushort)Items.ElectricSawOff,
+                _ => (ushort)Items.None,
+            };
         }
 
         public static int ToolMax(ushort id) {
             //max uses
-            switch (id) {
+            return id switch {
+                (ushort)Items.AxeStone => 50,
+                (ushort)Items.PickaxeStone => 50,
+                (ushort)Items.ShovelStone => 50,
+                (ushort)Items.HoeStone => 50,
+                (ushort)Items.HoeCopper => 200,
+                (ushort)Items.KnifeCopper => 200,
+                (ushort)Items.SawCopper => 200,
+                (ushort)Items.ShearsCopper => 200,
+                (ushort)Items.HammerCopper => 200,
+                (ushort)Items.PickaxeCopper => 200,
+                (ushort)Items.ShovelCopper => 200,
+                (ushort)Items.AxeCopper => 200,
+                (ushort)Items.HammerBronze => 250,
+                (ushort)Items.HoeBronze => 250,
+                (ushort)Items.KnifeBronze => 250,
+                (ushort)Items.SawBronze => 250,
+                (ushort)Items.ShearsBronze => 250,
+                (ushort)Items.PickaxeBronze => 250,
+                (ushort)Items.ShovelBronze => 250,
+                (ushort)Items.AxeBronze => 250,
+                (ushort)Items.AxeIron => 300,
+                (ushort)Items.HammerIron => 300,
+                (ushort)Items.HoeIron => 300,
+                (ushort)Items.PickaxeIron => 300,
+                (ushort)Items.ShovelIron => 300,
+                (ushort)Items.KnifeIron => 300,
+                (ushort)Items.SawIron => 300,
+                (ushort)Items.ShearsIron => 300,
+                (ushort)Items.AxeSteel => 350,
+                (ushort)Items.HammerSteel => 350,
+                (ushort)Items.HoeSteel => 350,
+                (ushort)Items.PickaxeSteel => 350,
+                (ushort)Items.ShovelSteel => 350,
+                (ushort)Items.KnifeSteel => 350,
+                (ushort)Items.SawSteel => 350,
+                (ushort)Items.ShearsSteel => 350,
+                (ushort)Items.AxeAluminium => 150,
+                (ushort)Items.HammerAluminium => 150,
+                (ushort)Items.HoeAluminium => 150,
+                (ushort)Items.PickaxeAluminium => 150,
+                (ushort)Items.ShovelAluminium => 150,
+                (ushort)Items.KnifeAluminium => 150,
+                (ushort)Items.SawAluminium => 150,
+                (ushort)Items.ShearsAluminium => 150,
+                (ushort)Items.AxeGold => 5,
+                (ushort)Items.HammerGold => 5,
+                (ushort)Items.HoeGold => 5,
+                (ushort)Items.PickaxeGold => 5,
+                (ushort)Items.ShovelGold => 5,
+                (ushort)Items.KnifeGold => 5,
+                (ushort)Items.SawGold => 5,
+                (ushort)Items.ShearsGold => 5,
+                (ushort)Items.ElectricDrill => 400,
+                (ushort)Items.ElectricSaw => 400,
+                (ushort)Items.TorchElectricON => 400,
+                (ushort)Items.Gun => 1000,
+                (ushort)Items.AirTank => 1000,
+                (ushort)Items.AirTank2 => 2000,
+                (ushort)Items.BucketWater => 255,
+                (ushort)Items.BucketOil => 255,
+                (ushort)Items.BottleOil => 50,
+                (ushort)Items.BottleWater => 50,
+                (ushort)Items.TorchON => 100,
+                (ushort)Items.DyeArmy => 50,
+                (ushort)Items.DyeBlack => 50,
+                (ushort)Items.DyeBlue => 50,
+                (ushort)Items.DyeBrown => 50,
+                (ushort)Items.DyeDarkBlue => 50,
+                (ushort)Items.DyeDarkGray => 50,
+                (ushort)Items.DyeDarkGreen => 50,
+                (ushort)Items.DyeDarkRed => 50,
+                (ushort)Items.DyeGold => 50,
+                (ushort)Items.DyeGray => 50,
+                (ushort)Items.DyeGreen => 50,
+                (ushort)Items.DyeLightBlue => 50,
+                (ushort)Items.DyeLightGray => 50,
+                (ushort)Items.DyeLightGreen => 50,
+                (ushort)Items.DyeMagenta => 50,
+                (ushort)Items.DyeOlive => 50,
+                (ushort)Items.DyeOrange => 50,
+                (ushort)Items.DyePink => 50,
+                (ushort)Items.DyePurple => 50,
+                (ushort)Items.DyeRed => 50,
+                (ushort)Items.DyeRoseQuartz => 50,
+                (ushort)Items.DyeSpringGreen => 50,
+                (ushort)Items.DyeTeal => 50,
+                (ushort)Items.DyeViolet => 50,
+                (ushort)Items.DyeWhite => 50,
+                (ushort)Items.DyeYellow => 50,
+                (ushort)Items.ItemBattery => 99,
+                _ => throw new System.Exception("Tool " + (Items)id + " not found in switch above"),
+            };
 
-                case (ushort)Items.AxeStone: return 50;
-                case (ushort)Items.PickaxeStone: return 50;
-                case (ushort)Items.ShovelStone: return 50;
-                case (ushort)Items.HoeStone: return 50;
-                case (ushort)Items.HoeCopper: return 200;
-                case (ushort)Items.KnifeCopper: return 200;
-                case (ushort)Items.SawCopper: return 200;
-                case (ushort)Items.ShearsCopper: return 200;
-                case (ushort)Items.HammerCopper: return 200;
-                case (ushort)Items.PickaxeCopper: return 200;
-                case (ushort)Items.ShovelCopper: return 200;
-                case (ushort)Items.AxeCopper: return 200;
-
-                case (ushort)Items.HammerBronze: return 250;
-                case (ushort)Items.HoeBronze: return 250;
-                case (ushort)Items.KnifeBronze: return 250;
-                case (ushort)Items.SawBronze: return 250;
-                case (ushort)Items.ShearsBronze: return 250;
-                case (ushort)Items.PickaxeBronze: return 250;
-                case (ushort)Items.ShovelBronze: return 250;
-                case (ushort)Items.AxeBronze: return 250;
-
-                case (ushort)Items.AxeIron: return 300;
-                case (ushort)Items.HammerIron: return 300;
-                case (ushort)Items.HoeIron: return 300;
-                case (ushort)Items.PickaxeIron: return 300;
-                case (ushort)Items.ShovelIron: return 300;
-                case (ushort)Items.KnifeIron: return 300;
-                case (ushort)Items.SawIron: return 300;
-                case (ushort)Items.ShearsIron: return 300;
-
-                case (ushort)Items.AxeSteel: return 350;
-                case (ushort)Items.HammerSteel: return 350;
-                case (ushort)Items.HoeSteel: return 350;
-                case (ushort)Items.PickaxeSteel: return 350;
-                case (ushort)Items.ShovelSteel: return 350;
-                case (ushort)Items.KnifeSteel: return 350;
-                case (ushort)Items.SawSteel: return 350;
-                case (ushort)Items.ShearsSteel: return 350;
-
-                case (ushort)Items.AxeAluminium: return 150;
-                case (ushort)Items.HammerAluminium: return 150;
-                case (ushort)Items.HoeAluminium: return 150;
-                case (ushort)Items.PickaxeAluminium: return 150;
-                case (ushort)Items.ShovelAluminium: return 150;
-                case (ushort)Items.KnifeAluminium: return 150;
-                case (ushort)Items.SawAluminium: return 150;
-                case (ushort)Items.ShearsAluminium: return 150;
-
-                case (ushort)Items.AxeGold: return 5;
-                case (ushort)Items.HammerGold: return 5;
-                case (ushort)Items.HoeGold: return 5;
-                case (ushort)Items.PickaxeGold: return 5;
-                case (ushort)Items.ShovelGold: return 5;
-                case (ushort)Items.KnifeGold: return 5;
-                case (ushort)Items.SawGold: return 5;
-                case (ushort)Items.ShearsGold: return 5;
-
-                case (ushort)Items.ElectricDrill: return 400;
-                case (ushort)Items.ElectricSaw: return 400;
-
-                case (ushort)Items.TorchElectricON: return 400;
-
-                case (ushort)Items.Gun: return 1000;
-                case (ushort)Items.AirTank: return 1000;
-                case (ushort)Items.AirTank2: return 2000;
-
-                case (ushort)Items.BucketWater: return 255;
-                case (ushort)Items.BucketOil: return 255;
-                case (ushort)Items.BottleOil: return 50;
-                case (ushort)Items.BottleWater: return 50;
-
-                    case (ushort)Items.TorchON : return 100;
-
-                    case (ushort)Items.DyeArmy: return 50;
-                case (ushort)Items.DyeBlack: return 50;
-                case (ushort)Items.DyeBlue: return 50;
-                case (ushort)Items.DyeBrown: return 50;
-                case (ushort)Items.DyeDarkBlue: return 50;
-                case (ushort)Items.DyeDarkGray: return 50;
-                case (ushort)Items.DyeDarkGreen: return 50;
-                case (ushort)Items.DyeDarkRed: return 50;
-                case (ushort)Items.DyeGold: return 50;
-                case (ushort)Items.DyeGray: return 50;
-                case (ushort)Items.DyeGreen: return 50;
-                case (ushort)Items.DyeLightBlue: return 50;
-                case (ushort)Items.DyeLightGray: return 50;
-                case (ushort)Items.DyeLightGreen: return 50;
-                case (ushort)Items.DyeMagenta: return 50;
-                case (ushort)Items.DyeOlive: return 50;
-                case (ushort)Items.DyeOrange: return 50;
-                case (ushort)Items.DyePink: return 50;
-                case (ushort)Items.DyePurple: return 50;
-                case (ushort)Items.DyeRed: return 50;
-                case (ushort)Items.DyeRoseQuartz: return 50;
-                case (ushort)Items.DyeSpringGreen: return 50;
-                case (ushort)Items.DyeTeal: return 50;
-                case (ushort)Items.DyeViolet: return 50;
-                case (ushort)Items.DyeWhite: return 50;
-                case (ushort)Items.DyeYellow: return 50;
-                case (ushort)Items.ItemBattery: return 99;
-            }
-            #if DEBUG
-            throw new System.Exception("Tool "+(Items)id+" not found in switch above");
-            #else
+#if DEBUG
+#else
             return -1;
-            #endif
+#endif
         }
 
         //public static int BurnWoodInFurnace(ushort id){
@@ -1007,425 +992,381 @@ namespace rabcrClient {
         //}
 
         public static bool IsCompostable(ushort id) {
-            switch (id) {
-                case (ushort)Items.Alore: return true;
-                case (ushort)Items.Apple: return true;
-                case (ushort)Items.AppleLeaves: return true;
-                case (ushort)Items.AppleLeavesWithApples: return true;
-                case (ushort)Items.AppleSapling: return true;
-                case (ushort)Items.Ash: return true;
-                case (ushort)Items.Banana: return true;
-                case (ushort)Items.Blueberries: return true;
-                case (ushort)Items.Boletus: return true;
-                case (ushort)Items.CactusBig: return true;
-                case (ushort)Items.CactusSmall: return true;
-                case (ushort)Items.Carrot: return true;
-                case (ushort)Items.Champignon: return true;
-                case (ushort)Items.Cherry: return true;
-                case (ushort)Items.CherryLeaves: return true;
-                case (ushort)Items.CherryLeavesWithCherries: return true;
-                case (ushort)Items.CherrySapling: return true;
-                case (ushort)Items.Cloth: return true;
-                case (ushort)Items.CoalDust: return true;
-                case (ushort)Items.Coral: return true;
-                case (ushort)Items.Dandelion: return true;
-                case (ushort)Items.FishMeat: return true;
-                case (ushort)Items.Flax: return true;
-                case (ushort)Items.FlaxSeeds: return true;
-                case (ushort)Items.GrassBlockClay: return true;
-                case (ushort)Items.GrassBlockDesert: return true;
-                case (ushort)Items.GrassBlockForest: return true;
-                case (ushort)Items.GrassBlockHills: return true;
-                case (ushort)Items.GrassBlockJungle: return true;
-                case (ushort)Items.GrassBlockPlains: return true;
-                case (ushort)Items.GrassDesert: return true;
-                case (ushort)Items.GrassForest: return true;
-                case (ushort)Items.GrassHills: return true;
-                case (ushort)Items.GrassJungle: return true;
-                case (ushort)Items.GrassPlains: return true;
-                case (ushort)Items.Hay: return true;
-                case (ushort)Items.HayBlock: return true;
-                case (ushort)Items.Heater: return true;
-                case (ushort)Items.Leave: return true;
-                case (ushort)Items.Lemon: return true;
-                case (ushort)Items.LemonLeaves: return true;
-                case (ushort)Items.LemonLeavesWithLemons: return true;
-                case (ushort)Items.LemonSapling: return true;
-                case (ushort)Items.LindenLeaves: return true;
-                case (ushort)Items.LindenSapling: return true;
-                case (ushort)Items.MudIngot: return true;
-                case (ushort)Items.OakLeaves: return true;
-                case (ushort)Items.OakSapling: return true;
-                case (ushort)Items.Onion: return true;
-                case (ushort)Items.Orange: return true;
-                case (ushort)Items.OrangeLeaves: return true;
-                case (ushort)Items.OrangeLeavesWithOranges: return true;
-                case (ushort)Items.OrangeSapling: return true;
-                case (ushort)Items.Paper: return true;
-                case (ushort)Items.Peas: return true;
-                case (ushort)Items.PineLeaves: return true;
-                case (ushort)Items.PineSapling: return true;
-                case (ushort)Items.PlantBlueberry: return true;
-                case (ushort)Items.PlantCarrot: return true;
-                case (ushort)Items.PlantOnion: return true;
-                case (ushort)Items.PlantOrchid: return true;
-                case (ushort)Items.PlantPeas: return true;
-                case (ushort)Items.PlantRashberry: return true;
-                case (ushort)Items.PlantRose: return true;
-                case (ushort)Items.PlantStrawberry: return true;
-                case (ushort)Items.PlantViolet: return true;
-                case (ushort)Items.Plum: return true;
-                case (ushort)Items.PlumLeaves: return true;
-                case (ushort)Items.PlumLeavesWithPlums: return true;
-                case (ushort)Items.PlumSapling: return true;
-                case (ushort)Items.RabbitMeat: return true;
-                case (ushort)Items.RabbitMeatCooked: return true;
-                case (ushort)Items.Rashberry: return true;
-                case (ushort)Items.Rope: return true;
-                case (ushort)Items.Seaweed: return true;
-                case (ushort)Items.Seeds: return true;
-                case (ushort)Items.Stick: return true;
-                case (ushort)Items.Sticks: return true;
-                case (ushort)Items.Strawberry: return true;
-                case (ushort)Items.SugarCane: return true;
-                case (ushort)Items.WheatStraw: return true;
-                case (ushort)Items.Yarn: return true;
-                case (ushort)Items.GrassBlockCompost: return true;
-                case (ushort)Items.Egg: return true;
-                case (ushort)Items.boiledEgg: return true;
-                case (ushort)Items.Saltpeter: return true;
-                default: return false;
-            }
+            return id switch {
+                (ushort)Items.Alore => true,
+                (ushort)Items.Apple => true,
+                (ushort)Items.AppleLeaves => true,
+                (ushort)Items.AppleLeavesWithApples => true,
+                (ushort)Items.AppleSapling => true,
+                (ushort)Items.Ash => true,
+                (ushort)Items.Banana => true,
+                (ushort)Items.Blueberries => true,
+                (ushort)Items.Boletus => true,
+                (ushort)Items.CactusBig => true,
+                (ushort)Items.CactusSmall => true,
+                (ushort)Items.Carrot => true,
+                (ushort)Items.Champignon => true,
+                (ushort)Items.Cherry => true,
+                (ushort)Items.CherryLeaves => true,
+                (ushort)Items.CherryLeavesWithCherries => true,
+                (ushort)Items.CherrySapling => true,
+                (ushort)Items.Cloth => true,
+                (ushort)Items.CoalDust => true,
+                (ushort)Items.Coral => true,
+                (ushort)Items.Dandelion => true,
+                (ushort)Items.FishMeat => true,
+                (ushort)Items.Flax => true,
+                (ushort)Items.FlaxSeeds => true,
+                (ushort)Items.GrassBlockClay => true,
+                (ushort)Items.GrassBlockDesert => true,
+                (ushort)Items.GrassBlockForest => true,
+                (ushort)Items.GrassBlockHills => true,
+                (ushort)Items.GrassBlockJungle => true,
+                (ushort)Items.GrassBlockPlains => true,
+                (ushort)Items.GrassDesert => true,
+                (ushort)Items.GrassForest => true,
+                (ushort)Items.GrassHills => true,
+                (ushort)Items.GrassJungle => true,
+                (ushort)Items.GrassPlains => true,
+                (ushort)Items.Hay => true,
+                (ushort)Items.HayBlock => true,
+                (ushort)Items.Heater => true,
+                (ushort)Items.Leave => true,
+                (ushort)Items.Lemon => true,
+                (ushort)Items.LemonLeaves => true,
+                (ushort)Items.LemonLeavesWithLemons => true,
+                (ushort)Items.LemonSapling => true,
+                (ushort)Items.LindenLeaves => true,
+                (ushort)Items.LindenSapling => true,
+                (ushort)Items.MudIngot => true,
+                (ushort)Items.OakLeaves => true,
+                (ushort)Items.OakSapling => true,
+                (ushort)Items.Onion => true,
+                (ushort)Items.Orange => true,
+                (ushort)Items.OrangeLeaves => true,
+                (ushort)Items.OrangeLeavesWithOranges => true,
+                (ushort)Items.OrangeSapling => true,
+                (ushort)Items.Paper => true,
+                (ushort)Items.Peas => true,
+                (ushort)Items.PineLeaves => true,
+                (ushort)Items.PineSapling => true,
+                (ushort)Items.PlantBlueberry => true,
+                (ushort)Items.PlantCarrot => true,
+                (ushort)Items.PlantOnion => true,
+                (ushort)Items.PlantOrchid => true,
+                (ushort)Items.PlantPeas => true,
+                (ushort)Items.PlantRashberry => true,
+                (ushort)Items.PlantRose => true,
+                (ushort)Items.PlantStrawberry => true,
+                (ushort)Items.PlantViolet => true,
+                (ushort)Items.Plum => true,
+                (ushort)Items.PlumLeaves => true,
+                (ushort)Items.PlumLeavesWithPlums => true,
+                (ushort)Items.PlumSapling => true,
+                (ushort)Items.RabbitMeat => true,
+                (ushort)Items.RabbitMeatCooked => true,
+                (ushort)Items.Rashberry => true,
+                (ushort)Items.Rope => true,
+                (ushort)Items.Seaweed => true,
+                (ushort)Items.Seeds => true,
+                (ushort)Items.Stick => true,
+                (ushort)Items.Sticks => true,
+                (ushort)Items.Strawberry => true,
+                (ushort)Items.SugarCane => true,
+                (ushort)Items.WheatStraw => true,
+                (ushort)Items.Yarn => true,
+                (ushort)Items.GrassBlockCompost => true,
+                (ushort)Items.Egg => true,
+                (ushort)Items.boiledEgg => true,
+                (ushort)Items.Saltpeter => true,
+                _ => false,
+            };
         }
 
-        public static bool IsLeave(ushort id) { 
-           switch (id) {
+        public static bool IsLeave(ushort id) {
+            return id switch {
                 // Frequent leaves
-				case (ushort)BlockId.SpruceLeaves: return true;
-
+                (ushort)BlockId.SpruceLeaves => true,
                 // Frequent branches
-				case (ushort)BlockId.OakBranches: return true;
-				case (ushort)BlockId.LindenBranches: return true;
-				case (ushort)BlockId.WillowBranches: return true;
-
+                (ushort)BlockId.OakBranches => true,
+                (ushort)BlockId.LindenBranches => true,
+                (ushort)BlockId.WillowBranches => true,
                 // Fruit branches
-				case (ushort)BlockId.AppleBranches: return true;
-				case (ushort)BlockId.CherryBranches: return true;
-				case (ushort)BlockId.PlumBranches: return true;
-
+                (ushort)BlockId.AppleBranches => true,
+                (ushort)BlockId.CherryBranches => true,
+                (ushort)BlockId.PlumBranches => true,
                 // Non-frequent leaves
-				case (ushort)BlockId.WillowLeaves: return true;
-				case (ushort)BlockId.OakLeaves: return true;
-				case (ushort)BlockId.LindenLeaves: return true;
-
+                (ushort)BlockId.WillowLeaves => true,
+                (ushort)BlockId.OakLeaves => true,
+                (ushort)BlockId.LindenLeaves => true,
                 // Fruit leaves
-				case (ushort)BlockId.AppleLeaves: return true;
-				case (ushort)BlockId.AppleLeavesBlossom: return true;
-				case (ushort)BlockId.AppleLeavesWithApples: return true;
-
-				case (ushort)BlockId.CherryLeaves: return true;
-				case (ushort)BlockId.CherryLeavesBlossom: return true;
-				case (ushort)BlockId.CherryLeavesWithCherries: return true;
-
-				case (ushort)BlockId.PlumLeaves: return true;
-				case (ushort)BlockId.PlumLeavesBlossom: return true;
-				case (ushort)BlockId.PlumLeavesWithPlums: return true;
-
+                (ushort)BlockId.AppleLeaves => true,
+                (ushort)BlockId.AppleLeavesBlossom => true,
+                (ushort)BlockId.AppleLeavesWithApples => true,
+                (ushort)BlockId.CherryLeaves => true,
+                (ushort)BlockId.CherryLeavesBlossom => true,
+                (ushort)BlockId.CherryLeavesWithCherries => true,
+                (ushort)BlockId.PlumLeaves => true,
+                (ushort)BlockId.PlumLeavesBlossom => true,
+                (ushort)BlockId.PlumLeavesWithPlums => true,
                 // Leaves in Hot biomes
-				case (ushort)BlockId.OrangeLeaves: return true;
-				case (ushort)BlockId.OrangeLeavesWithOranges: return true;
-
-				case (ushort)BlockId.OliveLeaves: return true;
-				case (ushort)BlockId.OliveLeavesWithOlives: return true;
-
-				case (ushort)BlockId.LemonLeaves: return true;
-				case (ushort)BlockId.LemonLeavesWithLemons: return true;
-
-				case (ushort)BlockId.PineLeaves: return true;
-                case (ushort)BlockId.AcaciaLeaves: return true;
-				case (ushort)BlockId.EucalyptusLeaves: return true;
-				case (ushort)BlockId.MangroveLeaves: return true;
-
-				case (ushort)BlockId.RubberTreeLeaves: return true;
-
-				case (ushort)BlockId.KapokLeaves: return true;
-				case (ushort)BlockId.KapokLeacesFlowering: return true;
-				case (ushort)BlockId.KapokLeacesFibre: return true;
-
-            }
-            return false;
+                (ushort)BlockId.OrangeLeaves => true,
+                (ushort)BlockId.OrangeLeavesWithOranges => true,
+                (ushort)BlockId.OliveLeaves => true,
+                (ushort)BlockId.OliveLeavesWithOlives => true,
+                (ushort)BlockId.LemonLeaves => true,
+                (ushort)BlockId.LemonLeavesWithLemons => true,
+                (ushort)BlockId.PineLeaves => true,
+                (ushort)BlockId.AcaciaLeaves => true,
+                (ushort)BlockId.EucalyptusLeaves => true,
+                (ushort)BlockId.MangroveLeaves => true,
+                (ushort)BlockId.RubberTreeLeaves => true,
+                (ushort)BlockId.KapokLeaves => true,
+                (ushort)BlockId.KapokLeacesFlowering => true,
+                (ushort)BlockId.KapokLeacesFibre => true,
+                _ => false,
+            };
         }
 
         #region Blocks from Items
         public static ushort BackBlockFromItem(ushort item) {
-            switch (item) {
-
+            return item switch {
                 // Blocks
-                case (ushort)Items.Lava: return (ushort)BlockId.Lava;
-
+                (ushort)Items.Lava => (ushort)BlockId.Lava,
                 // Backs
-                case (ushort)Items.BackCobblestone: return (ushort)BlockId.BackCobblestone;
-                case (ushort)Items.BackSand: return (ushort)BlockId.BackSand;
-                case (ushort)Items.BackDirt: return (ushort)BlockId.BackDirt;
-                case (ushort)Items.BackAluminium: return (ushort)BlockId.BackAluminium;
-                case (ushort)Items.BackAnorthosite: return (ushort)BlockId.BackAnorthosite;
-                case (ushort)Items.BackBasalt: return (ushort)BlockId.BackBasalt;
-                case (ushort)Items.BackClay: return (ushort)BlockId.BackClay;
-                case (ushort)Items.BackCoal: return (ushort)BlockId.BackCoal;
-                case (ushort)Items.BackCopper: return (ushort)BlockId.BackCopper;
-                case (ushort)Items.BackDiorit: return (ushort)BlockId.BackDiorit;
-                case (ushort)Items.BackDolomite: return (ushort)BlockId.BackDolomite;
-                case (ushort)Items.BackFlint: return (ushort)BlockId.BackFlint;
-                case (ushort)Items.BackGabbro: return (ushort)BlockId.BackGabbro;
-                case (ushort)Items.BackGneiss: return (ushort)BlockId.BackGneiss;
-                case (ushort)Items.BackGold: return (ushort)BlockId.BackGold;
-                case (ushort)Items.BackGravel: return (ushort)BlockId.BackGravel;
-                case (ushort)Items.BackIron: return (ushort)BlockId.BackIron;
-                case (ushort)Items.BackLimestone: return (ushort)BlockId.BackLimestone;
-                case (ushort)Items.BackMudstone: return (ushort)BlockId.BackMudstone;
-                case (ushort)Items.BackRedSand: return (ushort)BlockId.BackRedSand;
-                case (ushort)Items.BackRegolite: return (ushort)BlockId.BackRegolite;
-                case (ushort)Items.BackRhyolite: return (ushort)BlockId.BackRhyolite;
-                case (ushort)Items.BackSaltpeter: return (ushort)BlockId.BackSaltpeter;
-                case (ushort)Items.BackSandstone: return (ushort)BlockId.BackSandstone;
-                case (ushort)Items.BackSchist: return (ushort)BlockId.BackSchist;
-                case (ushort)Items.BackSilver: return (ushort)BlockId.BackSilver;
-                case (ushort)Items.BackSulfur: return (ushort)BlockId.BackSulfur;
-                case (ushort)Items.BackTin: return (ushort)BlockId.BackTin;
-
+                (ushort)Items.BackCobblestone => (ushort)BlockId.BackCobblestone,
+                (ushort)Items.BackSand => (ushort)BlockId.BackSand,
+                (ushort)Items.BackDirt => (ushort)BlockId.BackDirt,
+                (ushort)Items.BackAluminium => (ushort)BlockId.BackAluminium,
+                (ushort)Items.BackAnorthosite => (ushort)BlockId.BackAnorthosite,
+                (ushort)Items.BackBasalt => (ushort)BlockId.BackBasalt,
+                (ushort)Items.BackClay => (ushort)BlockId.BackClay,
+                (ushort)Items.BackCoal => (ushort)BlockId.BackCoal,
+                (ushort)Items.BackCopper => (ushort)BlockId.BackCopper,
+                (ushort)Items.BackDiorit => (ushort)BlockId.BackDiorit,
+                (ushort)Items.BackDolomite => (ushort)BlockId.BackDolomite,
+                (ushort)Items.BackFlint => (ushort)BlockId.BackFlint,
+                (ushort)Items.BackGabbro => (ushort)BlockId.BackGabbro,
+                (ushort)Items.BackGneiss => (ushort)BlockId.BackGneiss,
+                (ushort)Items.BackGold => (ushort)BlockId.BackGold,
+                (ushort)Items.BackGravel => (ushort)BlockId.BackGravel,
+                (ushort)Items.BackIron => (ushort)BlockId.BackIron,
+                (ushort)Items.BackLimestone => (ushort)BlockId.BackLimestone,
+                (ushort)Items.BackMudstone => (ushort)BlockId.BackMudstone,
+                (ushort)Items.BackRedSand => (ushort)BlockId.BackRedSand,
+                (ushort)Items.BackRegolite => (ushort)BlockId.BackRegolite,
+                (ushort)Items.BackRhyolite => (ushort)BlockId.BackRhyolite,
+                (ushort)Items.BackSaltpeter => (ushort)BlockId.BackSaltpeter,
+                (ushort)Items.BackSandstone => (ushort)BlockId.BackSandstone,
+                (ushort)Items.BackSchist => (ushort)BlockId.BackSchist,
+                (ushort)Items.BackSilver => (ushort)BlockId.BackSilver,
+                (ushort)Items.BackSulfur => (ushort)BlockId.BackSulfur,
+                (ushort)Items.BackTin => (ushort)BlockId.BackTin,
                 // Wood
-                case (ushort)Items.WoodApple: return (ushort)BlockId.AppleWood;
-                case (ushort)Items.WoodCherry: return (ushort)BlockId.CherryWood;
-                case (ushort)Items.WoodLemon: return (ushort)BlockId.LemonWood;
-                case (ushort)Items.WoodLinden: return (ushort)BlockId.LindenWood;
-                case (ushort)Items.WoodOak: return (ushort)BlockId.OakWood;
-                case (ushort)Items.WoodOrange: return (ushort)BlockId.OrangeWood;
-                case (ushort)Items.WoodPine: return (ushort)BlockId.PineWood;
-                case (ushort)Items.WoodPlum: return (ushort)BlockId.PlumWood;
-                case (ushort)Items.WoodSpruce: return (ushort)BlockId.SpruceWood;
-                case (ushort)Items.AcaciaWood: return (ushort)BlockId.AcaciaWood;
-                case (ushort)Items.EucalyptusWood: return (ushort)BlockId.EucalyptusWood;
-                case (ushort)Items.KapokWood: return (ushort)BlockId.KapokWood;
-                case (ushort)Items.MangroveWood: return (ushort)BlockId.MangroveWood;
-                case (ushort)Items.OliveWood: return (ushort)BlockId.OliveWood;
-                case (ushort)Items.RubberTreeWood: return (ushort)BlockId.RubberTreeWood;
-                case (ushort)Items.WillowWood: return (ushort)BlockId.WillowWood;
-
-
-                case (ushort)Items.Glass: return (ushort)BlockId.Glass;
-                case (ushort)Items.AdvancedSpaceBack: return (ushort)BlockId.AdvancedSpaceBack;
-                case (ushort)Items.AdvancedSpaceWindow: return (ushort)BlockId.AdvancedSpaceWindow;
-            }
-
-            return (ushort)BlockId.None;
+                (ushort)Items.WoodApple => (ushort)BlockId.AppleWood,
+                (ushort)Items.WoodCherry => (ushort)BlockId.CherryWood,
+                (ushort)Items.WoodLemon => (ushort)BlockId.LemonWood,
+                (ushort)Items.WoodLinden => (ushort)BlockId.LindenWood,
+                (ushort)Items.WoodOak => (ushort)BlockId.OakWood,
+                (ushort)Items.WoodOrange => (ushort)BlockId.OrangeWood,
+                (ushort)Items.WoodPine => (ushort)BlockId.PineWood,
+                (ushort)Items.WoodPlum => (ushort)BlockId.PlumWood,
+                (ushort)Items.WoodSpruce => (ushort)BlockId.SpruceWood,
+                (ushort)Items.AcaciaWood => (ushort)BlockId.AcaciaWood,
+                (ushort)Items.EucalyptusWood => (ushort)BlockId.EucalyptusWood,
+                (ushort)Items.KapokWood => (ushort)BlockId.KapokWood,
+                (ushort)Items.MangroveWood => (ushort)BlockId.MangroveWood,
+                (ushort)Items.OliveWood => (ushort)BlockId.OliveWood,
+                (ushort)Items.RubberTreeWood => (ushort)BlockId.RubberTreeWood,
+                (ushort)Items.WillowWood => (ushort)BlockId.WillowWood,
+                (ushort)Items.Glass => (ushort)BlockId.Glass,
+                (ushort)Items.AdvancedSpaceBack => (ushort)BlockId.AdvancedSpaceBack,
+                (ushort)Items.AdvancedSpaceWindow => (ushort)BlockId.AdvancedSpaceWindow,
+                _ => (ushort)BlockId.None,
+            };
         }
 
         public static ushort SolidBlockFromItem(ushort item) {
-            switch (item) {
+            return item switch {
                 // Stone
-                case (ushort)Items.StoneBasalt: return (ushort)BlockId.StoneBasalt;
-                case (ushort)Items.StoneDiorit: return (ushort)BlockId.StoneDiorit;
-                case (ushort)Items.StoneDolomite: return (ushort)BlockId.StoneDolomite;
-                case (ushort)Items.StoneGabbro: return (ushort)BlockId.StoneGabbro;
-                case (ushort)Items.StoneGneiss: return (ushort)BlockId.StoneGneiss;
-                case (ushort)Items.StoneLimestone: return (ushort)BlockId.StoneLimestone;
-                case (ushort)Items.StoneRhyolite: return (ushort)BlockId.StoneRhyolite;
-                case (ushort)Items.StoneSandstone: return (ushort)BlockId.StoneSandstone;
-                case (ushort)Items.StoneSchist: return (ushort)BlockId.StoneSchist;
-
+                (ushort)Items.StoneBasalt => (ushort)BlockId.StoneBasalt,
+                (ushort)Items.StoneDiorit => (ushort)BlockId.StoneDiorit,
+                (ushort)Items.StoneDolomite => (ushort)BlockId.StoneDolomite,
+                (ushort)Items.StoneGabbro => (ushort)BlockId.StoneGabbro,
+                (ushort)Items.StoneGneiss => (ushort)BlockId.StoneGneiss,
+                (ushort)Items.StoneLimestone => (ushort)BlockId.StoneLimestone,
+                (ushort)Items.StoneRhyolite => (ushort)BlockId.StoneRhyolite,
+                (ushort)Items.StoneSandstone => (ushort)BlockId.StoneSandstone,
+                (ushort)Items.StoneSchist => (ushort)BlockId.StoneSchist,
                 // Ore
-                case (ushort)Items.OreAluminium: return (ushort)BlockId.OreAluminium;
-                case (ushort)Items.OreCopper: return (ushort)BlockId.OreCopper;
-                case (ushort)Items.OreGold: return (ushort)BlockId.OreGold;
-                case (ushort)Items.OreIron: return (ushort)BlockId.OreIron;
-                case (ushort)Items.OreSilver: return (ushort)BlockId.OreSilver;
-                case (ushort)Items.OreTin: return (ushort)BlockId.OreTin;
-                case (ushort)Items.OreCoal: return (ushort)BlockId.OreCoal;
-                case (ushort)Items.OreSulfur: return (ushort)BlockId.OreSulfur;
-                case (ushort)Items.OreSaltpeter: return (ushort)BlockId.OreSaltpeter;
-
+                (ushort)Items.OreAluminium => (ushort)BlockId.OreAluminium,
+                (ushort)Items.OreCopper => (ushort)BlockId.OreCopper,
+                (ushort)Items.OreGold => (ushort)BlockId.OreGold,
+                (ushort)Items.OreIron => (ushort)BlockId.OreIron,
+                (ushort)Items.OreSilver => (ushort)BlockId.OreSilver,
+                (ushort)Items.OreTin => (ushort)BlockId.OreTin,
+                (ushort)Items.OreCoal => (ushort)BlockId.OreCoal,
+                (ushort)Items.OreSulfur => (ushort)BlockId.OreSulfur,
+                (ushort)Items.OreSaltpeter => (ushort)BlockId.OreSaltpeter,
                 // Blocks
-                case (ushort)Items.Dirt: return (ushort)BlockId.Dirt;
-                case (ushort)Items.Gravel: return (ushort)BlockId.Gravel;
-                case (ushort)Items.Stonerubble: return (ushort)BlockId.Cobblestone;
-                case (ushort)Items.Sand: return (ushort)BlockId.Sand;
-                case (ushort)Items.Ice: return (ushort)BlockId.Ice;
-                case (ushort)Items.Compost: return (ushort)BlockId.Compost;
-
+                (ushort)Items.Dirt => (ushort)BlockId.Dirt,
+                (ushort)Items.Gravel => (ushort)BlockId.Gravel,
+                (ushort)Items.Stonerubble => (ushort)BlockId.Cobblestone,
+                (ushort)Items.Sand => (ushort)BlockId.Sand,
+                (ushort)Items.Ice => (ushort)BlockId.Ice,
+                (ushort)Items.Compost => (ushort)BlockId.Compost,
                 // Grass
-                case (ushort)Items.GrassBlockDesert: return (ushort)BlockId.GrassBlockDesert;
-                case (ushort)Items.GrassBlockForest: return (ushort)BlockId.GrassBlockForest;
-                case (ushort)Items.GrassBlockHills: return (ushort)BlockId.GrassBlockHills;
-                case (ushort)Items.GrassBlockJungle: return (ushort)BlockId.GrassBlockJungle;
-                case (ushort)Items.GrassBlockPlains: return (ushort)BlockId.GrassBlockPlains;
-                case (ushort)Items.GrassBlockCompost: return (ushort)BlockId.GrassBlockCompost;
-
+                (ushort)Items.GrassBlockDesert => (ushort)BlockId.GrassBlockDesert,
+                (ushort)Items.GrassBlockForest => (ushort)BlockId.GrassBlockForest,
+                (ushort)Items.GrassBlockHills => (ushort)BlockId.GrassBlockHills,
+                (ushort)Items.GrassBlockJungle => (ushort)BlockId.GrassBlockJungle,
+                (ushort)Items.GrassBlockPlains => (ushort)BlockId.GrassBlockPlains,
+                (ushort)Items.GrassBlockCompost => (ushort)BlockId.GrassBlockCompost,
                 // Artifical
-                case (ushort)Items.Roof1: return (ushort)BlockId.Roof1;
-                case (ushort)Items.Roof2: return (ushort)BlockId.Roof2;
-                case (ushort)Items.Bricks: return (ushort)BlockId.Bricks;
-
-                case (ushort)Items.Door: return (ushort)BlockId.DoorClose;
-                case (ushort)Items.Planks: return (ushort)BlockId.Planks;
-
-                case (ushort)Items.AdvancedSpaceBlock: return (ushort)BlockId.AdvancedSpaceBlock;
-                case (ushort)Items.AdvancedSpaceFloor: return (ushort)BlockId.AdvancedSpaceFloor;
-                case (ushort)Items.AdvancedSpacePart1: return (ushort)BlockId.AdvancedSpacePart1;
-                case (ushort)Items.AdvancedSpacePart2: return (ushort)BlockId.AdvancedSpacePart2;
-                case (ushort)Items.AdvancedSpacePart3: return (ushort)BlockId.AdvancedSpacePart3;
-                case (ushort)Items.AdvancedSpacePart4: return (ushort)BlockId.AdvancedSpacePart4;
-
-                case (ushort)Items.Snow: return (ushort)BlockId.Snow;
-
-            }
-
-            return (ushort)BlockId.None;
+                (ushort)Items.Roof1 => (ushort)BlockId.Roof1,
+                (ushort)Items.Roof2 => (ushort)BlockId.Roof2,
+                (ushort)Items.Bricks => (ushort)BlockId.Bricks,
+                (ushort)Items.Door => (ushort)BlockId.DoorClose,
+                (ushort)Items.Planks => (ushort)BlockId.Planks,
+                (ushort)Items.AdvancedSpaceBlock => (ushort)BlockId.AdvancedSpaceBlock,
+                (ushort)Items.AdvancedSpaceFloor => (ushort)BlockId.AdvancedSpaceFloor,
+                (ushort)Items.AdvancedSpacePart1 => (ushort)BlockId.AdvancedSpacePart1,
+                (ushort)Items.AdvancedSpacePart2 => (ushort)BlockId.AdvancedSpacePart2,
+                (ushort)Items.AdvancedSpacePart3 => (ushort)BlockId.AdvancedSpacePart3,
+                (ushort)Items.AdvancedSpacePart4 => (ushort)BlockId.AdvancedSpacePart4,
+                (ushort)Items.Snow => (ushort)BlockId.Snow,
+                _ => (ushort)BlockId.None,
+            };
         }
 
         public static ushort TopBlockFromItem(ushort item) {
-            switch (item) {
-                case (ushort)Items.ChristmasStar: return (ushort)BlockId.ChristmasStar;
-
-                case (ushort)Items.Egg: return (ushort)BlockId.EggDrop;
-                case (ushort)Items.BucketForRubber: return (ushort)BlockId.BucketForRubber;
-                case (ushort)Items.Shelf: return (ushort)BlockId.Shelf;
-                case (ushort)Items.Barrel: return (ushort)BlockId.Barrel;
-                case (ushort)Items.BoxWooden: return (ushort)BlockId.BoxWooden;
-                case (ushort)Items.BoxAdv: return (ushort)BlockId.BoxAdv;
-                case (ushort)Items.OxygenMachine: return (ushort)BlockId.OxygenMachine;
-
+            return item switch {
+                (ushort)Items.ChristmasStar => (ushort)BlockId.ChristmasStar,
+                (ushort)Items.Egg => (ushort)BlockId.EggDrop,
+                (ushort)Items.BucketForRubber => (ushort)BlockId.BucketForRubber,
+                (ushort)Items.Shelf => (ushort)BlockId.Shelf,
+                (ushort)Items.Barrel => (ushort)BlockId.Barrel,
+                (ushort)Items.BoxWooden => (ushort)BlockId.BoxWooden,
+                (ushort)Items.BoxAdv => (ushort)BlockId.BoxAdv,
+                (ushort)Items.OxygenMachine => (ushort)BlockId.OxygenMachine,
                 // Leaves
-                case (ushort)Items.AppleLeaves: return (ushort)BlockId.AppleLeaves;
-                case (ushort)Items.LemonLeavesWithLemons: return (ushort)BlockId.LemonLeavesWithLemons;
-                case (ushort)Items.LindenLeaves: return (ushort)BlockId.LindenLeaves;
-                case (ushort)Items.OakLeaves: return (ushort)BlockId.OakLeaves;
-                case (ushort)Items.OrangeLeaves: return (ushort)BlockId.OrangeLeaves;
-                case (ushort)Items.SpruceLeaves: return (ushort)BlockId.SpruceLeaves;
-                case (ushort)Items.PlumLeavesWithPlums: return (ushort)BlockId.PlumLeavesWithPlums;
-                case (ushort)Items.PlumLeaves: return (ushort)BlockId.PlumLeaves;
-                case (ushort)Items.PineLeaves: return (ushort)BlockId.PineLeaves;
-                case (ushort)Items.OrangeLeavesWithOranges: return (ushort)BlockId.OrangeLeavesWithOranges;
-                case (ushort)Items.AppleLeavesWithApples: return (ushort)BlockId.AppleLeavesWithApples;
-                case (ushort)Items.CherryLeaves: return (ushort)BlockId.CherryLeaves;
-                case (ushort)Items.CherryLeavesWithCherries: return (ushort)BlockId.CherryLeavesWithCherries;
-                case (ushort)Items.LemonLeaves: return (ushort)BlockId.LemonLeaves;
-
-                case (ushort)Items.WillowLeaves: return (ushort)BlockId.WillowLeaves;
-                case (ushort)Items.WillowWood: return (ushort)BlockId.WillowWood;
-                case (ushort)Items.MangroveLeaves: return (ushort)BlockId.MangroveLeaves;
-                case (ushort)Items.MangroveWood: return (ushort)BlockId.MangroveWood;
-                case (ushort)Items.EucalyptusLeaves: return (ushort)BlockId.EucalyptusLeaves;
-                case (ushort)Items.EucalyptusWood: return (ushort)BlockId.EucalyptusWood;
-                case (ushort)Items.OliveLeavesWithOlives: return (ushort)BlockId.OliveLeavesWithOlives;
-                case (ushort)Items.OliveLeaves: return (ushort)BlockId.OliveLeaves;
-                case (ushort)Items.OliveWood: return (ushort)BlockId.OliveWood;
-                case (ushort)Items.RubberTreeLeaves: return (ushort)BlockId.RubberTreeLeaves;
-                case (ushort)Items.RubberTreeWood: return (ushort)BlockId.RubberTreeWood;
-                case (ushort)Items.AcaciaLeaves: return (ushort)BlockId.AcaciaLeaves;
-                case (ushort)Items.AcaciaWood: return (ushort)BlockId.AcaciaWood;
-                case (ushort)Items.KapokLeacesFlowering: return (ushort)BlockId.KapokLeacesFlowering;
-                case (ushort)Items.KapokLeavesFibre: return (ushort)BlockId.KapokLeacesFibre;
-                case (ushort)Items.KapokLeaves: return (ushort)BlockId.KapokLeaves;
-                case (ushort)Items.KapokWood: return (ushort)BlockId.KapokWood;
-                case (ushort)Items.WillowSapling: return (ushort)BlockId.WillowSapling;
-                case (ushort)Items.MangroveSapling: return (ushort)BlockId.MangroveSapling;
-                case (ushort)Items.EucalyptusSapling: return (ushort)BlockId.EucalyptusSapling;
-                case (ushort)Items.OliveSapling: return (ushort)BlockId.OliveSapling;
-                case (ushort)Items.RubberTreeSapling: return (ushort)BlockId.RubberTreeSapling;
-                case (ushort)Items.AcaciaSapling: return (ushort)BlockId.AcaciaSapling;
-                case (ushort)Items.KapokSapling: return (ushort)BlockId.KapokSapling;
-
+                (ushort)Items.AppleLeaves => (ushort)BlockId.AppleLeaves,
+                (ushort)Items.LemonLeavesWithLemons => (ushort)BlockId.LemonLeavesWithLemons,
+                (ushort)Items.LindenLeaves => (ushort)BlockId.LindenLeaves,
+                (ushort)Items.OakLeaves => (ushort)BlockId.OakLeaves,
+                (ushort)Items.OrangeLeaves => (ushort)BlockId.OrangeLeaves,
+                (ushort)Items.SpruceLeaves => (ushort)BlockId.SpruceLeaves,
+                (ushort)Items.PlumLeavesWithPlums => (ushort)BlockId.PlumLeavesWithPlums,
+                (ushort)Items.PlumLeaves => (ushort)BlockId.PlumLeaves,
+                (ushort)Items.PineLeaves => (ushort)BlockId.PineLeaves,
+                (ushort)Items.OrangeLeavesWithOranges => (ushort)BlockId.OrangeLeavesWithOranges,
+                (ushort)Items.AppleLeavesWithApples => (ushort)BlockId.AppleLeavesWithApples,
+                (ushort)Items.CherryLeaves => (ushort)BlockId.CherryLeaves,
+                (ushort)Items.CherryLeavesWithCherries => (ushort)BlockId.CherryLeavesWithCherries,
+                (ushort)Items.LemonLeaves => (ushort)BlockId.LemonLeaves,
+                (ushort)Items.WillowLeaves => (ushort)BlockId.WillowLeaves,
+                (ushort)Items.WillowWood => (ushort)BlockId.WillowWood,
+                (ushort)Items.MangroveLeaves => (ushort)BlockId.MangroveLeaves,
+                (ushort)Items.MangroveWood => (ushort)BlockId.MangroveWood,
+                (ushort)Items.EucalyptusLeaves => (ushort)BlockId.EucalyptusLeaves,
+                (ushort)Items.EucalyptusWood => (ushort)BlockId.EucalyptusWood,
+                (ushort)Items.OliveLeavesWithOlives => (ushort)BlockId.OliveLeavesWithOlives,
+                (ushort)Items.OliveLeaves => (ushort)BlockId.OliveLeaves,
+                (ushort)Items.OliveWood => (ushort)BlockId.OliveWood,
+                (ushort)Items.RubberTreeLeaves => (ushort)BlockId.RubberTreeLeaves,
+                (ushort)Items.RubberTreeWood => (ushort)BlockId.RubberTreeWood,
+                (ushort)Items.AcaciaLeaves => (ushort)BlockId.AcaciaLeaves,
+                (ushort)Items.AcaciaWood => (ushort)BlockId.AcaciaWood,
+                (ushort)Items.KapokLeacesFlowering => (ushort)BlockId.KapokLeacesFlowering,
+                (ushort)Items.KapokLeavesFibre => (ushort)BlockId.KapokLeacesFibre,
+                (ushort)Items.KapokLeaves => (ushort)BlockId.KapokLeaves,
+                (ushort)Items.KapokWood => (ushort)BlockId.KapokWood,
+                (ushort)Items.WillowSapling => (ushort)BlockId.WillowSapling,
+                (ushort)Items.MangroveSapling => (ushort)BlockId.MangroveSapling,
+                (ushort)Items.EucalyptusSapling => (ushort)BlockId.EucalyptusSapling,
+                (ushort)Items.OliveSapling => (ushort)BlockId.OliveSapling,
+                (ushort)Items.RubberTreeSapling => (ushort)BlockId.RubberTreeSapling,
+                (ushort)Items.AcaciaSapling => (ushort)BlockId.AcaciaSapling,
+                (ushort)Items.KapokSapling => (ushort)BlockId.KapokSapling,
                 // Blocks
-                case (ushort)Items.SnowTop: return (ushort)BlockId.SnowTop;
-                case (ushort)Items.Glass: return (ushort)BlockId.Glass;
-                case (ushort)Items.Oil: return (ushort)BlockId.Oil;
-                case (ushort)Items.BucketWater: return (ushort)BlockId.WaterBlock;
-                case (ushort)Items.Stick: return (ushort)BlockId.BranchWithout;
-
+                (ushort)Items.SnowTop => (ushort)BlockId.SnowTop,
+                (ushort)Items.Glass => (ushort)BlockId.Glass,
+                (ushort)Items.Oil => (ushort)BlockId.Oil,
+                (ushort)Items.BucketWater => (ushort)BlockId.WaterBlock,
+                (ushort)Items.Stick => (ushort)BlockId.BranchWithout,
                 // Saplings
-                case (ushort)Items.AppleSapling: return (ushort)BlockId.AppleSapling;
-                case (ushort)Items.OrangeSapling: return (ushort)BlockId.OrangeSapling;
-                case (ushort)Items.PineSapling: return (ushort)BlockId.PineSapling;
-                case (ushort)Items.CherrySapling: return (ushort)BlockId.CherrySapling;
-                case (ushort)Items.PlumSapling: return (ushort)BlockId.PlumSapling;
-                case (ushort)Items.LemonSapling: return (ushort)BlockId.LemonSapling;
-
-                case (ushort)Items.OakSapling: return (ushort)BlockId.OakSapling;
-                case (ushort)Items.SpruceSapling: return (ushort)BlockId.SpruceSapling;
-                case (ushort)Items.LindenSapling: return (ushort)BlockId.LindenSapling;
-
+                (ushort)Items.AppleSapling => (ushort)BlockId.AppleSapling,
+                (ushort)Items.OrangeSapling => (ushort)BlockId.OrangeSapling,
+                (ushort)Items.PineSapling => (ushort)BlockId.PineSapling,
+                (ushort)Items.CherrySapling => (ushort)BlockId.CherrySapling,
+                (ushort)Items.PlumSapling => (ushort)BlockId.PlumSapling,
+                (ushort)Items.LemonSapling => (ushort)BlockId.LemonSapling,
+                (ushort)Items.OakSapling => (ushort)BlockId.OakSapling,
+                (ushort)Items.SpruceSapling => (ushort)BlockId.SpruceSapling,
+                (ushort)Items.LindenSapling => (ushort)BlockId.LindenSapling,
                 // Flowers
-                case (ushort)Items.Alore: return (ushort)BlockId.Alore;
-                case (ushort)Items.PlantRose: return (ushort)BlockId.Rose;
-                case (ushort)Items.PlantViolet: return (ushort)BlockId.Violet;
-                case (ushort)Items.Dandelion: return (ushort)BlockId.Dandelion;
-                case (ushort)Items.PlantOrchid: return (ushort)BlockId.Orchid;
-                case (ushort)Items.CactusBig: return (ushort)BlockId.CactusBig;
-                case (ushort)Items.CactusSmall: return (ushort)BlockId.CactusSmall;
-
+                (ushort)Items.Alore => (ushort)BlockId.Alore,
+                (ushort)Items.PlantRose => (ushort)BlockId.Rose,
+                (ushort)Items.PlantViolet => (ushort)BlockId.Violet,
+                (ushort)Items.Dandelion => (ushort)BlockId.Dandelion,
+                (ushort)Items.PlantOrchid => (ushort)BlockId.Orchid,
+                (ushort)Items.CactusBig => (ushort)BlockId.CactusBig,
+                (ushort)Items.CactusSmall => (ushort)BlockId.CactusSmall,
                 // Grass
-                case (ushort)Items.GrassDesert: return (ushort)BlockId.GrassDesert;
-                case (ushort)Items.GrassForest: return (ushort)BlockId.GrassForest;
-                case (ushort)Items.GrassHills: return (ushort)BlockId.GrassHills;
-                case (ushort)Items.GrassJungle: return (ushort)BlockId.GrassJungle;
-                case (ushort)Items.GrassPlains: return (ushort)BlockId.GrassPlains;
-
+                (ushort)Items.GrassDesert => (ushort)BlockId.GrassDesert,
+                (ushort)Items.GrassForest => (ushort)BlockId.GrassForest,
+                (ushort)Items.GrassHills => (ushort)BlockId.GrassHills,
+                (ushort)Items.GrassJungle => (ushort)BlockId.GrassJungle,
+                (ushort)Items.GrassPlains => (ushort)BlockId.GrassPlains,
                 // Artifical Blocks
-                case (ushort)Items.Door: return (ushort)BlockId.DoorOpen;
-
+                (ushort)Items.Door => (ushort)BlockId.DoorOpen,
                 // Mechanical
-                case (ushort)Items.Desk: return (ushort)BlockId.Desk;
-                case (ushort)Items.Flag: return (ushort)BlockId.Flag;
-                case (ushort)Items.Ladder: return (ushort)BlockId.Ladder;
-                case (ushort)Items.TorchON: return (ushort)BlockId.BurningTorch;
-
+                (ushort)Items.Desk => (ushort)BlockId.Desk,
+                (ushort)Items.Flag => (ushort)BlockId.Flag,
+                (ushort)Items.Ladder => (ushort)BlockId.Ladder,
+                (ushort)Items.TorchON => (ushort)BlockId.BurningTorch,
                 // Electrical
-                case (ushort)Items.Lamp: return (ushort)BlockId.Lamp;
-                case (ushort)Items.Radio: return (ushort)BlockId.Radio;
-                case (ushort)Items.WindMill: return (ushort)BlockId.Windmill;
-                case (ushort)Items.Label: return (ushort)BlockId.Label;
-                case (ushort)Items.Rocket: return (ushort)BlockId.Rocket;
-                case (ushort)Items.SewingMachine: return (ushort)BlockId.SewingMachine;
-
-                case (ushort)Items.FurnaceElectric: return (ushort)BlockId.FurnaceElectric;
-                case (ushort)Items.Macerator: return (ushort)BlockId.Macerator;
-                case (ushort)Items.WaterMill: return (ushort)BlockId.Watermill;
-                case (ushort)Items.SolarPanel: return (ushort)BlockId.SolarPanel;
-                case (ushort)Items.Miner: return (ushort)BlockId.Miner;
-                case (ushort)Items.Charger: return (ushort)BlockId.Charger;
-                case (ushort)Items.FurnaceStone: return (ushort)BlockId.FurnaceStone;
-                case (ushort)Items.Composter: return (ushort)BlockId.Composter;
-            }
-
-            return (ushort)BlockId.None;
+                (ushort)Items.Lamp => (ushort)BlockId.Lamp,
+                (ushort)Items.Radio => (ushort)BlockId.Radio,
+                (ushort)Items.WindMill => (ushort)BlockId.Windmill,
+                (ushort)Items.Label => (ushort)BlockId.Label,
+                (ushort)Items.Rocket => (ushort)BlockId.Rocket,
+                (ushort)Items.SewingMachine => (ushort)BlockId.SewingMachine,
+                (ushort)Items.FurnaceElectric => (ushort)BlockId.FurnaceElectric,
+                (ushort)Items.Macerator => (ushort)BlockId.Macerator,
+                (ushort)Items.WaterMill => (ushort)BlockId.Watermill,
+                (ushort)Items.SolarPanel => (ushort)BlockId.SolarPanel,
+                (ushort)Items.Miner => (ushort)BlockId.Miner,
+                (ushort)Items.Charger => (ushort)BlockId.Charger,
+                (ushort)Items.FurnaceStone => (ushort)BlockId.FurnaceStone,
+                (ushort)Items.Composter => (ushort)BlockId.Composter,
+                _ => (ushort)BlockId.None,
+            };
         }
 
         public static ushort PlantFromItem(ushort item) {
-            switch (item) {
-                case (ushort)Items.Strawberry: return (ushort)BlockId.Strawberry;
-                case (ushort)Items.PlantBlueberry: return (ushort)BlockId.Blueberry;
-                case (ushort)Items.PlantRashberry: return (ushort)BlockId.Rashberry;
-
-                case (ushort)Items.PlantOnion: return (ushort)BlockId.Onion;
-                case (ushort)Items.PlantPeas: return (ushort)BlockId.Peas;
-                case (ushort)Items.PlantCarrot: return (ushort)BlockId.Carrot;
-                case (ushort)Items.Peas: return (ushort)BlockId.Peas;
-                case (ushort)Items.Carrot: return (ushort)BlockId.Carrot;
-                case (ushort)Items.Onion: return (ushort)BlockId.Onion;
-            }
-
-            return (ushort)BlockId.None;
+            return item switch {
+                (ushort)Items.Strawberry => (ushort)BlockId.Strawberry,
+                (ushort)Items.PlantBlueberry => (ushort)BlockId.Blueberry,
+                (ushort)Items.PlantRashberry => (ushort)BlockId.Rashberry,
+                (ushort)Items.PlantOnion => (ushort)BlockId.Onion,
+                (ushort)Items.PlantPeas => (ushort)BlockId.Peas,
+                (ushort)Items.PlantCarrot => (ushort)BlockId.Carrot,
+                (ushort)Items.Peas => (ushort)BlockId.Peas,
+                (ushort)Items.Carrot => (ushort)BlockId.Carrot,
+                (ushort)Items.Onion => (ushort)BlockId.Onion,
+                _ => (ushort)BlockId.None,
+            };
         }
 
         public static ushort MobFromItem(ushort item) {
-            switch (item) {
-                case (ushort)Items.AnimalRabbit: return (ushort)BlockId.Rabbit;
-                case (ushort)Items.AnimalChicken: return (ushort)BlockId.Chicken;
-                case (ushort)Items.AnimalFish: return (ushort)BlockId.Fish;
-                case (ushort)Items.AnimalParrot: return (ushort)BlockId.MobParrot;
-            }
-
-            return (ushort)BlockId.None;
+            return item switch {
+                (ushort)Items.AnimalRabbit => (ushort)BlockId.Rabbit,
+                (ushort)Items.AnimalChicken => (ushort)BlockId.Chicken,
+                (ushort)Items.AnimalFish => (ushort)BlockId.Fish,
+                (ushort)Items.AnimalParrot => (ushort)BlockId.MobParrot,
+                _ => (ushort)BlockId.None,
+            };
         }
         #endregion
 
@@ -1465,75 +1406,71 @@ namespace rabcrClient {
             return true;
         }
 
-        public static bool IsBlockOnGrowing(ushort id) { 
-            switch (id){
-                case (ushort)BlockId.Dirt: return true;
-				case (ushort)BlockId.Compost: return true;
-				case (ushort)BlockId.Clay: return true;
-
-				case (ushort)BlockId.GrassBlockPlains: return true;
-				case (ushort)BlockId.GrassBlockHills: return true;
-				case (ushort)BlockId.GrassBlockJungle: return true;
-				case (ushort)BlockId.GrassBlockDesert: return true;
-				case (ushort)BlockId.GrassBlockForest: return true;
-				case (ushort)BlockId.GrassBlockClay: return true;
-				case (ushort)BlockId.GrassBlockCompost: return true;
-
-				case (ushort)BlockId.GrassBlockSnowPlains: return true;
-				case (ushort)BlockId.GrassBlockSnowHills: return true;
-				case (ushort)BlockId.GrassBlockSnowJungle: return true;
-				case (ushort)BlockId.GrassBlockSnowDesert: return true;
-				case (ushort)BlockId.GrassBlockSnowForest: return true;
-				case (ushort)BlockId.GrassBlockSnowClay: return true;
-				case (ushort)BlockId.GrassBlockSnowCompost: return true;
-                
-                default: return false;
-            }
+        public static bool IsBlockOnGrowing(ushort id) {
+            return id switch {
+                (ushort)BlockId.Dirt => true,
+                (ushort)BlockId.Compost => true,
+                (ushort)BlockId.Clay => true,
+                (ushort)BlockId.GrassBlockPlains => true,
+                (ushort)BlockId.GrassBlockHills => true,
+                (ushort)BlockId.GrassBlockJungle => true,
+                (ushort)BlockId.GrassBlockDesert => true,
+                (ushort)BlockId.GrassBlockForest => true,
+                (ushort)BlockId.GrassBlockClay => true,
+                (ushort)BlockId.GrassBlockCompost => true,
+                (ushort)BlockId.GrassBlockSnowPlains => true,
+                (ushort)BlockId.GrassBlockSnowHills => true,
+                (ushort)BlockId.GrassBlockSnowJungle => true,
+                (ushort)BlockId.GrassBlockSnowDesert => true,
+                (ushort)BlockId.GrassBlockSnowForest => true,
+                (ushort)BlockId.GrassBlockSnowClay => true,
+                (ushort)BlockId.GrassBlockSnowCompost => true,
+                _ => false,
+            };
         }
 
         public static bool IsDirtPlaceable(ushort id) {
-             switch (id) {
-                case (ushort)BlockId.OakSapling: return true;
-                case (ushort)BlockId.OrangeSapling: return true;
-                case (ushort)BlockId.PineSapling: return true;
-                case (ushort)BlockId.PlumSapling: return true;
-                case (ushort)BlockId.SpruceSapling: return true;
-                case (ushort)BlockId.AppleSapling: return true;
-                case (ushort)BlockId.CherrySapling: return true;
-                case (ushort)BlockId.LemonSapling: return true;
-                case (ushort)BlockId.LindenSapling: return true;
-                case (ushort)BlockId.AcaciaSapling: return true;
-                case (ushort)BlockId.EucalyptusSapling: return true;
-                case (ushort)BlockId.KapokSapling: return true;
-                case (ushort)BlockId.MangroveSapling: return true;
-                case (ushort)BlockId.OliveSapling: return true;
-                case (ushort)BlockId.RubberTreeSapling: return true;
-                case (ushort)BlockId.WillowSapling: return true;
-                case (ushort)BlockId.Rose: return true;
-                case (ushort)BlockId.Dandelion: return true;
-                case (ushort)BlockId.Heather: return true;
-                case (ushort)BlockId.Orchid: return true;
-                case (ushort)BlockId.Violet: return true;
-                case (ushort)BlockId.Alore: return true;
-                case (ushort)BlockId.Boletus: return true;
-                case (ushort)BlockId.BranchFull: return true;
-                case (ushort)BlockId.Champignon: return true;
-                case (ushort)BlockId.GrassDesert: return true;
-                case (ushort)BlockId.GrassForest: return true;
-                case (ushort)BlockId.GrassHills: return true;
-                case (ushort)BlockId.GrassJungle: return true;
-                case (ushort)BlockId.GrassPlains: return true;
-                case (ushort)BlockId.Toadstool: return true;
-                case (ushort)BlockId.EggDrop: return true;
-                case (ushort)BlockId.Rocks: return true;
-            }
-            return false;
+            return id switch {
+                (ushort)BlockId.OakSapling => true,
+                (ushort)BlockId.OrangeSapling => true,
+                (ushort)BlockId.PineSapling => true,
+                (ushort)BlockId.PlumSapling => true,
+                (ushort)BlockId.SpruceSapling => true,
+                (ushort)BlockId.AppleSapling => true,
+                (ushort)BlockId.CherrySapling => true,
+                (ushort)BlockId.LemonSapling => true,
+                (ushort)BlockId.LindenSapling => true,
+                (ushort)BlockId.AcaciaSapling => true,
+                (ushort)BlockId.EucalyptusSapling => true,
+                (ushort)BlockId.KapokSapling => true,
+                (ushort)BlockId.MangroveSapling => true,
+                (ushort)BlockId.OliveSapling => true,
+                (ushort)BlockId.RubberTreeSapling => true,
+                (ushort)BlockId.WillowSapling => true,
+                (ushort)BlockId.Rose => true,
+                (ushort)BlockId.Dandelion => true,
+                (ushort)BlockId.Heather => true,
+                (ushort)BlockId.Orchid => true,
+                (ushort)BlockId.Violet => true,
+                (ushort)BlockId.Alore => true,
+                (ushort)BlockId.Boletus => true,
+                (ushort)BlockId.BranchFull => true,
+                (ushort)BlockId.Champignon => true,
+                (ushort)BlockId.GrassDesert => true,
+                (ushort)BlockId.GrassForest => true,
+                (ushort)BlockId.GrassHills => true,
+                (ushort)BlockId.GrassJungle => true,
+                (ushort)BlockId.GrassPlains => true,
+                (ushort)BlockId.Toadstool => true,
+                (ushort)BlockId.EggDrop => true,
+                (ushort)BlockId.Rocks => true,
+                _ => false,
+            };
         }
 
         public static CraftingRecipe[] Craft(ushort id) {
-            switch (id) { 
-                case (ushort)Items.AngelHair:
-                    return new CraftingRecipe[] {
+            return id switch {
+                (ushort)Items.AngelHair => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateGold, 1)),
@@ -1541,9 +1478,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AngelHair,2)
                         ),
-                    };
-                case (ushort)Items.MediumStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.MediumStone => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone, 1)),
@@ -1557,10 +1493,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.MediumStone, 3)
                         ),
-                    };
-
-                case (ushort)Items.SmallStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SmallStone => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.MediumStone, 1)),
@@ -1581,10 +1515,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SmallStone, 3)
                         ),
-                    };
-
-                case (ushort)Items.HammerCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CopperIngot,1)),
@@ -1593,10 +1525,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HammerCopper)
                         )
-                    };
-
-                case (ushort)Items.HammerAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1)),
@@ -1605,10 +1535,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HammerAluminium)
                         )
-                    };
-                    
-                case (ushort)Items.HammerSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.SteelIngot,1)),
@@ -1617,10 +1545,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HammerSteel)
                         )
-                    };
-
-                case (ushort)Items.ShearsSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShearsHeadSteel,1)),
@@ -1628,10 +1554,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsSteel)
                         )
-                    };
-                    
-                case (ushort)Items.ShovelBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelBronze => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadBronze,1)),
@@ -1639,10 +1563,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelBronze)
                         )
-                    };
-
-                case (ushort)Items.DyeBrown:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeBrown => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlack)),
@@ -1650,10 +1572,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeBrown)
                         )
-                    };
-                    
-                case (ushort)Items.DyeMagenta:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeMagenta => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlue)),
@@ -1661,10 +1581,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeMagenta)
                         )
-                    };
-                    
-                case (ushort)Items.DyeOrange:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeOrange => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeYellow)),
@@ -1672,10 +1590,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeOrange)
                         )
-                    };
-
-                case (ushort)Items.DyeTeal:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeTeal => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlue)),
@@ -1683,10 +1599,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeTeal)
                         )
-                    };
-
-                case (ushort)Items.DyeArmy:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeArmy => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBrown)),
@@ -1695,10 +1609,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeArmy)
                         )
-                    };
-
-                case (ushort)Items.DyeRoseQuartz:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeRoseQuartz => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeWhite)),
@@ -1706,10 +1618,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeRoseQuartz)
                         )
-                    };
-
-                case (ushort)Items.DyePink:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyePink => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeWhite)),
@@ -1717,10 +1627,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyePink)
                         )
-                    };
-
-                case (ushort)Items.DyeLightBlue:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeLightBlue => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeWhite)),
@@ -1728,10 +1636,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeLightBlue)
                         )
-                    };
-
-                case (ushort)Items.DyeLightGreen:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeLightGreen => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeWhite)),
@@ -1739,10 +1645,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeLightGreen)
                         )
-                    };
-
-                case (ushort)Items.DyeDarkGreen:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeDarkGreen => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlack)),
@@ -1750,10 +1654,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeDarkGreen)
                         )
-                    };
-
-                case (ushort)Items.DyeDarkBlue:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeDarkBlue => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlack)),
@@ -1761,10 +1663,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeDarkBlue)
                         )
-                    };
-
-                case (ushort)Items.DyeDarkRed:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeDarkRed => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.DyeBlack)),
@@ -1772,10 +1672,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.DyeDarkRed)
                         )
-                    };
-
-                case (ushort)Items.OxygenMachine:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.OxygenMachine => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Charger,1)),
@@ -1792,10 +1690,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.OxygenMachine,1)
                         )
-                    };
-
-                case (ushort)Items.AirTank:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AirTank => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -1806,10 +1702,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AirTank,1)
                         )
-                    };
-
-                case (ushort)Items.AirTank2:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AirTank2 => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,2)),
@@ -1820,10 +1714,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AirTank2,1)
                         )
-                    };
-
-                case (ushort)Items.Gun:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Gun => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -1834,10 +1726,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Gun,1)
                         )
-                    };
-
-                case (ushort)Items.Ammo:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Ammo => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper,2)),
@@ -1847,10 +1737,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Ammo,5)
                         )
-                    };
-
-                case (ushort)Items.Gunpowder:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Gunpowder => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Saltpeter, 5)),
@@ -1859,10 +1747,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Gunpowder,7)
                         )
-                    };
-
-                 case (ushort)Items.BucketForRubber:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BucketForRubber => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bucket,1)),
@@ -1870,10 +1756,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BucketForRubber,1)
                         )
-                    };
-
-                case (ushort)Items.HoeBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeBronze => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HoeHeadBronze,1)),
@@ -1881,10 +1765,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeBronze)
                         )
-                    };
-
-                case (ushort)Items.HoeCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HoeHeadCopper, 1)),
@@ -1892,10 +1774,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeCopper)
                         )
-                    };
-
-                case (ushort)Items.HoeIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeIron => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HoeHeadIron, 1)),
@@ -1903,10 +1783,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeIron)
                         )
-                    };
-
-                case (ushort)Items.HoeGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeGold => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HoeHeadGold, 1)),
@@ -1914,10 +1792,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeGold)
                         )
-                    };
-
-                case (ushort)Items.HoeAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HoeHeadAluminium, 1)),
@@ -1925,10 +1801,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeAluminium)
                         )
-                    };
-
-                case (ushort)Items.Composter:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Composter => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks,4)),
@@ -1939,10 +1813,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BowlEmpty,1)
                         )
-                    };
-
-                case (ushort)Items.BowlEmpty:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BowlEmpty => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks,1)),
@@ -1950,10 +1822,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BowlEmpty,1)
                         )
-                    };
-
-                case (ushort)Items.TorchOFF:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TorchOFF => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -1973,10 +1843,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.TorchOFF,1)
                         )
-                    };
-
-                case (ushort)Items.PickaxeIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeIron => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -1984,10 +1852,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeIron)
                         )
-                    };
-
-                case (ushort)Items.PickaxeCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -1995,10 +1861,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeCopper)
                         )
-                    };
-
-                case (ushort)Items.PickaxeGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeGold => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2006,10 +1870,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeGold)
                         )
-                    };
-
-                case (ushort)Items.PickaxeSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2017,10 +1879,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeSteel)
                         )
-                    };
-
-                case (ushort)Items.PickaxeAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2028,10 +1888,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeAluminium)
                         )
-                    };
-
-                case (ushort)Items.PickaxeBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeBronze => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2039,10 +1897,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeCopper)
                         )
-                    };
-
-                case (ushort)Items.KnifeCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2050,10 +1906,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeCopper)
                         )
-                    };
-
-                case (ushort)Items.KnifeBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeBronze => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2061,10 +1915,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeBronze)
                         )
-                    };
-
-                case (ushort)Items.KnifeGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeGold => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2072,10 +1924,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeGold)
                         )
-                    };
-
-                case (ushort)Items.KnifeSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2083,10 +1933,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeSteel)
                         )
-                    };
-
-                case (ushort)Items.HoeSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2094,10 +1942,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeSteel)
                         )
-                    };
-
-                case (ushort)Items.AxeSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeSteel => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2105,10 +1951,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeSteel)
                         )
-                    };
-
-                case (ushort)Items.AxeBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeBronze => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2116,10 +1960,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeBronze)
                         )
-                    };
-
-                case (ushort)Items.AxeCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2127,10 +1969,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeCopper)
                         )
-                    };
-
-                case (ushort)Items.AxeAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2138,10 +1978,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeAluminium)
                         )
-                    };
-
-                case (ushort)Items.KnifeIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeIron => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2149,10 +1987,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeIron)
                         )
-                    };
-
-                case (ushort)Items.KnifeAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2160,11 +1996,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.KnifeAluminium)
                         )
-                    };
-
-
-                case (ushort)Items.SewingMachine:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SewingMachine => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateIron,1)),
@@ -2174,10 +2007,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SewingMachine, 1)
                         )
-                    };
-
-                case (ushort)Items.Charger:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Charger => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{
@@ -2190,10 +2021,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Charger,1)
                         )
-                  };
-
-                case (ushort)Items.HoeStone:
-                    return new CraftingRecipe[] {
+                  },
+                (ushort)Items.HoeStone => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.StoneHead,1)),
@@ -2201,10 +2030,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HoeStone)
                         )
-                    };
-
-                case (ushort)Items.AxeIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeIron => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AxeHeadIron,1)),
@@ -2212,10 +2039,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeIron)
                         )
-                    };
-
-                case (ushort)Items.TorchElectricON:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TorchElectricON => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bulb,1)),
@@ -2225,10 +2050,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.TorchElectricON)
                         )
-                    };
-
-                case (ushort)Items.ShovelIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelIron => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadIron,1)),
@@ -2236,10 +2059,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelIron)
                         )
-                    };
-
-                case (ushort)Items.ShovelAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelAluminium => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadIron,1)),
@@ -2247,10 +2068,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelAluminium)
                         )
-                    };
-
-                case (ushort)Items.ShovelCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelCopper => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadCopper,1)),
@@ -2258,10 +2077,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelCopper)
                         )
-                    };
-
-                case (ushort)Items.AxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -2269,10 +2086,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AxeHeadIron, 4)
                         )
-                    };
-
-                case (ushort)Items.PickaxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -2280,10 +2095,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.PickaxeHeadIron, 4)
                         )
-                    };
-
-                case (ushort)Items.ShovelHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -2291,11 +2104,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.ShovelHeadIron, 4)
                         )
-                    };
-
-
-                case (ushort)Items.BronzeDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BronzeDust => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CopperDust, 3)),
@@ -2303,10 +2113,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.CopperDust, 4)
                         )
-                    };
-
-                case (ushort)Items.WaterMill:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.WaterMill => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper, 2)),
@@ -2316,16 +2124,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.WaterMill,1)
                         )
-                    };
-
-
-                case (ushort)Items.Stonerubble:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Stonerubble => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SmallStone, 4),new ItemNonInvBasic((ushort)Items.Stonerubble, 4))
-                    };
-
-                case (ushort)Items.Bricks:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Bricks => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.OneBrick, 4)),
@@ -2335,10 +2138,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Bricks,1)
                         )
-                    };
-
-                case (ushort)Items.Leave:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Leave => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn(new ItemNonInvBasic((ushort)Items.Sticks,1)),
                             new CraftingOut[]{
@@ -2355,10 +2156,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Stick, 2))
                             }
                         ),
-                    };
-
-                case (ushort)Items.Ladder:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Ladder => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 10)),
@@ -2366,10 +2165,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Ladder,1)
                         )
-                    };
-
-                case (ushort)Items.Flag:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Flag => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2377,10 +2174,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Flag,1)
                         )
-                    };
-
-                case (ushort)Items.Shelf:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Shelf => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks, 5)),
@@ -2389,10 +2184,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Shelf,1)
                         )
-                    };
-
-                case (ushort)Items.Barrel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Barrel => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks, 10)),
@@ -2402,10 +2195,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Barrel,1)
                         )
-                    };
-
-                case (ushort)Items.BoxWooden:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BoxWooden => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks, 7)),
@@ -2414,10 +2205,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BoxWooden,1)
                         )
-                    };
-
-                case (ushort)Items.BoxAdv:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BoxAdv => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.plateAluminium, 2)),
@@ -2427,10 +2216,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Shelf,1)
                         )
-                    };
-
-                case (ushort)Items.Sticks:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Sticks => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.OakLeaves,1)),
@@ -2441,10 +2228,8 @@ namespace rabcrClient {
                             new CraftingIn[]{CraftingRecipe.AnySapling(1)},
                             new CraftingOut[]{ new CraftingOut(new ItemNonInvBasic((ushort)Items.Sticks, 1)) }
                         )
-                    };
-
-                case (ushort)Items.WheatSeeds:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.WheatSeeds => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new ItemNonInvBasic((ushort)Items.WheatStraw,1),
                             new CraftingOut[] {
@@ -2452,10 +2237,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1))
                             }
                         )
-                    };
-
-                case (ushort)Items.Seeds:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Seeds => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{new ItemNonInvBasic((ushort)Items.WheatSeeds,1), new ItemNonInvBasic((ushort)Items.FlaxSeeds,1) })
@@ -2471,10 +2254,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Hay, 1)),
                             }
                         )
-                    };
-
-                case (ushort)Items.Desk:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Desk => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone,1)),
@@ -2482,10 +2263,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Desk,1)
                         )
-                    };
-
-                case (ushort)Items.CoalDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CoalDust => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.ItemCoal,1), new ItemNonInvBasic((ushort)Items.OreCoal,1),new ItemNonInvBasic((ushort)Items.CoalWood,1) }),
@@ -2493,10 +2272,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.CoalDust,2)
                         )
-                    };
-
-                case (ushort)Items.Hay:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Hay => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.HayBlock,1)),
@@ -2509,10 +2286,8 @@ namespace rabcrClient {
                             },
                             new CraftingOut[]{ new CraftingOut( new ItemNonInvBasic((ushort)Items.Hay, 4)),new CraftingOut(new ItemNonInvBasic((ushort)Items.WheatSeeds,1)) }
                         ),
-                    };
-
-                case (ushort)Items.Gravel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Gravel => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.BigStone,1) , new ItemNonInvBasic((ushort)Items.MediumStone,2),new ItemNonInvBasic((ushort)Items.SmallStone,4)}),
@@ -2520,10 +2295,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Gravel,1)
                         )
-                    };
-
-                case (ushort)Items.Stick:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Stick => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new ItemNonInvBasic((ushort)Items.Sticks,1),
                             new CraftingOut[]{
@@ -2538,10 +2311,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Leave, 3))
                             }
                         ),
-                    };
-
-                case (ushort)Items.StoneHead:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.StoneHead => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BigStone,1)),
@@ -2553,10 +2324,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.MediumStone,3), 0.3f)
                             }
                         )
-                    };
-
-                case (ushort)Items.PickaxeStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeStone => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.StoneHead,1)),
@@ -2564,10 +2333,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.PickaxeStone)
                         )
-                    };
-
-                case (ushort)Items.AxeStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeStone => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.StoneHead,1)),
@@ -2575,10 +2342,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeStone)
                         )
-                    };
-
-                case (ushort)Items.ShovelStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelStone => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.StoneHead,1)),
@@ -2586,16 +2351,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelStone)
                         )
-                    };
-
-                case (ushort)Items.HayBlock:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HayBlock => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Hay,4),new ItemNonInvBasic((ushort)Items.HayBlock, 1))
-                    };
-
-
-                case (ushort)Items.PlateCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateCopper => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CopperIngot,1)),
@@ -2603,10 +2363,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.PlateCopper, 2)
                         )
-                    };
-
-                case (ushort)Items.plateAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.plateAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1)),
@@ -2614,10 +2372,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.plateAluminium, 2)
                         )
-                    };
-
-                case (ushort)Items.PlateIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot, 1)),
@@ -2625,10 +2381,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.PlateIron, 2)
                         )
-                    };
-
-                case (ushort)Items.PlateBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateBronze => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BronzeIngot, 1)),
@@ -2636,10 +2390,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.PlateBronze, 2)
                         )
-                    };
-
-                case (ushort)Items.PlateGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.GoldIngot, 1)),
@@ -2647,10 +2399,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.PlateGold, 2)
                         )
-                    };
-
-                case (ushort)Items.FurnaceElectric:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.FurnaceElectric => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateIron, 4)),
@@ -2660,10 +2410,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.FurnaceElectric,1)
                         )
-                    };
-
-                case (ushort)Items.Macerator:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Macerator => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateIron, 2)),
@@ -2677,10 +2425,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Macerator,1)
                         )
-                    };
-
-                case (ushort)Items.Radio:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Radio => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BigCircuit, 2)),
@@ -2689,10 +2435,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Radio,1)
                         )
-                    };
-
-                case (ushort)Items.Label:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Label => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BareLabel, 2)),
@@ -2700,10 +2444,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Label,1)
                         )
-                    };
-
-                case (ushort)Items.BareLabel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BareLabel => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper,1)),
@@ -2711,10 +2453,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BareLabel, 4)
                         )
-                    };
-
-                case (ushort)Items.Sand:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Sand => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Gravel,1)),
@@ -2736,10 +2476,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Sand,1)
                         ),
-                    };
-
-                case (ushort)Items.ShearsCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsCopper => new CraftingRecipe[] {
                         //new CraftingRecipe(
                         //    new CraftingIn[]{
                         //        new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper,1)),
@@ -2756,10 +2494,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsCopper)
                         )
-                    };
-
-                case (ushort)Items.ShearsBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsBronze => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShearsHeadBronze,1)),
@@ -2768,11 +2504,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsBronze)
                         )
-                    };
-
-
-                case (ushort)Items.ShearsIron:
-                     return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ShearsHeadIron,1)),
@@ -2781,11 +2514,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsIron)
                         )
-                    };
-
-
-                case (ushort)Items.AdvancedSpaceBlock:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpaceBlock => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.plateAluminium, 2)),
@@ -2795,10 +2525,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock, 2)
                         )
-                    };
-
-                case (ushort)Items.Miner:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Miner => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.ElectricDrill,1)),
@@ -2809,10 +2537,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Miner,1)
                         )
-                    };
-
-                case (ushort)Items.Diode:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Diode => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BareLabel,1)),
@@ -2820,10 +2546,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Diode, 4)
                         )
-                    };
-
-                case (ushort)Items.HammerBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerBronze => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BronzeIngot,1)),
@@ -2832,10 +2556,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.HammerBronze,1)
                         )
-                    };
-
-                case (ushort)Items.HammerIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot,1)),
@@ -2844,10 +2566,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.HammerIron,1)
                         )
-                    };
-
-                case (ushort)Items.SawCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SawCopper => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper,1)),
@@ -2856,10 +2576,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.SawCopper)
                         )
-                    };
-
-                case (ushort)Items.SawBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SawBronze => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateBronze,1)),
@@ -2868,10 +2586,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.SawBronze)
                         )
-                    };
-
-                case (ushort)Items.SawIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SawIron => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateIron,1)),
@@ -2880,10 +2596,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.SawIron)
                         )
-                    };
-
-                case (ushort)Items.ElectricDrill:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ElectricDrill => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot, 1)),
@@ -2895,11 +2609,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ElectricDrill)
                         )
-                    };
-
-
-                case (ushort)Items.ElectricSaw:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ElectricSaw => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateIron, 3)),
@@ -2911,10 +2622,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ElectricSaw)
                         )
-                    };
-
-                case (ushort)Items.Rocket:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Rocket => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.plateAluminium, 16)),
@@ -2929,11 +2638,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Rocket,1)
                         )
-                    };
-
-
-                case (ushort)Items.Door:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Door => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 3)),
@@ -2943,10 +2649,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Door,1)
                         )
-                    };
-
-                case (ushort)Items.Yarn:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Yarn => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick,1)),
@@ -2954,13 +2658,9 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Yarn,1)
                         )
-                    };
-
-                case (ushort)Items.Rope:
-                    return new CraftingRecipe[] {new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Yarn, 3), new ItemNonInvBasic((ushort)Items.Rope,1))};
-
-                case (ushort)Items.Nail:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Rope => new CraftingRecipe[] { new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Yarn, 3), new ItemNonInvBasic((ushort)Items.Rope, 1)) },
+                (ushort)Items.Nail => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot, 1)),
@@ -2968,10 +2668,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Nail, 10)
                         )
-                    };
-
-                case (ushort)Items.Roof1:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Roof1 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bricks,1)),
@@ -2979,10 +2677,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Roof1, 2)
                         )
-                    };
-
-                case (ushort)Items.Roof2:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Roof2 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bricks,1)),
@@ -2990,11 +2686,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Roof2, 2)
                         )
-                    };
-
-
-                case (ushort)Items.FurnaceStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.FurnaceStone => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.MediumStone, 6), new ItemNonInvBasic((ushort)Items.BigStone,4), new ItemNonInvBasic((ushort)Items.SmallStone,8)}),
@@ -3002,10 +2695,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.FurnaceStone,1)
                         )
-                    };
-
-                case (ushort)Items.MudIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.MudIngot => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Clay, 1), new ItemNonInvBasic((ushort)Items.MudIngot, 1)),
                         new CraftingRecipe(
                             new CraftingIn[]{
@@ -3015,10 +2706,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.MudIngot,1)
                         )
-                    };
-
-                case (ushort)Items.ItemBattery:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ItemBattery => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Lemon,1)),
@@ -3027,10 +2716,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ItemBattery,1)
                         )
-                    };
-
-                case (ushort)Items.BigCircuit:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BigCircuit => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Circuit, 1)),
@@ -3043,10 +2730,8 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.BigCircuit,1)
                         ),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Circuit, 3),new ItemNonInvBasic((ushort)Items.BigCircuit,1))
-                    };
-
-                case (ushort)Items.Bucket:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Bucket => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Planks, 2)),
@@ -3061,10 +2746,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Bucket,1)
                         )
-                    };
-
-                case (ushort)Items.Bulb:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Bulb => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Label,1)),
@@ -3074,10 +2757,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Bulb,1)
                         )
-                    };
-
-                case (ushort)Items.Circuit:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Circuit => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateCopper, 1)),
@@ -3088,10 +2769,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Circuit,1)
                         )
-                    };
-
-                case (ushort)Items.SolarPanel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SolarPanel => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Silicium, 1)),
@@ -3101,12 +2780,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SolarPanel,1)
                         )
-                    };
-
-
-
-                case (ushort)Items.WindMill:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.WindMill => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Motor, 1)),
@@ -3120,10 +2795,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.WindMill,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpaceWindow:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpaceWindow => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3132,10 +2805,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpaceWindow,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpaceFloor:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpaceFloor => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3143,10 +2814,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpaceFloor,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpacePart1:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpacePart1 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3154,10 +2823,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpacePart1,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpacePart2:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpacePart2 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3165,10 +2832,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpacePart2,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpacePart3:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpacePart3 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3176,10 +2841,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpacePart3,1)
                         )
-                    };
-
-                case (ushort)Items.AdvancedSpacePart4:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AdvancedSpacePart4 => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.AdvancedSpaceBlock,1)),
@@ -3187,10 +2850,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AdvancedSpacePart4,1)
                         )
-                    };
-
-                case (ushort)Items.Lamp:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Lamp => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bulb, 1)),
@@ -3205,10 +2866,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Lamp,1)
                         )
-                    };
-
-                case (ushort)Items.Cloth:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Cloth => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 2)),
@@ -3216,10 +2875,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Cloth,1)
                         )
-                    };
-
-                case (ushort)Items.AxeGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
@@ -3227,10 +2884,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.AxeGold)
                         )
-                    };
-
-                case (ushort)Items.ShovelGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
@@ -3238,10 +2893,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelGold)
                         )
-                    };
-                    
-                case (ushort)Items.ShovelSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelSteel => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
@@ -3249,10 +2902,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShovelSteel)
                         )
-                    };
-                    
-                case (ushort)Items.ShearsAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
@@ -3260,20 +2911,18 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsAluminium)
                         )
-                    };
-
-               // case (ushort)Items.ShovelGold:
-                    //return new CraftingRecipe[] {
-                    //    new CraftingRecipe(
-                    //        new CraftingIn[]{
-                    //            new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
-                    //            new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadGold, 1))
-                    //        },
-                    //        new ItemNonInvTool((ushort)Items.ShovelGold)
-                    //    )
-                    //};
-                case (ushort)Items.ShearsGold:
-                    return new CraftingRecipe[] {
+                    },
+                // case (ushort)Items.ShovelGold:
+                //return new CraftingRecipe[] {
+                //    new CraftingRecipe(
+                //        new CraftingIn[]{
+                //            new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
+                //            new CraftingIn(new ItemNonInvBasic((ushort)Items.ShovelHeadGold, 1))
+                //        },
+                //        new ItemNonInvTool((ushort)Items.ShovelGold)
+                //    )
+                //};
+                (ushort)Items.ShearsGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 2)),
@@ -3281,10 +2930,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.ShearsGold)
                         )
-                    };
-
-                case (ushort)Items.HammerGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HammerGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Stick, 1)),
@@ -3293,10 +2940,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvTool((ushort)Items.HammerGold)
                         )
-                    };
-
-                case (ushort)Items.Motor:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Motor => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.IronIngot, 1)),
@@ -3306,10 +2951,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Motor,1)
                         )
-                    };
-
-                case (ushort)Items.Rod:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Rod => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.IronIngot, 1), new ItemNonInvBasic((ushort)Items.BronzeIngot, 1) }),
@@ -3317,10 +2960,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Rod, 2)
                         )
-                    };
-
-                case (ushort)Items.Condenser:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Condenser => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.plateAluminium, 1), new ItemNonInvBasic((ushort)Items.PlateCopper, 1) }),
@@ -3329,10 +2970,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Condenser, 5)
                         )
-                    };
-
-                case (ushort)Items.Rezistance:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Rezistance => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CoalWood,1)),
@@ -3340,15 +2979,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Rezistance, 5)
                         )
-                    };
-
-                case (ushort)Items.Tranzistor:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Tranzistor => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Diode, 2), new ItemNonInvBasic((ushort)Items.Tranzistor, 1))
-                    };
-
-                case (ushort)Items.Planks:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Planks => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 CraftingRecipe.AnyWood(1),
@@ -3359,16 +2994,14 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.WoodDust,1), 0.5f)
                             }
                         )
-                    };
-
-                default: return null;
-            }
+                    },
+                _ => null,
+            };
         }
 
         public static CraftingRecipe[] Bake(ushort id) {
-            switch (id) {
-                case (ushort)Items.ChristmasBallGray:
-                    return new CraftingRecipe[] {
+            return id switch {
+                (ushort)Items.ChristmasBallGray => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Glass,1)),
@@ -3376,10 +3009,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.ChristmasBallGray)
                         )
-                    };
-
-                case (ushort)Items.ChristmasStar:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ChristmasStar => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Glass,1)),
@@ -3387,10 +3018,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.ChristmasStar)
                         )
-                    };
-
-                case (ushort)Items.SteelIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SteelIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(
@@ -3420,9 +3049,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.SteelIngot, 1))
                             }
                         )
-                    };
-                   case (ushort)Items.DyeBlue:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeBlue => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Blueberries, 1)),
@@ -3433,10 +3061,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Leave, 1))
                             }
                         )
-                    };
-
-                case (ushort)Items.DyeViolet:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeViolet => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlantViolet, 1)),
@@ -3447,15 +3073,11 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Leave, 1))
                             }
                         )
-                    };
-                    
-                case (ushort)Items.boiledEgg:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.boiledEgg => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Egg, 1), new ItemNonInvFood((ushort)Items.boiledEgg, 1, 0))
-                    };
-
-                case (ushort)Items.DyeRed:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeRed => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(
@@ -3468,10 +3090,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeRed, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeGreen:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeGreen => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Leave, 1)),
@@ -3482,10 +3102,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Leave, 1))
                             }
                         )
-                    };
-
-                case (ushort)Items.DyeOrange:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeOrange => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvFood((ushort)Items.Carrot, 1, 0.5f)),
@@ -3493,10 +3111,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeOrange, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeSpringGreen:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeSpringGreen => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvFood((ushort)Items.Peas, 1, 0.5f)),
@@ -3504,10 +3120,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeSpringGreen, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeYellow:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeYellow => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(
@@ -3520,10 +3134,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeYellow, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeDarkGreen:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeDarkGreen => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvFood((ushort)Items.Seaweed, 1, 0.5f)),
@@ -3531,10 +3143,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeDarkGreen, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeBrown:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeBrown => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(
@@ -3548,10 +3158,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeBrown, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeLightGray:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeLightGray => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Ash, 1)),
@@ -3559,10 +3167,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeLightGray, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeGray:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeGray => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(
@@ -3577,10 +3183,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeGray, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeBlack:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeBlack => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CoalDust, 1)),
@@ -3588,10 +3192,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeBlack, 1)
                         )
-                    };
-                    
-                case (ushort)Items.DyeWhite:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeWhite => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Saltpeter, 1)),
@@ -3599,10 +3201,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeWhite, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeGold => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.GoldDust, 1)),
@@ -3610,10 +3210,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeGold, 1)
                         )
-                    };
-
-                case (ushort)Items.DyeRoseQuartz:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeRoseQuartz => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlantRose, 1)),
@@ -3621,10 +3219,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.DyeRoseQuartz, 1)
                         )
-                    };
-
-                case (ushort)Items.TestTube:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TestTube => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn(
                                 new ItemNonInv[]{
@@ -3634,82 +3230,54 @@ namespace rabcrClient {
                             ),
                             new CraftingOut(new ItemNonInvBasic((ushort)Items.TestTube,1))
                         ),
-                    };
-
-                case (ushort)Items.TorchON:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TorchON => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.TorchOFF,1),new ItemNonInvTool((ushort)Items.TorchON,1)),
-                    };
-
-                case (ushort)Items.Bottle:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Bottle => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Plastic,1),new ItemNonInvBasic((ushort)Items.Bottle,1)),
-                    };
-                    
-                case (ushort)Items.ShovelHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadSteel,1)),
-                    };
-                    
-                case (ushort)Items.AxeHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadGold,1)),
-                    };
-
-                case (ushort)Items.DyeOlive:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.DyeOlive => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Olive,1)),
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.TestTube,1))
                             },
-                                
+
                             new ItemNonInvBasic((ushort)Items.DyeOlive,1)
                         )
-                    };
-
-                case (ushort)Items.HoeHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadBronze,1)),
-                    };
-
-                case (ushort)Items.HoeHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadCopper,1)),
-                    };
-
-                case (ushort)Items.HoeHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadAluminium,1)),
-                    };
-
-                case (ushort)Items.HoeHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadSteel,1)),
-                    };
-
-                case (ushort)Items.HoeHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadGold,1)),
-                    };
-
-                case (ushort)Items.HoeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.HoeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1), new ItemNonInvBasic((ushort)Items.HoeHeadIron,1)),
-                    };
-
-                case (ushort)Items.RabbitMeatCooked:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.RabbitMeatCooked => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.RabbitMeat,1), new ItemNonInvBasic((ushort)Items.RabbitMeatCooked,1)),
-                    };
-
-                case (ushort)Items.RabbitMeatCookedWithSalt:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.RabbitMeatCookedWithSalt => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.RabbitMeat,1), new ItemNonInvBasic((ushort)Items.RabbitMeatCookedWithSalt,1)),
-                    };
-
-                case (ushort)Items.Plastic:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Plastic => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Rubber,1)),
@@ -3719,10 +3287,8 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.Plastic,1)
                         ),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Bottle,1), new ItemNonInvBasic((ushort)Items.Plastic,1))
-                    };
-
-                case (ushort)Items.BowlWithMushrooms:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BowlWithMushrooms => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BowlEmpty,1)),
@@ -3733,10 +3299,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BowlWithMushrooms,1)
                         )
-                    };
-
-                case (ushort)Items.BowlWithVegetables:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BowlWithVegetables => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.BowlEmpty,1)),
@@ -3747,195 +3311,119 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BowlWithVegetables,1)
                         )
-                    };
-
-                case (ushort)Items.plateAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.plateAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1), new ItemNonInvBasic((ushort)Items.plateAluminium, 2))
-                    };
-
-                case (ushort)Items.OneBrick:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.OneBrick => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.MudIngot,1), new ItemNonInvBasic((ushort)Items.OneBrick, 1))
-                    };
-
-                case (ushort)Items.BareLabel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BareLabel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.BareLabel, 3))
-                    };
-
-                case (ushort)Items.PlateBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1), new ItemNonInvBasic((ushort)Items.PlateBronze, 2))
-                    };
-
-                case (ushort)Items.PlateCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1), new ItemNonInvBasic((ushort)Items.PlateCopper, 2))
-                    };
-
-                case (ushort)Items.PlateGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.PlateGold, 2))
-                    };
-
-                case (ushort)Items.PlateIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PlateIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot, 1), new ItemNonInvBasic((ushort)Items.PlateIron, 2))
-                    };
-
-                case (ushort)Items.FishMeatCooked:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.FishMeatCooked => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.FishMeat,1), new ItemNonInvBasic((ushort)Items.FishMeatCooked,1))
-                    };
-
-                case (ushort)Items.AxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadIron,1))
-                    };
-
-                case (ushort)Items.AxeHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadCopper,1))
-                    };
-
-                case (ushort)Items.AxeHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadBronze,1))
-                    };
-
-                case (ushort)Items.AxeHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadAluminium,1))
-                    };
-
-                case (ushort)Items.AxeHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadSteel,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadIron,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadCopper,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadBronze,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadGold,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadAluminium,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadSteel,1))
-                    };
-
-                case (ushort)Items.ShovelHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadIron,1))
-                    };
-
-                case (ushort)Items.ShovelHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadCopper,1))
-                    };
-
-                case (ushort)Items.ShovelHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadBronze,1))
-                    };
-
-                case (ushort)Items.ShovelHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadGold,1))
-                    };
-
-                case (ushort)Items.ShovelHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadAluminium,1))
-                    };
-
-                case (ushort)Items.ShearsHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadAluminium,1))
-                    };
-
-                case (ushort)Items.ShearsHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadCopper,1))
-                    };
-
-                case (ushort)Items.ShearsHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadBronze,1))
-                    };
-
-                case (ushort)Items.ShearsHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadIron,1))
-                    };
-
-                case (ushort)Items.ShearsHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadGold,1))
-                    };
-
-                case (ushort)Items.ShearsHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShearsHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadSteel,1))
-                    };
-
-                case (ushort)Items.KnifeHeadSteel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadSteel,1))
-                    };
-
-                case (ushort)Items.KnifeHeadCopper:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadCopper => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadCopper,1))
-                    };
-
-                case (ushort)Items.KnifeHeadBronze:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadBronze => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadBronze,1))
-                    };
-
-                case (ushort)Items.KnifeHeadGold:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadGold => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadGold,1))
-                    };
-
-                case (ushort)Items.KnifeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadIron,1))
-                    };
-
-                case (ushort)Items.KnifeHeadAluminium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.KnifeHeadAluminium => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadAluminium,1))
-                    };
-
-                case (ushort)Items.Glass:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Glass => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Sand,1), new ItemNonInvBasic((ushort)Items.Glass,1))
-                    };
-
-                case (ushort)Items.Rubber:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Rubber => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInv[]{
@@ -3945,10 +3433,8 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.Rubber,1)
                         )
                         //new CraftingRecipe((ushort)Items.Resin, (ushort)Items.Rubber)
-                    };
-
-                case (ushort)Items.Ash:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Ash => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInv[]{
@@ -3959,15 +3445,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Ash,1)
                         )
-                    };
-
-                case (ushort)Items.CoalWood:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CoalWood => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Planks, 2), new ItemNonInvBasic((ushort)Items.CoalWood, 1))
-                    };
-
-                case (ushort)Items.Silicium:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Silicium => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.ItemBattery)),
@@ -3980,10 +3462,8 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvTool((ushort)Items.ItemBattery, 1)),
                             }
                         )
-                    };
-
-                case (ushort)Items.AluminiumIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AluminiumIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvTool((ushort)Items.ItemBattery)),
@@ -4002,10 +3482,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.AluminiumIngot,1)
                         )
-                    };
-
-                case (ushort)Items.IronIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.IronIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn( new ItemNonInv[]{
@@ -4021,10 +3499,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.IronIngot,1)
                         )
-                    };
-
-                case (ushort)Items.SilverIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SilverIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn( new ItemNonInv[]{
@@ -4034,10 +3510,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SilverIngot,1)
                         )
-                    };
-
-                case (ushort)Items.CopperIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CopperIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{
@@ -4049,10 +3523,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.CopperIngot,1)
                         )
-                    };
-
-                case (ushort)Items.GoldIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.GoldIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{new CraftingIn(
                                 new ItemNonInv[]{
@@ -4063,10 +3535,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.GoldIngot,1)
                         )
-                    };
-
-                case (ushort)Items.BronzeIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BronzeIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.ItemCopper, 3), new ItemNonInvBasic((ushort)Items.CopperIngot, 3)}),
@@ -4082,31 +3552,25 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.BronzeIngot, 2)
                         ),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.PlateBronze, 2),new ItemNonInvBasic((ushort)Items.BronzeIngot, 2)),
-                    };
-
-                case (ushort)Items.TinIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TinIngot => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInv[]{ new ItemNonInvBasic((ushort)Items.ItemTin, 1), new ItemNonInvBasic((ushort)Items.TinDust, 2), new ItemNonInvBasic((ushort)Items.OreTin, 1)})
                             },
                             new ItemNonInvBasic((ushort)Items.TinIngot,1)
                         )
-                    };
-
-                default: return null;
-            }
+                    },
+                _ => null,
+            };
         }
 
         public static CraftingRecipe[] Clothes(ushort id) {
-            switch (id) {
-                case (ushort)Items.boiledEgg:
-                    return new CraftingRecipe[] {
+            return id switch {
+                (ushort)Items.boiledEgg => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Egg,1), new ItemNonInvBasic((ushort)Items.boiledEgg,1))
-                    };
-
-                case (ushort)Items.BucketForRubber:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BucketForRubber => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Bucket, 1)),
@@ -4114,10 +3578,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BucketForRubber, 1)
                          )
-                    };
-
-                case (ushort)Items.Hat:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Hat => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth, 1)),
@@ -4125,10 +3587,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Hat, 1)
                          )
-                    };
-
-                case (ushort)Items.Crown:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Crown => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.PlateGold, 2)),
@@ -4138,11 +3598,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Crown, 1)
                         )
-                    };
-
-
-                case (ushort)Items.Cap:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Cap => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4150,11 +3607,8 @@ namespace rabcrClient {
                             },
                         new ItemNonInvBasic((ushort)Items.Cap, 1)
                          )
-                    };
-
-
-                case (ushort)Items.SpaceHelmet:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SpaceHelmet => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4164,15 +3618,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SpaceHelmet, 1)
                         )
-                    };
-
-                case (ushort)Items.FormalShoes:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.FormalShoes => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Cloth,1), new ItemNonInvBasic((ushort)Items.FormalShoes,1))
-                    };
-
-                case (ushort)Items.Pumps:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Pumps => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4180,15 +3630,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Pumps, 1)
                          )
-                    };
-
-                case (ushort)Items.Sneakers:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Sneakers => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Cloth,1),new ItemNonInvBasic((ushort)Items.Sneakers,1))
-                    };
-
-                case (ushort)Items.SpaceBoots:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SpaceBoots => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4196,19 +3642,15 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SpaceBoots, 1)
                         )
-                    };
-
-
-                case (ushort)Items.BikiniDown:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BikiniDown => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1))
                             },
                             new ItemNonInvBasic((ushort)Items.BikiniDown,1)
                         )
-                    };
-
+                    },
                 //case (ushort)Items.BlueBikini:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4219,45 +3661,32 @@ namespace rabcrClient {
                 //            new ItemNonInv((ushort)Items.BlueBikini, 1)
                 //        )
                 //    };
-
-
-                case (ushort)Items.Underpants:
-                    return new CraftingRecipe[] {
+                (ushort)Items.Underpants => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1))
                             },
                             new ItemNonInvBasic((ushort)Items.Underpants, 1)
                         )
-                    };
-
-
-                case (ushort)Items.BoxerShorts:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BoxerShorts => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new ItemNonInvBasic((ushort)Items.Cloth,1),
                             new ItemNonInvBasic((ushort)Items.BoxerShorts,1)
                         )
-                    };
-
-
+                    },
                 //case (ushort)Items.GrayUnderpants:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe((ushort)Items.Cloth, (ushort)Items.GrayUnderpants)
                 //    };
-
-
-                case (ushort)Items.Panties:
-                    return new CraftingRecipe[] {
+                (ushort)Items.Panties => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1))
                             },
                             new ItemNonInvBasic((ushort)Items.Panties, 1)
                         )
-                    };
-
-
+                    },
                 //case (ushort)Items.PantiesRed:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4268,10 +3697,7 @@ namespace rabcrClient {
                 //            new ItemNonInv((ushort)Items.PantiesRed, 1)
                 //         )
                 //    };
-
-
-                case (ushort)Items.Swimsuit:
-                    return new CraftingRecipe[] {
+                (ushort)Items.Swimsuit => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4279,55 +3705,41 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Swimsuit, 1)
                         )
-                    };
-
-
-                case (ushort)Items.Dress:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Dress => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,3))
                             },
                             new ItemNonInvBasic((ushort)Items.Dress, 1)
                         )
-                    };
-
-
-                case (ushort)Items.TShirt:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TShirt => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                            new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,2))
                         },
                         new ItemNonInvBasic((ushort)Items.TShirt, 1)
                          )
-                    };
-
-
-                 //case (ushort)Items.LightBlueTShirt:
-                 //   return new CraftingRecipe[] {
-                 //       new CraftingRecipe(
-                 //           new CraftingIn[]{
-                 //         new CraftingIn(new ItemNonInv((ushort)Items.Cloth,2)),
-                 //         new CraftingIn(new ItemNonInvBasic((ushort)Items.Blueberries),
-                 //       },
-                 //       new ItemNonInv((ushort)Items.LightBlueTShirt, 1)
-                 //        )
-                 //   };
-
-
-                case (ushort)Items.Shirt:
-                    return new CraftingRecipe[] {
+                    },
+                //case (ushort)Items.LightBlueTShirt:
+                //   return new CraftingRecipe[] {
+                //       new CraftingRecipe(
+                //           new CraftingIn[]{
+                //         new CraftingIn(new ItemNonInv((ushort)Items.Cloth,2)),
+                //         new CraftingIn(new ItemNonInvBasic((ushort)Items.Blueberries),
+                //       },
+                //       new ItemNonInv((ushort)Items.LightBlueTShirt, 1)
+                //        )
+                //   };
+                (ushort)Items.Shirt => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Cloth,2), new ItemNonInvBasic((ushort)Items.Shirt, 1))
-                    };
-
+                    },
                 //case (ushort)Items.Dress:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(new ItemNonInv((ushort)Items.Cloth,3), new ItemNonInv((ushort)Items.WhiteDress, 1))
                 //    };
-
-                case (ushort)Items.CoatArmy:
-                    return new CraftingRecipe[] {
+                (ushort)Items.CoatArmy => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,3)),
@@ -4335,15 +3747,11 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.CoatArmy, 1)
                         )
-                    };
-
-                case (ushort)Items.Coat:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Coat => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Cloth,3), new ItemNonInvBasic((ushort)Items.Coat, 1))
-                    };
-
-                case (ushort)Items.JacketDenim:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.JacketDenim => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,2)),
@@ -4351,10 +3759,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.JacketDenim,1)
                         )
-                    };
-
-                case (ushort)Items.JacketFormal:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.JacketFormal => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,2)),
@@ -4362,8 +3768,7 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.JacketFormal,1)
                         )
-                    };
-
+                    },
                 //case (ushort)Items.jac:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4374,9 +3779,7 @@ namespace rabcrClient {
                 //            new ItemNonInvBasic((ushort)Items.Jacket
                 //        )
                 //    };
-
-                case (ushort)Items.JacketShort:
-                    return new CraftingRecipe[] {
+                (ushort)Items.JacketShort => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4384,11 +3787,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.JacketShort,1)
                         )
-                    };
-
-
-                case (ushort)Items.SpaceSuit:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SpaceSuit => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4399,10 +3799,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SpaceSuit,1)
                         )
-                    };
-
-                case (ushort)Items.ArmyTrousers:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ArmyTrousers => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4410,20 +3808,16 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.ArmyTrousers,1)
                         )
-                    };
-
-                case (ushort)Items.Skirt:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Skirt => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1))
                             },
                             new ItemNonInvBasic((ushort)Items.Skirt,1)
                         )
-                    };
-
-                case (ushort)Items.Jeans:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Jeans => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4431,8 +3825,7 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Jeans,1)
                         )
-                    };
-
+                    },
                 //case (ushort)Items.Skirt:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4444,10 +3837,7 @@ namespace rabcrClient {
                 //            new ItemNonInvBasic((ushort)Items.PinkSkirt
                 //        )
                 //    };
-
-
-                case (ushort)Items.Shorts:
-                    return new CraftingRecipe[] {
+                (ushort)Items.Shorts => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4455,11 +3845,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Shorts, 1)
                         )
-                    };
-
-
-                case (ushort)Items.SpaceTrousers:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SpaceTrousers => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4468,10 +3855,8 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.SpaceTrousers,1)
                         )
-                    };
-
-                case (ushort)Items.Bra:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Bra => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4479,8 +3864,7 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Bra,1)
                         )
-                    };
-
+                    },
                 //case (ushort)Items.PurpleBra:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4492,8 +3876,6 @@ namespace rabcrClient {
                 //            new ItemNonInv((ushort)Items.PurpleBra, 1)
                 //        )
                 //    };
-
-
                 //case (ushort)Items.RedBra:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4504,9 +3886,7 @@ namespace rabcrClient {
                 //        new ItemNonInv((ushort)Items.RedBra, 1)
                 //         )
                 //    };
-
-                case (ushort)Items.BikiniTop:
-                    return new CraftingRecipe[] {
+                (ushort)Items.BikiniTop => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4515,8 +3895,7 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.BikiniTop,1)
                         )
-                    };
-
+                    },
                 //case (ushort)Items.TopBlueBikini:
                 //    return new CraftingRecipe[] {
                 //        new CraftingRecipe(
@@ -4528,9 +3907,7 @@ namespace rabcrClient {
                 //            new ItemNonInvBasic((ushort)Items.TopBlueBikini
                 //        )
                 //    };
-
-                case (ushort)Items.Backpack:
-                    return new CraftingRecipe[] {
+                (ushort)Items.Backpack => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.Cloth,1)),
@@ -4538,21 +3915,17 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.Backpack,1)
                         )
-                    };
-
-                default: return null;
-            }
+                    },
+                _ => null,
+            };
         }
 
         public static CraftingRecipe[] ToDust(ushort id) {
-            switch (id) {
-                case (ushort)Items.StoneHead:
-                    return new CraftingRecipe[] {
+            return id switch {
+                (ushort)Items.StoneHead => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BigStone,1), new ItemNonInvBasic((ushort)Items.StoneHead, 1)),
-                    };
-
-                case (ushort)Items.IronDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.IronDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1), new ItemNonInvBasic((ushort)Items.IronDust, 2)),
                         new CraftingRecipe(
                             new ItemNonInvBasic((ushort)Items.ItemIron,1),
@@ -4573,27 +3946,19 @@ namespace rabcrClient {
                             },
                             new ItemNonInvBasic((ushort)Items.IronDust,2)
                         )
-                    };
-
-                case (ushort)Items.CopperDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CopperDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1), new ItemNonInvBasic((ushort)Items.CopperDust,2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.ItemCopper,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.CopperDust,3),0.75f))
-                    };
-
-                case (ushort)Items.BareLabel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BareLabel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BareLabel,1), new ItemNonInvBasic((ushort)Items.CopperDust,1)),
-                    };
-
-                case (ushort)Items.TinDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.TinDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.TinIngot,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.TinDust,2),0.75f)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.ItemTin,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.TinDust,1),0.75f))
-                    };
-
-                case (ushort)Items.BronzeDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BronzeDust => new CraftingRecipe[] {
                         new CraftingRecipe (
                             new CraftingIn[] {
                                 new CraftingIn(new ItemNonInvBasic((ushort)Items.CopperIngot, 3)),
@@ -4602,113 +3967,73 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.BronzeDust, 8)
                         ),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1), new ItemNonInvBasic((ushort)Items.BronzeDust,2))
-                    };
-
-                case (ushort)Items.AluminiumDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AluminiumDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot, 1), new ItemNonInvBasic((ushort)Items.AluminiumDust, 2))
-                    };
-
-                case (ushort)Items.WoodDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.WoodDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Stick,1), new ItemNonInvBasic((ushort)Items.WoodDust, 4))
-                    };
-
-                case (ushort)Items.GoldDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.GoldDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1), new ItemNonInvBasic((ushort)Items.GoldDust, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.ItemGold,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.GoldDust,3), 0.75f))
-                    };
-
-                case (ushort)Items.CoalDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CoalDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.OreCoal,1), new ItemNonInvBasic((ushort)Items.CoalDust, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CoalWood,1), new ItemNonInvBasic((ushort)Items.CoalDust, 2))
-                    };
-
-                case (ushort)Items.SilverDust:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SilverDust => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SilverIngot,1), new ItemNonInvBasic((ushort)Items.SilverDust, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.ItemSilver,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.SilverDust,3), 0.75f))
-                    };
-
-                case (ushort)Items.CopperIngot:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.CopperIngot => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Label,1), new ItemNonInvBasic((ushort)Items.BareLabel,1)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CoalWood,1), new ItemNonInvBasic((ushort)Items.BareLabel, 2))
-                    };
-
-                case (ushort)Items.Gravel:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Gravel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BigStone,1),new ItemNonInvBasic((ushort)Items.Gravel,1)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.MediumStone, 2), new ItemNonInvBasic((ushort)Items.Gravel,1)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SmallStone, 4), new ItemNonInvBasic((ushort)Items.Gravel,1)),
-                    };
-
-                case (ushort)Items.Sand:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Sand => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Gravel,1), new ItemNonInvBasic((ushort)Items.Sand, 1)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Bricks,1), new ItemNonInvBasic((ushort)Items.Sand, 1))
-                    };
-
-                case (ushort)Items.WheatSeeds:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.WheatSeeds => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.WheatStraw,1), new ItemNonInvBasic((ushort)Items.WheatSeeds,1))
-                    };
-
-                case (ushort)Items.AxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.AxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.AxeHeadIron,1))
-                    };
-
-                case (ushort)Items.PickaxeHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.PickaxeHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1), new ItemNonInvBasic((ushort)Items.PickaxeHeadIron,1))
-                    };
-
-                case (ushort)Items.ShovelHeadIron:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.ShovelHeadIron => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1), new ItemNonInvBasic((ushort)Items.ShovelHeadIron,1))
-                    };
-
-                case (ushort)Items.Seeds:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Seeds => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Hay,1), new ItemNonInvBasic((ushort)Items.Seeds,1))
-                    };
-
-                case (ushort)Items.Leave:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Leave => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.OakLeaves,1), new ItemNonInvBasic((ushort)Items.Seeds, 4))
-                    };
-
-                case (ushort)Items.Yarn:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Yarn => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Cloth,1), new ItemNonInvBasic((ushort)Items.Yarn, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Rope,1), new ItemNonInvBasic((ushort)Items.Yarn, 1)),
-                    };
-
-                case (ushort)Items.Cloth:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Cloth => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Flag,1), new ItemNonInvBasic((ushort)Items.Cloth, 2))
-                    };
-
-                case (ushort)Items.Hay:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Hay => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.HayBlock,1), new ItemNonInvBasic((ushort)Items.Hay, 2))
-                    };
-
-                case (ushort)Items.BucketWater:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.BucketWater => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Bucket,1), new ItemNonInvBasic((ushort)Items.Lemon, 4)),
-                    };
-
-                case (ushort)Items.FlaxSeeds:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.FlaxSeeds => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Flax,1), new CraftingOut(new ItemNonInvBasic((ushort)Items.FlaxSeeds,2),0.75f))
-                    };
-
-                case (ushort)Items.Label:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Label => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new ItemNonInvBasic((ushort)Items.Lamp,1),
                             new CraftingOut[]{
@@ -4763,34 +4088,25 @@ namespace rabcrClient {
                                 new CraftingOut(new ItemNonInvBasic((ushort)Items.Motor, 1))
                             }
                         ),
-                    };
-
-                case (ushort)Items.SmallStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.SmallStone => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.MediumStone,1), new ItemNonInvBasic((ushort)Items.SmallStone, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BigStone,1), new ItemNonInvBasic((ushort)Items.SmallStone, 4)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Stonerubble,1), new ItemNonInvBasic((ushort)Items.SmallStone, 4)),
-                    };
-
-                case (ushort)Items.MediumStone:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.MediumStone => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BigStone,1), new ItemNonInvBasic((ushort)Items.MediumStone, 2)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Stonerubble,1), new ItemNonInvBasic((ushort)Items.MediumStone, 2)),
-                    };
-
-                case (ushort)Items.Stonerubble:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Stonerubble => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SmallStone, 4), new ItemNonInvBasic((ushort)Items.Stonerubble, 1)),
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.MediumStone, 2), new ItemNonInvBasic((ushort)Items.Stonerubble, 1))
-                    };
-
-                case (ushort)Items.Stick:
-                    return new CraftingRecipe[] {
+                    },
+                (ushort)Items.Stick => new CraftingRecipe[] {
                         new CraftingRecipe(new CraftingIn[]{ CraftingRecipe.AnyWood(1) }, new ItemNonInvBasic((ushort)Items.Stick, 4))
-                    };
-
-                default: return null;
-            }
+                    },
+                _ => null,
+            };
         }
 
         public static int FoodMaxCount(ushort id) {
@@ -5163,215 +4479,193 @@ namespace rabcrClient {
         }
 
         public static bool IsItemInvBasic32(ushort id) {
-            switch (id) {
-                case (ushort)Items.AngelHair: return true;
-                case (ushort)Items.ChristmasBallGray: return true;
-                case (ushort)Items.ChristmasBallBlue: return true;
-                case (ushort)Items.ChristmasBallLightGreen: return true;
-                case (ushort)Items.ChristmasBallOrange: return true;
-                case (ushort)Items.ChristmasBallPink: return true;
-                case (ushort)Items.ChristmasBallPurple: return true;
-                case (ushort)Items.ChristmasBallRed: return true;
-                case (ushort)Items.ChristmasBallYellow: return true;
-                case (ushort)Items.ChristmasBallTeal: return true;
-                case (ushort)Items.Rope: return true;
-                case (ushort)Items.Nail: return true;
-                case (ushort)Items.Bottle: return true;
-                case (ushort)Items.Flag: return true;
-                case (ushort)Items.Diode: return true;
-                case (ushort)Items.Tranzistor: return true;
-                case (ushort)Items.Rezistance: return true;
-                case (ushort)Items.Motor: return true;
-                case (ushort)Items.ElectricDrillOff: return true;
-                case (ushort)Items.ElectricSawOff: return true;
-                case (ushort)Items.LighterOFF: return true;
-                case (ushort)Items.TorchElectricOFF: return true;
-                case (ushort)Items.Condenser: return true;
-                case (ushort)Items.Rod: return true;
-                case (ushort)Items.Ammo: return true;
+            return id switch {
+                (ushort)Items.AngelHair => true,
+                (ushort)Items.ChristmasBallGray => true,
+                (ushort)Items.ChristmasBallBlue => true,
+                (ushort)Items.ChristmasBallLightGreen => true,
+                (ushort)Items.ChristmasBallOrange => true,
+                (ushort)Items.ChristmasBallPink => true,
+                (ushort)Items.ChristmasBallPurple => true,
+                (ushort)Items.ChristmasBallRed => true,
+                (ushort)Items.ChristmasBallYellow => true,
+                (ushort)Items.ChristmasBallTeal => true,
+                (ushort)Items.Rope => true,
+                (ushort)Items.Nail => true,
+                (ushort)Items.Bottle => true,
+                (ushort)Items.Flag => true,
+                (ushort)Items.Diode => true,
+                (ushort)Items.Tranzistor => true,
+                (ushort)Items.Rezistance => true,
+                (ushort)Items.Motor => true,
+                (ushort)Items.ElectricDrillOff => true,
+                (ushort)Items.ElectricSawOff => true,
+                (ushort)Items.LighterOFF => true,
+                (ushort)Items.TorchElectricOFF => true,
+                (ushort)Items.Condenser => true,
+                (ushort)Items.Rod => true,
+                (ushort)Items.Ammo => true,
                 //case (ushort)Items.ItemBattery: return true;
-                case (ushort)Items.Label: return true;
-                case (ushort)Items.BareLabel: return true;
-                case (ushort)Items.Bricks: return true;
-                case (ushort)Items.plateAluminium: return true;
-                case (ushort)Items.PlateBronze: return true;
-                case (ushort)Items.PlateIron: return true;
-                case (ushort)Items.PlateGold: return true;
-                case (ushort)Items.PlateCopper: return true;
-                case (ushort)Items.MudIngot: return true;
-                case (ushort)Items.Bulb: return true;
-
-                case (ushort)Items.CopperIngot: return true;
-                case (ushort)Items.TinIngot: return true;
-                case (ushort)Items.BronzeIngot: return true;
-                case (ushort)Items.GoldIngot: return true;
-                case (ushort)Items.SilverIngot: return true;
-                case (ushort)Items.IronIngot: return true;
-                case (ushort)Items.SteelIngot: return true;
-                case (ushort)Items.AluminiumIngot: return true;
-
-
-                case (ushort)Items.Egg: return true;
-                case (ushort)Items.TinEmpty: return true;
-                case (ushort)Items.Circuit: return true;
-                case (ushort)Items.BigCircuit: return true;
-                case (ushort)Items.WindMill: return true;
-                case (ushort)Items.OneBrick: return true;
-                case (ushort)Items.TestTube: return true;
-
-
-                case (ushort)Items.AxeHeadCopper: return true;
-                case (ushort)Items.AxeHeadBronze: return true;
-                case (ushort)Items.AxeHeadGold: return true;
-                case (ushort)Items.AxeHeadIron: return true;
-                case (ushort)Items.AxeHeadSteel: return true;
-                case (ushort)Items.AxeHeadAluminium: return true;
-
-                case (ushort)Items.ShovelHeadCopper: return true;
-                case (ushort)Items.ShovelHeadBronze: return true;
-                case (ushort)Items.ShovelHeadGold: return true;
-                case (ushort)Items.ShovelHeadIron: return true;
-                case (ushort)Items.ShovelHeadSteel: return true;
-                case (ushort)Items.ShovelHeadAluminium: return true;
-
-                case (ushort)Items.PickaxeHeadCopper: return true;
-                case (ushort)Items.PickaxeHeadBronze: return true;
-                case (ushort)Items.PickaxeHeadGold: return true;
-                case (ushort)Items.PickaxeHeadIron: return true;
-                case (ushort)Items.PickaxeHeadSteel: return true;
-                case (ushort)Items.PickaxeHeadAluminium: return true;
-
-                case (ushort)Items.ShearsHeadCopper: return true;
-                case (ushort)Items.ShearsHeadBronze: return true;
-                case (ushort)Items.ShearsHeadGold: return true;
-                case (ushort)Items.ShearsHeadIron: return true;
-                case (ushort)Items.ShearsHeadSteel: return true;
-                case (ushort)Items.ShearsHeadAluminium: return true;
-
-                case (ushort)Items.KnifeHeadCopper: return true;
-                case (ushort)Items.KnifeHeadBronze: return true;
-                case (ushort)Items.KnifeHeadGold: return true;
-                case (ushort)Items.KnifeHeadIron: return true;
-                case (ushort)Items.KnifeHeadSteel: return true;
-                case (ushort)Items.KnifeHeadAluminium: return true;
-
-            }
-            return false;
+                (ushort)Items.Label => true,
+                (ushort)Items.BareLabel => true,
+                (ushort)Items.Bricks => true,
+                (ushort)Items.plateAluminium => true,
+                (ushort)Items.PlateBronze => true,
+                (ushort)Items.PlateIron => true,
+                (ushort)Items.PlateGold => true,
+                (ushort)Items.PlateCopper => true,
+                (ushort)Items.MudIngot => true,
+                (ushort)Items.Bulb => true,
+                (ushort)Items.CopperIngot => true,
+                (ushort)Items.TinIngot => true,
+                (ushort)Items.BronzeIngot => true,
+                (ushort)Items.GoldIngot => true,
+                (ushort)Items.SilverIngot => true,
+                (ushort)Items.IronIngot => true,
+                (ushort)Items.SteelIngot => true,
+                (ushort)Items.AluminiumIngot => true,
+                (ushort)Items.Egg => true,
+                (ushort)Items.TinEmpty => true,
+                (ushort)Items.Circuit => true,
+                (ushort)Items.BigCircuit => true,
+                (ushort)Items.WindMill => true,
+                (ushort)Items.OneBrick => true,
+                (ushort)Items.TestTube => true,
+                (ushort)Items.AxeHeadCopper => true,
+                (ushort)Items.AxeHeadBronze => true,
+                (ushort)Items.AxeHeadGold => true,
+                (ushort)Items.AxeHeadIron => true,
+                (ushort)Items.AxeHeadSteel => true,
+                (ushort)Items.AxeHeadAluminium => true,
+                (ushort)Items.ShovelHeadCopper => true,
+                (ushort)Items.ShovelHeadBronze => true,
+                (ushort)Items.ShovelHeadGold => true,
+                (ushort)Items.ShovelHeadIron => true,
+                (ushort)Items.ShovelHeadSteel => true,
+                (ushort)Items.ShovelHeadAluminium => true,
+                (ushort)Items.PickaxeHeadCopper => true,
+                (ushort)Items.PickaxeHeadBronze => true,
+                (ushort)Items.PickaxeHeadGold => true,
+                (ushort)Items.PickaxeHeadIron => true,
+                (ushort)Items.PickaxeHeadSteel => true,
+                (ushort)Items.PickaxeHeadAluminium => true,
+                (ushort)Items.ShearsHeadCopper => true,
+                (ushort)Items.ShearsHeadBronze => true,
+                (ushort)Items.ShearsHeadGold => true,
+                (ushort)Items.ShearsHeadIron => true,
+                (ushort)Items.ShearsHeadSteel => true,
+                (ushort)Items.ShearsHeadAluminium => true,
+                (ushort)Items.KnifeHeadCopper => true,
+                (ushort)Items.KnifeHeadBronze => true,
+                (ushort)Items.KnifeHeadGold => true,
+                (ushort)Items.KnifeHeadIron => true,
+                (ushort)Items.KnifeHeadSteel => true,
+                (ushort)Items.KnifeHeadAluminium => true,
+                _ => false,
+            };
         }
 
         public static bool IsItemInvTool32(ushort id) {
-            switch (id) {
+            return id switch {
                 // Hoe
-                case (ushort)Items.HoeStone: return true;
-                case (ushort)Items.HoeCopper: return true;
-                case (ushort)Items.HoeBronze: return true;
-                case (ushort)Items.HoeIron: return true;
-                case (ushort)Items.HoeGold: return true;
-                case (ushort)Items.HoeAluminium: return true;
-                case (ushort)Items.HoeSteel: return true;
-
+                (ushort)Items.HoeStone => true,
+                (ushort)Items.HoeCopper => true,
+                (ushort)Items.HoeBronze => true,
+                (ushort)Items.HoeIron => true,
+                (ushort)Items.HoeGold => true,
+                (ushort)Items.HoeAluminium => true,
+                (ushort)Items.HoeSteel => true,
                 // Knife
-                case (ushort)Items.KnifeCopper: return true;
-                case (ushort)Items.KnifeBronze: return true;
-                case (ushort)Items.KnifeIron: return true;
-                case (ushort)Items.KnifeSteel: return true;
-                case (ushort)Items.KnifeAluminium: return true;
-                case (ushort)Items.KnifeGold: return true;
-
+                (ushort)Items.KnifeCopper => true,
+                (ushort)Items.KnifeBronze => true,
+                (ushort)Items.KnifeIron => true,
+                (ushort)Items.KnifeSteel => true,
+                (ushort)Items.KnifeAluminium => true,
+                (ushort)Items.KnifeGold => true,
                 // Pickaxe
-                case (ushort)Items.PickaxeStone: return true;
-                case (ushort)Items.PickaxeIron: return true;
-                case (ushort)Items.PickaxeCopper: return true;
-                case (ushort)Items.PickaxeBronze: return true;
-                case (ushort)Items.PickaxeSteel: return true;
-                case (ushort)Items.PickaxeGold: return true;
-                case (ushort)Items.PickaxeAluminium: return true;
-
+                (ushort)Items.PickaxeStone => true,
+                (ushort)Items.PickaxeIron => true,
+                (ushort)Items.PickaxeCopper => true,
+                (ushort)Items.PickaxeBronze => true,
+                (ushort)Items.PickaxeSteel => true,
+                (ushort)Items.PickaxeGold => true,
+                (ushort)Items.PickaxeAluminium => true,
                 // Axe
-                case (ushort)Items.AxeStone: return true;
-                case (ushort)Items.AxeIron: return true;
-                case (ushort)Items.AxeSteel: return true;
-                case (ushort)Items.AxeAluminium: return true;
-                case (ushort)Items.AxeCopper: return true;
-                case (ushort)Items.AxeBronze: return true;
-                case (ushort)Items.AxeGold: return true;
-
+                (ushort)Items.AxeStone => true,
+                (ushort)Items.AxeIron => true,
+                (ushort)Items.AxeSteel => true,
+                (ushort)Items.AxeAluminium => true,
+                (ushort)Items.AxeCopper => true,
+                (ushort)Items.AxeBronze => true,
+                (ushort)Items.AxeGold => true,
                 // Shovel
-                case (ushort)Items.ShovelStone: return true;
-                case (ushort)Items.ShovelIron: return true;
-                case (ushort)Items.ShovelSteel: return true;
-                case (ushort)Items.ShovelAluminium: return true;
-                case (ushort)Items.ShovelGold: return true;
-                case (ushort)Items.ShovelCopper: return true;
-                case (ushort)Items.ShovelBronze: return true;
-
+                (ushort)Items.ShovelStone => true,
+                (ushort)Items.ShovelIron => true,
+                (ushort)Items.ShovelSteel => true,
+                (ushort)Items.ShovelAluminium => true,
+                (ushort)Items.ShovelGold => true,
+                (ushort)Items.ShovelCopper => true,
+                (ushort)Items.ShovelBronze => true,
                 // Saw
-                case (ushort)Items.SawCopper: return true;
-                case (ushort)Items.SawBronze: return true;
-                case (ushort)Items.SawIron: return true;
-                case (ushort)Items.SawGold: return true;
-                case (ushort)Items.SawSteel: return true;
-                case (ushort)Items.SawAluminium: return true;
-
+                (ushort)Items.SawCopper => true,
+                (ushort)Items.SawBronze => true,
+                (ushort)Items.SawIron => true,
+                (ushort)Items.SawGold => true,
+                (ushort)Items.SawSteel => true,
+                (ushort)Items.SawAluminium => true,
                 // Hammer
-                case (ushort)Items.HammerBronze: return true;
-                case (ushort)Items.HammerIron: return true;
-                case (ushort)Items.HammerCopper: return true;
-                case (ushort)Items.HammerAluminium: return true;
-                case (ushort)Items.HammerGold: return true;
-                case (ushort)Items.HammerSteel: return true;
-
+                (ushort)Items.HammerBronze => true,
+                (ushort)Items.HammerIron => true,
+                (ushort)Items.HammerCopper => true,
+                (ushort)Items.HammerAluminium => true,
+                (ushort)Items.HammerGold => true,
+                (ushort)Items.HammerSteel => true,
                 // Shears
-                case (ushort)Items.ShearsCopper: return true;
-                case (ushort)Items.ShearsBronze: return true;
-                case (ushort)Items.ShearsIron: return true;
-                case (ushort)Items.ShearsAluminium: return true;
-                case (ushort)Items.ShearsGold: return true;
-                case (ushort)Items.ShearsSteel: return true;
-
+                (ushort)Items.ShearsCopper => true,
+                (ushort)Items.ShearsBronze => true,
+                (ushort)Items.ShearsIron => true,
+                (ushort)Items.ShearsAluminium => true,
+                (ushort)Items.ShearsGold => true,
+                (ushort)Items.ShearsSteel => true,
                 // Electric
-                case (ushort)Items.ElectricDrill: return true;
-                case (ushort)Items.ElectricSaw: return true;
-
-                case (ushort)Items.TorchElectricON: return true;
-
-                case (ushort)Items.BottleOil: return true;
-                case (ushort)Items.BottleSaltWater: return true;
-                case (ushort)Items.BottleWater: return true;
-                case (ushort)Items.Gun: return true;
-
-                case (ushort)Items.LighterON: return true;
-                case (ushort)Items.AirTank2: return true;
-                case (ushort)Items.AirTank: return true;
-
-                case (ushort)Items.DyeArmy: return true;
-                case (ushort)Items.DyeBlack: return true;
-                case (ushort)Items.DyeBlue: return true;
-                case (ushort)Items.DyeBrown: return true;
-                case (ushort)Items.DyeDarkBlue: return true;
-                case (ushort)Items.DyeDarkGray: return true;
-                case (ushort)Items.DyeDarkGreen: return true;
-                case (ushort)Items.DyeDarkRed: return true;
-                case (ushort)Items.DyeGold: return true;
-                case (ushort)Items.DyeGray: return true;
-                case (ushort)Items.DyeGreen: return true;
-                case (ushort)Items.DyeLightBlue: return true;
-                case (ushort)Items.DyeLightGray: return true;
-                case (ushort)Items.DyeLightGreen: return true;
-                case (ushort)Items.DyeMagenta: return true;
-                case (ushort)Items.DyeOlive: return true;
-                case (ushort)Items.DyeOrange: return true;
-                case (ushort)Items.DyePink: return true;
-                case (ushort)Items.DyePurple: return true;
-                case (ushort)Items.DyeRed: return true;
-                case (ushort)Items.DyeRoseQuartz: return true;
-                case (ushort)Items.DyeSpringGreen: return true;
-                case (ushort)Items.DyeTeal: return true;
-                case (ushort)Items.DyeViolet: return true;
-                case (ushort)Items.DyeWhite: return true;
-                case (ushort)Items.DyeYellow: return true;
-            }
-            return false;
+                (ushort)Items.ElectricDrill => true,
+                (ushort)Items.ElectricSaw => true,
+                (ushort)Items.TorchElectricON => true,
+                (ushort)Items.BottleOil => true,
+                (ushort)Items.BottleSaltWater => true,
+                (ushort)Items.BottleWater => true,
+                (ushort)Items.Gun => true,
+                (ushort)Items.LighterON => true,
+                (ushort)Items.AirTank2 => true,
+                (ushort)Items.AirTank => true,
+                (ushort)Items.DyeArmy => true,
+                (ushort)Items.DyeBlack => true,
+                (ushort)Items.DyeBlue => true,
+                (ushort)Items.DyeBrown => true,
+                (ushort)Items.DyeDarkBlue => true,
+                (ushort)Items.DyeDarkGray => true,
+                (ushort)Items.DyeDarkGreen => true,
+                (ushort)Items.DyeDarkRed => true,
+                (ushort)Items.DyeGold => true,
+                (ushort)Items.DyeGray => true,
+                (ushort)Items.DyeGreen => true,
+                (ushort)Items.DyeLightBlue => true,
+                (ushort)Items.DyeLightGray => true,
+                (ushort)Items.DyeLightGreen => true,
+                (ushort)Items.DyeMagenta => true,
+                (ushort)Items.DyeOlive => true,
+                (ushort)Items.DyeOrange => true,
+                (ushort)Items.DyePink => true,
+                (ushort)Items.DyePurple => true,
+                (ushort)Items.DyeRed => true,
+                (ushort)Items.DyeRoseQuartz => true,
+                (ushort)Items.DyeSpringGreen => true,
+                (ushort)Items.DyeTeal => true,
+                (ushort)Items.DyeViolet => true,
+                (ushort)Items.DyeWhite => true,
+                (ushort)Items.DyeYellow => true,
+                _ => false,
+            };
         }
 
         public static bool IsItemInvFood16(ushort id) {
@@ -5679,7 +4973,7 @@ namespace rabcrClient {
 
         public static bool ItemsCanBeFill(ushort itemId, byte Liquid, ref int max, ref ushort newId){
             switch (Liquid) {
-              
+
                 case (byte)LiquidId.Water:
                     switch (itemId) {
                         case (ushort)Items.Bucket:
@@ -5819,7 +5113,7 @@ namespace rabcrClient {
                             newId=(ushort)Items.ChristmasBallGray;
                             max=50;
                             return true;
-                            
+
                         case (ushort)Items.ChristmasBallYellow:
                             newId=(ushort)Items.ChristmasBallGray;
                             max=50;
@@ -6154,7 +5448,7 @@ namespace rabcrClient {
             return;
         }
 
-         public static float FurnaceStoneBurnWood(ushort id) { 
+         public static float FurnaceStoneBurnWood(ushort id) {
             switch (id) {
 				case (ushort)Items.WoodOak: return 0.25f;
 				case (ushort)Items.WoodPine: return 0.25f;
@@ -6174,7 +5468,7 @@ namespace rabcrClient {
 				case (ushort)Items.EucalyptusWood: return 0.225f;
 				case (ushort)Items.AcaciaWood: return 0.225f;
 				case (ushort)Items.KapokWood: return 0.22f;
-                         
+
 				case (ushort)Items.OreCoal: return 0.5f;
 				case (ushort)Items.Stick: return 0.02f;
 				case (ushort)Items.Paper: return 0.05f;

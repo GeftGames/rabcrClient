@@ -41,7 +41,7 @@ namespace rabcrClient {
             if (Global.HasSoundGraphics)MediaPlayer.Stop();
         }
 
-        public override void Update(GameTime gameTime) { 
+        public override void Update(GameTime gameTime) {
             // Set keyboard and mouse
             oldMouseState=newMouseState;
             newKeyboardState=Keyboard.GetState();
@@ -64,7 +64,7 @@ namespace rabcrClient {
             if (Global.HasSoundGraphics){
                 if (playing < 0) {
                     Song play/*=null*/;
-                    switch (Rabcr.random.Int4()) {
+                    switch (FastRandom.Int4()) {
                         case 0:  play = Songs.Happend;  break;
                         case 1:  play = Songs.Medium;   break;
                         case 2:  play = Songs.Root;     break;

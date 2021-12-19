@@ -588,7 +588,7 @@ namespace rabcrClient {
                 TextureHandUp,
                 TextureHandDown,
 
-                
+
             TextureStaticSpaceSuit,
                 TextureStaticShirt,
                 TextureStaticSneakers,

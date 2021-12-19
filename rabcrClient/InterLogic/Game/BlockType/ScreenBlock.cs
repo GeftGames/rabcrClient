@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace rabcrClient {
     class ScreenBlock : Block{//static =no animation (fence,label)
 
-        public int screen;
         Rectangle rectangle;
+        public int screen;
         public Vector2 Position;
         public Texture2D Texture;
 
@@ -17,9 +17,10 @@ namespace rabcrClient {
         }
 
         public int Screen {
-            set{
+            set {
                 screen=value;
-                rectangle = new Rectangle(rectangle.Width * screen,0, rectangle.Width, rectangle.Height);
+                rectangle.X=rectangle.Width * screen;
+              //  rectangle = new Rectangle(rectangle.Width * screen,0, rectangle.Width, rectangle.Height);
             }
         }
 

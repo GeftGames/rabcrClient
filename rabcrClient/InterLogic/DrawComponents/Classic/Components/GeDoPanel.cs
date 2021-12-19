@@ -89,13 +89,13 @@ namespace rabcrClient {
 
         protected override void OnMouseDown(MouseEventArgs e) {
             base.OnMouseDown(e);
-            if (gedo!=null) 
+            if (gedo!=null)
                 gedo.Click=true;
         }
 
         protected override void OnMouseUp(MouseEventArgs e) {
             base.OnMouseUp(e);
-            if (gedo!=null) 
+            if (gedo!=null)
                 gedo.Click=false;
         }
 

@@ -21,7 +21,7 @@ namespace rabcrClient {
         public static GraphicsDeviceManager GraphicsManager;
         public static Game Game;
         public static Texture2D Pixel;
-        public static FastRandom random;
+       // public static FastRandom random;
         public static SpriteBatch spriteBatch;
         static bool exiting=false;
         static bool saved=false;
@@ -101,7 +101,7 @@ namespace rabcrClient {
                    // Global.OnlineAccount=false;
 
                     Setting.Path=GetPathIfNotArgs();
-                    
+
                     //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
                 }
 
@@ -113,7 +113,7 @@ namespace rabcrClient {
                 //Log.Init();
 
                 if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
-                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){
                          default:
                             MessageBox.Show("Game data not found, game was probably runned from archive"
                             #if DEBUG
@@ -130,7 +130,7 @@ namespace rabcrClient {
                             ,"Chyba - Nenalezeny data hry");
                             break;
                     }
-                   
+
 
                     Environment.Exit(-1);
                     return;
@@ -152,8 +152,8 @@ namespace rabcrClient {
 
             GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
             GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
-           
-     
+
+
             try {
                 GraphicsManager.ApplyChanges();
             } catch{ }
@@ -162,10 +162,10 @@ namespace rabcrClient {
             SetLangUp();
             Content = new ContentManager(Services, "RabcrData");
             content=Content;
-       
+
             (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
-            random=new FastRandom();
+       //     random=new FastRandom();
 
             Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
             {
@@ -175,7 +175,7 @@ namespace rabcrClient {
                 MyGameForm.MinimumSize=new Size(320, 200);
                 MyGameForm.SizeChanged+=Window_ClientSizeChanged;
                 MyGameForm.StartPosition=FormStartPosition.CenterScreen;
-            } 
+            }
         }
 
         public static void SetLangUp(){
@@ -217,7 +217,7 @@ namespace rabcrClient {
                     GC.WaitForPendingFinalizers();
                     BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_traditionalChinese_18);
                     break;
-                    
+
                 case "korean":
                     BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_korean_34);
                     GC.Collect();
@@ -306,7 +306,7 @@ namespace rabcrClient {
             spriteBatch=new SpriteBatch(GraphicsDevice);
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
-            
+
             GoTo(new Start());
             base.LoadContent();
         }
@@ -325,7 +325,7 @@ namespace rabcrClient {
 
         public static void GoTo(Screen name) {
             if (screen!=null) {
-                if (!screen.isDisposed) screen.Shutdown(); 
+                if (!screen.isDisposed) screen.Shutdown();
             }
             name.Init();
             screen=name;
@@ -400,14 +400,14 @@ namespace rabcrClient {
         //    bytes.AddRange(BitConverter.GetBytes(Setting.slideChangeTime));
         //    bytes.AddRange(BitConverter.GetBytes(Setting.Zoom));
         //    bytes.AddRange(BitConverter.GetBytes(Setting.NightBrightness));
-                
-          
+
+
 
         //    File.WriteAllBytes(Setting.Path+@"\Setting.bin",bytes.ToArray());
         //    //Debug.Write(" Uloženo!");
 
         //    //if (Global.OnlineAccount && Global.Logged) UploadAccountSetting();
-        //    //else 
+        //    //else
         //    if (exiting)saved=true;
         //}
 

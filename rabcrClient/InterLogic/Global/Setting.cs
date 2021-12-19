@@ -155,12 +155,12 @@ namespace rabcrClient {
             bytes.AddRange(BitConverter.GetBytes(slideChangeTime));
             bytes.AddRange(BitConverter.GetBytes(Zoom));
             bytes.AddRange(BitConverter.GetBytes(NightBrightness));
-                
+
             File.WriteAllBytes(Path+@"\Setting.bin",bytes.ToArray());
             //Debug.Write(" Uloženo!");
 
             //if (Global.OnlineAccount && Global.Logged) UploadAccountSetting();
-            //else 
+            //else
           //  if (exiting)saved=true;
         }
 

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace rabcrClient {
     public class Terrain {
-        public int 
+        public int
             // Total (With half)
             LightPosFull,
             LightPosFull16,
             LightPosHalf,
-            LightPosHalf16;
-
-        public int StartSomething;
+            LightPosHalf16,
+			StartSomething;
 
         public Block[]
             Background=new Block[125],
@@ -22,26 +21,26 @@ namespace rabcrClient {
             IsSolidBlocks=new bool[125],
             IsTopBlocks=new bool[125];
 
-        public List<Mob> Mobs=new List<Mob>();
-        public List<Plant> Plants=new List<Plant>();
+        public List<Mob> Mobs=new();
+        public List<Plant> Plants=new();
 
         public Vector2 LightVec;
 
 		///<summary> After you removed New Block on Y pos terrain</summary>
         public void RefreshLightingRemoveTop(int newBlockOnY, ushort id) {
 			if (newBlockOnY==LightPosHalf) {
-				if (GameMethods.IsHalfShadowBlock(id)) { 
+				if (GameMethods.IsHalfShadowBlock(id)) {
 
-					for (int i=LightPosHalf; i<125; i++) { 
-						if (i==LightPosFull) { 
+					for (int i=LightPosHalf; i<125; i++) {
+						if (i==LightPosFull) {
 							LightPosHalf=i;
 							LightPosHalf16=i*16;
 							//StartSomething=newBlockOnY;
-							return;	
+							return;
 						}
 
 						if (IsTopBlocks[i]) {
-							if (GameMethods.IsHalfShadowBlock(TopBlocks[i].Id)) { 
+							if (GameMethods.IsHalfShadowBlock(TopBlocks[i].Id)) {
 								LightPosHalf=i;
 								LightPosHalf16=i*16;
 							//	StartSomething=newBlockOnY;
@@ -55,9 +54,9 @@ namespace rabcrClient {
 
 		///<summary> After you Added New Block on Y pos terrain</summary>
         public void RefreshLightingAddTop(int newBlockOnY, ushort id) {
-			if (GameMethods.IsHalfShadowBlock(id)) { 
+			if (GameMethods.IsHalfShadowBlock(id)) {
 				//if (newBlockOnY<LightPosFull) {
-					if (newBlockOnY<LightPosHalf) { 
+					if (newBlockOnY<LightPosHalf) {
 						LightPosHalf=newBlockOnY;
 						LightPosHalf16=newBlockOnY*16;
 					}
@@ -67,7 +66,7 @@ namespace rabcrClient {
 
         public void RefreshLightingAddSolid(int pos, int y) {
 			if (y<StartSomething) StartSomething=y;
-			
+
 			if (y<LightPosFull) {
 				LightPosFull=y;
 				LightPosFull16=y*16;
@@ -77,7 +76,7 @@ namespace rabcrClient {
                     LightPosHalf=y;
                     LightPosHalf16=y*16;
                 }
-            }  
+            }
 		}
 
 		public void RefreshLightingRemoveSolid(int pos, int y) {
@@ -107,17 +106,17 @@ namespace rabcrClient {
 				// first solid block in chunk
 				int LightPos2=StartSomething;
 				for (; LightPos2<LightPosFull; LightPos2++) {
-					if (IsTopBlocks[LightPos2]){ 
+					if (IsTopBlocks[LightPos2]){
 						LightPosHalf=LightPos2;
 						LightPosHalf16=LightPos2*16;
-						break; 
+						break;
 					}
 				}
-				if (LightPos2==LightPosFull){ 
+				if (LightPos2==LightPosFull){
 					LightPosHalf=LightPos2;
 						LightPosHalf16=LightPos2*16;
 				}
-				
+
 
 
 
@@ -128,7 +127,7 @@ namespace rabcrClient {
 				//}
 
 				//if (LightPosFull!=LightPos) {
-					
+
 				//	int sStartSomething;
 				//	for (sStartSomething=0; sStartSomething<125; sStartSomething++) {
 				//		if (IsTopBlocks[sStartSomething]) break;
@@ -137,16 +136,16 @@ namespace rabcrClient {
 				//	}
 
 				//	StartSomething=sStartSomething;
-										
+
 				//	for (int i=StartSomething; i<125; i++) {
-				//		if (IsTopBlocks[i]) { 
-				//			if (GameMethods.IsHalfShadowBlock(TopBlocks[i].Id)) { 
+				//		if (IsTopBlocks[i]) {
+				//			if (GameMethods.IsHalfShadowBlock(TopBlocks[i].Id)) {
 				//				LightPosHalf=i;
 				//				LightPosHalf16=i*16;
 				//				break;
 				//			}
 				//		}
-					
+
 				//	}
 				//}
 

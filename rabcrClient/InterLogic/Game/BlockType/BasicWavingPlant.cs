@@ -7,7 +7,7 @@ namespace rabcrClient {
         #region Varibles
         public Vector2 Position;
         public Texture2D Texture;
-        
+
         readonly Vector2 vecOrigin;
         public int ticks;
         public float offsed;
@@ -23,12 +23,12 @@ namespace rabcrClient {
             ticks=0;
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, (float)System.Math.Sin(ticks/10f+offsed)*0.25f*(1-ticks/100f)/*(ticks/100f)*/, vecOrigin, 1f, SpriteEffects.None, 0); 
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, (float)System.Math.Sin(ticks/10f+offsed)*0.25f*(1-ticks/100f)/*(ticks/100f)*/, vecOrigin, 1f, SpriteEffects.None, 0);
 
-        public NormalBlock TurnOff() => new NormalBlock { 
+        public NormalBlock TurnOff() => new NormalBlock {
             Texture=Texture,
             Position=Position,
-            Id=Id 
+            Id=Id
         };
 
         public override Block CloneDown() => null;

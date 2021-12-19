@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
@@ -17,11 +18,12 @@ namespace rabcrClient {
             if (int.TryParse(args[2], out port)) {
                 if (IPAddress.TryParse(args[1], out ip) ) {
                     Start();
-                } else Console.WriteLine("1515");//Nelze rozpoznat ip
+                } else SetServerError(0,"1515",-1,"Nelze rozpoznat ip","Constructor");//Console.WriteLine();//Nelze rozpoznat ip
             } else {
                 if (IPAddress.TryParse(args[1], out ip)) {
-                    Console.WriteLine("1516");//Nelze rozpoznat port
-                } else Console.WriteLine("1517");//Nelze rozpoznat adresu serveru
+                    SetServerError(0,"1515",-1,"Nelze rozpoznat port","Constructor");
+                  //  Console.WriteLine("1516");//Nelze rozpoznat port
+                } else SetServerError(0,"1515",-1,"Nelze rozpoznat adresu","Constructor");//Console.WriteLine("1517");//Nelze rozpoznat adresu serveru
             }
             while (running) {}
             Console.WriteLine("I|Exited");
@@ -68,14 +70,16 @@ namespace rabcrClient {
             try {
                 clientSocket.EndConnect(ar);
 
-                Data msgToSend = new Data {
-                    Cmd=Command.Check,
-                    From=Setting.Name,
-                    To="{Server}",
-                    Message="check"
-                };
+                //Data msgToSend = new Data {
+                //    Cmd=Command.Check,
+                //    From=Setting.Name,
+                //    To="{Server}",
+                //    Message="check"
+                //};
+                List<byte> bytesToSend=new List<byte>();
+                bytesToSend.Add((byte)Command.CheckInMenu);
 
-                byte[] bytes = msgToSend.ToByte();
+                byte[] bytes = bytesToSend.ToArray();
 
                 clientSocket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
            } catch (SocketException ex) {
@@ -114,30 +118,47 @@ namespace rabcrClient {
         }
 
         void OnReceive(IAsyncResult ar) {
-            Data msgReceived=null;
+            //Data msgReceived=null;
 
             try {
                 clientSocket.EndReceive(ar);
-                msgReceived = new Data(byteData);
+             //   msgReceived = new Data(byteData);
+                //bytesToSend.Add((byte)Command.Check);
+                if (byteData[0]==(byte)Command.Check) {
+                    // Version
+                    byte lenVersion = byteData[1];
+                    string version=System.Text.Encoding.UTF8.GetString(byteData, 2, lenVersion);
+
+                    // Message
+                    int pos=2+lenVersion/*-1*/;
+                    int lenMessage=byteData[pos];
+                    string serverMessage=System.Text.Encoding.UTF8.GetString(byteData, pos+1, lenMessage/*-1*/);
+
+                    pos+=lenMessage+1;
+                    int online=byteData[pos];
+                    int max=byteData[pos+1];
+                    Console.WriteLine("G|"+version+'|'+serverMessage+'|'+online+'|'+max);
+                    Exit();
+                }
             } catch (SocketException ex) {
                 if (ex.ErrorCode==10054) SetServerError(1,"1524",ex.ErrorCode,ex.Message,"OnReceive");//Server byl neočekávaně vypnut.
                 else SetServerError(2,ex.Message,ex.ErrorCode,ex.Message,"OnReceive");
             } catch (Exception ex) {
                 SetServerError(2,"1525",0,ex.Message,"OnReceive");//Nelze získat data
             } finally {
-                if (msgReceived.Cmd==Command.Check) {
-                    string[]get=msgReceived.Message.Split('|');
-                    if (get.Length>0) {
-                        Console.WriteLine("G|"+msgReceived.Message);
-                        Exit();
-                    } else {
-                        SetServerError(3,"1526",0,"","OnReceive");//Připojení existuje, ale získané data nemají správný typ.
-                    }
-                } else {
-                    string str="";
-                    foreach (byte b in byteData)str+=b+" ";
-                    SetServerError(3,"1527",0,""+str,"OnReceive");//Obdrženy vadné data
-                }
+                //if (msgReceived.Cmd==Command.Check) {
+                //    string[]get=msgReceived.Message.Split('|');
+                //    if (get.Length>0) {
+                //        Console.WriteLine("G|"+msgReceived.Message);
+                //        Exit();
+                //    } else {
+                //        SetServerError(3,"1526",0,"","OnReceive");//Připojení existuje, ale získané data nemají správný typ.
+                //    }
+                //} else {
+                //    string str="";
+                //    foreach (byte b in byteData)str+=b+" ";
+                //    SetServerError(3,"1527",0,""+str,"OnReceive");//Obdrženy vadné data
+                //}
             }
         }
 

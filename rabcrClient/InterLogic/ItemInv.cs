@@ -582,7 +582,7 @@ namespace rabcrClient {
             posTex=new Rectangle(0, 0, 32, 32);
             Id=id;
             GetCount=Maximum=GameMethods.ToolMax(id);
-           
+
             Texture=tex;
 
             bar2.Width=-1;

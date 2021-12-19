@@ -64,7 +64,7 @@ namespace rabcrClient {
         public static void SetUp(bool sameLanguageAsSystem) {
             XmlDocument file = new XmlDocument();
             XmlNode data=null;
-            
+
             try {
                 file.Load(new System.IO.FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData\\"+Setting.StyleName+"\\Lang\\lang.xml");
             } catch (Exception ex) {
@@ -86,16 +86,16 @@ namespace rabcrClient {
                             EnglishName=n.Attributes["EnglishName"].Value,
                             NativeName=n.Attributes["NativeName"].Value,
                             Name=n.Attributes["Name"].Value,
-                           
+
                             FontFile=n.Attributes["FontFile"]?.Value,
                             _Base=n.Attributes["Base"]?.Value,
                            // TwoLetterISOLanguageName=n.Attributes["TwoLetterISOLanguageName"]?.Value,
                          //   ThreeLetterISOLanguageName=n.Attributes["ThreeLetterISOLanguageName"]?.Value,
                           //  TranslationQuality=int.Parse(n.Attributes["TranslationQuality"]?.Value),
                         //    UseBase=n.Attributes["UseBase"]?.Value=="true",
-                        }; 
+                        };
                        if (n.Attributes["Quality"]!=null) int.TryParse(n.Attributes["Quality"].Value, out ll.Quality);
-                        
+
                         {
                             // Solve category
                             XmlAttribute cat=n.Attributes["Flag"];
@@ -181,7 +181,7 @@ namespace rabcrClient {
 
                     for (int i=0; i<Languages.Length; i++) {
                         Language ll=Languages[i];
-                  
+
                         if (ll.Name=="eng") en=i;
 
                         if (ll.Name==ci) {
@@ -192,7 +192,7 @@ namespace rabcrClient {
                     }
 
                     // find eng-US
-                    //if (!find) { 
+                    //if (!find) {
                     //   // ci = CultureInfo.InstalledUICulture.Name.Replace("en", "eng");
 
                     //    for (int i=0; i<Languages.Length; i++) {

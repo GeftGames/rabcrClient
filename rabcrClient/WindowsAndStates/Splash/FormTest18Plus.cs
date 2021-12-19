@@ -12,10 +12,10 @@ namespace rabcrClient {
 
 
         void Generate(){
-            NumOne=(Rabcr.random.Int(5)+3);
+            NumOne=(FastRandom.Int(5)+3);
 
-            time=Rabcr.random.Int(3)+2;
-           // int time2=Rabcr.random.Next(3)+2;
+            time=FastRandom.Int(3)+2;
+           // int time2=FastRandom.Next(3)+2;
             //length=time*10;
             //=length/rRnd;
              gTextPanel1.Text=Text=Lang.Texts[283];
@@ -23,7 +23,7 @@ namespace rabcrClient {
             gButton2.Text=Lang.Texts[57];
             //speed=(length*time2)/time;
 
-            int m=Rabcr.random.Int(3)+1;
+            int m=FastRandom.Int(3)+1;
 
             geDoPanel1.Load(Lang.Texts[281].Replace("%num%",(NumOne*2).ToString()));
 
@@ -32,7 +32,7 @@ namespace rabcrClient {
             geDoPanel3.Load(Lang.Texts[291].Replace("%speed%",(10*m).ToString()).Replace("%length%",(time*10*m).ToString()));
 
             string num2(){
-                switch (Rabcr.random.Int(6)){
+                switch (FastRandom.Int(6)){
                     default:
                         NumTwo=Lang.Texts[284];
                         return "H<Subscript>2</Subscript>O";
@@ -60,7 +60,7 @@ namespace rabcrClient {
             }
 
             //string num3(){
-            //    switch (Rabcr.random.Next(6)){
+            //    switch (FastRandom.Next(6)){
             //        default:
             //            NumThree="služba";
             //            return "service";

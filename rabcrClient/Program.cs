@@ -12,7 +12,7 @@ namespace rabcrClient {
 
         [STAThread]
         static void Main(string[] args) {
-          
+
 
 
 #if !DEBUG
@@ -25,10 +25,10 @@ namespace rabcrClient {
             /*
             Args
             Use: "...\rabcrClient.exe" Path="C:\Users\..." Type="Message" Name="Player" Text=""
-            
-            
+
+
             */
-         
+
 
             if (args.Length>0) {
                 switch (args[0]) {
@@ -54,9 +54,9 @@ namespace rabcrClient {
                         int language=-1;
                         /*langFilePath="",*/string  Text="Error no text found", Header="Message";
 
-                            foreach (string arg in args) { 
+                            foreach (string arg in args) {
                                 string[] a=arg.Split('=');
-                                switch (a[0]) { 
+                                switch (a[0]) {
                                     case "Language":
                                         int.TryParse(a[1], out language);
                                         break;
@@ -69,12 +69,12 @@ namespace rabcrClient {
                                         Text=arg.Substring(5);
                                         break;
                                 }
-                            } 
-                            
+                            }
+
                             using (Message message = new Message(language: language, Header: Header, text: Text)) message.Run();
                         }
 
-                      
+
                         break;
 
                     case "/CheckServer":
@@ -158,7 +158,7 @@ namespace rabcrClient {
 
             #if !DEBUG
             } catch (Exception ex) {
-             
+
 
                 CultureInfo ci = CultureInfo.InstalledUICulture;
                 string cap, text, details;
@@ -236,7 +236,7 @@ namespace rabcrClient {
                         // StackTrace
                         System.Diagnostics.StackTrace st=new System.Diagnostics.StackTrace(ex, true);
                         int count = st.FrameCount;
-                    
+
 
                         if (count>1) {
                             System.Diagnostics.StackFrame sf2=st.GetFrame(1);
@@ -254,8 +254,8 @@ namespace rabcrClient {
                             trace=trace.Replace(" ", "%20");
                             send+=trace;
                         } else send+="&h=";
-                        
-                      
+
+
         Clipboard.SetText(Release.stringRRE+send);
                         // Antispawn
                         System.Threading.Thread.Sleep(200);
@@ -264,10 +264,10 @@ namespace rabcrClient {
                         WebClient wc=new WebClient();
                         string result=wc.DownloadString(Release.stringRRE+send);
                         //System.Diagnostics.Process.Start();
-                        if (result.StartsWith("O|")){ 
+                        if (result.StartsWith("O|")){
                             Console.WriteLine("send");
                         }else Console.WriteLine("not send");
-                   
+
 
                         // Antispawn
                         System.Threading.Thread.Sleep(200);

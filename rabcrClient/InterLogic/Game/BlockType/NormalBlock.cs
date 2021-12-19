@@ -20,7 +20,7 @@ namespace rabcrClient {
         public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
 
         public override Block CloneDown() {
-            NormalBlock n = new NormalBlock{
+            NormalBlock n = new NormalBlock {
                 Texture=Texture,
                 Id=Id,
                 Position=Position

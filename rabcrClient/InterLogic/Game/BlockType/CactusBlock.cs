@@ -19,16 +19,12 @@ namespace rabcrClient {
             Position = position;
         }
 
-       // public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
-
-
-         public void SetOrigin() { 
+        public void SetOrigin() {
             vecOrigin=-new Vector2(Position.X-cactus.Root.X*16/*+*/-8, Position.Y-cactus.Root.Y*16/*-8*/-8/*-16*/);
-            
         }
 
-         public override void Draw() {
-            if (cactus!=null) Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, cactus.angle, vecOrigin, 1f, SpriteEffects.None, 0); 
+        public override void Draw() {
+            if (cactus!=null) Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, cactus.angle, vecOrigin, 1f, SpriteEffects.None, 0);
         }
 
         public override Block CloneDown() {

@@ -36,7 +36,7 @@ namespace rabcrClient {
         public virtual void Draw() => Rabcr.spriteBatch.Draw(GrowTexture, Position, drawRectangle, Color.White);
 
 
-        public FruitPlantWaving TurnToWavingPlant(bool right)=>new FruitPlantWaving(right){ 
+        public FruitPlantWaving TurnToWavingPlant(bool right)=>new FruitPlantWaving(right){
             GrowTexture=GrowTexture,
             Position=Position,
             Id=Id,

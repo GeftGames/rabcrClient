@@ -28,8 +28,8 @@ namespace rabcrClient {
         }
 
         private void ButtonShare_Click(object sender, System.EventArgs e) {
-            if (!buttonShare.Disamble) { 
-                using (FormAchGameJolt fagj=new FormAchGameJolt(Level,NameText)) { 
+            if (!buttonShare.Disamble) {
+                using (FormAchGameJolt fagj=new FormAchGameJolt(Level,NameText)) {
                     fagj.ShowDialog();
                 }
             }

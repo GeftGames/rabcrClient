@@ -157,19 +157,19 @@ namespace rabcrClient {
 
                 // Name of language
                    switch (Quality){
-                        default: 
+                        default:
                             Text.Draw(sb);
                             break;
 
-                        case 0: 
+                        case 0:
                             Text.Draw(sb, Color.Red);
                             break;
 
-                        case 1: 
+                        case 1:
                             Text.Draw(sb, Color.Orange);
                             break;
 
-                        //case 2: 
+                        //case 2:
                         //    Text.Draw(sb, Color.Orange);
                          //   break;
 
@@ -473,7 +473,7 @@ namespace rabcrClient {
             int y=0;
          //    yy=0;
 
-          
+
             LanguageList=new List<LItem>();//{
 
             Texture2D ok=GetDataTexture("Menu/Styles/Used");
@@ -484,7 +484,7 @@ namespace rabcrClient {
                 foreach (string strCategory in l.Category) {
                     string[] path=strCategory.Split('>');
                     InsertInto(LanguageList,path,l,null);
-    
+
                 }
             }
 
@@ -550,7 +550,7 @@ namespace rabcrClient {
                 }
             }
 
-         
+
 
             {
                 current=null;
@@ -670,12 +670,12 @@ namespace rabcrClient {
                 InsertInto(LanguageList, l);
             }
 
-            void InsertInto(List<LItem> langs, Language lang) {  
+            void InsertInto(List<LItem> langs, Language lang) {
                 LLanguage l = new LLanguage {
                     TextureOK=ok,
                     id=lang.id
                 };
-              
+
                 bool displayEnglishName=true;
                 Language langO=Lang.Languages[l.id];
                 if (langO.EnglishName==langO.NativeName) displayEnglishName=false;
@@ -697,7 +697,7 @@ namespace rabcrClient {
                 l.Text=new Text(dis, xxx, y, BitmapFont.bitmapFont18);
 
                 l.Quality=lang.Quality;
-           
+
                 if (lang.Flags!=null) {
 
                     if (lang.Flags.Length>0) {
@@ -748,7 +748,7 @@ namespace rabcrClient {
                     if (yy<0)start=i;
                     LItem c=langs[i];
                     c.SetPos(xxx,yy,DocumentSize);
-               
+
                     yy+=60;
                 }
             }else{

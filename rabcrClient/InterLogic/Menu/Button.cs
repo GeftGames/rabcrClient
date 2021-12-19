@@ -63,7 +63,7 @@ namespace rabcrClient {
 					if (oldmouseState) {
                         if (Rabcr.Game.IsActive) {
                             if (Click==null)throw new Exception("Programmer forget to register click event");
-                            Click.Invoke(this,null); 
+                            Click.Invoke(this,null);
                         }
                         oldmouseState=false;
                     }
@@ -84,7 +84,7 @@ namespace rabcrClient {
         #region ButtonDraw
         public void ButtonDraw(SpriteBatch spriteBatch, float f) {
 			if (needBeFill!=150) {
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch, blacksh*f); 
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch, blacksh*f);
             }
             spriteBatch.Draw(texture, position, color*f);
 

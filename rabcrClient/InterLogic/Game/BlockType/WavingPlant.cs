@@ -15,7 +15,7 @@
 //        public int ticks;
 //        #endregion
 
-//    //    public abstract void Draw(); 
+//    //    public abstract void Draw();
 
 //        public abstract object TurnOff();
 //    }

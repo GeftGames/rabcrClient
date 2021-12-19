@@ -42,8 +42,8 @@ namespace rabcrClient {
             buttonLeftTexture=Textures.ButtonLeft;
             buttonRightTexture=Textures.ButtonRight;
             //buttonProblems=new Button(Textures.ButtonCenter, Fonts.Medium, Fonts.Big);
-            buttonAddServer=new ButtonCenter(buttonLeftTexture/*, Fonts.Medium, Fonts.Big,true*/) { center=true };
-            buttonRefreshList=new ButtonCenter(buttonRightTexture/*, Fonts.Medium, Fonts.Big,true*/) { center=true };
+            buttonAddServer=new ButtonCenter(buttonLeftTexture/*, Fonts.Medium, Fonts.Big,true*/) { /*center=true*/ };
+            buttonRefreshList=new ButtonCenter(buttonRightTexture/*, Fonts.Medium, Fonts.Big,true*/) { /*center=true*/ };
             buttonMenu=new Button(Textures.ButtonLongLeft, Lang.Texts[1]/*, Fonts.Medium, Fonts.Big,true*/);
             buttonMenu.Click+=ClickMenu;
             //buttonServer=new Button(Textures.ButtonCenter, Fonts.Medium, Fonts.Big);
@@ -103,7 +103,7 @@ namespace rabcrClient {
             //    p.Start();
             //}
             int yy = (int)(-(servers.Count-(Global.WindowHeight-75-65)/100f)*100*scrollbar.scale)-65/*-55*/;
-          //  
+          //
             for (int i = 0; i<servers.Count; i++) {
                 //if (i>=Worlds.Count)break;
                 if (yy>-70-70&&yy<Global.WindowHeight-75-65-70) {
@@ -124,7 +124,7 @@ namespace rabcrClient {
 
                 }
             }
-           //  
+           //
             //if (buttonMenu.Click) {
             //    ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
             //}
@@ -181,7 +181,7 @@ namespace rabcrClient {
             //}
 
             if (buttonAddServer.Click) {
-                string dir = Setting.Path+"\\Servers\\"+Rabcr.random.Int(100000000);
+                string dir = Setting.Path+"\\Servers\\"+FastRandom.Int(100000000);
                 if (!Directory.Exists(dir)) {
                     Directory.CreateDirectory(dir);
 
@@ -206,7 +206,7 @@ namespace rabcrClient {
                     if (servers.Count>0) {
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
                         //   servers[foreachedServer].geDoMessage=new GeDo(Fonts.Small/*,Fonts.SmallItalic,Pixel*//*,false*/);
-                        
+
                         if (!int.TryParse(connectionChecker.ErrorText, out int langErrorCode)) langErrorCode =1531;
 
                         if (connectionChecker.ErrorDeep==0) {
@@ -234,15 +234,15 @@ namespace rabcrClient {
                     }
                 } else if (connectionChecker.Received!=""&&connectionChecker.Received!=null) {
                     string[] data = connectionChecker.Received.Split('|');
-                    servers[foreachedServer].geDoMessage=new GeDo(data[1], 100, yy+103);
-                    servers[foreachedServer].joinedPlayers=int.Parse(data[2]);
-                    servers[foreachedServer].maxplayers=int.Parse(data[3]);
-                    servers[foreachedServer].version=data[4];
+                    servers[foreachedServer].geDoMessage=new GeDo(data[2], 100, yy+103);
+                    servers[foreachedServer].joinedPlayers=int.Parse(data[3]);
+                    servers[foreachedServer].maxplayers=int.Parse(data[4]);
+                    servers[foreachedServer].version=data[1];
 
                     if (servers[foreachedServer].version!=Release.VersionString) {
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
                         servers[foreachedServer].error=true;
-                        servers[foreachedServer].geDoMessage=new GeDo("<Yellow>"+Lang.Texts[241]+"</Yellow> Hra je pro jinou verzi - "+servers[foreachedServer].version, 100, yy+103);
+                        servers[foreachedServer].geDoMessage=new GeDo("<Yellow>"+Lang.Texts[241]+"</Yellow> "+Lang.Texts[1529].Replace("%name%",servers[foreachedServer].version)/* Hra je pro jinou verzi - "+*/, 100, yy+103);
                     } else if (servers[foreachedServer].joinedPlayers==servers[foreachedServer].maxplayers) {
                         servers[foreachedServer].error=true;
                         servers[foreachedServer].currentConnection=Server.Connection.Error;
@@ -507,7 +507,7 @@ namespace rabcrClient {
                         // s.setting.mouseYCorrection=75;
                         s.play=new ButtonCenter(buttonRightTexture/*,Fonts.Medium,Fonts.Big,true*/) {
                             Text=Lang.Texts[247] /*Setting.czechLanguage ? "Připojit":"Connect"*/,
-                            center=true
+                          //  center=true
                         };
 
 
@@ -527,7 +527,7 @@ namespace rabcrClient {
         }
 
         void SetTexts() {
-            buttonAddServer.center=true;
+        //    buttonAddServer.center=true;
 
          //   buttonMenu.Text=Lang.Texts[1];
             buttonRefreshList.Text=Lang.Texts[15];
@@ -709,12 +709,12 @@ namespace rabcrClient {
         }
 
         void RunMultiplayer(Server s) {
-            //MultiPlayer m = new MultiPlayer {
-            //    port=s.port,
-            //    ip=s.ip,
-            //    pathToWorld=s.filePath
-            //};
-            //Rabcr.GoTo(m);
+            Multiplayer m = new Multiplayer {
+                port = s.port,
+                ip = s.ip,
+                pathToWorld = s.filePath
+            };
+            Rabcr.GoTo(m);
         }
     }
 

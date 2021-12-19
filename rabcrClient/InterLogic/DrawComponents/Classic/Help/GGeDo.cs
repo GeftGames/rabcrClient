@@ -968,7 +968,7 @@ namespace rabcrClient {
 
         public override void Draw(Graphics g) {
             brush.Dispose();
-            brush=new SolidBrush(Rabcr.random.ColorSystemDrawing()/* Color.FromArgb(Rabcr.random.Byte(),Rabcr.random.Byte(),Rabcr.random.Byte())*/);
+            brush=new SolidBrush(FastRandom.ColorSystemDrawing()/* Color.FromArgb(FastRandom.Byte(),FastRandom.Byte(),FastRandom.Byte())*/);
             NativeMethods.Text(g, text, X, Y, brush);
         }
     }

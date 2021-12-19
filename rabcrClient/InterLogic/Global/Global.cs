@@ -15,9 +15,9 @@ namespace rabcrClient {
 
         public static bool ChangedSettings;
         public static bool YoungPlayer=true;
-       // public static bool OnlineAccount;
-      //  public static bool Logged;
-      //  public static string Pass;
+        public static bool OnlineAccount;
+        public static bool Logged;
+        public static string Pass;
 
         public const float ScaleBigToMedium=0.4523809523809524f;
         public const float ScaleMediumToSmall=0.8421052631578947f;
@@ -68,12 +68,12 @@ namespace rabcrClient {
         //    "<NewLine><Red>&l;Spoiler&g;</Red>, <Red>&l;Article&g;</Red> a <Red>&l;NewLine&g;</Red>" +
         //    "</Spoiler>\"";
 
-            public static void RunMessage(string Text, string Header="Message"){ 
+            public static void RunMessage(string Text, string Header="Message"){
                 System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0], "/Message Language="+Setting.CurrentLanguage+" \"Header="+Header+"\" \"Text="+Text+"\"");
                 System.Diagnostics.Debug.WriteLine("/Message Language="+Setting.CurrentLanguage+" \"Header="+Header+"\" \"Text="+Text+"\"");
             }
 
-        public static void ShowgeDoHelp(){ 
+        public static void ShowgeDoHelp(){
             RunMessage(
              "<Bold>"+Lang.Texts[1559]+"</Bold>" +
             "<NewLine>"+
@@ -123,13 +123,13 @@ namespace rabcrClient {
             //"<NewLine><Red>&l;Spoiler&g;</Red>, <Red>&l;Article&g;</Red> a <Red>&l;NewLine&g;</Red>"+
             //"</Spoiler>"
 
-                
-                
-                
+
+
+
                 ,Lang.Texts[194]);
-       
+
             }
-        
+
 
          //public static string MessageGedoInfo="<Bold>Informace o GeDo tagech</Bold>" +
          //   "<NewLine>"+
@@ -182,7 +182,7 @@ namespace rabcrClient {
         //static Message message;
         //static GameWindow otherWindow;
         //public static bool IsPopupShowed;
-        //public static void ShowPopUpWindow(string text) { 
+        //public static void ShowPopUpWindow(string text) {
         //    if (!IsPopupShowed){
         //        message=new Message(Setting.CurrentLanguage,text);
         //        otherWindow = Microsoft.Xna.Framework.GameWindow.Create(message, 100, 100);
@@ -191,9 +191,9 @@ namespace rabcrClient {
         //    }
         //}
 
-        //public static void ClosePopUp() { 
-        //    if (IsPopupShowed) { 
-                
+        //public static void ClosePopUp() {
+        //    if (IsPopupShowed) {
+
         //        IsPopupShowed=false;
         //    }
         //}

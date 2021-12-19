@@ -33,9 +33,9 @@
             this.gTextPanel3 = new GTextPanel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
             this.panel1.Controls.Add(this.textPanel8);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -43,9 +43,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(579, 34);
             this.panel1.TabIndex = 0;
-            // 
+            //
             // textPanel8
-            // 
+            //
             this.textPanel8.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel8.BackColor = System.Drawing.Color.Transparent;
             this.textPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -56,9 +56,9 @@
             this.textPanel8.TabIndex = 0;
             this.textPanel8.TabStop = false;
             this.textPanel8.Text = "Achievement detail";
-            // 
+            //
             // buttonClose
-            // 
+            //
             this.buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonClose.BackColor = System.Drawing.Color.Transparent;
             this.buttonClose.Disamble = false;
@@ -70,9 +70,9 @@
             this.buttonClose.TabIndex = 2;
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.ButtonClose_Click);
-            // 
+            //
             // gTextPanel1
-            // 
+            //
             this.gTextPanel1.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.gTextPanel1.Location = new System.Drawing.Point(31, 110);
@@ -82,9 +82,9 @@
             this.gTextPanel1.TabIndex = 0;
             this.gTextPanel1.TabStop = false;
             this.gTextPanel1.Text = "This is text about acheavement detail";
-            // 
+            //
             // buttonShare
-            // 
+            //
             this.buttonShare.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonShare.BackColor = System.Drawing.Color.Transparent;
             this.buttonShare.Disamble = true;
@@ -96,9 +96,9 @@
             this.buttonShare.TabIndex = 2;
             this.buttonShare.Text = "Share as Game Jolt Trophy";
             this.buttonShare.Click += new System.EventHandler(this.ButtonShare_Click);
-            // 
+            //
             // gTextPanel2
-            // 
+            //
             this.gTextPanel2.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.gTextPanel2.Location = new System.Drawing.Point(31, 51);
@@ -108,9 +108,9 @@
             this.gTextPanel2.TabIndex = 0;
             this.gTextPanel2.TabStop = false;
             this.gTextPanel2.Text = "Base achievement";
-            // 
+            //
             // gTextPanel3
-            // 
+            //
             this.gTextPanel3.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.gTextPanel3.Location = new System.Drawing.Point(31, 80);
@@ -120,9 +120,9 @@
             this.gTextPanel3.TabIndex = 0;
             this.gTextPanel3.TabStop = false;
             this.gTextPanel3.Text = "Not acquired";
-            // 
+            //
             // FormAchDetail
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(579, 274);

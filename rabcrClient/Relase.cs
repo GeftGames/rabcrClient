@@ -2,10 +2,10 @@ namespace rabcrClient{
     static class Release {
 
         // Name of version
-        public const int 
-            VersionMajor    = 0, 
-            VersionMinor    = 1, 
-            VersionBuild    = 25, 
+        public const int
+            VersionMajor    = 0,
+            VersionMinor    = 1,
+            VersionBuild    = 25,
             VersionRevision = 0;
 
         public const string VersionString = "0.1.25.0";
@@ -134,7 +134,7 @@ namespace rabcrClient{
 
 
         #region Links
-        public const string 
+        public const string
             // Report error
             stringRRE="https://***.php",
 

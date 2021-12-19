@@ -18,6 +18,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <LangVersion>9.0</LangVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -39,12 +40,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Publish\</OutputPath>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
     <ErrorReport>none</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -69,14 +72,17 @@
     <Compile Include="AchievmentControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Commands.cs" />
+    <Compile Include="Particles.cs" />
     <Compile Include="ClothesTypes.cs" />
     <Compile Include="Functions\FastMath.cs" />
     <Compile Include="Functions\FastRandom.cs" />
     <Compile Include="InterLogic\Game\BlockType\CactusBlock.cs" />
+    <Compile Include="InterLogic\Game\BlockType\MFish.cs" />
     <Compile Include="InterLogic\Game\BlockType\FruitPlantWaving.cs" />
     <Compile Include="InterLogic\Game\BlockType\BasicWavingPlant.cs" />
     <Compile Include="InterLogic\Game\BlockType\Parrot.cs" />
-    <Compile Include="InterLogic\Game\BlockType\WavingPlant.cs" />
+    <Compile Include="InterLogic\Game\Terrain\MultiplayerMethods.cs" />
     <Compile Include="InterLogic\Menu\Settings\SettingMessage.cs" />
     <Compile Include="InterLogic\Multiplayer\CheckServer.cs" />
     <Compile Include="InterLogic\Multiplayer\ConnectionChecker.cs" />
@@ -268,12 +274,6 @@
     <Compile Include="WindowsAndStates\Splash\FormAchDetail.Designer.cs">
       <DependentUpon>FormAchDetail.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowsAndStates\Splash\FormBanCountry.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WindowsAndStates\Splash\FormBanCountry.Designer.cs">
-      <DependentUpon>FormBanCountry.cs</DependentUpon>
-    </Compile>
     <Compile Include="WindowsAndStates\Splash\FormAch.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -291,6 +291,12 @@
     </Compile>
     <Compile Include="WindowsAndStates\Splash\FormBadTranslation.Designer.cs">
       <DependentUpon>FormBadTranslation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsAndStates\Splash\FormLogin.Designer.cs">
+      <DependentUpon>FormLogin.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowsAndStates\Splash\FormTest18Plus.cs">
       <SubType>Form</SubType>
@@ -346,6 +352,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -434,9 +441,6 @@
     <EmbeddedResource Include="WindowsAndStates\Splash\FormAchDetail.resx">
       <DependentUpon>FormAchDetail.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WindowsAndStates\Splash\FormBanCountry.resx">
-      <DependentUpon>FormBanCountry.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="WindowsAndStates\Splash\FormAch.resx">
       <DependentUpon>FormAch.cs</DependentUpon>
     </EmbeddedResource>
@@ -445,6 +449,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WindowsAndStates\Splash\FormBadTranslation.resx">
       <DependentUpon>FormBadTranslation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsAndStates\Splash\FormLogin.resx">
+      <DependentUpon>FormLogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowsAndStates\Splash\FormTest18Plus.resx">
       <DependentUpon>FormTest18Plus.cs</DependentUpon>
@@ -471,14 +478,13 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets'))" />
   </Target>
-  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
-
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

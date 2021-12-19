@@ -289,7 +289,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingMovemer button=new SettingMovemer(Lang.Texts[354], line, movemer) { 
+                SettingMovemer button=new SettingMovemer(Lang.Texts[354], line, movemer) {
                     Scale=Setting.NightBrightness
                 };
                 button.Click+=ClickNightBrightness;

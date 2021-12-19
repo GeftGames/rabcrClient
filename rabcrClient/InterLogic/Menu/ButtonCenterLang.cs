@@ -23,7 +23,7 @@ namespace rabcrClient {
         public string Text {
             set {
                 str=value;
-                if (position!=null)ReSet();
+                /*if (position!=null)*/ReSet();
             }
         }
         #endregion

@@ -12,7 +12,7 @@ namespace rabcrClient {
         bool oldmouseState;
         bool click;
         readonly Color blacksh;
-        public bool center;
+      //  public bool center;
         public Texture2D texture;
 
         Text text;
@@ -24,7 +24,7 @@ namespace rabcrClient {
         public string Text {
             set {
                 str=value;
-                if (position!=null)ReSet();
+                /*if (position!=null)*/ReSet();
             }
         }
         #endregion
@@ -87,7 +87,7 @@ namespace rabcrClient {
                 color=new Color(fill,fill,fill);
             }
 			if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch); 
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch);
             }
             spriteBatch.Draw(texture, position, color*f);
 
@@ -118,7 +118,7 @@ namespace rabcrClient {
                 color=new Color(fill,fill,fill);
             }
 			if (needBeFill!=150){
-                if (Constants.AnimationsControls) DrawShadow(spriteBatch); 
+                if (Constants.AnimationsControls) DrawShadow(spriteBatch);
             }
             spriteBatch.Draw(texture, position, color*f);
 

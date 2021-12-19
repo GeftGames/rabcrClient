@@ -33,9 +33,9 @@
             this.achievmentControl1 = new rabcr.AchievmentControl();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
             this.panel1.Controls.Add(this.textPanel8);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -43,9 +43,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(579, 34);
             this.panel1.TabIndex = 0;
-            // 
+            //
             // textPanel8
-            // 
+            //
             this.textPanel8.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel8.BackColor = System.Drawing.Color.Transparent;
             this.textPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -56,9 +56,9 @@
             this.textPanel8.TabIndex = 0;
             this.textPanel8.TabStop = false;
             this.textPanel8.Text = "Achievements";
-            // 
+            //
             // buttonClose
-            // 
+            //
             this.buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonClose.BackColor = System.Drawing.Color.Transparent;
             this.buttonClose.Disamble = false;
@@ -70,9 +70,9 @@
             this.buttonClose.TabIndex = 2;
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.CustomButton1_Click);
-            // 
+            //
             // achievmentControl3
-            // 
+            //
             this.achievmentControl3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.achievmentControl3.BackColor = System.Drawing.Color.Transparent;
             this.achievmentControl3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -83,9 +83,9 @@
             this.achievmentControl3.TabIndex = 3;
             this.achievmentControl3.Text = "Future age";
             this.achievmentControl3.Click += new System.EventHandler(this.AchievmentControl3_Click);
-            // 
+            //
             // achievmentControl2
-            // 
+            //
             this.achievmentControl2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.achievmentControl2.BackColor = System.Drawing.Color.Transparent;
             this.achievmentControl2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -96,9 +96,9 @@
             this.achievmentControl2.TabIndex = 3;
             this.achievmentControl2.Text = "Iron age";
             this.achievmentControl2.Click += new System.EventHandler(this.achievmentControl2_Click);
-            // 
+            //
             // achievmentControl0
-            // 
+            //
             this.achievmentControl0.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.achievmentControl0.BackColor = System.Drawing.Color.Transparent;
             this.achievmentControl0.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -109,9 +109,9 @@
             this.achievmentControl0.TabIndex = 3;
             this.achievmentControl0.Text = "Stone age";
             this.achievmentControl0.Click += new System.EventHandler(this.AchievmentControl0_Click);
-            // 
+            //
             // achievmentControl1
-            // 
+            //
             this.achievmentControl1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.achievmentControl1.BackColor = System.Drawing.Color.Transparent;
             this.achievmentControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -122,9 +122,9 @@
             this.achievmentControl1.TabIndex = 3;
             this.achievmentControl1.Text = "Bronze age";
             this.achievmentControl1.Click += new System.EventHandler(this.AchievmentControl1_Click);
-            // 
+            //
             // FormAch
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(579, 420);
