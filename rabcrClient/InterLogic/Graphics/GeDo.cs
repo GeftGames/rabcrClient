@@ -15,7 +15,7 @@ namespace rabcrClient {
         List<GeDoString> gedoBuilding;
         const int lineSize=30;
         public int mouseAdd;
-        float TextW;
+        /*float*/int TextW;
         int X, Y, yy2, gedoLen;
         bool changingPos=false;
         public int width;
@@ -138,35 +138,35 @@ namespace rabcrClient {
 
                     //first
                     if (i==0) {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                     //   GeDoStringNormal g = ;
+                        gedoBuilding.Add(new GeDoStringNormal() {
                             //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
-                        };
-                        gedoBuilding.Add(g);
+                            text=new TextWithMeasure(lines[i], X+ TextW, Y)
+                        });
                         Y+=lineSize;
                         TextW=0;
 
                     //last
                     } else if (i==lines.Length-1) {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                        GeDoStringNormal g = new() {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
+                            text=new TextWithMeasure(lines[i], X+TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         TextW=g.text.MeasureX;
 
                     //middle
                     } else {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                       // GeDoStringNormal g = ;
+                        gedoBuilding.Add(new GeDoStringNormal() {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
-                        };
-                        gedoBuilding.Add(g);
+                            text=new TextWithMeasure(lines[i], X+ TextW, Y)
+                        });
                         Y+=lineSize;
                     }
                 }
             } else {
-                GeDoStringNormal g = new GeDoStringNormal {
+                GeDoStringNormal g = new() {
                     text=new TextWithMeasure(tmpText, X+(int)TextW, Y)
                 };
                 gedoBuilding.Add(g);
@@ -209,7 +209,7 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringNormal g = new GeDoStringNormal {
+                GeDoStringNormal g = new() {
                     //X=(int)(X+TextW),
                     //Y=Y-10,
                    // str=tmpText,
@@ -268,7 +268,7 @@ namespace rabcrClient {
 
                     //first
                     if (i==0) {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
                             text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
@@ -278,7 +278,7 @@ namespace rabcrClient {
 
                         //last
                     } else if (i==lines.Length-1) {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
                             text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
@@ -287,7 +287,7 @@ namespace rabcrClient {
 
                         //middle
                     } else {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
                             text=new TextWithMeasure(lines[i], (int)(X+TextW), Y)
                         };
@@ -296,7 +296,7 @@ namespace rabcrClient {
                     }
                 }
             } else {
-                GeDoStringColoredText g= new GeDoStringColoredText {
+                GeDoStringColoredText g= new() {
                     color=c,
                     text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
@@ -380,7 +380,7 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringItalic g = new GeDoStringItalic {
+                GeDoStringItalic g = new() {
                     text=new TextWithMeasure(tmpText, (int)(X+TextW), Y)
                 };
                 gedoBuilding.Add(g);
@@ -423,7 +423,7 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringAnimated g= new GeDoStringAnimated {
+                GeDoStringAnimated g= new() {
                    text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
 
@@ -581,7 +581,7 @@ namespace rabcrClient {
             //if (tmpText.Contains(Environment.NewLine)) {
             //    //ShowError("Multiline link");
             //} else {
-                GeDoStringLink g = new GeDoStringLink(tmpText, (int)(X+TextW), Y) {
+                GeDoStringLink g = new GeDoStringLink(tmpText, X+TextW, Y) {
                     mouseAdd2=mouseAdd,
                 };
 
@@ -659,8 +659,8 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringRandom g = new GeDoStringRandom {
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y)
+                GeDoStringRandom g = new() {
+                    text=new TextWithMeasure(tmpText, X+TextW, Y)
                 };
                 gedoBuilding.Add(g);
                 TextW+=g.text.MeasureX;
@@ -687,7 +687,7 @@ namespace rabcrClient {
                 if (showText=="") showText=Lang.Texts[292];
                 if (hideText=="") hideText=Lang.Texts[293];
             }
-            GeDoStringSpoiler g = new GeDoStringSpoiler(tmpText, X,(int)(X+TextW), Y, mouseAdd) {
+            GeDoStringSpoiler g = new(tmpText, X, X+TextW, Y, mouseAdd) {
                 textShow=showText,
                 textHide=hideText
             };
@@ -713,7 +713,7 @@ namespace rabcrClient {
                 }
             }
 
-            GeDoStringArticle g = new GeDoStringArticle(tmpText, X, Y, width, mouseAdd, wrap);
+            GeDoStringArticle g = new(tmpText, X, Y, width, mouseAdd, wrap);
 
             gedoBuilding.Add(g);
             TextW=0;

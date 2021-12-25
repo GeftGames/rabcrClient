@@ -45,46 +45,46 @@ namespace rabcrClient {
         }
 
         static bool IsDevanagariChar(char input) {
-            switch (input) {
-                case 'क': return true;
-                case 'ख': return true;
-                case 'ग': return true;
-                case 'घ': return true;
-                case 'ङ': return true;
-                case 'च': return true;
-                case 'छ': return true;
-                case 'ज': return true;
-                case 'झ': return true;
-                case 'ञ': return true;
-                case 'ट': return true;
-                case 'ठ': return true;
-                case 'ड': return true;
-                case 'ढ': return true;
-                case 'ण': return true;
-                case 'त': return true;
-                case 'थ': return true;
-                case 'द': return true;
-                case 'ध': return true;
-                case 'न': return true;
-                case 'प': return true;
-                case 'फ': return true;
-                case 'ब': return true;
-                case 'भ': return true;
-                case 'म': return true;
-                case 'य': return true;
-                case 'र': return true;
-                case 'ल': return true;
-                case 'व': return true;
-                case 'श': return true;
-                case 'ष': return true;
-                case 'स': return true;
-                case 'ह': return true;
-            }
-            return false;
+            return input switch {
+                'क' => true,
+                'ख' => true,
+                'ग' => true,
+                'घ' => true,
+                'ङ' => true,
+                'च' => true,
+                'छ' => true,
+                'ज' => true,
+                'झ' => true,
+                'ञ' => true,
+                'ट' => true,
+                'ठ' => true,
+                'ड' => true,
+                'ढ' => true,
+                'ण' => true,
+                'त' => true,
+                'थ' => true,
+                'द' => true,
+                'ध' => true,
+                'न' => true,
+                'प' => true,
+                'फ' => true,
+                'ब' => true,
+                'भ' => true,
+                'म' => true,
+                'य' => true,
+                'र' => true,
+                'ल' => true,
+                'व' => true,
+                'श' => true,
+                'ष' => true,
+                'स' => true,
+                'ह' => true,
+                _ => false,
+            };
         }
 
         void BuildTextDevanagari(string txt){
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            List<DrawingChar> tmpChs=new();
             char[] chs=new RenderEnngineDevanagari(txt).Output.ToCharArray();
             int posx=X;
 
@@ -216,7 +216,7 @@ namespace rabcrClient {
         }
 
         void BuildTextArabic(string txt){
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            List<DrawingChar> tmpChs=new();
             char[] chs=BuildArabicText(txt);
             int posx=X;
 
@@ -275,259 +275,259 @@ namespace rabcrClient {
         }
 
         static int ArabicFinalFormConventer(int s){
-            switch (s){
-                case 1609: return 65264;
-                case 1577: return 65172;
-                case 1570: return 65154;
-                case 1610: return 65266;
-                case 1578: return 65174;
-                case 1594: return 65230;
-                case 1576: return 65168;
-                case 1604: return 65246;
-                case 1583: return 65193;
-                case 1601: return 65234;
-                case 1606: return 65254;
-                case 1593: return 65226;
-                case 1605: return 65250;
-                case 1585: return 65198;
-                case 1603: return 65242;
-                case 1749: return 65258;//?
-                case 1574: return 65162;
-                case 1735: return 64472;
-                case 1670: return 64379;
-                case 1575: return 65166;
-                case 1579: return 65178;
-                case 1580: return 65182;
-                case 1581: return 65186;
-                case 1582: return 65190;
-                case 1584: return 65196;
-                case 1586: return 65200;
-                case 1587: return 65202;
-                case 1588: return 65206;
-                case 1589: return 65210;
-                case 1590: return 65214;
-                case 1591: return 65218;
-                case 1592: return 65222;
-                case 1602: return 65238;
-                case 1607: return 65258;
-                case 1608: return 65262;
-                case 1571: return 65156;
-                case 1573: return 65160;
-                case 1572: return 65158;
-                case 1709: return 64468;
-                case 1736: return 64476;
-                case 1726: return 64427;
-                case 1711: return 64403;
-            }
-            return s;
+            return s switch {
+                1609 => 65264,
+                1577 => 65172,
+                1570 => 65154,
+                1610 => 65266,
+                1578 => 65174,
+                1594 => 65230,
+                1576 => 65168,
+                1604 => 65246,
+                1583 => 65193,
+                1601 => 65234,
+                1606 => 65254,
+                1593 => 65226,
+                1605 => 65250,
+                1585 => 65198,
+                1603 => 65242,
+                1749 => 65258,//?
+                1574 => 65162,
+                1735 => 64472,
+                1670 => 64379,
+                1575 => 65166,
+                1579 => 65178,
+                1580 => 65182,
+                1581 => 65186,
+                1582 => 65190,
+                1584 => 65196,
+                1586 => 65200,
+                1587 => 65202,
+                1588 => 65206,
+                1589 => 65210,
+                1590 => 65214,
+                1591 => 65218,
+                1592 => 65222,
+                1602 => 65238,
+                1607 => 65258,
+                1608 => 65262,
+                1571 => 65156,
+                1573 => 65160,
+                1572 => 65158,
+                1709 => 64468,
+                1736 => 64476,
+                1726 => 64427,
+                1711 => 64403,
+                _ => s,
+            };
         }
 
         static int ArabicInitialFormConventer(int s){
-            switch (s){
-                case 1578: return 65175;
-                case 1594: return 65231;
-                case 1574: return 65163;
-                case 1610: return 65267;
-                case 1576: return 65169;
-                case 1601: return 65235;
-                case 1606: return 65255;
-                case 1593: return 65227;
-                case 1605: return 65251;
-                case 1603: return 65243;
-                case 1670: return 64380;
-                case 1579: return 65179;
-                case 1580: return 65183;
-                case 1581: return 65187;
-                case 1582: return 65191;
-                case 1587: return 65203;
-                case 1588: return 65207;
-                case 1589: return 65211;
-                case 1590: return 65215;
-                case 1591: return 65219;
-                case 1592: return 65223;
-                case 1602: return 65239;
-                case 1604: return 65247;
-                case 1607: return 65259;
-                case 1709: return 64469;
-                case 1609: return 64488;
-                case 1726: return 64428;
-                case 1711: return 64404;
-            }
-            return s;
+            return s switch {
+                1578 => 65175,
+                1594 => 65231,
+                1574 => 65163,
+                1610 => 65267,
+                1576 => 65169,
+                1601 => 65235,
+                1606 => 65255,
+                1593 => 65227,
+                1605 => 65251,
+                1603 => 65243,
+                1670 => 64380,
+                1579 => 65179,
+                1580 => 65183,
+                1581 => 65187,
+                1582 => 65191,
+                1587 => 65203,
+                1588 => 65207,
+                1589 => 65211,
+                1590 => 65215,
+                1591 => 65219,
+                1592 => 65223,
+                1602 => 65239,
+                1604 => 65247,
+                1607 => 65259,
+                1709 => 64469,
+                1609 => 64488,
+                1726 => 64428,
+                1711 => 64404,
+                _ => s,
+            };
         }
 
         static int ArabicMedialFormConventer(int s){
-            switch (s){
-                case 1610: return 65268;
-                case 1578: return 65176;
-                case 1604: return 65248;
-                case 1594: return 65232;
-                case 1609: return 64489;
-                case 1576: return 65170;
-                case 1601: return 65236;
-                case 1606: return 65256;
-                case 1593: return 65228;
-                case 1605: return 65252;
-                case 1603: return 65244;
-                case 1574: return 65164;
-                case 1670: return 64381;
-                case 1575: return 65166;
-                case 1579: return 65180;
-                case 1580: return 65184;
-                case 1581: return 65188;
-                case 1582: return 65192;
-                case 1583: return 65193;
-                case 1584: return 65196;
-                case 1585: return 65198;
-                case 1586: return 65200;
-                case 1587: return 65204;
-                case 1588: return 65208;
-                case 1589: return 65212;
-                case 1590: return 65216;
-                case 1591: return 65220;
-                case 1592: return 65224;
-                case 1602: return 65240;
-                case 1607: return 65260;
-                case 1608: return 65262;
-                case 1571: return 65156;
-                case 1573: return 65160;
-                case 1572: return 65158;
-                case 1570: return 65154;
-                case 1735: return 64472;
-                case 1749: return 65258;//?
-                case 1709: return 64470;
-                case 1736: return 64476;
-                case 1726: return 64429;
-                case 1711: return 64405;
-            }
-            return s;
+            return s switch {
+                1610 => 65268,
+                1578 => 65176,
+                1604 => 65248,
+                1594 => 65232,
+                1609 => 64489,
+                1576 => 65170,
+                1601 => 65236,
+                1606 => 65256,
+                1593 => 65228,
+                1605 => 65252,
+                1603 => 65244,
+                1574 => 65164,
+                1670 => 64381,
+                1575 => 65166,
+                1579 => 65180,
+                1580 => 65184,
+                1581 => 65188,
+                1582 => 65192,
+                1583 => 65193,
+                1584 => 65196,
+                1585 => 65198,
+                1586 => 65200,
+                1587 => 65204,
+                1588 => 65208,
+                1589 => 65212,
+                1590 => 65216,
+                1591 => 65220,
+                1592 => 65224,
+                1602 => 65240,
+                1607 => 65260,
+                1608 => 65262,
+                1571 => 65156,
+                1573 => 65160,
+                1572 => 65158,
+                1570 => 65154,
+                1735 => 64472,
+                1749 => 65258,//?
+                1709 => 64470,
+                1736 => 64476,
+                1726 => 64429,
+                1711 => 64405,
+                _ => s,
+            };
         }
 
         static bool HaveInitialForm(char ch){
-            switch (ch){
-                case 'ا': return false;
-                case 'ب': return true;
-                case 'ت': return true;
-                case 'ث': return true;
-                case 'ج': return true;
-                case 'ح': return true;
-                case 'خ': return true;
-                case 'د': return false;
-                case 'ذ': return false;
-                case 'ر': return false;
-                case 'ز': return false;
-                case 'س': return true;
-                case 'ش': return true;
-                case 'ص': return true;
-                case 'ض': return true;
-                case 'ط': return true;
-                case 'ظ': return true;
-                case 'ع': return true;
-                case 'غ': return true;
-                case 'ف': return true;
-                case 'ق': return true;
-                case 'ك': return true;
-                case 'ل': return true;
-                case 'م': return true;
-                case 'ه': return true;
-                case 'ي': return true;
-                case 'و': return false;
-                case 'ۇ': return false;
-                case 'ۈ': return false;
-                case 'أ': return false;
-                case 'إ': return false;
-                case 'ؤ': return false;
-                case 'ئ': return true;
-                case 'آ': return false;
-                case 'ن': return true;
-                case 'ﻹ': return false;
-                case 'ﻻ': return false;
-                case 'چ': return true;
-                case 'ڭ': return true;
-                case 'ک': return true;
-                case 'ڑ': return false;
-                case 'ی': return true;
-                case 'گ': return true;
-                case 'ې': return true;
-                case 'ۆ': return false;
+            return ch switch {
+                'ا' => false,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => false,
+                'ذ' => false,
+                'ر' => false,
+                'ز' => false,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => false,
+                'ۇ' => false,
+                'ۈ' => false,
+                'أ' => false,
+                'إ' => false,
+                'ؤ' => false,
+                'ئ' => true,
+                'آ' => false,
+                'ن' => true,
+                'ﻹ' => false,
+                'ﻻ' => false,
+                'چ' => true,
+                'ڭ' => true,
+                'ک' => true,
+                'ڑ' => false,
+                'ی' => true,
+                'گ' => true,
+                'ې' => true,
+                'ۆ' => false,
                 //?
-                case 'ى': return true;
-                case 'ة': return true;
-                case 'ە': return false;
-                case 'ہ': return true;
-                case 'ھ': return true;
-                    case 'ں': return false;
-                    case 'ے': return false;
-            }
+                'ى' => true,
+                'ة' => true,
+                'ە' => false,
+                'ہ' => true,
+                'ھ' => true,
+                'ں' => false,
+                'ے' => false,
+                _ => throw new Exception("Missing arabic letter " + ch),
+            };
+
 #if DEBUG
-            throw new Exception("Missing arabic letter "+ch);
-            #else
+#else
             return true;
 #endif
         }
 
         static bool HaveFinalForm(char ch){
-            switch (ch){
-                case 'ا': return true;
-                case 'ب': return true;
-                case 'ت': return true;
-                case 'ث': return true;
-                case 'ج': return true;
-                case 'ح': return true;
-                case 'خ': return true;
-                case 'د': return true;
-                case 'ذ': return true;
-                case 'ر': return true;
-                case 'ز': return true;
-                case 'س': return true;
-                case 'ش': return true;
-                case 'ص': return true;
-                case 'ض': return true;
-                case 'ط': return true;
-                case 'ظ': return true;
-                case 'ع': return true;
-                case 'غ': return true;
-                case 'ف': return true;
-                case 'ق': return true;
-                case 'ك': return true;
-                case 'ل': return true;
-                case 'م': return true;
-                case 'ه': return true;
-                case 'ي': return true;
-                case 'و': return true;
-                case 'ۇ': return true;
-                case 'أ': return true;
-                case 'إ': return true;
-                case 'ؤ': return true;
-                case 'ئ': return true;
-                case 'آ': return true;
-                case 'ن': return true;
-                case 'ڭ': return true;
-                case 'ﻹ': return false;
-                case 'ﻻ': return false;
-                case 'چ': return true;
-                case 'ھ' : return true;
-                case 'ۈ' : return true;
-                case 'ک' : return true;
-                case 'ڑ' : return true;
-                case 'ہ' : return true;
-                case 'ی' : return true;
-                case 'ے' : return true;
-                case 'ۆ' : return true;
-                case 'گ' : return true;
-                case 'ې' : return true;
-
+            return ch switch {
+                'ا' => true,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => true,
+                'ذ' => true,
+                'ر' => true,
+                'ز' => true,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => true,
+                'ۇ' => true,
+                'أ' => true,
+                'إ' => true,
+                'ؤ' => true,
+                'ئ' => true,
+                'آ' => true,
+                'ن' => true,
+                'ڭ' => true,
+                'ﻹ' => false,
+                'ﻻ' => false,
+                'چ' => true,
+                'ھ' => true,
+                'ۈ' => true,
+                'ک' => true,
+                'ڑ' => true,
+                'ہ' => true,
+                'ی' => true,
+                'ے' => true,
+                'ۆ' => true,
+                'گ' => true,
+                'ې' => true,
                 //?
-                case 'ى': return true;
-                case 'ة': return true;
-                case 'ە': return true;
-            }
+                'ى' => true,
+                'ة' => true,
+                'ە' => true,
+                _ => throw new Exception("Missing arabic letter " + ch),
+            };
 
-            #if DEBUG
-            throw new Exception("Missing arabic letter "+ch);
-            #else
+#if DEBUG
+#else
             return true;
-            #endif
+#endif
         }
 
         public static char[] BuildArabicText(string txt) {
@@ -597,7 +597,7 @@ namespace rabcrClient {
 
         #region Normal
         void BuildTextNormal(string txt){
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            List<DrawingChar> tmpChs=new();
             char[] chs=txt.ToArray();
             int posx=X, posY=Y;
 
@@ -798,8 +798,8 @@ namespace rabcrClient {
 
         public const int MeasureY =30;
 
-        public TextWithMeasure(string txt, int x, int y){
-            if (txt==null){
+        public TextWithMeasure(string txt, int x, int y) {
+            if (txt==null) {
                 Chars=new DrawingChar[0];
                 return;
             }
@@ -807,7 +807,7 @@ namespace rabcrClient {
             Bitmap=BitmapFont.bitmapFont18.Bitmap;
             X=y;
             Y=y;
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+            List<DrawingChar> tmpChs=new();
 
             char[] chs=Text.BuildArabicText(txt);//txt.ToCharArray();
             int posx=x;
@@ -880,7 +880,7 @@ namespace rabcrClient {
         public void Draw(SpriteBatch sb, Color c) {
             for (int i=0; i<len; i++) {
                 DrawingChar ch=Chars[i];
-                sb.Draw(Bitmap,ch.Pos,ch.Rectangle,c);
+                sb.Draw(Bitmap, ch.Pos, ch.Rectangle, c);
             }
         }
 
@@ -904,7 +904,7 @@ namespace rabcrClient {
         public void DrawItalic(SpriteBatch sb, Color c) {
             for (int i=0; i<len; i++) {
                 DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap,ch.Pos, ch.Rectangle,c,0.2f,new Vector2(),1,SpriteEffects.None,1);
+                sb.Draw(/*font.*/Bitmap,ch.Pos, ch.Rectangle, c, 0.2f, Vector2.Zero, 1, SpriteEffects.None, 1);
             }
         }
 
@@ -937,7 +937,7 @@ namespace rabcrClient {
             Bitmap=BitmapFont.bitmapFont34.Bitmap;
            // font=f;
         //   txt=
-            List<Glyph> tmpChs=new List<Glyph>();
+            List<Glyph> tmpChs=new();
             char[] chs=Text.BuildArabicText(txt);//txt.ToCharArray();
             int posx=x;
 
@@ -1060,10 +1060,10 @@ namespace rabcrClient {
 
         public BitmapFont(int size, byte[] bytes) {
             Size=size;
-            List<Glyph> tmpGlyphs=new List<Glyph>();
+            List<Glyph> tmpGlyphs=new();
 
             for (int i=0; i<bytes.Length; ) {
-                Glyph g = new Glyph {
+                Glyph g = new() {
                     Code=(int)(uint)(bytes[i+3] | bytes[i+2]<<8 | bytes[i+1]<<16 | bytes[i]<<24),
                 };
                 if (g.visible=bytes[i+4]==1){

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 
 namespace rabcrClient {
     enum Sex:byte{
@@ -45,10 +46,19 @@ namespace rabcrClient {
             Proportions,
             Fill,
         }
+        public static bool FirstRun;
+        //public enum GameAnimations :byte{
+        //    Minimal,
+        //    LowQuality,
+        //    NormalQuality,
+        //    BestQuality
+        //}
+   //     public static GameAnimations AnimationsGame=GameAnimations.NormalQuality;
+        public static bool Vignetting=true;
 
         public static Scale currentScale;
 
-        public static float Zoom=2;
+        public static float Zoom=3;
 
         public static float VolumeMusic=.5f;
 
@@ -56,6 +66,22 @@ namespace rabcrClient {
 
         public static int CurrentLanguage;
 
+        public static float Multisapling=1f;
+
+        public static bool BackgroundFancy=true;
+        public static bool Clouds=true;
+        public static bool InteractionMess=true;
+        public static bool FallingLeaves=true;
+        public static bool WavingElements=true;
+        public static FogTypes Fog=FogTypes.Fancy;
+        public enum FogTypes { 
+            No,
+            Plain,
+            Fancy
+        }
+        public static bool SunAndMoon=true;
+        public static bool BetterSnowAndRain=true;
+        public static bool SnowAndRain=true;
         #region Keys
         public static Microsoft.Xna.Framework.Input.Keys KeyLeft=Microsoft.Xna.Framework.Input.Keys.Left;
 
@@ -82,17 +108,64 @@ namespace rabcrClient {
 
         public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
 
+
+      
+
         public static float NightBrightness=0.6f;
 
-        public static GraphicsProfile GraphicsProfile;
+      //  public static GraphicsProfile GraphicsProfile;
 
         public static void CreateSettings() {
            // Debug.WriteLine("Creating new settings");
             try {
-                if (File.Exists(Setting.Path+@"\Setting.bin")) File.Delete(Setting.Path+@"\Setting.bin");
+                if (File.Exists(Path+@"\Setting.bin")) File.Delete(Path+@"\Setting.bin");
             } catch {}
 
             Lang.SetUp(true);
+            FirstRun=true;
+    //     ManagementObjectSearcher searcher 
+    // = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
+
+    //string graphicsCard = string.Empty;
+    //foreach (ManagementObject mo in searcher.Get())
+    //{
+    //    foreach (PropertyData property in mo.Properties)
+    //    {
+    //       if (property.Name == "Description")
+    //       {
+    //           graphicsCard = property.Value.ToString();
+    //       }
+    //    }
+    //}
+
+          //  var graphicsCardName = new SharpDX.Direct3D9.Direct3D().Adapters[0].Details.Description;
+
+          //  Debug.WriteLine(graphicsCardName);
+          //  if (GraphicsDeviceInformation.)Setting.GameAnimations
+
+//var GraphicsCard = Rabcr.Game.GraphicsDevice;
+
+
+//int NumberOfAdapters = GraphicsAdapter.Adapters.Count;
+
+//List<string> AdapterNames = new List<string>();
+
+//foreach (GraphicsAdapter EnumeratedAdapter in GraphicsAdapter.Adapters)
+
+//{
+
+//    if (EnumeratedAdapter == GraphicsCard.Adapter)
+
+//    {
+
+//        //This is the one being used.
+
+//    }
+
+//    AdapterNames.Add(EnumeratedAdapter.Description);
+
+//}
+
 
             SaveSetting();
         }
@@ -107,7 +180,7 @@ namespace rabcrClient {
             Debug.WriteLine("Ukládání nastavení... ");
             #endif
 
-            List<byte> bytes = new List<byte> {
+            List<byte> bytes = new() {
                 (byte)sex,
                 (byte)MaturePlayer,
                 (byte)hairType,
@@ -141,8 +214,18 @@ namespace rabcrClient {
 
                 (byte)CurrentLanguage,
                 Constants.AnimationsControls ? (byte)1 : (byte)0,
-                Constants.AnimationsGame ? (byte)1 : (byte)0,
-                (byte)GraphicsProfile,
+                WavingElements ? (byte)1 : (byte)0,
+                Clouds ? (byte)1 : (byte)0,
+                BackgroundFancy ? (byte)1 : (byte)0,
+                BetterSnowAndRain ? (byte)1 : (byte)0,
+                FallingLeaves ? (byte)1 : (byte)0,
+                InteractionMess ? (byte)1 : (byte)0,
+                SnowAndRain ? (byte)1 : (byte)0,
+                Vignetting ? (byte)1 : (byte)0,
+                SunAndMoon ? (byte)1 : (byte)0,
+                (byte)(Multisapling*10),
+                (byte)Fog,
+              //  (byte)GraphicsProfile,
 
                 (byte)currentScale,
                 (byte)currentWindow,
@@ -196,10 +279,25 @@ namespace rabcrClient {
                     KeyExit=(Keys)(*current++);
                     KeyShowInfo=(Keys)(*current++);
 
+
+      
+
                     CurrentLanguage=*current++;
                     Constants.AnimationsControls=(*current++) == 1;
-                    Constants.AnimationsGame=(*current++) == 1;
-                    GraphicsProfile=(GraphicsProfile)(*current++);
+                    WavingElements=(*current++) == 1;
+                    Clouds=(*current++) == 1;
+                    BackgroundFancy=(*current++) == 1;
+                    BetterSnowAndRain=(*current++) == 1;
+                    FallingLeaves=(*current++) == 1;
+                    InteractionMess=(*current++) == 1;
+                    SnowAndRain=(*current++) == 1;
+                    Vignetting=(*current++) == 1;
+                    SunAndMoon=(*current++) == 1;
+                    Multisapling=(*current++)/10f;
+                    Fog=(FogTypes)(*current++);
+
+
+                    //GraphicsProfile=(Setting.GraphicsProfile)(*current++);
 
 
                     currentScale=(Scale)(*current++);
@@ -215,7 +313,7 @@ namespace rabcrClient {
                     Zoom=GetFloat();
                     NightBrightness=GetFloat();
 
-                    if (Zoom<=0) Zoom=2;
+                    if (Zoom<=0) Zoom=3;
 
                     if (Global.HasSoundGraphics) MediaPlayer.Volume=VolumeMusic;
 

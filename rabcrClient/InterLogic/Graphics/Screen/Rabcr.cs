@@ -21,6 +21,7 @@ namespace rabcrClient {
         public static GraphicsDeviceManager GraphicsManager;
         public static Game Game;
         public static Texture2D Pixel;
+        public static Texture2D Pixel2;
        // public static FastRandom random;
         public static SpriteBatch spriteBatch;
         static bool exiting=false;
@@ -153,6 +154,23 @@ namespace rabcrClient {
             GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
             GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
 
+            //    Graphics.RasterizerState.MultiSampleAntiAlias=true;
+            GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+            void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
+                e.GraphicsDeviceInformation.GraphicsProfile = GraphicsProfile.HiDef;
+                //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
+                Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
+            }
+            GraphicsManager.PreferMultiSampling = true;
+            //    GraphicsManager.GraphicsDevice..BeforeDeviceCreated += Graphics_BeforeDeviceCreated;
+            //	        Graphics.PresentationParameters.MultiSampleCount = 8;
+            //	GraphicsManager.PreferMultiSampling = true;
+
+
+            // void Graphics_BeforeDeviceCreated(object sender, PresentationParameters e)
+            //   {
+            //       e.MultiSampleCount = 16;
+            //    }
 
             try {
                 GraphicsManager.ApplyChanges();
@@ -164,6 +182,7 @@ namespace rabcrClient {
             content=Content;
 
             (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
+            (Pixel2 = new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White,Color.White,Color.White,Color.White });
 
        //     random=new FastRandom();
 

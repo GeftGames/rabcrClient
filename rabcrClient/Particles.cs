@@ -38,8 +38,19 @@ namespace rabcrClient {
         public float Size;
 
         public ParticleRain(float size, float vSpeed) {
-            Color=Color.Blue*(Size=size);
-            VSpeed=vSpeed*(size*0.5f+0.5f);
+            Size=size;
+            Color = FastRandom.Int(6) switch {
+                1 => new Color(97, 111, 166) * size,
+                2 => new Color(67, 75, 127) * size,
+                //case : 
+                // //   Color=Color.Blue*size;
+                //    break;
+                4 => new Color(164, 173, 211) * size,
+                3 => new Color(42, 50, 92) * size,
+                _ => new Color(127, 139, 189) * size,
+            };
+            //   Color=Color.Blue*();
+            VSpeed =vSpeed*(size*0.5f+0.5f);
         }
 
         public void Update() {
@@ -47,11 +58,33 @@ namespace rabcrClient {
             Position.Y+=VSpeed;
         }
 
-        public void Draw(float x, float y,float a) => Rabcr.spriteBatch.Draw(
+        public void Draw(float x, float y,float a) {
+            Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), 1, Size<0.5f ? 2 : 3),
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Size<0.75f ? 1 : 1, Size<0.25f ? 3 : (Size<0.75f ? 4 : 5)),
                 color: Color*a
             );
+        }
+
+        public void DrawBetterQuality(float x, float y,float a) {
+            Rabcr.spriteBatch.Draw(
+                texture: Rabcr.Pixel,
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x)+1, (int)(Position.Y+0.5f+y)+1, Size<0.75f ? 1 : 1, Size<0.25f ? 3 : (Size<0.75f ? 4 : 5)),
+                color: Color.Black*a*0.05f
+            );
+
+            Rabcr.spriteBatch.Draw(
+                texture: Rabcr.Pixel,
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y)-1, Size<0.75f ? 1 : 1, Size<0.25f ? 3 : (Size<0.75f ?4 : 5)),
+                color: Color.White*a*0.05f
+            );
+
+            Rabcr.spriteBatch.Draw(
+                texture: Rabcr.Pixel,
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Size<0.75f ? 1 : 1, Size<0.25f ? 3 : (Size<0.75f ? 4 : 5)),
+                color: Color*a
+            );
+        }
     }
 
     class ParticleSnow {
@@ -69,20 +102,55 @@ namespace rabcrClient {
             VSpeed=vSpeed*size;
         }
 
-        public void Update() {
+        public void Update(bool right) {
             time++;
-            if (time%10==0) amplitude=FastRandom.Float()*2-1;
+            if (time%10==0) amplitude=FastRandom.FloatTWO()-1;
 
-            Position.X+=HSpeed+amplitude*((float)Math.Cos(time/10f))*0.25f;
+            if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time/10f))*0.25f;
+            else Position.X-=HSpeed+amplitude*((float)Math.Cos(time/10f))*0.25f;
             Position.Y+=VSpeed+((float)Math.Sin(time/10f))*HSpeed*0.5f/*+0.2f*/;
         }
 
-        public void Draw(float x, float y,float A) => Rabcr.spriteBatch.Draw(
-                texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Size>0.5f ? 2 : 1, Size>0.5f ? 2 : 1),
-                color: Color*A
-            );
+        public void Draw(float x, float y, Color c) { 
+                Rabcr.spriteBatch.Draw(
+                    texture: Rabcr.Pixel2,
+                   new Vector2(Position.X+0.5f+x, Position.Y+0.5f+y),
+                    color: c
+                );
+        }
+    }
 
+    class ParticleSnowSmall {
+        public Vector2 Position;
+
+        public float HSpeed;
+        public float VSpeed;
+        public Color Color;
+        //	public float Angle;
+        int time;
+        public float Size;
+        float amplitude=1;
+        public ParticleSnowSmall(float vSpeed) {
+            Size=FastRandom.FloatHalf()+0.5f;
+            Color=Color.White*Size;
+            VSpeed=vSpeed*Size;
+        }
+
+        public void Update(bool right) {
+            time++;
+            if (time%10==0) amplitude=FastRandom.FloatTWO()-1;
+
+            if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time/10f))*0.25f;
+            else Position.X-=HSpeed+amplitude*((float)Math.Cos(time/10f))*0.25f;
+            Position.Y+=VSpeed+((float)Math.Sin(time/10f))*HSpeed*0.5f/*+0.2f*/;
+        }
+
+        public void Draw(float x, float y, Color c) 
+            => Rabcr.spriteBatch.Draw(
+                Rabcr.Pixel,
+                new Vector2(Position.X+x, Position.Y+y),
+                c
+            );
     }
 
     class FallingLeave {

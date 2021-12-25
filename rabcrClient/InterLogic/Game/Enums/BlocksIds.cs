@@ -34,8 +34,10 @@
     OakLeaves,
     OakWood,
     OakBranches,
+    OakBranchesSnow,
 
     SpruceLeaves,
+    SpruceLeavesWithSnow,
     SpruceWood,
 
     PineLeaves,
@@ -44,24 +46,28 @@
     LindenLeaves,
     LindenWood,
     LindenBranches,
+    LindenBranchesSnow,
 
     AppleLeaves,
     AppleLeavesWithApples,
     AppleLeavesBlossom,
     AppleWood,
     AppleBranches,
+    AppleBranchesSnow,
 
     CherryLeaves,
     CherryLeavesWithCherries,
     CherryLeavesBlossom,
     CherryWood,
     CherryBranches,
+    CherryBranchesSnow,
 
     PlumLeaves,
     PlumLeavesWithPlums,
     PlumLeavesBlossom,
     PlumWood,
     PlumBranches,
+    PlumBranchesSnow,
 
     LemonWood,
     LemonLeaves,
@@ -74,6 +80,7 @@
     WillowLeaves,
     WillowWood,
     WillowBranches,
+    WillowBranchesSnow,
 
     MangroveLeaves,
     MangroveWood,

@@ -80,9 +80,9 @@ namespace rabcrClient {
         public static Color Lerp(Color value1, Color value2, float amount) {
             float _amount=1-amount;
             return new Color(
-                (byte)(value1.R*_amount + value2.R*amount),
-                (byte)(value1.G*_amount + value2.G*amount),
-                (byte)(value1.B*_amount + value2.B*amount),
+                (byte)(value1.R*_amount + value2.R*amount + .5f),
+                (byte)(value1.G*_amount + value2.G*amount + .5f),
+                (byte)(value1.B*_amount + value2.B*amount + .5f),
                 (byte)255/*(value1.A*_amount + value2.A*amount)*/
             );
         }

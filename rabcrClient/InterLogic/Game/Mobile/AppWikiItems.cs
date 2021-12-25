@@ -129,8 +129,8 @@ namespace rabcrClient.Mobile {
             //        blockId=t;
             //        type="Plant";
             //    }
-           // }
-            string add="";
+            // }
+            string add;
             if (blockId==BlockId.None){
                 add="\r\nPoložit: Ne";
             }else{

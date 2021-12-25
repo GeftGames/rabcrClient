@@ -191,8 +191,8 @@ namespace rabcrClient {
     static class GameMethods {
 
 
-        public static bool IsHalfShadowBlock(ushort id) {
-            return id switch {
+        public static bool IsHalfShadowBlock(ushort id) 
+            => id switch {
                 (ushort)BlockId.AcaciaLeaves => true,
                 (ushort)BlockId.AppleLeaves => true,
                 (ushort)BlockId.AppleLeavesWithApples => true,
@@ -223,10 +223,8 @@ namespace rabcrClient {
                 (ushort)BlockId.WaterSalt => true,
                 _ => false,
             };
-        }
-
-        public static bool IsLeaves(ushort id) {
-            return id switch {
+        
+        public static bool IsLeaves(ushort id) => id switch {
                 (ushort)BlockId.AcaciaLeaves => true,
                 (ushort)BlockId.AppleLeaves => true,
                 (ushort)BlockId.AppleLeavesWithApples => true,
@@ -254,23 +252,20 @@ namespace rabcrClient {
                 (ushort)BlockId.WillowLeaves => true,
                 _ => false,
             };
-        }
+        
+        public static bool IsSelectedShears(ushort id) => id switch {
+            (ushort)Items.ShearsCopper => true,
+            (ushort)Items.ShearsBronze => true,
+            (ushort)Items.ShearsGold => true,
+            (ushort)Items.ShearsIron => true,
+            (ushort)Items.ShearsSteel => true,
+            (ushort)Items.ShearsAluminium => true,
+            _ => false,
+        };
+        
 
-        public static bool IsSelectedShears(ushort id) {
-            switch (id) {
-                case (ushort)Items.ShearsCopper: return true;
-                case (ushort)Items.ShearsBronze: return true;
-			    case (ushort)Items.ShearsGold: return true;
-			    case (ushort)Items.ShearsIron: return true;
-			    case (ushort)Items.ShearsSteel: return true;
-			    case (ushort)Items.ShearsAluminium: return true;
-            }
-
-			return false;
-		}
-
-		public static bool IsSelectedKnife(ushort id) {
-            return id switch {
+		public static bool IsSelectedKnife(ushort id) 
+            => id switch {
                 (ushort)Items.KnifeCopper => true,
                 (ushort)Items.KnifeBronze => true,
                 (ushort)Items.KnifeGold => true,
@@ -279,8 +274,7 @@ namespace rabcrClient {
                 (ushort)Items.KnifeAluminium => true,
                 _ => false,
             };
-        }
-
+        
         public static int GetItemNameId(ushort id) {
             switch (id) {
                 // Blocks
@@ -852,23 +846,20 @@ namespace rabcrClient {
             return 999;
         }
 
-        public static ushort ToolToBasic(ushort i) {
-            return i switch {
-                (ushort)Items.BucketOil => (ushort)Items.Bucket,
-                (ushort)Items.BucketWater => (ushort)Items.Bucket,
-                (ushort)Items.TorchElectricON => (ushort)Items.TorchElectricOFF,
-                (ushort)Items.LighterON => (ushort)Items.LighterOFF,
-                (ushort)Items.BottleOil => (ushort)Items.Bottle,
-                (ushort)Items.BottleWater => (ushort)Items.Bottle,
-                (ushort)Items.ElectricDrill => (ushort)Items.ElectricDrillOff,
-                (ushort)Items.ElectricSaw => (ushort)Items.ElectricSawOff,
-                _ => (ushort)Items.None,
-            };
-        }
-
-        public static int ToolMax(ushort id) {
-            //max uses
-            return id switch {
+        public static ushort ToolToBasic(ushort i) => i switch {
+            (ushort)Items.BucketOil => (ushort)Items.Bucket,
+            (ushort)Items.BucketWater => (ushort)Items.Bucket,
+            (ushort)Items.TorchElectricON => (ushort)Items.TorchElectricOFF,
+            (ushort)Items.LighterON => (ushort)Items.LighterOFF,
+            (ushort)Items.BottleOil => (ushort)Items.Bottle,
+            (ushort)Items.BottleWater => (ushort)Items.Bottle,
+            (ushort)Items.ElectricDrill => (ushort)Items.ElectricDrillOff,
+            (ushort)Items.ElectricSaw => (ushort)Items.ElectricSawOff,
+            _ => (ushort)Items.None,
+        };
+        
+        public static int ToolMax(ushort id)
+            => id switch {
                 (ushort)Items.AxeStone => 50,
                 (ushort)Items.PickaxeStone => 50,
                 (ushort)Items.ShovelStone => 50,
@@ -959,15 +950,13 @@ namespace rabcrClient {
                 (ushort)Items.DyeWhite => 50,
                 (ushort)Items.DyeYellow => 50,
                 (ushort)Items.ItemBattery => 99,
+                #if DEBUG
                 _ => throw new System.Exception("Tool " + (Items)id + " not found in switch above"),
+                #else
+                _=>-1,
+                #endif
             };
-
-#if DEBUG
-#else
-            return -1;
-#endif
-        }
-
+        
         //public static int BurnWoodInFurnace(ushort id){
         //    switch (id){
         //        case (ushort)Items.ItemCoal: return 45;
@@ -991,8 +980,8 @@ namespace rabcrClient {
         //    return 0;
         //}
 
-        public static bool IsCompostable(ushort id) {
-            return id switch {
+        public static bool IsCompostable(ushort id)
+            => id switch {
                 (ushort)Items.Alore => true,
                 (ushort)Items.Apple => true,
                 (ushort)Items.AppleLeaves => true,
@@ -1081,20 +1070,24 @@ namespace rabcrClient {
                 (ushort)Items.Saltpeter => true,
                 _ => false,
             };
-        }
-
-        public static bool IsLeave(ushort id) {
-            return id switch {
+        
+        public static bool IsLeave(ushort id) 
+            => id switch {
                 // Frequent leaves
                 (ushort)BlockId.SpruceLeaves => true,
                 // Frequent branches
                 (ushort)BlockId.OakBranches => true,
                 (ushort)BlockId.LindenBranches => true,
+                (ushort)BlockId.LindenBranchesSnow => true,
                 (ushort)BlockId.WillowBranches => true,
+                (ushort)BlockId.WillowBranchesSnow => true,
                 // Fruit branches
                 (ushort)BlockId.AppleBranches => true,
+                (ushort)BlockId.AppleBranchesSnow => true,
                 (ushort)BlockId.CherryBranches => true,
+                (ushort)BlockId.CherryBranchesSnow => true,
                 (ushort)BlockId.PlumBranches => true,
+                (ushort)BlockId.PlumBranchesSnow => true,
                 // Non-frequent leaves
                 (ushort)BlockId.WillowLeaves => true,
                 (ushort)BlockId.OakLeaves => true,
@@ -1126,11 +1119,10 @@ namespace rabcrClient {
                 (ushort)BlockId.KapokLeacesFibre => true,
                 _ => false,
             };
-        }
-
+        
         #region Blocks from Items
-        public static ushort BackBlockFromItem(ushort item) {
-            return item switch {
+        public static ushort BackBlockFromItem(ushort item) 
+            => item switch {
                 // Blocks
                 (ushort)Items.Lava => (ushort)BlockId.Lava,
                 // Backs
@@ -1184,10 +1176,9 @@ namespace rabcrClient {
                 (ushort)Items.AdvancedSpaceWindow => (ushort)BlockId.AdvancedSpaceWindow,
                 _ => (ushort)BlockId.None,
             };
-        }
-
-        public static ushort SolidBlockFromItem(ushort item) {
-            return item switch {
+        
+        public static ushort SolidBlockFromItem(ushort item) 
+            => item switch {
                 // Stone
                 (ushort)Items.StoneBasalt => (ushort)BlockId.StoneBasalt,
                 (ushort)Items.StoneDiorit => (ushort)BlockId.StoneDiorit,
@@ -1237,10 +1228,9 @@ namespace rabcrClient {
                 (ushort)Items.Snow => (ushort)BlockId.Snow,
                 _ => (ushort)BlockId.None,
             };
-        }
-
-        public static ushort TopBlockFromItem(ushort item) {
-            return item switch {
+        
+        public static ushort TopBlockFromItem(ushort item) 
+            => item switch {
                 (ushort)Items.ChristmasStar => (ushort)BlockId.ChristmasStar,
                 (ushort)Items.Egg => (ushort)BlockId.EggDrop,
                 (ushort)Items.BucketForRubber => (ushort)BlockId.BucketForRubber,
@@ -1342,10 +1332,9 @@ namespace rabcrClient {
                 (ushort)Items.Composter => (ushort)BlockId.Composter,
                 _ => (ushort)BlockId.None,
             };
-        }
-
-        public static ushort PlantFromItem(ushort item) {
-            return item switch {
+        
+        public static ushort PlantFromItem(ushort item) 
+            => item switch {
                 (ushort)Items.Strawberry => (ushort)BlockId.Strawberry,
                 (ushort)Items.PlantBlueberry => (ushort)BlockId.Blueberry,
                 (ushort)Items.PlantRashberry => (ushort)BlockId.Rashberry,
@@ -1357,17 +1346,16 @@ namespace rabcrClient {
                 (ushort)Items.Onion => (ushort)BlockId.Onion,
                 _ => (ushort)BlockId.None,
             };
-        }
-
-        public static ushort MobFromItem(ushort item) {
-            return item switch {
+        
+        public static ushort MobFromItem(ushort item) 
+            => item switch {
                 (ushort)Items.AnimalRabbit => (ushort)BlockId.Rabbit,
                 (ushort)Items.AnimalChicken => (ushort)BlockId.Chicken,
                 (ushort)Items.AnimalFish => (ushort)BlockId.Fish,
                 (ushort)Items.AnimalParrot => (ushort)BlockId.MobParrot,
                 _ => (ushort)BlockId.None,
             };
-        }
+        
         #endregion
 
         static readonly ushort[] nonBreaktableBlocks={
@@ -1406,8 +1394,8 @@ namespace rabcrClient {
             return true;
         }
 
-        public static bool IsBlockOnGrowing(ushort id) {
-            return id switch {
+        public static bool IsBlockOnGrowing(ushort id) 
+            => id switch {
                 (ushort)BlockId.Dirt => true,
                 (ushort)BlockId.Compost => true,
                 (ushort)BlockId.Clay => true,
@@ -1427,10 +1415,9 @@ namespace rabcrClient {
                 (ushort)BlockId.GrassBlockSnowCompost => true,
                 _ => false,
             };
-        }
-
-        public static bool IsDirtPlaceable(ushort id) {
-            return id switch {
+        
+        public static bool IsDirtPlaceable(ushort id) 
+            => id switch {
                 (ushort)BlockId.OakSapling => true,
                 (ushort)BlockId.OrangeSapling => true,
                 (ushort)BlockId.PineSapling => true,
@@ -1466,8 +1453,7 @@ namespace rabcrClient {
                 (ushort)BlockId.Rocks => true,
                 _ => false,
             };
-        }
-
+        
         public static CraftingRecipe[] Craft(ushort id) {
             return id switch {
                 (ushort)Items.AngelHair => new CraftingRecipe[] {
@@ -4175,9 +4161,12 @@ namespace rabcrClient {
                 case (ushort)Items.TinOfBlueberries: return 99;
                 case (ushort)Items.TinOfRashberries: return 99;
                 case (ushort)Items.TinOfStrawberries: return 99;
-                #endregion
-            }
-            return -1;
+            
+                    #endregion
+              default: return -1;
+                    //break; 
+                    }
+           
         }
 
         public static bool IsItemInvBasic16(ushort id) {
@@ -4382,14 +4371,14 @@ namespace rabcrClient {
                 case (ushort)Items.FurnaceStone: return true;
                 case (ushort)Items.FurnaceElectric: return true;
                 case (ushort)Items.Radio: return true;
-             //   case (ushort)Items.Banana: return true;
+                //   case (ushort)Items.Banana: return true;
                 //case (ushort)Items.Apple: return true;
                 //case (ushort)Items.Cherry: return true;
                 //case (ushort)Items.Plum: return true;
                 //case (ushort)Items.Rashberry: return true;
                 //case (ushort)Items.Blueberries: return true;
-              //  case (ushort)Items.Lemon: return true;
-              //  case (ushort)Items.Orange: return true;
+                //  case (ushort)Items.Lemon: return true;
+                //  case (ushort)Items.Orange: return true;
                 case (ushort)Items.OreIron: return true;
                 case (ushort)Items.Saltpeter: return true;
                 case (ushort)Items.SilverDust: return true;
@@ -4401,7 +4390,7 @@ namespace rabcrClient {
                 case (ushort)Items.Lamp: return true;
                 case (ushort)Items.Macerator: return true;
                 case (ushort)Items.Oil: return true;
-               // case (ushort)Items.Olive: return true;
+                // case (ushort)Items.Olive: return true;
                 case (ushort)Items.Ladder: return true;
                 case (ushort)Items.StoneHead: return true;
                 case (ushort)Items.ItemCopper: return true;
@@ -4474,12 +4463,14 @@ namespace rabcrClient {
                 case (ushort)Items.RedSand: return true;
                 case (ushort)Items.Resin: return true;
                 case (ushort)Items.ChristmasStar: return true;
+                default:  return false;
+                    //break;
             }
-            return false;
+          
         }
 
-        public static bool IsItemInvBasic32(ushort id) {
-            return id switch {
+        public static bool IsItemInvBasic32(ushort id) 
+            => id switch {
                 (ushort)Items.AngelHair => true,
                 (ushort)Items.ChristmasBallGray => true,
                 (ushort)Items.ChristmasBallBlue => true,
@@ -4563,10 +4554,10 @@ namespace rabcrClient {
                 (ushort)Items.KnifeHeadAluminium => true,
                 _ => false,
             };
-        }
+        
 
-        public static bool IsItemInvTool32(ushort id) {
-            return id switch {
+        public static bool IsItemInvTool32(ushort id) 
+            => id switch {
                 // Hoe
                 (ushort)Items.HoeStone => true,
                 (ushort)Items.HoeCopper => true,
@@ -4666,8 +4657,7 @@ namespace rabcrClient {
                 (ushort)Items.DyeYellow => true,
                 _ => false,
             };
-        }
-
+        
         public static bool IsItemInvFood16(ushort id) {
             switch (id) {
                 #region Fruit
@@ -4715,16 +4705,20 @@ namespace rabcrClient {
                 case (ushort)Items.RabbitMeatWithSalt: return true;
                 case (ushort)Items.RabbitMeatCooked: return true;
                 case (ushort)Items.RabbitMeatCookedWithSalt: return true;
-                #endregion
+             
+                    #endregion
 
-                #region Seeds
-               // case (ushort)Items.Seeds: return true;
-               // case (ushort)Items.FlaxSeeds: return true;
-              //  case (ushort)Items.WheatSeeds: return true;
-              //  case (ushort)Items.RiceSeeds: return true;
-                #endregion
-            }
-            return false;
+                    #region Seeds
+                    // case (ushort)Items.Seeds: return true;
+                    // case (ushort)Items.FlaxSeeds: return true;
+                    //  case (ushort)Items.WheatSeeds: return true;
+                    //  case (ushort)Items.RiceSeeds: return true;
+                    #endregion
+             default:return false;
+              //      break; 
+                    
+                    }
+            
         }
 
         public static bool IsItemInvFood32(ushort id) {
@@ -4747,82 +4741,74 @@ namespace rabcrClient {
 
                 case (ushort)Items.TinOfLemons: return true;
                 case (ushort)Items.TinOfOranges: return true;
-                #endregion
+              
+                    #endregion 
+                    default:  return false;
+                    //break;
             }
-            return false;
+          
         }
 
-        public static bool IsItemInvNonStackable32(ushort id) {
-            switch (id) {
-                case (ushort)Items.Crown: return true;
-                case (ushort)Items.Hat: return true;
-                case (ushort)Items.SpaceBoots: return true;
-                case (ushort)Items.Mobile: return true;
-                case (ushort)Items.SpaceHelmet: return true;
-                case (ushort)Items.SpaceSuit: return true;
-                case (ushort)Items.SpaceTrousers: return true;
-            }
-            return false;
-        }
+        public static bool IsItemInvNonStackable32(ushort id) 
+            => id switch {
+                (ushort)Items.Crown => true,
+                (ushort)Items.Hat => true,
+                (ushort)Items.SpaceBoots => true,
+                (ushort)Items.Mobile => true,
+                (ushort)Items.SpaceHelmet => true,
+                (ushort)Items.SpaceSuit => true,
+                (ushort)Items.SpaceTrousers => true,
+                _ => false,
+            };
 
-        public static bool IsItemInvBasicColoritzed32NonStackable(ushort id) {
-            switch (id) {
+        public static bool IsItemInvBasicColoritzed32NonStackable(ushort id) 
+            => id switch {
                 // Head
-                case (ushort)Items.Cap: return true;
-                case (ushort)Items.SpaceHelmet: return true;
-
+                (ushort)Items.Cap => true,
+                (ushort)Items.SpaceHelmet => true,
                 // Chest
-                case (ushort)Items.Dress: return true;
-                case (ushort)Items.TShirt: return true;
-                case (ushort)Items.Shirt: return true;
-
+                (ushort)Items.Dress => true,
+                (ushort)Items.TShirt => true,
+                (ushort)Items.Shirt => true,
                 // ChestTop
-                case (ushort)Items.Coat: return true;
-                case (ushort)Items.CoatArmy: return true;
-                case (ushort)Items.JacketFormal: return true;
-                case (ushort)Items.JacketShort: return true;
-                case (ushort)Items.JacketDenim: return true;
-                case (ushort)Items.SpaceSuit: return true;
-
+                (ushort)Items.Coat => true,
+                (ushort)Items.CoatArmy => true,
+                (ushort)Items.JacketFormal => true,
+                (ushort)Items.JacketShort => true,
+                (ushort)Items.JacketDenim => true,
+                (ushort)Items.SpaceSuit => true,
                 // Legs
-                case (ushort)Items.Skirt: return true;
-                case (ushort)Items.Jeans: return true;
-                case (ushort)Items.Shorts: return true;
-                case (ushort)Items.SpaceTrousers: return true;
-                case (ushort)Items.ArmyTrousers: return true;
-
+                (ushort)Items.Skirt => true,
+                (ushort)Items.Jeans => true,
+                (ushort)Items.Shorts => true,
+                (ushort)Items.SpaceTrousers => true,
+                (ushort)Items.ArmyTrousers => true,
                 // Feet
-                case (ushort)Items.Pumps: return true;
-                case (ushort)Items.SpaceBoots: return true;
-                case (ushort)Items.Sneakers: return true;
-                case (ushort)Items.FormalShoes: return true;
-
+                (ushort)Items.Pumps => true,
+                (ushort)Items.SpaceBoots => true,
+                (ushort)Items.Sneakers => true,
+                (ushort)Items.FormalShoes => true,
                 // UpUnderwear
-                case (ushort)Items.Bra: return true;
-                case (ushort)Items.BikiniTop: return true;
-
+                (ushort)Items.Bra => true,
+                (ushort)Items.BikiniTop => true,
                 // DownUnderwear
-                case (ushort)Items.BikiniDown: return true;
-                case (ushort)Items.Underpants: return true;
-                case (ushort)Items.BoxerShorts: return true;
-                case (ushort)Items.Panties: return true;
-                case (ushort)Items.Swimsuit: return true;
-
-                case (ushort)Items.Backpack: return true;
-            }
-            return false;
-        }
-
-        public static bool IsItemInvTool16(ushort id) {
-            switch (id) {
-                case (ushort)Items.TorchON: return true;
-                case (ushort)Items.BucketOil: return true;
-                case (ushort)Items.BucketWater: return true;
-
-                    case (ushort)Items.ItemBattery: return true;
-            }
-            return false;
-        }
+                (ushort)Items.BikiniDown => true,
+                (ushort)Items.Underpants => true,
+                (ushort)Items.BoxerShorts => true,
+                (ushort)Items.Panties => true,
+                (ushort)Items.Swimsuit => true,
+                (ushort)Items.Backpack => true,
+                _ => false,
+            };
+        
+        public static bool IsItemInvTool16(ushort id) 
+            => id switch {
+                (ushort)Items.TorchON => true,
+                (ushort)Items.BucketOil => true,
+                (ushort)Items.BucketWater => true,
+                (ushort)Items.ItemBattery => true,
+                _ => false,
+            };
 
         public static float FoodMaxDescay(ushort id) {
             switch (id) {
@@ -4895,85 +4881,79 @@ namespace rabcrClient {
             return -1;
         }
 
-        public static Color DyeToColor(byte liquid){
-            switch (liquid){
-                case (byte)LiquidId.DyeArmy: return new Color(34,48,17);
-                case (byte)LiquidId.DyeBlack: return Color.Black;
-                case (byte)LiquidId.DyeBlue: return Color.Blue;
-                case (byte)LiquidId.DyeBrown: return Color.Brown;
-                case (byte)LiquidId.DyeGray: return Color.Gray;
-                case (byte)LiquidId.DyeWhite: return Color.White;
-                case (byte)LiquidId.DyeYellow: return Color.Yellow;
-                case (byte)LiquidId.DyeViolet: return Color.Violet;
-                case (byte)LiquidId.DyeTeal: return Color.Teal;
-                case (byte)LiquidId.DyeSpringGreen: return new Color(143, 225, 44);
-                case (byte)LiquidId.DyeRoseQuartz: return new Color(170, 152, 169);
-                case (byte)LiquidId.DyeRed: return Color.Red;
-                case (byte)LiquidId.DyeDarkRed: return Color.DarkRed;
-                case (byte)LiquidId.DyePurple: return Color.Purple;
-                case (byte)LiquidId.DyePink: return Color.Pink;
-                case (byte)LiquidId.DyeOrange: return Color.Orange;
-                case (byte)LiquidId.DyeOlive: return Color.Olive;
-                case (byte)LiquidId.DyeMagenta: return Color.Magenta;
-                case (byte)LiquidId.DyeLightGreen: return Color.LightGreen;
-                case (byte)LiquidId.DyeLightGray: return Color.LightGray;
-                case (byte)LiquidId.DyeLightBlue: return Color.LightBlue;
-                case (byte)LiquidId.DyeGreen: return Color.Green;
-                case (byte)LiquidId.DyeDarkGreen: return Color.DarkGreen;
-                case (byte)LiquidId.DyeGold: return Color.Gold;
-                case (byte)LiquidId.DyeDarkBlue: return Color.DarkBlue;
-            }
-            return Color.Transparent;
-        }
-
-        public static bool HasLiquid(ushort id){
-             switch (id) {
+        public static Color DyeToColor(byte liquid)
+            => liquid switch {
+                (byte)LiquidId.DyeArmy => new Color(34, 48, 17),
+                (byte)LiquidId.DyeBlack => Color.Black,
+                (byte)LiquidId.DyeBlue => Color.Blue,
+                (byte)LiquidId.DyeBrown => Color.Brown,
+                (byte)LiquidId.DyeGray => Color.Gray,
+                (byte)LiquidId.DyeWhite => Color.White,
+                (byte)LiquidId.DyeYellow => Color.Yellow,
+                (byte)LiquidId.DyeViolet => Color.Violet,
+                (byte)LiquidId.DyeTeal => Color.Teal,
+                (byte)LiquidId.DyeSpringGreen => new Color(143, 225, 44),
+                (byte)LiquidId.DyeRoseQuartz => new Color(170, 152, 169),
+                (byte)LiquidId.DyeRed => Color.Red,
+                (byte)LiquidId.DyeDarkRed => Color.DarkRed,
+                (byte)LiquidId.DyePurple => Color.Purple,
+                (byte)LiquidId.DyePink => Color.Pink,
+                (byte)LiquidId.DyeOrange => Color.Orange,
+                (byte)LiquidId.DyeOlive => Color.Olive,
+                (byte)LiquidId.DyeMagenta => Color.Magenta,
+                (byte)LiquidId.DyeLightGreen => Color.LightGreen,
+                (byte)LiquidId.DyeLightGray => Color.LightGray,
+                (byte)LiquidId.DyeLightBlue => Color.LightBlue,
+                (byte)LiquidId.DyeGreen => Color.Green,
+                (byte)LiquidId.DyeDarkGreen => Color.DarkGreen,
+                (byte)LiquidId.DyeGold => Color.Gold,
+                (byte)LiquidId.DyeDarkBlue => Color.DarkBlue,
+                _ => Color.Transparent,
+            };
+        
+        public static bool HasLiquid(ushort id)
+            => id switch {
                 //Bottle
-                case (ushort)Items.BottleSaltWater: return true;
-                case (ushort)Items.BottleWater: return true;
-                case (ushort)Items.BottleOil: return true;
-
+                (ushort)Items.BottleSaltWater => true,
+                (ushort)Items.BottleWater => true,
+                (ushort)Items.BottleOil => true,
                 // Bucket
-                case (ushort)Items.BucketWater: return true;
-                case (ushort)Items.BucketOil: return true;
-
+                (ushort)Items.BucketWater => true,
+                (ushort)Items.BucketOil => true,
                 // Blocks
-                case (ushort)Items.Lava: return true;
-                case (ushort)Items.Oil: return true;
-
-                case (ushort)Items.DyeGold: return true;
-                case (ushort)Items.DyeWhite: return true;
-                case (ushort)Items.DyeYellow: return true;
-                case (ushort)Items.DyeOrange: return true;
-                case (ushort)Items.DyeRed: return true;
-                case (ushort)Items.DyeDarkRed: return true;
-                case (ushort)Items.DyeOlive: return true;
-                case (ushort)Items.DyePurple: return true;
-                case (ushort)Items.DyePink: return true;
-                case (ushort)Items.DyeTeal: return true;
-                case (ushort)Items.DyeLightBlue: return true;
-                case (ushort)Items.DyeBlue: return true;
-                case (ushort)Items.DyeMagenta: return true;
-                case (ushort)Items.DyeDarkBlue: return true;
-                case (ushort)Items.DyeBlack: return true;
-                case (ushort)Items.DyeBrown: return true;
-                case (ushort)Items.DyeLightGray: return true;
-                case (ushort)Items.DyeGray: return true;
-                case (ushort)Items.DyeDarkGray: return true;
-                case (ushort)Items.DyeViolet: return true;
-                case (ushort)Items.DyeSpringGreen: return true;
-                case (ushort)Items.DyeRoseQuartz: return true;
-                case (ushort)Items.DyeLightGreen: return true;
-                case (ushort)Items.DyeGreen: return true;
-                case (ushort)Items.DyeArmy: return true;
-                case (ushort)Items.DyeDarkGreen: return true;
-            }
-            return false;
-        }
-
+                (ushort)Items.Lava => true,
+                (ushort)Items.Oil => true,
+                (ushort)Items.DyeGold => true,
+                (ushort)Items.DyeWhite => true,
+                (ushort)Items.DyeYellow => true,
+                (ushort)Items.DyeOrange => true,
+                (ushort)Items.DyeRed => true,
+                (ushort)Items.DyeDarkRed => true,
+                (ushort)Items.DyeOlive => true,
+                (ushort)Items.DyePurple => true,
+                (ushort)Items.DyePink => true,
+                (ushort)Items.DyeTeal => true,
+                (ushort)Items.DyeLightBlue => true,
+                (ushort)Items.DyeBlue => true,
+                (ushort)Items.DyeMagenta => true,
+                (ushort)Items.DyeDarkBlue => true,
+                (ushort)Items.DyeBlack => true,
+                (ushort)Items.DyeBrown => true,
+                (ushort)Items.DyeLightGray => true,
+                (ushort)Items.DyeGray => true,
+                (ushort)Items.DyeDarkGray => true,
+                (ushort)Items.DyeViolet => true,
+                (ushort)Items.DyeSpringGreen => true,
+                (ushort)Items.DyeRoseQuartz => true,
+                (ushort)Items.DyeLightGreen => true,
+                (ushort)Items.DyeGreen => true,
+                (ushort)Items.DyeArmy => true,
+                (ushort)Items.DyeDarkGreen => true,
+                _ => false,
+            };
+        
         public static bool ItemsCanBeFill(ushort itemId, byte Liquid, ref int max, ref ushort newId){
             switch (Liquid) {
-
                 case (byte)LiquidId.Water:
                     switch (itemId) {
                         case (ushort)Items.Bucket:
@@ -5318,85 +5298,46 @@ namespace rabcrClient {
             return false;
         }
 
-        public static (byte, int, ushort) ItemsIdToLiquid(ushort itemId) {
-            switch (itemId) {
+        public static (byte, int, ushort) ItemsIdToLiquid(ushort itemId) 
+            => itemId switch {
                 //Bottle
-                case (ushort)Items.BottleSaltWater: return ((byte)LiquidId.WaterSalt, 100, (ushort)Items.Bottle);
-                case (ushort)Items.BottleWater: return ((byte)LiquidId.Water, 100, (ushort)Items.Bottle);
-                case (ushort)Items.BottleOil: return ((byte)LiquidId.Oil, 100, (ushort)Items.Bottle);
-
+                (ushort)Items.BottleSaltWater => ((byte)LiquidId.WaterSalt, 100, (ushort)Items.Bottle),
+                (ushort)Items.BottleWater => ((byte)LiquidId.Water, 100, (ushort)Items.Bottle),
+                (ushort)Items.BottleOil => ((byte)LiquidId.Oil, 100, (ushort)Items.Bottle),
                 // Bucket
-                case (ushort)Items.BucketWater: return ((byte)LiquidId.Water, 255, (ushort)Items.Bucket);
-                case (ushort)Items.BucketOil: return ((byte)LiquidId.Oil, 255, (ushort)Items.Bucket);
-
+                (ushort)Items.BucketWater => ((byte)LiquidId.Water, 255, (ushort)Items.Bucket),
+                (ushort)Items.BucketOil => ((byte)LiquidId.Oil, 255, (ushort)Items.Bucket),
                 // Blocks
-                case (ushort)Items.Lava: return ((byte)LiquidId.Lava, 255, (ushort)Items.None);
-                case (ushort)Items.Oil: return ((byte)LiquidId.Oil, 255, (ushort)Items.None);
-
-
-                case (ushort)Items.DyeArmy: return ((byte)LiquidId.DyeArmy, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeBlack: return ((byte)LiquidId.DyeBlack, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeBlue: return ((byte)LiquidId.DyeBlue, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeBrown: return ((byte)LiquidId.DyeBrown, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeDarkBlue: return ((byte)LiquidId.DyeDarkBlue, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeDarkGray: return ((byte)LiquidId.DyeDarkGray, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeDarkGreen: return ((byte)LiquidId.DyeDarkGreen, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeDarkRed: return ((byte)LiquidId.DyeDarkRed, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeGold: return ((byte)LiquidId.DyeGold, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeGray: return ((byte)LiquidId.DyeGray, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeGreen: return ((byte)LiquidId.DyeGreen, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeLightBlue: return ((byte)LiquidId.DyeLightBlue, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeLightGray: return ((byte)LiquidId.DyeLightGray, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeLightGreen: return ((byte)LiquidId.DyeLightGreen, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeMagenta: return ((byte)LiquidId.DyeMagenta, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeOlive: return ((byte)LiquidId.DyeOlive, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeOrange: return ((byte)LiquidId.DyeOrange, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyePink: return ((byte)LiquidId.DyePink, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyePurple: return ((byte)LiquidId.DyePurple, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeRed: return ((byte)LiquidId.DyeRed, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeRoseQuartz: return ((byte)LiquidId.DyeRoseQuartz, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeSpringGreen: return ((byte)LiquidId.DyeTeal, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeViolet: return ((byte)LiquidId.DyeViolet, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeWhite: return ((byte)LiquidId.DyeWhite, 50, (ushort)Items.TestTube);
-                case (ushort)Items.DyeYellow: return ((byte)LiquidId.DyeYellow, 50, (ushort)Items.TestTube);
-
-                //    case (ushort)Items.TShirt: return ((byte)LiquidId.None, 50, (ushort)Items.TestTube);
-
-
-                //case (ushort)Items.DyeWhite: return ((byte)LiquidId.DyeWhite,);
-                //case (ushort)Items.DyeYellow: return (byte)LiquidId.DyeYellow;
-                //case (ushort)Items.DyeGold: return (byte)LiquidId.DyeGold;
-                //case (ushort)Items.DyeOrange: return (byte)LiquidId.DyeOrange;
-                //case (ushort)Items.DyeRed: return (byte)LiquidId.DyeRed;
-                //case (ushort)Items.DyeDarkRed: return (byte)LiquidId.DyeDarkRed;
-                //case (ushort)Items.DyePink: return (byte)LiquidId.DyePink;
-                //case (ushort)Items.DyePurple: return (byte)LiquidId.DyePurple;
-                //case (ushort)Items.DyeLightBlue: return (byte)LiquidId.DyeLightBlue;
-                //case (ushort)Items.DyeBlue: return (byte)LiquidId.DyeBlue;
-                //case (ushort)Items.DyeDarkBlue: return (byte)LiquidId.DyeDarkBlue;
-                //case (ushort)Items.DyeTeal: return (byte)LiquidId.DyeTeal;
-                //case (ushort)Items.DyeLightGreen: return (byte)LiquidId.DyeLightGreen;
-                //case (ushort)Items.DyeGreen: return (byte)LiquidId.DyeGreen;
-                //case (ushort)Items.DyeDarkGreen: return (byte)LiquidId.DyeDarkGreen;
-                //case (ushort)Items.DyeBrown: return (byte)LiquidId.DyeBrown;
-                //case (ushort)Items.DyeLightGray: return (byte)LiquidId.DyeLightGray;
-                //case (ushort)Items.DyeGray: return (byte)LiquidId.DyeGray;
-                //case (ushort)Items.DyeDarkGray: return (byte)LiquidId.DyeDarkGray;
-                //case (ushort)Items.DyeBlack: return (byte)LiquidId.DyeBlack;
-                //case (ushort)Items.DyeArmy: return (byte)LiquidId.DyeArmy;
-                //case (ushort)Items.DyeMagenta: return (byte)LiquidId.DyeMagenta;
-                //case (ushort)Items.DyeRoseQuartz: return (byte)LiquidId.DyeRoseQuartz;
-                //case (ushort)Items.DyeSpringGreen: return (byte)LiquidId.DyeSpringGreen;
-                //case (ushort)Items.DyeViolet: return (byte)LiquidId.DyeViolet;
-                //case (ushort)Items.DyeOlive: return (byte)LiquidId.DyeOlive;
-
-                //case (ushort)BlockId.WaterBlock: return (byte)LiquidId.Vinegar;
-                //case (ushort)BlockId.WaterBlock: return (byte)LiquidId.Alcohol;
-                //case (ushort)BlockId.WaterBlock: return (byte)LiquidId.Brine;
-            }
-            return ((byte)LiquidId.None, 0, (ushort)Items.None);
-        }
-
+                (ushort)Items.Lava => ((byte)LiquidId.Lava, 255, (ushort)Items.None),
+                (ushort)Items.Oil => ((byte)LiquidId.Oil, 255, (ushort)Items.None),
+                (ushort)Items.DyeArmy => ((byte)LiquidId.DyeArmy, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeBlack => ((byte)LiquidId.DyeBlack, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeBlue => ((byte)LiquidId.DyeBlue, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeBrown => ((byte)LiquidId.DyeBrown, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeDarkBlue => ((byte)LiquidId.DyeDarkBlue, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeDarkGray => ((byte)LiquidId.DyeDarkGray, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeDarkGreen => ((byte)LiquidId.DyeDarkGreen, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeDarkRed => ((byte)LiquidId.DyeDarkRed, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeGold => ((byte)LiquidId.DyeGold, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeGray => ((byte)LiquidId.DyeGray, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeGreen => ((byte)LiquidId.DyeGreen, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeLightBlue => ((byte)LiquidId.DyeLightBlue, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeLightGray => ((byte)LiquidId.DyeLightGray, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeLightGreen => ((byte)LiquidId.DyeLightGreen, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeMagenta => ((byte)LiquidId.DyeMagenta, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeOlive => ((byte)LiquidId.DyeOlive, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeOrange => ((byte)LiquidId.DyeOrange, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyePink => ((byte)LiquidId.DyePink, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyePurple => ((byte)LiquidId.DyePurple, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeRed => ((byte)LiquidId.DyeRed, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeRoseQuartz => ((byte)LiquidId.DyeRoseQuartz, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeSpringGreen => ((byte)LiquidId.DyeTeal, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeViolet => ((byte)LiquidId.DyeViolet, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeWhite => ((byte)LiquidId.DyeWhite, 50, (ushort)Items.TestTube),
+                (ushort)Items.DyeYellow => ((byte)LiquidId.DyeYellow, 50, (ushort)Items.TestTube),
+                _ => ((byte)LiquidId.None, 0, (ushort)Items.None),
+            };
+        
         public static void SealReceipe(ushort id, byte liquid, ref ushort newId, ref ushort newLiquid, ref int liquidAmount, ref TimeSpan timeSpan) {
             switch (id) {
                 case (ushort)Items.Apple:
@@ -5448,61 +5389,55 @@ namespace rabcrClient {
             return;
         }
 
-         public static float FurnaceStoneBurnWood(ushort id) {
-            switch (id) {
-				case (ushort)Items.WoodOak: return 0.25f;
-				case (ushort)Items.WoodPine: return 0.25f;
-				case (ushort)Items.WoodLinden: return 0.25f;
-				case (ushort)Items.WoodSpruce: return 0.25f;
+        public static float FurnaceStoneBurnWood(ushort id) 
+            => id switch {
+                (ushort)Items.WoodOak => 0.25f,
+                (ushort)Items.WoodPine => 0.25f,
+                (ushort)Items.WoodLinden => 0.25f,
+                (ushort)Items.WoodSpruce => 0.25f,
+                (ushort)Items.WoodApple => 0.2f,
+                (ushort)Items.WoodCherry => 0.2f,
+                (ushort)Items.WoodPlum => 0.2f,
+                (ushort)Items.WoodLemon => 0.2f,
+                (ushort)Items.OliveWood => 0.2f,
+                (ushort)Items.WoodOrange => 0.2f,
+                (ushort)Items.MangroveWood => 0.195f,
+                (ushort)Items.WillowWood => 0.195f,
+                (ushort)Items.RubberTreeWood => 0.195f,
+                (ushort)Items.EucalyptusWood => 0.225f,
+                (ushort)Items.AcaciaWood => 0.225f,
+                (ushort)Items.KapokWood => 0.22f,
+                (ushort)Items.OreCoal => 0.5f,
+                (ushort)Items.Stick => 0.02f,
+                (ushort)Items.Paper => 0.05f,
+                (ushort)Items.CoalDust => 0.02f,
+                (ushort)Items.CoalWood => 0.25f,
+                (ushort)Items.ItemCoal => 0.5f,
+                (ushort)Items.Plastic => 0.01f,
+                (ushort)Items.Sticks => 0.02f,
+                (ushort)Items.FewSticks => 0.1f,
+                (ushort)Items.Shelf => 0.3f,
+                (ushort)Items.BoxWooden => 0.3f,
+                (ushort)Items.Flag => 0.05f,
+                (ushort)Items.Hay => 0.01f,
+                (ushort)Items.Ladder => 0.2f,
+                (ushort)Items.OakSapling => 0.02f,
+                (ushort)Items.OliveSapling => 0.02f,
+                (ushort)Items.OrangeSapling => 0.02f,
+                (ushort)Items.PineSapling => 0.02f,
+                (ushort)Items.PlumSapling => 0.02f,
+                (ushort)Items.RubberTreeSapling => 0.02f,
+                (ushort)Items.SpruceSapling => 0.02f,
+                (ushort)Items.WillowSapling => 0.02f,
+                (ushort)Items.MangroveSapling => 0.02f,
+                (ushort)Items.AcaciaSapling => 0.02f,
+                (ushort)Items.Yarn => 0.02f,
+                (ushort)Items.Bucket => 0.05f,
+                (ushort)Items.Cloth => 0.05f,
+                (ushort)Items.Desk => 0.1f,
+                (ushort)Items.Planks => 0.1f,
+                _ => -1f,
+            };
 
-				case (ushort)Items.WoodApple: return 0.2f;
-				case (ushort)Items.WoodCherry: return 0.2f;
-				case (ushort)Items.WoodPlum: return 0.2f;
-				case (ushort)Items.WoodLemon: return 0.2f;
-				case (ushort)Items.OliveWood: return 0.2f;
-				case (ushort)Items.WoodOrange: return 0.2f;
-
-				case (ushort)Items.MangroveWood: return 0.195f;
-				case (ushort)Items.WillowWood: return 0.195f;
-				case (ushort)Items.RubberTreeWood: return 0.195f;
-				case (ushort)Items.EucalyptusWood: return 0.225f;
-				case (ushort)Items.AcaciaWood: return 0.225f;
-				case (ushort)Items.KapokWood: return 0.22f;
-
-				case (ushort)Items.OreCoal: return 0.5f;
-				case (ushort)Items.Stick: return 0.02f;
-				case (ushort)Items.Paper: return 0.05f;
-				case (ushort)Items.CoalDust: return 0.02f;
-				case (ushort)Items.CoalWood: return 0.25f;
-				case (ushort)Items.ItemCoal: return 0.5f;
-				case (ushort)Items.Plastic: return 0.01f;
-				case (ushort)Items.Sticks: return 0.02f;
-				case (ushort)Items.FewSticks: return 0.1f;
-
-				case (ushort)Items.Shelf: return 0.3f;
-				case (ushort)Items.BoxWooden: return 0.3f;
-				case (ushort)Items.Flag: return 0.05f;
-				case (ushort)Items.Hay: return 0.01f;
-				case (ushort)Items.Ladder: return 0.2f;
-				case (ushort)Items.OakSapling: return 0.02f;
-				case (ushort)Items.OliveSapling: return 0.02f;
-				case (ushort)Items.OrangeSapling: return 0.02f;
-				case (ushort)Items.PineSapling: return 0.02f;
-				case (ushort)Items.PlumSapling: return 0.02f;
-				case (ushort)Items.RubberTreeSapling: return 0.02f;
-				case (ushort)Items.SpruceSapling: return 0.02f;
-				case (ushort)Items.WillowSapling: return 0.02f;
-				case (ushort)Items.MangroveSapling: return 0.02f;
-				case (ushort)Items.AcaciaSapling: return 0.02f;
-				case (ushort)Items.Yarn: return 0.02f;
-				case (ushort)Items.Bucket: return 0.05f;
-				case (ushort)Items.Cloth: return 0.05f;
-				case (ushort)Items.Desk: return 0.1f;
-				case (ushort)Items.Planks: return 0.1f;
-
-
-            }
-            return -1f;
-        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -127,6 +129,34 @@ namespace rabcrClient {
             //} else {
             //    buttonLogin = new Button(Textures.ButtonRight, Lang.Texts[12]);
             //    buttonLogin.Click+=LogStuff;
+            //}
+
+
+            //if (Setting.FirstRun) { 
+            //    var GraphicsCard = Rabcr.Game.GraphicsDevice;
+
+            //      string usingGPU="";
+            //    int NumberOfAdapters = GraphicsAdapter.Adapters.Count;
+
+            //    List<string> AdapterNames = new();
+
+            //    foreach (GraphicsAdapter EnumeratedAdapter in GraphicsAdapter.Adapters)
+
+            //    {
+
+            //        if (EnumeratedAdapter == GraphicsCard.Adapter)
+
+            //        {
+
+            //            //This is the one being used.
+            //             usingGPU=EnumeratedAdapter.Description;
+            //            break;
+            //        }
+
+            //        AdapterNames.Add(EnumeratedAdapter.Description);
+
+            //    }   
+            //      Debug.WriteLine(AdapterNames);
             //}
 
             SetTexts();

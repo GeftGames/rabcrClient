@@ -158,7 +158,7 @@ namespace rabcrClient {
             posNumSh.Y=posNum.Y+0.5f;
         }
 
-        public override DInt GetPos() => new DInt{X=posTex.X, Y=posTex.Y };
+        public override DInt GetPos() => new (){X=posTex.X, Y=posTex.Y };
         #endregion
 
        // public void AddOne() => SetCount=GetCount+1;
@@ -1171,7 +1171,7 @@ namespace rabcrClient {
         public void SetPos(Vector2 pos) => posTex=pos;
 
         // Get
-        public override DInt GetPos() => new DInt{ X=(int)posTex.X, Y=(int)posTex.Y };
+        public override DInt GetPos() => new() { X=(int)posTex.X, Y=(int)posTex.Y };
 
         public override Vector2 GetPosVector2() => posTex;
 

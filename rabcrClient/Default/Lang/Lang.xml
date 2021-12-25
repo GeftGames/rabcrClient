@@ -98,9 +98,9 @@
 		<Lang EnglishName="Welsh" Quality="2" NativeName="Cymraeg" Name="cym" Base="eng" UseBase="true" Category="European&gt;Celtic" FontFile="latin" info="https://translation2.paralink.com/English-Welsh-Translation/"/>
 		<Lang EnglishName="Tongan" Quality="2" NativeName="lea faka-Tonga" Name="ton" Category="Oceanic" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation"/>
 		<Lang EnglishName="Tahitian" Quality="2" NativeName="Reo Tahiti" Name="tah" Category="Oceanic" FontFile="latin"/>
-		<Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanácke nářečí" Name="mor-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
-		<Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácký dialekt" Name="mor-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
-		<Lang EnglishName="Valašsko dialect" Quality="1" NativeName="Valašský dialekt" Name="mor-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
+		<Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanáckê" Name="mor-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
+		<Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácky" Name="mor-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
+		<Lang EnglishName="Valašsko dialect" Quality="1" NativeName="Valašsky" Name="mor-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
 		<Lang EnglishName="Hantec slang" Quality="1" NativeName="Brněnský hantec" Name="mor-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
 		<Lang EnglishName="Central Bohemian interdialect" quality="2" NativeName="Středočeská mluva" Name="ces-ce" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin"/>
 		<Lang EnglishName="Korean" Quality="2" NativeName="한국어" Name="kor" Base="eng" Flag="KO" Category="Asian" FontFile="korean"/>
@@ -6006,85 +6006,8 @@
 			<por-br>Controla animações</por-br>
 		</a>
 		<a id="125">
-			<eng>Game animations</eng>
-      <ces>Herní animace</ces>
-      <mor-ha>Herni animace</mor-ha>
-			<fra>Animations de jeu</fra>
-			<dan>Spilanimationer</dan>
-			<por>Animações de jogo</por>
-			<cat>Animacions de jocs</cat>
-			<pol>Animacje gier</pol>
-			<slk>Herná animácie</slk>
-			<jpn>ゲームアニメーション</jpn>
-			<ukr>Ігрові анімації</ukr>
-			<ita>Animazioni di gioco</ita>
-			<spa>Animaciones de juegos</spa>
-			<fin>Pelianimaatioita</fin>
-			<nld>Game-animaties</nld>
-			<kor>게임 애니메이션</kor>
-			<zch>遊戲動畫</zch>
-			<ara>لعبة الرسوم المتحركة</ara>
-			<uig>ئويۇن كارتونلىرى</uig>
-			<urd>کھیل ہی کھیل میں متحرک تصاویر</urd>
-			<srp>Анимације игара</srp>
-			<kur>Anîmasyonên lîstikê</kur>
-			<hau>Wasan rayarwa</hau>
-			<deu>Spielanimationen</deu>
-			<svl>Animacije iger</svl>
-			<mkd>Анимации на игри</mkd>
-			<bul>Анимации на играта</bul>
-			<eo>Ludanimacioj</eo>
-			<ltz>Spillanimatiounen</ltz>
-			<swe>Spelanimationer</swe>
-			<alb>Animacione lojërash</alb>
-			<swa>Michoro ya mchezo</swa>
-			<gla>Beothalachd geama</gla>
-			<zul>Izithombe zegeyimu</zul>
-			<hin>गेम एनिमेशन</hin>
-			<mar>गेम अ‍ॅनिमेशन</mar>
-			<nep>खेल एनिमेसनहरू</nep>
-			<la>Ludo animations</la>
-			<gle>Beochan cluiche</gle>
-			<hun>Játék animációk</hun>
-			<fil>Mga animasyon ng laro</fil>
-			<lit>Žaidimų animacijos</lit>
-			<hrv>Animacije igara</hrv>
-			<ind>Animasi permainan</ind>
-			<lav>Spēļu animācijas</lav>
-			<mlt>Animazzjonijiet tal-logħob</mlt>
-			<nor>Spillanimasjoner</nor>
-			<ron>Animații de joc</ron>
-			<afr>Game animasies</afr>
-			<xho>Oopopayi bomdlalo</xho>
-			<kin>Umukino wa animasiyo</kin>
-			<mri>Hākoritanga hākinakina</mri>
-			<eus>Joko animazioak</eus>
-			<bos>Animacije igara</bos>
-			<ceb>Mga animasyon sa dula</ceb>
-			<nya>Makanema ojambula pamasewera</nya>
-			<fris>Game animaasjes</fris>
-			<glg>Animacións de xogos</glg>
-			<hat>Jwèt Animations</hat>
-			<haw>Nā hāmeʻa pāʻani</haw>
-			<hmn>Cov tsiaj qus</hmn>
-			<ibo>Egwuregwu egwuregwu</ibo>
-			<mon>Тоглоомын хөдөлгөөнт дүрс</mon>
-			<mlg>Sarimiaina lalao</mlg>
-			<msa>Animasi permainan</msa>
-			<tat>Уен анимацияләре</tat>
-			<jav>Animasi game</jav>
-			<yor>Awọn ohun idanilaraya ere</yor>
-			<cos>Animazioni di ghjocu</cos>
-			<isl>Leik fjör</isl>
-			<kaz>Ойын анимациялары</kaz>
-			<sna>Mitambo yemitambo</sna>
-			<sot>Lipapali tsa papali</sot>
-			<vie>Hoạt ảnh trò chơi</vie>
-			<est>Mängu animatsioonid</est>
-			<cym>Animeiddiadau gêm</cym>
-			<ton>Vaʻinga animations</ton>
-			<fij>Gacagaca ni qito</fij>
-			<por-br>Animações de jogos</por-br>
+			<eng>Game graphics quality</eng>
+      <ces>Kvalita obrazu hry</ces>
 		</a>
 		<a id="126">
 			<eng>Zoom</eng>
@@ -64736,5 +64659,69 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 			<fij>Wainimoli</fij>
 			<por-br>Limonada</por-br>
 		</a>
+
+		<a id="1587">
+			<eng>Minimal</eng>
+			<ces>Minimální</ces>
+		</a>
+
+		<a id="1588">
+			<eng>Low</eng>
+			<ces>Nízká</ces>
+		</a>
+		<a id="1589">
+			<eng>Medium</eng>
+			<ces>Střední</ces>
+		</a>
+		<a id="1590">
+			<eng>Best</eng>
+			<ces>Skvělá</ces>
+		</a>
+
+		<a id="1591">
+			<eng>Graphics card note</eng>
+			<ces>Poznámka ke grafické kartě</ces>
+		</a>
+		<a id="1592">
+			<eng>It looks like you have another more powerful graphics card,</eng>
+			<ces>Vypadáto, že máte další lepší grafickou kartu,</ces>
+		</a>
+		<a id="1593">
+			<eng>but now it is probably used slower.</eng>
+			<ces>ale asi používáte tu pomalejší</ces>
+		</a>
+		<a id="1594">
+			<eng>Currently Using gpu: </eng>
+			<ces>Teď používaná gpu: </ces>
+		</a>
+    <a id="1595">
+      <eng>6×</eng>
+    </a>
+    <a id="1596">
+      <eng>7×</eng>
+    </a>
+    <a id="1597">
+      <eng>Vignetting</eng>
+    </a>
+		<a id="1598">
+      <eng>Fog</eng>
+    </a>
+		<a id="1599">
+      <eng>Waving elements</eng>
+    </a>
+    <a id="1600">
+      <eng>Interaction mess</eng>
+    </a>
+    <a id="1601">
+      <eng>Clouds</eng>
+    </a>
+		<a id="1602">
+      <eng>None</eng>
+      <ces>Žádné</ces>
+    </a>
+		<a id="1603">
+      <eng>Fancy</eng>
+      <ces>Hezké</ces>
+    </a>
 	</Data>
 </XMLFile>

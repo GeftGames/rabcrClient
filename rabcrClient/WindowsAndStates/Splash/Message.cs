@@ -184,6 +184,7 @@ namespace rabcrClient {
         //    Rabcr.random=new FastRandom();
             Rabcr.ActiveWindow=IsActive;
             (Rabcr.Pixel=new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
+          //  (Rabcr.Pixel2=new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White });
 
             Textures.ButtonCenter=GetDataTexture(@"Buttons\Menu\Center");
 

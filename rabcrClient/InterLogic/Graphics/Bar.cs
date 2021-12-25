@@ -143,7 +143,7 @@ namespace rabcrClient {
             }
 
             // Bounds
-            Color bColor=new Color(bcolorh,bcolorh,bcolorh);
+            Color bColor=new(bcolorh,bcolorh,bcolorh);
             spriteBatch.Draw(Rabcr.Pixel, new Rectangle(X+3, Y, Size-6, 1), bColor);
             spriteBatch.Draw(Rabcr.Pixel, new Rectangle(X+3, Y+32, Size-6, 1), bColor);
             spriteBatch.Draw(Rabcr.Pixel, new Rectangle(X, Y+3, 1, 32-6), bColor);

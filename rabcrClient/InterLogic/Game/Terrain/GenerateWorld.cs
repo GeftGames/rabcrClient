@@ -6402,7 +6402,7 @@ namespace rabcrClient {
                 float ta=angle;
 
                 // Cave asymetry
-                float add=(FastRandom.Float()*0.5f-1f)*0.3f;
+                float add=(FastRandom.FloatHalf()/**0.5f*/-1f)*0.3f;
 
                 if (add+lastRnd>1f)add=1f;
                 if (add+lastRnd<0f)add=0f;

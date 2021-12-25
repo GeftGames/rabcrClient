@@ -959,7 +959,7 @@ GraphicsDevice Graphics;
                     } else {
                         Vector2 z=center-rameno;
                          // Vektor na kterém leží loket
-                        Vector2 loket=new Vector2(-z.Y,z.X);
+                        Vector2 loket=new(-z.Y, z.X);
 
                         // Vzdálenost loket a bod střed
                         float toloket=(float)Math.Sqrt(6*6-dis*dis/4);

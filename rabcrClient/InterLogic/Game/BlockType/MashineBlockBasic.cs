@@ -44,7 +44,7 @@ namespace rabcrClient {
         }
 
         public override Block CloneDown() {
-            MashineBlockBasic mb=new MashineBlockBasic(Texture,Id, Position, Inv.Length);
+            MashineBlockBasic mb=new(Texture,Id, Position, Inv.Length);
             mb.Position.Y+=16;
             return mb;
         }

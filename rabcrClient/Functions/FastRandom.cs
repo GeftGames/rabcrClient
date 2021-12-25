@@ -8,7 +8,8 @@ namespace rabcrClient {
 
         // Constants
         const double DOUBLE_UNIT = 1.0 / ( int.MaxValue + 1.0 );
-
+        const double DOUBLE_UNIT_HALF = 0.5 / ( int.MaxValue + 1.0 );
+        const double DOUBLE_UNIT_TWO = 2.0 / ( int.MaxValue + 1.0 );
         // State Fields
         static ulong
             x_ = (ulong)Guid.NewGuid().GetHashCode(),
@@ -278,6 +279,28 @@ namespace rabcrClient {
             x_ = temp_x;
 
             return (float)(DOUBLE_UNIT * (0x7FFFFFFF & (y_ + temp_x)));
+        }
+        
+        public static float FloatHalf() {
+            x_ ^= x_ << 23;
+
+            ulong temp_x = y_;
+
+            y_ = x_ ^ y_ ^ (x_ >> 17) ^ (y_ >> 26);
+            x_ = temp_x;
+
+            return (float)(DOUBLE_UNIT_HALF * (0x7FFFFFFF & (y_ + temp_x)));
+        }
+        
+        public static float FloatTWO() {
+            x_ ^= x_ << 23;
+
+            ulong temp_x = y_;
+
+            y_ = x_ ^ y_ ^ (x_ >> 17) ^ (y_ >> 26);
+            x_ = temp_x;
+
+            return (float)(DOUBLE_UNIT_TWO * (0x7FFFFFFF & (y_ + temp_x)));
         }
 
         public static float Rotatin() {

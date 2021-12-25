@@ -13,7 +13,7 @@ namespace rabcrClient {
             TextTransparentry=.4f;
 
         public static bool AnimationsControls=true;
-        public static bool AnimationsGame=true;
+      
    // public static bool AnimationsRichGame=true;
         //public static bool OnlineAccount;
         //public static bool Logged;

@@ -13,9 +13,7 @@ namespace rabcrClient {
         public Color Color;
         #endregion
 
-        private LeavesBlock() {
-           // Color=ColorWhite;
-        }
+        private LeavesBlock() { }
 
         public LeavesBlock(Texture2D texture, ushort id, Vector2 position) {
             Texture = texture;
@@ -34,7 +32,7 @@ namespace rabcrClient {
         }
 
         public override Block CloneDown() {
-            LeavesBlock n = new LeavesBlock {
+            LeavesBlock n = new() {
                 Texture=Texture,
                 Id=Id,
                 Position=Position,

@@ -7657,7 +7657,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								DrawSideInventory();
 
 								#region Barel inventory
-								Vector2 vec=new Vector2(Global.WindowWidthHalf-300+119, Global.WindowHeightHalf-198+250);
+								Vector2 vec=new(Global.WindowWidthHalf-300+119, Global.WindowHeightHalf-198+250);
 								// In
 								spriteBatch.Draw(inventorySlotInTexture, vec, ColorWhite);
 								invBarrel[0].Draw();
@@ -25443,9 +25443,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			return false;
 		}
 
-        static DInt InventoryGetPosNormal5(int ix) => new DInt{ X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+        static DInt InventoryGetPosNormal5(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
 
-		static Vector2 InventoryGetPosNormal5Vector2(int ix) => new Vector2{ X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+		static Vector2 InventoryGetPosNormal5Vector2(int ix) => new(Global.WindowWidth-36, Global.WindowHeightHalf-80+ix*40+4);
 
 		static DInt InventoryGetPosAdvBox(int i) {
 			int row=i/12;

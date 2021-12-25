@@ -26,6 +26,9 @@ namespace rabcrClient {
 
         public int Selected {
             set {
+                #if DEBUG
+                if (list.Length==0) throw new Exception("Fill this switcher with text options after constructor, e.g. ...=new string[]{Lang.Texts[1], Lang.Texts[2], ...}");
+                #endif
                 buttonText=list[selected=value];
                 DInt s=BitmapFont.bitmapFont18.MeasureTextSingleLine(buttonText);
                 textSizeX=(texture.Width-s.X)/2;
@@ -77,7 +80,7 @@ namespace rabcrClient {
                             Selected=selected;
 
                             if (Rabcr.ActiveWindow){
-                                if (Rabcr.Game.IsActive){
+                                if (Rabcr.Game.IsActive) {
                                     Click.Invoke();
                                 }
                             }
