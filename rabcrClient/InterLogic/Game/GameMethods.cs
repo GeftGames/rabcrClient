@@ -4876,9 +4876,11 @@ namespace rabcrClient {
                 case (ushort)Items.TinOfBlueberries: return 800;
                 case (ushort)Items.TinOfRashberries: return 800;
                 case (ushort)Items.TinOfStrawberries: return 800;
-                #endregion
+                    #endregion
+                default:
+                   return -1;
             }
-            return -1;
+          //  return -1;
         }
 
         public static Color DyeToColor(byte liquid)

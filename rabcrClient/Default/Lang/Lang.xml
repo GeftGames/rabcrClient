@@ -22206,7 +22206,9 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="999">
 			<eng>Unknown item</eng>
-			<ces>Neznámý item</ces>
+      <ces>Neznámý item</ces>
+      <mor-ha>Neznámé item</mor-ha>
+      <ces-ce>Neznámej item</ces-ce>
 			<slk>Neznámy item</slk>
 			<pol>Nieznana pozycja</pol>
 			<jpn>不明なアイテム</jpn>
@@ -22286,8 +22288,10 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		<a id="1001">
 			<eng>Stone axe</eng>
 			<enu>Stone ax</enu>
-			<ces>Kamenná sekera</ces>
-			<mor-va>Kamenná sekyra</mor-va>
+      <ces>Kamenná sekera</ces>
+      <mor-ha>Kamenná sekera</mor-ha>
+      <mor-va>Kamenná sekyra</mor-va>
+      <mor-sl>Kamenná sekyra</mor-sl>
 			<slk>Kamenná sekera</slk>
 			<pol>Kamienna siekiera</pol>
 			<deu>Steinaxt</deu>
@@ -22365,7 +22369,7 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="1002">
 			<eng>Stone shovel</eng>
-			<ces>Kamenná lopata</ces>
+      <ces>Kamenná lopata</ces>
 			<slk>Kamenná lopata</slk>
 			<jpn>石シャベル</jpn>
 			<pol>Łopata do kamienia</pol>
@@ -22444,7 +22448,9 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="1003">
 			<eng>Stone pickaxe</eng>
-			<ces>Kamenný krumpáč</ces>
+      <ces>Kamenný krumpáč</ces>
+      <mor-ha>Kamenné krômpáč</mor-ha>
+      <ces-ce>Kamennej krumpáč</ces-ce>
 			<slk>Kamenný krompáč</slk>
 			<pol>Kamienny kilof</pol>
 			<jpn>石のつるはし</jpn>
@@ -22523,7 +22529,8 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		<a id="1004">
 			<eng>Iron axe</eng>
 			<enu>Iron ax</enu>
-			<ces>Železná sekera</ces>
+      <ces>Železná sekera</ces>
+      <mor-ha>Železná sekera</mor-ha>
 			<mor-va>Železná sekyra</mor-va>
 			<slk>Żelazna sekera</slk>
 			<pol>Kamienna siekiera</pol>
@@ -22681,7 +22688,9 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="1006">
 			<eng>Iron pickaxe</eng>
-			<ces>Železný krumpáč</ces>
+      <ces>Železný krumpáč</ces>
+      <ces-ce>Železnej krumpáč</ces-ce>
+      <mor-ha>Železné krômpáč</mor-ha>
 			<slk>Železný krompáč</slk>
 			<pol>Żelazny kilof</pol>
 			<jpn>鉄のツルハシ</jpn>
@@ -22756,7 +22765,9 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="1007">
 			<eng>Bronze hammer</eng>
-			<ces>Bronzové kladivo</ces>
+      <ces>Bronzové kladivo</ces>
+      <ces-ce>Bronzový kladivo</ces-ce>
+      <mor-ha>Bronzovy kladivo</mor-ha>
 			<slk>Bronzové kladivo</slk>
 			<pol>Młotek z brązu</pol>
 			<jpn>ブロンズハンマー</jpn>
@@ -28012,7 +28023,7 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		<a id="1081">
 			<eng>Gravel</eng>
 			<ces>Štěrk</ces>
-			<mor-va>Těřazg</mor-va>
+			<mor-va>Břak</mor-va>
 			<pol>Żwir</pol>
 			<slk>Štrk</slk>
 			<jpn>砂利</jpn>
@@ -28089,7 +28100,8 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
 		</a>
 		<a id="1082">
 			<eng>Snow</eng>
-			<ces>Sníh</ces>
+      <ces>Sníh</ces>
+      <mor-ha>Snih</mor-ha>
 			<pol>Śnieg</pol>
 			<slk>Sneh</slk>
 			<jpn>雪</jpn>

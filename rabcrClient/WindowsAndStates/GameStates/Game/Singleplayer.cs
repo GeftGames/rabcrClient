@@ -14,7 +14,7 @@ namespace rabcrClient {
 
 		#region Varibles
 		SoundEffectInstance SoundWind, SoundRain;
-		float upscalingMultisapling=1f/*Setting.Multisapling*/;
+		float upscalingMultisapling=2f/*Setting.Multisapling*/;
       //  readonly bool snowing;
 		enum Precipitation : byte {
 			None,
@@ -16690,7 +16690,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		DInt GetPosOfItemInInventories(ItemInv[] inv, int i) {
 			if (IsSameArray(inv, InventoryNormal)) {
 				DInt p=InventoryGetPosNormal(i);
-				if (p is null) return p;
+				if (p is not null) return p;
 			}
 			if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 				if (IsSameArray(inv, InventoryClothes)) {
@@ -17570,6 +17570,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 			return -1;
 		}
+		
 		int InvFurnaceStoneMoveId() {
 			if (In40(Global.WindowWidthHalf-300+4+1+40,      Global.WindowHeightHalf-200+2+4+60)) return 0;
 			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60)) return 1;
@@ -17578,6 +17579,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 			return -1;
 		}
+		
 		int InvWoodenBoxMoveId() {
 			// Wooden box
 			if (In(Global.WindowWidthHalf-300+59, Global.WindowHeightHalf+59, Global.WindowWidthHalf-300+59+(12*40), Global.WindowHeightHalf+59+40*2)) {
@@ -18517,9 +18519,9 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		//}
 
 		void DrawNeed() {
-			if (CurrentDeskCrafting==null)return;
-			if (selectedCraftingItem==-1)return;
-			if (SelectedCraftingRecipe==-1)return;
+			if (CurrentDeskCrafting==null) return;
+			if (selectedCraftingItem==-1) return;
+			if (SelectedCraftingRecipe==-1) return;
 			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8), Color.White);
 			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
 
@@ -18697,23 +18699,23 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 				ItemNonInv item=n.ItemSlot[n.SelectedItem];
 				switch (item) {
 					case ItemNonInvTool t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					case ItemNonInvNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
 						break;
 
 					case ItemNonInvBasicColoritzedNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
 						break;
 
 					case ItemNonInvFood t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					case ItemNonInvBasic t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					default:
@@ -24866,7 +24868,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					itemText.ChangePosition(mouseRealPosX+cursorWidth, mouseRealPosY);
 				} else {
 					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
-					itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth, mouseRealPosY);
+					itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY);
 				}
 				itemText.Draw(spriteBatch);
 			}
