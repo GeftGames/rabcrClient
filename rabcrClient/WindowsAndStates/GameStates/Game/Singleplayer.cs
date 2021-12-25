@@ -16690,42 +16690,42 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		DInt GetPosOfItemInInventories(ItemInv[] inv, int i) {
 			if (IsSameArray(inv, InventoryNormal)) {
 				DInt p=InventoryGetPosNormal(i);
-				if (p!=null) return p;
+				if (p is null) return p;
 			}
 			if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 				if (IsSameArray(inv, InventoryClothes)) {
 					DInt p=InventoryGetPosClothes(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.BoxWooden) {
 				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBoxWooden(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.FurnaceStone) {
 				if (IsSameArray(inv, ((MashineBlockBasic )terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosFurnaceStone(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.BoxAdv) {
 				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosAdvBox(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Miner) {
 				if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBoxWooden(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
 				if (IsSameArray(inv, ((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosShelf(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
@@ -16736,7 +16736,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 			if (inventory==InventoryType.Barrel) {
 				if (IsSameArray(inv, ((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBarrel(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			#if DEBUG

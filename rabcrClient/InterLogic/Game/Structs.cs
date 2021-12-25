@@ -24,9 +24,20 @@ public class DInt : IEquatable<DInt>{
         y = Y;
     }
 
-    public static bool operator != (DInt value1, DInt value2) => value1.X != value2.X || value1.Y != value2.Y;
-    public static bool operator == (DInt value1, DInt value2) => value1.X == value2.X && value1.Y == value2.Y;
-
+    public static bool operator != (DInt value1, DInt value2) {
+        #if DEBUG
+        if (value1 is null) throw new Exception("value1 is null");
+        if (value2 is null) throw new Exception("value2 is null");
+        #endif
+        return value1.X != value2.X || value1.Y != value2.Y;
+    }
+    public static bool operator == (DInt value1, DInt value2) {
+        #if DEBUG
+        if (value1 is null) throw new Exception("value1 is null");
+        if (value2 is null) throw new Exception("value2 is null");
+        #endif
+        return value1.X == value2.X && value1.Y == value2.Y;
+    }
 }
 
 public struct ShortAndByte {
