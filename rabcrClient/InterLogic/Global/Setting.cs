@@ -12,8 +12,24 @@ namespace rabcrClient {
         Girl
     }
 
-    struct Setting {
-        public static bool LangSortByList=true;
+    struct Setting {  
+        public enum Scale :byte{
+            Without,
+            Proportions,
+            Fill,
+        } 
+        public enum Window:byte {
+            Normal,
+            Maxi,
+            Fullscreen
+        }   
+        public enum FogTypes:byte { 
+            No,
+            Plain,
+            Fancy
+        }
+
+        // Character
         public static Sex sex=Sex.Men;
         public static int hairType=1;
         public static Color hairColor=Color.Brown;
@@ -23,64 +39,44 @@ namespace rabcrClient {
         public static int eyesType;
         public static Color eyesColor=Color.DarkBlue;
         public static int MaturePlayer=1;
+
+        // Save
+        public static string Path=@"C:\GeftGames\"+Global.GameName+@"\";
+        
+        // Account
         public static string Name="Player";
 
-        public static string Path=@"C:\GeftGames\"+Global.GameName+@"\";
-
-        public static bool Background=true;
-
-        public static bool Fps=false;
-
-        public enum Window:byte {
-            Normal,
-            Maxi,
-            Fullscreen
-        }
-
-        public static Window currentWindow;
-
-        public enum Scale :byte{
-            Without,
-            Proportions,
-            Fill,
-        }
+        // Functional
         public static bool FirstRun;
-        //public enum GameAnimations :byte{
-        //    Minimal,
-        //    LowQuality,
-        //    NormalQuality,
-        //    BestQuality
-        //}
-   //     public static GameAnimations AnimationsGame=GameAnimations.NormalQuality;
+        public static bool LangSortByList=true;
+        public static bool SnowAndRain=true;
+        public static bool SunAndMoon=true;
+
+        // Settings
+        public static bool Background=true;
+        public static bool Fps=false;
+        public static Window currentWindow;
         public static bool Vignetting=true;
-
         public static Scale currentScale;
-
         public static float Zoom=3;
-
         public static float VolumeMusic=.5f;
-
         public static float VolumeEffects=1;
-
         public static int CurrentLanguage;
-
         public static float UpScalingSuperSapling=1f;
         public static int Multisapling=1;
-
         public static bool BackgroundFancy=true;
         public static bool Clouds=true;
         public static bool InteractionMess=true;
         public static bool FallingLeaves=true;
         public static bool WavingElements=true;
         public static FogTypes Fog=FogTypes.Fancy;
-        public static bool SunAndMoon=true;
         public static bool BetterSnowAndRain=true;
-        public static bool SnowAndRain=true;
-        public enum FogTypes { 
-            No,
-            Plain,
-            Fancy
-        }
+        public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
+        public static float NightBrightness=0.6f;
+        public static float slideChangeTime=0.05f;
+
+        public const string StyleName="Default";
+     
         #region Keys
         public static Microsoft.Xna.Framework.Input.Keys KeyLeft=Microsoft.Xna.Framework.Input.Keys.Left;
 
@@ -101,19 +97,6 @@ namespace rabcrClient {
         public static Microsoft.Xna.Framework.Input.Keys KeyShowInfo=Microsoft.Xna.Framework.Input.Keys.F1;
         #endregion
 
-        public const string StyleName="Default";
-
-        public static float slideChangeTime=0.05f;
-
-        public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
-
-
-      
-
-        public static float NightBrightness=0.6f;
-
-      //  public static GraphicsProfile GraphicsProfile;
-
         public static void CreateSettings() {
            // Debug.WriteLine("Creating new settings");
             try {
@@ -122,49 +105,6 @@ namespace rabcrClient {
 
             Lang.SetUp(true);
             FirstRun=true;
-    //     ManagementObjectSearcher searcher 
-    // = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
-
-    //string graphicsCard = string.Empty;
-    //foreach (ManagementObject mo in searcher.Get())
-    //{
-    //    foreach (PropertyData property in mo.Properties)
-    //    {
-    //       if (property.Name == "Description")
-    //       {
-    //           graphicsCard = property.Value.ToString();
-    //       }
-    //    }
-    //}
-
-          //  var graphicsCardName = new SharpDX.Direct3D9.Direct3D().Adapters[0].Details.Description;
-
-          //  Debug.WriteLine(graphicsCardName);
-          //  if (GraphicsDeviceInformation.)Setting.GameAnimations
-
-//var GraphicsCard = Rabcr.Game.GraphicsDevice;
-
-
-//int NumberOfAdapters = GraphicsAdapter.Adapters.Count;
-
-//List<string> AdapterNames = new List<string>();
-
-//foreach (GraphicsAdapter EnumeratedAdapter in GraphicsAdapter.Adapters)
-
-//{
-
-//    if (EnumeratedAdapter == GraphicsCard.Adapter)
-
-//    {
-
-//        //This is the one being used.
-
-//    }
-
-//    AdapterNames.Add(EnumeratedAdapter.Description);
-
-//}
-
 
             SaveSetting();
         }
