@@ -22,7 +22,7 @@ namespace rabcrClient {
         const int DocumentSize=500;
         int start,end;
         float smoothMouse=0;
-        const int PageHeight=1290+60+70+60+90+90+90+90+90+90;
+        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500;
         #endregion
 
         public override void Init() {
@@ -30,6 +30,7 @@ namespace rabcrClient {
             buttonMenu.Click+=ClickMenu;
             effectBlur=Effects.BluredTopDownBounds;
 
+         //   PageHeight=1290+settings.Count*90;
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")){
                 maxheight=PageHeight/*-Global.WindowHeight+60+60+90+30*/,
                 height=Global.WindowHeight-75-65-2
@@ -41,7 +42,9 @@ namespace rabcrClient {
             movemer = GetDataTexture(@"Buttons\Setting\TrackBar\Movemer");
             scrollbar.PositionY=76;
             header=new Text(Lang.Texts[8],10, 10,BitmapFont.bitmapFont34);
+
             SetTexts();
+
             Resize();
         }
 
@@ -117,7 +120,7 @@ namespace rabcrClient {
             #region Settings
             int imax=end+1;
             if (imax>=settings.Count)imax=settings.Count;
-            for (int i=start; i<imax; i++){
+            for (int i=start; i<imax && i>=0; i++){
                 settings[i].Draw(spriteBatch);
             }
             #endregion
@@ -144,6 +147,7 @@ namespace rabcrClient {
         }
 
         public override void Resize() {
+           // PageHeight=settings.Count*90-Global.WindowHeight;
             scrollbar.Scroll(0);
             Move(null,new EventArgs());
             worldsTarget?.Dispose();
@@ -368,8 +372,8 @@ namespace rabcrClient {
 
             #endregion
 
-            // Herních prvky
-            settings.Add(new SettingHeader(Lang.Texts[123]));
+            // Animations
+            settings.Add(new SettingHeader(Lang.Texts[1612]));
           
             // Vignetting
             {
@@ -420,33 +424,94 @@ namespace rabcrClient {
                 };
                 settings.Add(button);
             }
-            // MultiSampling
-            //{
-            //    int index=-1;
-            //    index = (int)Setting.Multisapling switch {
-            //        2 => 1,
-            //        4 => 2,
-            //        8 => 3,
-            //        16 => 4,
-            //        _ => 0,
-            //    };
-            //    SettingSwitcher button = new(tex, Lang.Texts[1601], new string[]{ }, index);
-            //    button.Click += () => {
-            //        Setting.Multisapling=button.selected switch {
-            //        0 => 1f,
-            //        1 => 2f,
-            //        2 => 4f,
-            //        3 => 8f,
-            //        4 => 16f,
-            //        _ => 0f
-            //    };;
-            //        Global.ChangedSettings=true;
-            //    };
-            //    settings.Add(button);
-            //}
-
+               
+            // FallingLeaves
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1608], Setting.FallingLeaves);
+                button.Click += () => {
+                    Setting.FallingLeaves=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+             
+            // BackgroundFancy
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1610], Setting.BackgroundFancy);
+                button.Click += () => {
+                    Setting.BackgroundFancy=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
             
-           
+            // BetterSnowAndRain
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1611], Setting.BetterSnowAndRain);
+                button.Click += () => {
+                    Setting.BetterSnowAndRain=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // AA
+            settings.Add(new SettingHeader(Lang.Texts[1613]));
+          
+            // MultiSampling
+            {
+                int index=-1;
+                index = (int)Setting.Multisapling switch {
+                    2 => 1,
+                    4 => 2,
+                    8 => 3,
+                    16 => 4,
+                    _ => 0,
+                };
+                SettingSwitcher button = new(tex, Lang.Texts[1609], new string[]{ Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
+                button.Click += () => {
+                    Setting.Multisapling = button.selected switch {
+                        0 => 1,
+                        1 => 2,
+                        2 => 4,
+                        3 => 8,
+                        4 => 16,
+                        _ => 0
+                    }; ;
+                    Global.ChangedSettings = true;
+                };
+                settings.Add(button);
+            }
+
+            // Upscaling
+            {
+                int index=-1;
+                index = (int)Setting.Multisapling switch {
+                    -1 => 0,
+                    1 => 1,
+                    2 => 2,
+                    4 => 3,
+                    8 => 4,
+                    16 => 5,
+                    _ => 0,
+                };
+                SettingSwitcher button = new(tex, Lang.Texts[1606], new string[]{ Lang.Texts[1607], Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
+                button.Click += () => {
+                    Setting.Multisapling = button.selected switch {
+                        0 => 0,
+                        1 => 1,
+                        2 => 2,
+                        3 => 4,
+                        4 => 8,
+                        5 => 16,
+                        _ => -1
+                    }; ;
+                    Global.ChangedSettings = true;
+                };
+                settings.Add(button);
+            }
+
+         
             //{
             //    SettingSwitcher button = new(tex, Lang.Texts[125], new string[]{ Lang.Texts[1587], Lang.Texts[1588], Lang.Texts[1589], Lang.Texts[1590]}, (int)Setting.AnimationsGame);
             //    button.Click+=ClickAnimations;
@@ -457,8 +522,8 @@ namespace rabcrClient {
             //        Global.ChangedSettings=true;
             //    }
             //}
-           
-           
+
+
             //{
             //    SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
             //    button.Click+=ClickGraphicsProfile;
