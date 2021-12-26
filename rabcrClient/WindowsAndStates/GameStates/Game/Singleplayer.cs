@@ -14,8 +14,7 @@ namespace rabcrClient {
 
 		#region Varibles
 		SoundEffectInstance SoundWind, SoundRain;
-		float upscalingMultisapling=2f/*Setting.Multisapling*/;
-      //  readonly bool snowing;
+
 		enum Precipitation : byte {
 			None,
 			Snowing,
@@ -1402,7 +1401,7 @@ namespace rabcrClient {
 			for (int i2=0; i2<Global.WindowHeight; i2++){ 
 				if (wind) {
 					for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-						int addSide=Global.WindowHeight/2;
+						int addSide=Global.WindowHeightHalf;
 						if (windRirectionRight) {
 							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
 								if (Setting.BetterSnowAndRain) {
@@ -1503,6 +1502,10 @@ namespace rabcrClient {
         public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 		RasterizerState rasterizerState;
 		public unsafe override void Init() {
+
+			//Setting.UpScalingSuperSapling=1.00001f;
+		//	Setting.Multisapling=16;
+
 			FallingLeaves=new List<FallingLeave>();
 			Particles=new List<ParticleMess>();
 			WavingPlants=new List<object>();
@@ -2666,9 +2669,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			#endregion
 
 			#region Set basic
-			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*upscalingMultisapling, Setting.Zoom*upscalingMultisapling, 0);
+			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*Setting.UpScalingSuperSapling, Setting.Zoom*Setting.UpScalingSuperSapling, 0);
 			ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
-			MatrixUpScaling = Matrix.CreateScale(upscalingMultisapling, upscalingMultisapling, 0);
+			if (Setting.UpScalingSuperSapling!=1f) MatrixUpScaling = Matrix.CreateScale(Setting.UpScalingSuperSapling, Setting.UpScalingSuperSapling, 0);
 
 			newKeyboardState = Keyboard.GetState();
 			newMouseState = Mouse.GetState();
@@ -3124,10 +3127,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			Load();
+			//#if DEBUG
+			//CheckTerrain("After Load()");
+			//#endif
 
 			Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*(float)upscalingMultisapling, 
-				Global.WindowHeightHalf*(float)upscalingMultisapling, 
+				Global.WindowWidthHalf*(float)Setting.UpScalingSuperSapling, 
+				Global.WindowHeightHalf*(float)Setting.UpScalingSuperSapling, 
 			0));
 
 			TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
@@ -3139,7 +3145,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
-			targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*upscalingMultisapling), (int)(Global.WindowHeight*upscalingMultisapling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			if (Setting.UpScalingSuperSapling!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*Setting.UpScalingSuperSapling), (int)(Global.WindowHeight*Setting.UpScalingSuperSapling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 
 			//dayAlpha
 			if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
@@ -3291,8 +3297,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			// Graphics.RasterizerState.MultiSampleAntiAlias=true;
 			rasterizerState=new RasterizerState{ 
-				MultiSampleAntiAlias=true,
-
+				MultiSampleAntiAlias=Setting.Multisapling>1,
 			};
 			Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
 			//GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
@@ -3302,9 +3307,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			//	Debug.WriteLine(e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
 			//	}
 			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-			 Graphics.PresentationParameters.MultiSampleCount = 8;
+		//	Graphics.RasterizerState.MultiSampleAntiAlias=Setting.Multisapling>1;
+			 Graphics.PresentationParameters.MultiSampleCount = Setting.Multisapling;
 			GraphicsManager.ApplyChanges();
-			Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
+			//Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
 
 		//	if ((int)Setting.AnimationsGame==(int)Setting.GameAnimations.NormalQuality) {
 		//		//GraphicsManager.
@@ -3323,8 +3329,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				
 		//	}
 
-			weatherWindowWidth=(int)(Global.WindowWidth*upscalingMultisapling)+5;
-			weatherWindowHeight=(int)(Global.WindowHeight*upscalingMultisapling)+3;
+			weatherWindowWidth=(int)(Global.WindowWidth*Setting.UpScalingSuperSapling)+5;
+			weatherWindowHeight=(int)(Global.WindowHeight*Setting.UpScalingSuperSapling)+3;
 		}
 
 		public override void Shutdown() {
@@ -3337,6 +3343,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (SoundRain.State==SoundState.Playing)  SoundRain.Stop();
 
 			#region Save data
+			//#if DEBUG
+			//CheckTerrain("Shutdown");
+			//#endif
 			Save();
 
 			SaveSettings();
@@ -3387,14 +3396,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			cpuUsage?.Dispose();
 
 			modificatedLightTarget.Dispose();
-			targetGame.Dispose();
+			if (Setting.UpScalingSuperSapling!=1f) targetGame.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
 		}
 
 		public override unsafe void Update(GameTime gameTime) {
 			if (dontDoGame) return;
-
 			if (died) {
 				timerStayDied-=0.5f;
 				if (timerStayDied<=0)died=false;
@@ -3424,12 +3432,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					mouseRightDown=false;
 					if (oldMouseState.RightButton==ButtonState.Pressed) mouseRightRelease=true;
 				}
-
-				if (newMouseState.X==oldMouseState.X) {
-					if (newMouseState.Y==oldMouseState.Y) {
-						mousePosChanged=false;
+				if (changePosition){ 
+					mousePosChanged=true;
+				}else{
+					if (newMouseState.X==oldMouseState.X) {
+						if (newMouseState.Y==oldMouseState.Y) {
+							mousePosChanged=false;
+						} else mousePosChanged=true;
 					} else mousePosChanged=true;
-				} else mousePosChanged=true;
+				}
 
 				if (mousePosChanged) {
 					SetMousePos();
@@ -4558,7 +4569,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										p.ticks++;
 										i++;
 									} else {
-										terrain[(int)(p.Position.X/16)].TopBlocks[(int)(p.Position.Y/16)]=p.TurnOff();
+										terrain[(int)(p.Position.X/16f)].TopBlocks[(int)(p.Position.Y/16f)]=p.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
 								} else if (WavingPlants[i] is FruitPlantWaving z) {
@@ -4567,7 +4578,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										z.ticks++;
 										i++;
 									} else {
-										List<Plant> plants=terrain[(int)(z.Position.X/16)].Plants;
+										List<Plant> plants=terrain[(int)(z.Position.X/16f)].Plants;
 										plants[plants.IndexOf(z)]=z.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
@@ -4587,9 +4598,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Block block=chunk.TopBlocks[rh];
 								if (block is LeavesBlock lb){
 									if (lb.Id==(ushort)BlockId.SpruceLeaves || lb.Id==(ushort)BlockId.SpruceLeavesWithSnow){
-										FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), FastRandom.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2+FastRandom.Int2(),1)){
+										FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*FastRandom.Float(),*/windRirectionRight,precipitation, new Rectangle(0,0,2+FastRandom.Int2(),1)){
 											texture=lb.Texture,
-											Color=lb.Color,
+											//Color=lb.Color,
 										};
 										FallingLeaves.Add(fl);
 									}else{
@@ -4627,7 +4638,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										|| lb.Id==(ushort)BlockId.MangroveLeaves
 										) {
-											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), FastRandom.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
+											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*FastRandom.Float(),*/windRirectionRight,precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
 												texture=lb.Texture
 											};
 											FallingLeaves.Add(fl);
@@ -4641,7 +4652,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							for (int i = 0; i<FallingLeaves.Count; ) {
 								FallingLeave l = FallingLeaves[i];
 								l.Update();
-								int ch=(int)l.Position.X/16;
+								int ch=(int)(l.Position.X/16f);
 								if (terrain[ch].LightPosFull16<=l.Position.Y) {
 									FallingLeaves.RemoveAt(i);
 								} else i++;
@@ -5468,7 +5479,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (Temperature<0) {
 						if (wind) {
 							for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-								int addSide=Global.WindowHeight/2;
+								int addSide=Global.WindowHeightHalf;
 								if (windRirectionRight) {
 									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
 										if (Setting.BetterSnowAndRain) {
@@ -5633,7 +5644,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					UpdateLiquid((ushort)BlockId.WaterBlock);
 					if (wind){if (Global.WindowWidth>1000) WaveGrassDuringWind(); }
 				}
-
+				////
 				if (timer5==4) {
 					UpdateLiquid((ushort)BlockId.WaterSalt);
 					if (wind) WaveGrassDuringWind();
@@ -6380,9 +6391,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					autoSave--;
 					if (autoSave==0) {
+						//#if DEBUG
+						//CheckTerrain("before autosave");
+						//#endif
 						Save();
 
-							SaveSettings();
+						SaveSettings();
 
 						List<byte> bytes=new();
 						foreach (ItemInv x in InventoryNormal) x.SaveBytes(bytes);
@@ -6451,13 +6465,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				// Draw full lights
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, /*camera*//*MatrixUpScaling*//*MatrixUpScaling*/cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Setting.UpScalingSuperSapling==1f ? camera : cameraNoOpMultisapling);
 
                 foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
                 for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
                     Terrain chunk = terrain[x];
-                    spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), Color.White);
+                    spriteBatch.Draw(/*pixel*/lightMaskTexture, chunk.LightVec/*new Vector2(chunk.LightVec.X, chunk.LightVec.Y)*/, Color.White);
                 }
                 spriteBatch.End();
 
@@ -6466,7 +6480,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				spriteBatch.End();
 
 				// Draw high light
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, /*camera*//*MatrixUpScaling*/cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Setting.UpScalingSuperSapling==1f ? camera : cameraNoOpMultisapling);
 
 				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
@@ -6524,8 +6538,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Draw game
-
-				Graphics.SetRenderTarget(/*null*/targetGame);
+				if (Setting.UpScalingSuperSapling==1f) {
+					Graphics.SetRenderTarget(null/*targetGame*/);
+					Graphics.Clear(Color.Transparent);
+				} else Graphics.SetRenderTarget(/*null*/targetGame);
 
 				#region Draw background
 				if (changeRain<10) {
@@ -6731,15 +6747,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (/*rain*/actualRainForce>0f) {
 					//	int x, y;
 						spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
-
+						int cx=0;
+						int cy=0;
 						Rabcr.spriteBatch=spriteBatch;
 						if (Temperature<0) {
 							Color c=Color.White*actualRainForce;
-							foreach (ParticleSnowSmall r in snowDotsSmall)  r.Draw(/*x*/0, /*y*/0, c);
+							foreach (ParticleSnowSmall r in snowDotsSmall)  r.Draw(cx, cy, c);
 						} else {
 							if (Setting.BetterSnowAndRain) 
-								foreach (ParticleRain r in rainDots) r.Draw(/*x*/0, /*y*/0, actualRainForce);
-							else foreach (ParticleRain r in rainDots) r.DrawBetterQuality(/*x*/0, /*y*/0, actualRainForce);
+								foreach (ParticleRain r in rainDots) r.Draw(cx, cy, actualRainForce);
+							else foreach (ParticleRain r in rainDots) r.DrawBetterQuality(cx, cy, actualRainForce);
 						}
 						spriteBatch.End();
 					}
@@ -6771,7 +6788,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
                 #endregion
-			//	Graphics.SetRenderTarget(/*null*/targetGame);
+			//	Graphics.SetRenderTarget(null/*targetGame*/);
 				//Graphics.Clear(Color.Transparent);
                 if (Setting.WavingElements) {
 					if (wind) {
@@ -6883,7 +6900,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					
 						//EffectFog.Parameters["Octaves"].SetValue(3);
 						
-						spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, EffectFog,MatrixUpScaling);
+						if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
+						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, effect: EffectFog, MatrixUpScaling);
 						EffectFog.Techniques[0].Passes[0].Apply();
 
 						spriteBatch.Draw(pixel, Fullscreen, Color.White);
@@ -6911,8 +6929,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
-					EffectFog.Techniques[0].Passes[0].Apply();
+					if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, transformMatrix: MatrixUpScaling);
 
 					spriteBatch.Draw(pixel, Fullscreen, FogColor*oc*0.2f);
 					spriteBatch.End();
@@ -6935,7 +6953,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					//	else foreach (ParticleRain r in rainDots2) r.Draw(x, y, actualRainForce);
 					//}
 					int x=0,y=0;
-					if (Temperature<0f) {
+     //               x = ((int)(WindowCenterX + 0.5f)) - (int)(Global.WindowWidthHalf / Setting.Zoom);
+     //               y = ((int)(WindowCenterY + 0.5f)) - (int)(Global.WindowHeightHalf / Setting.Zoom);
+                    if (Temperature<0f) {
 						Color c=Color.White*actualRainForce;
 						foreach (ParticleSnow r in snowDots2)  
 							r.Draw(x, y, c);
@@ -7692,15 +7712,17 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					for (int i = 0; i<Particles.Count; i++) Particles[i].Draw();
 				}
 				spriteBatch.End();
-				Graphics.SetRenderTarget(null);
-				spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, BlendState.AlphaBlend, samplerState: SamplerState.LinearClamp);
-				spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
-				spriteBatch.End();
+				if (Setting.UpScalingSuperSapling!=1f) {
+					Graphics.SetRenderTarget(null);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, BlendState.AlphaBlend, Setting.UpScalingSuperSapling<1f ? SamplerState.PointWrap: SamplerState.LinearWrap);
+					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
+					spriteBatch.End();
+				}
 
-				// Draw lighting on game
-				spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply,samplerState: SamplerState.PointWrap);
-				spriteBatch.Draw(texture: modificatedLightTarget, position: Vector2Zero/*new Rectangle(0,0,(int)(Global.WindowWidth*upscalingMultisapling),(int)(Global.WindowHeight*upscalingMultisapling))*/, color: Color.White);
-				spriteBatch.End();
+                // Draw lighting on game
+                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: /*BlendState.Additive*/Multiply, samplerState: SamplerState.PointWrap);
+                spriteBatch.Draw(texture: modificatedLightTarget, Fullscreen/*position: Vector2Zero*//*new Rectangle(0,0,(int)(Global.WindowWidth*upscalingMultisapling),(int)(Global.WindowHeight*upscalingMultisapling))*/, color: Color.White);
+                spriteBatch.End();
                 #endregion
 
                 #region Vignetting
@@ -7708,18 +7730,20 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					//spriteBatch.End();
 					float WSize, HSize;
 					if (Global.WindowWidth>Global.WindowHeight) { 
-						WSize=  ((Global.WindowHeight+Global.WindowWidth)/4f)/(Global.WindowHeight/2f);
+						WSize=  ((Global.WindowHeight+Global.WindowWidth)/4f)/Global.WindowHeightHalf;
 						HSize=   1f;
 					} else {
 						WSize=1f;
-						HSize=((Global.WindowHeight+Global.WindowWidth)/4f) / (Global.WindowWidth/2f);
+						HSize=((Global.WindowHeight+Global.WindowWidth)/4f) / Global.WindowWidthHalf;
 					}
 					EffectVignetting.Parameters["WSize"].SetValue(WSize);
 					EffectVignetting.Parameters["HSize"].SetValue(HSize);
 					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
 
+					if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting, MatrixUpScaling);
 
-					spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearClamp, null, null, EffectVignetting, MatrixUpScaling);
+					//spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearClamp, null, null, EffectVignetting, Setting.UpScalingSuperSapling!=1f ? MatrixUpScaling : null);
 					EffectVignetting.Techniques[0].Passes[0].Apply();
 
 					spriteBatch.Draw(pixel, Fullscreen, Color.White);
@@ -9063,11 +9087,15 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 			if (dontDoGame) return;
 
 			SetCaptionInventory();
+			
 			Translation= ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*(float)upscalingMultisapling /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
-				Global.WindowHeightHalf*(float)upscalingMultisapling /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
+				Global.WindowWidthHalf*(float)Setting.UpScalingSuperSapling /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
+				Global.WindowHeightHalf*(float)Setting.UpScalingSuperSapling /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
 			0));
-			TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+
+			if (Setting.UpScalingSuperSapling!=1){
+				TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+			}
 
 			Fullscreen=new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight);
 			CreateGradientTexture();
@@ -9076,10 +9104,10 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 			modificatedLightTarget?.Dispose();
 			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-
-			targetGame?.Dispose();
-			targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*upscalingMultisapling), (int)(Global.WindowHeight*upscalingMultisapling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-
+			if (Setting.UpScalingSuperSapling!=1f) {
+				targetGame?.Dispose();
+				targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*Setting.UpScalingSuperSapling), (int)(Global.WindowHeight*Setting.UpScalingSuperSapling), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			}
 			if (Global.WorldDifficulty==2) {
 				if (inventory==InventoryType.Creative) {
 
@@ -9589,7 +9617,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 									return;
 
 								case (ushort)BlockId.Strawberry:
-									DropItemToPos(new ItemNonInvFood((ushort)Items.Strawberry,1,GameMethods.FoodMaxCount((ushort)Items.Strawberry),0,GameMethods.FoodMaxDescay((ushort)Items.Strawberry)), mousePosRoundX, mousePosRoundY);
+									DropItemToPos(new ItemNonInvFood((ushort)Items.Strawberry,1,GameMethods.FoodMaxCount((ushort)Items.Strawberry),GameMethods.FoodMaxDescay((ushort)Items.Strawberry),GameMethods.FoodMaxDescay((ushort)Items.Strawberry)), mousePosRoundX, mousePosRoundY);
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
@@ -15370,6 +15398,18 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 			}
 		}
 
+
+		void CheckTerrain(string method) { 
+			for (int x=0; x<TerrainLength; x++) { 
+				Terrain chunk=terrain[x];
+
+				for (int y=0; y<125; y++) { 
+					if ((chunk.Background[y]!=null) != chunk.IsBackground[y]) throw new Exception(method+", Background at x: "+x+", y: "+y+" is wrong");
+					if ((chunk.SolidBlocks[y]!=null) != chunk.IsSolidBlocks[y]) throw new Exception(method+", SolidBlock at x: "+x+", y: "+y+" is wrong");
+					if ((chunk.TopBlocks[y]!=null) != chunk.IsTopBlocks[y]) throw new Exception(method+", TopBlock at x: "+x+", y: "+y+" is wrong");
+				}
+			}	
+		}
 		//void RefreshLightingRemoveSolid(int pos, int y) {
 		//	Terrain chunk=terrain[pos];
 
@@ -16379,7 +16419,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		void CameraMatrix() {
 			if (Setting.Scale.Without==Setting.currentScale) {
 			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
-
+if (Setting.UpScalingSuperSapling!=1f) { 
 				cameraNoOpMultisapling=Matrix.CreateTranslation(
 					new Vector3(
 					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
@@ -16389,16 +16429,20 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						0
 					)
 				) * TranslationNoOpMultisapling;
-
-				camera=Matrix.CreateTranslation(
-					new Vector3(
-					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
-					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
-					//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
-					//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
-						0
-					)
-				) * Translation;
+				}
+				
+				//	camera=cameraNoOpMultisapling;
+				//}else{
+					camera=Matrix.CreateTranslation(
+						new Vector3(
+						-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
+						-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
+						//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
+						//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
+							0
+						)
+					) * Translation;
+			//	}
 				return;
 			}
 
@@ -16424,7 +16468,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 		Matrix CameraMatrixNoZoom(out int xx, out int yy) {
 		//	if (Setting.Scale.Without==Setting.currentScale) {
-			float z=1*upscalingMultisapling*Setting.Zoom;
+			float z=Setting.UpScalingSuperSapling*Setting.Zoom;
 			//if (Setting.Zoom<2.5)z=1*upscalingMultisapling;
 			//else z=2;
 
@@ -16434,7 +16478,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 			weatherWindowWidth=(int)(Global.WindowWidth*z/**upscalingMultisapling*/)+5;
 			weatherWindowHeight=(int)(Global.WindowHeight*z/**upscalingMultisapling*/)+5;
 
-			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * upscalingMultisapling, Global.WindowHeightHalf * upscalingMultisapling, 0));
+			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * Setting.UpScalingSuperSapling, Global.WindowHeightHalf * Setting.UpScalingSuperSapling, 0));
 			//}
 
 			//if (Setting.Scale.Proportions==Setting.currentScale) {
@@ -24397,7 +24441,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 											down.Mass(totalMass);
 											down.Fill=true;//?????
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 											continue;
 										}
 									}
@@ -24417,8 +24461,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 									 //   chunk.SolidBlocks[iy]=null;
 									//    chunk.Background[iy]=null;
 								   // }
-
-									chunk.IsTopBlocks[iy]=false;
+									chunk.IsBackground/*IsTopBlocks*/[iy]=false;
 									continue;
 								}
 							}
@@ -24512,8 +24555,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 										}
 
 										chunk.IsTopBlocks[iy]=false;
-										/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
-
+										chunk.TopBlocks[iy]=null;
 
 									} else if (totalMass==2) {
 									   // waterL.Fill=false;
@@ -24523,8 +24565,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 										waterR.MassNoFill(1);
 
 										chunk.IsTopBlocks[iy]=false;
-										/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
-
+										chunk.TopBlocks[iy]=null;
 									} else {
 										int rMass=totalMass/3;
 										int d=totalMass-3*rMass;
@@ -24579,10 +24620,10 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 										   // waterL.Fill=false;
 											waterL.MassNoFill(1);
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 										}else{
 											leftChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)leftChunk.SolidBlocks[iy]).Top=*/leftChunk.TopBlocks[iy]=null;
+											leftChunk.TopBlocks[iy]=null;
 											water.MassNoFill(1);
 										}
 									} else {
@@ -24616,10 +24657,10 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 										if (FastRandom.Bool()) {
 											waterR.MassNoFill(1);
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 										} else {
 											rightChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)rightChunk.SolidBlocks[iy]).Top=*/rightChunk.TopBlocks[iy]=null;
+											rightChunk.TopBlocks[iy]=null;
 											water.MassNoFill(1);
 										}
 									} else {

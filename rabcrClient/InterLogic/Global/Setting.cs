@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
 
 namespace rabcrClient {
     enum Sex:byte{
@@ -19,7 +17,7 @@ namespace rabcrClient {
         public static Sex sex=Sex.Men;
         public static int hairType=1;
         public static Color hairColor=Color.Brown;
-        public static Color ColorSkin=new Color(244,158,107);
+        public static Color ColorSkin=new(244,158,107);
         public static int moustageType=0;
         public static Color moustageColor=Color.Brown;
         public static int eyesType;
@@ -66,7 +64,8 @@ namespace rabcrClient {
 
         public static int CurrentLanguage;
 
-        public static float Multisapling=1f;
+        public static float UpScalingSuperSapling=1f;
+        public static int Multisapling=1;
 
         public static bool BackgroundFancy=true;
         public static bool Clouds=true;
@@ -74,14 +73,14 @@ namespace rabcrClient {
         public static bool FallingLeaves=true;
         public static bool WavingElements=true;
         public static FogTypes Fog=FogTypes.Fancy;
+        public static bool SunAndMoon=true;
+        public static bool BetterSnowAndRain=true;
+        public static bool SnowAndRain=true;
         public enum FogTypes { 
             No,
             Plain,
             Fancy
         }
-        public static bool SunAndMoon=true;
-        public static bool BetterSnowAndRain=true;
-        public static bool SnowAndRain=true;
         #region Keys
         public static Microsoft.Xna.Framework.Input.Keys KeyLeft=Microsoft.Xna.Framework.Input.Keys.Left;
 
@@ -223,7 +222,7 @@ namespace rabcrClient {
                 SnowAndRain ? (byte)1 : (byte)0,
                 Vignetting ? (byte)1 : (byte)0,
                 SunAndMoon ? (byte)1 : (byte)0,
-                (byte)(Multisapling*10),
+                (byte)(UpScalingSuperSapling*10),
                 (byte)Fog,
               //  (byte)GraphicsProfile,
 
@@ -293,7 +292,7 @@ namespace rabcrClient {
                     SnowAndRain=(*current++) == 1;
                     Vignetting=(*current++) == 1;
                     SunAndMoon=(*current++) == 1;
-                    Multisapling=(*current++)/10f;
+                    UpScalingSuperSapling=(*current++)/10f;
                     Fog=(FogTypes)(*current++);
 
 

@@ -29,7 +29,7 @@ namespace rabcrClient {
         public static bool ActiveWindow;
         public static MouseState newMouseState;
         public static bool IsBannedCountry, IsLimitedCountry;
-        public static Color color_r0_g0_b0_a100 = new Color(0,0,0,100);
+        public static Color color_r0_g0_b0_a100 = new(0,0,0,100);
 
         public Rabcr() {
             newMouseState=new MouseState();
@@ -147,6 +147,8 @@ namespace rabcrClient {
                 }
 
             #endregion
+            //    Setting.Multisapling=16;
+          //  Setting.UpScalingSuperSapling=1f;
 
             GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
@@ -158,10 +160,11 @@ namespace rabcrClient {
             GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
             void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
                 e.GraphicsDeviceInformation.GraphicsProfile = GraphicsProfile.HiDef;
-                //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
+                e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount=Setting.Multisapling;
+            //    //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
                 Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
             }
-            GraphicsManager.PreferMultiSampling = true;
+            GraphicsManager.PreferMultiSampling = Setting.Multisapling>1 /*|| Setting.Multisapling==0*/;
             //    GraphicsManager.GraphicsDevice..BeforeDeviceCreated += Graphics_BeforeDeviceCreated;
             //	        Graphics.PresentationParameters.MultiSampleCount = 8;
             //	GraphicsManager.PreferMultiSampling = true;

@@ -64735,5 +64735,38 @@ Em que horas ele viaja %length%km? s=v·t</por-br>
       <eng>Fancy</eng>
       <ces>Hezké</ces>
     </a>
+
+    <a id="1604">
+      <eng>8×</eng>
+    </a>
+
+    <a id="1605">
+      <eng>16×</eng>
+    </a>
+    <a id="1606">
+      <eng>Upscaling AA</eng>
+    </a>
+		<a id="1607">
+      <eng>1/x</eng>
+    </a>
+		<a id="1608">
+      <eng>Falling leaves</eng>
+    </a>
+		<a id="1609">
+      <eng>Multisampling</eng>
+    </a>
+		<a id="1610">
+      <eng>Fancy background</eng>
+    </a>
+		<a id="1611">
+      <eng>Better snow and rain</eng>
+    </a>
+		<a id="1612">
+      <eng>Animations</eng>
+    </a>
+
+		<a id="1613">
+      <eng>Graphics</eng>
+    </a>
 	</Data>
 </XMLFile>
