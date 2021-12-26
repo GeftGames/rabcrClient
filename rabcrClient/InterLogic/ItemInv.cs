@@ -198,7 +198,7 @@ namespace rabcrClient {
 
         public override int GetPosY() => posTex.Y;
 
-        public override Vector2 GetPosVector2() => new Vector2{ X=posTex.X, Y=posTex.Y };
+        public override Vector2 GetPosVector2() => new() { X=posTex.X, Y=posTex.Y };
     }
 
     class ItemInvBasic32: ItemInv{
@@ -321,7 +321,7 @@ namespace rabcrClient {
         }
         #endregion
 
-        public override DInt GetPos() => new DInt{X=(int)posTex.X, Y=(int)posTex.Y };
+        public override DInt GetPos() => new() { X=(int)posTex.X, Y=(int)posTex.Y };
 
         public override void SetPos(int x, int y){
             posTex.X=x;
@@ -350,7 +350,6 @@ namespace rabcrClient {
         public readonly Texture2D Texture;
         Rectangle bar1, bar2, bar3;
         public Vector2 posTex;
-        Color ColorWhite, ColorBlack, ColorGreen, ColorRed;
         bool DrawRed;
         #endregion
 
@@ -376,11 +375,6 @@ namespace rabcrClient {
             GetCount=count;
             Texture=tex;
 
-            ColorWhite=Color.White;
-            ColorBlack=Color.Black;
-            ColorRed=Color.Red;
-            ColorGreen=Color.Green;
-
             int v=(int)(GetCount/(float)Maximum*30);
             bar1= new Rectangle(x, y+28, 32, 5);
             bar2=new Rectangle(x+1, y+29, v, 3);
@@ -395,11 +389,6 @@ namespace rabcrClient {
             GetCount=count;
             Texture=tex;
 
-            ColorWhite=Color.White;
-            ColorBlack=Color.Black;
-            ColorRed=Color.Red;
-            ColorGreen=Color.Green;
-
             int v=(int)(GetCount/(float)Maximum*30);
             bar1= new Rectangle(x, y+28, 32, 5);
             bar2=new Rectangle(x+1, y+29, v, 3);
@@ -408,23 +397,12 @@ namespace rabcrClient {
         }
 
         public ItemInvTool32(Texture2D tex, ushort id, int count, int max) {
-            // posTex=new Vector2(x,y);
             Maximum=max;
             Id=id;
             GetCount=count;
             Texture=tex;
 
-            ColorWhite=Color.White;
-            ColorBlack=Color.Black;
-            ColorRed=Color.Red;
-            ColorGreen=Color.Green;
-
-            //  int v=(int)(GetCount/(float)Maximum*30);
-            //  bar1= new Rectangle(x, y+28, 32, 5);
-            // bar2=new Rectangle(x+1, y+29, v, 3);
             bar2.Width=-1;
-            // DrawRed=30!=v;
-            //if (DrawRed) bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
         }
 
         public ItemInvTool32(Texture2D tex, ushort id, int count) {
@@ -434,17 +412,7 @@ namespace rabcrClient {
             GetCount=count;
             Texture=tex;
 
-            ColorWhite=Color.White;
-            ColorBlack=Color.Black;
-            ColorRed=Color.Red;
-            ColorGreen=Color.Green;
-
-          //  int v=(int)(GetCount/(float)Maximum*30);
-          //  bar1= new Rectangle(x, y+28, 32, 5);
-           // bar2=new Rectangle(x+1, y+29, v, 3);
             bar2.Width=-1;
-           // DrawRed=30!=v;
-            //if (DrawRed) bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
         }
 
          public ItemInvTool32(Texture2D tex, ushort id) {
@@ -452,29 +420,19 @@ namespace rabcrClient {
             Id=id;
             Texture=tex;
 
-            ColorWhite=Color.White;
-            ColorBlack=Color.Black;
-            ColorRed=Color.Red;
-            ColorGreen=Color.Green;
-
-          //  int v=(int)(GetCount/(float)Maximum*30);
-          //  bar1= new Rectangle(x, y+28, 32, 5);
-           // bar2=new Rectangle(x+1, y+29, v, 3);
             bar2.Width=-1;
-           // DrawRed=30!=v;
-            //if (DrawRed) bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
         }
 
         #region Draw
         public override void Draw() {
-            Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+            Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
 
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, ColorBlack);
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar2, ColorGreen);
-            if (DrawRed) Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, ColorRed);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, Color.Black);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar2, Color.Green);
+            if (DrawRed) Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, Color.Red);
         }
 
-        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, Color.White);
         #endregion
 
         #region Save
@@ -504,7 +462,7 @@ namespace rabcrClient {
             bar3.Y=y+29;
         }
 
-        public override DInt GetPos() => new DInt{X=(int)posTex.X, Y=(int)posTex.Y };
+        public override DInt GetPos() => new() { X=(int)posTex.X, Y=(int)posTex.Y };
 
         public override ItemNonInv ToNon() => new ItemNonInvTool(Id, GetCount);
 
@@ -512,7 +470,7 @@ namespace rabcrClient {
 
         public override int GetPosY() => (int)posTex.Y;
 
-        public override Vector2 GetPosVector2() => new Vector2{ X=posTex.X, Y=posTex.Y };
+        public override Vector2 GetPosVector2() => new() { X=posTex.X, Y=posTex.Y };
     }
 
     class ItemInvTool16: ItemInv {
@@ -612,7 +570,7 @@ namespace rabcrClient {
         }
         #endregion
 
-        public override DInt GetPos() => new DInt{ X=posTex.X, Y=posTex.Y };
+        public override DInt GetPos() => new() { X=posTex.X, Y=posTex.Y };
 
         public override void SetPos(int x, int y) {
             posTex.X=x;
@@ -634,7 +592,7 @@ namespace rabcrClient {
 
         public override int GetPosY() => posTex.Y;
 
-        public override Vector2 GetPosVector2() => new Vector2{ X=posTex.X, Y=posTex.Y };
+        public override Vector2 GetPosVector2() => new() { X=posTex.X, Y=posTex.Y };
     }
 
     class ItemInvFood16: ItemInv {
@@ -645,7 +603,7 @@ namespace rabcrClient {
         public float GetDescay, DescayMaximum;
 
         Rectangle posTex, bar1, bar2, bar3;
-        Color colorDescay, ColorWhite;
+        Color colorDescay;
         #endregion
 
         public int SetCount {
@@ -675,7 +633,6 @@ namespace rabcrClient {
             posTex=new Rectangle(x, y, 32, 32);
             DescayMaximum=descayMax;
             GetCount=count;
-            ColorWhite=Color.White;
             Id=id;
             Texture=tex;
             CountMaximum=maxcount;
@@ -696,7 +653,6 @@ namespace rabcrClient {
             posTex=new Rectangle(x, y, 32, 32);
             DescayMaximum=GameMethods.FoodMaxDescay(id);
             GetCount=count;
-            ColorWhite=Color.White;
             Id=id;
             Texture=tex;
             CountMaximum=GameMethods.FoodMaxCount(id);
@@ -717,7 +673,6 @@ namespace rabcrClient {
              posTex=new Rectangle(0, 0, 32, 32);
             DescayMaximum=descayMax;
             GetCount=count;
-            ColorWhite=Color.White;
             Id=id;
             Texture=tex;
             CountMaximum=maxcount;
@@ -734,7 +689,6 @@ namespace rabcrClient {
             posTex=new Rectangle(0, 0, 32, 32);
             DescayMaximum=GameMethods.FoodMaxDescay(id);
             GetCount=count;
-            ColorWhite=Color.White;
             Id=id;
             Texture=tex;
             CountMaximum=GameMethods.FoodMaxCount(id);
@@ -750,14 +704,14 @@ namespace rabcrClient {
 
         #region Draw
         public override void Draw() {
-            Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+            Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
 
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, Color.Black);
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, ColorWhite);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, Global.ColorBlack);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, Global.ColorWhite);
             Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar2, colorDescay);
         }
 
-        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
         #endregion
 
         #region Save
@@ -785,7 +739,7 @@ namespace rabcrClient {
         }
         #endregion
 
-        public override DInt GetPos() => new DInt{ X=posTex.X, Y=posTex.Y };
+        public override DInt GetPos() => new() { X=posTex.X, Y=posTex.Y };
 
         public override void SetPos(int x, int y){
             posTex.X=x;
@@ -807,7 +761,7 @@ namespace rabcrClient {
 
         public override int GetPosY() => posTex.Y;
 
-        public override Vector2 GetPosVector2() => new Vector2{ X=posTex.X, Y=posTex.Y };
+        public override Vector2 GetPosVector2() => new() { X=posTex.X, Y=posTex.Y };
     }
 
     class ItemInvFood32: ItemInv {
@@ -817,7 +771,7 @@ namespace rabcrClient {
         public readonly Texture2D Texture;
         Vector2 posTex;
         Rectangle bar1, bar2, bar3;
-        Color colorDescay, ColorWhite;
+        Color colorDescay;
         public float GetDescay, DescayMaximum;
         #endregion
 
@@ -850,8 +804,6 @@ namespace rabcrClient {
             Id=id;
             Texture=tex;
 
-            ColorWhite=Color.White;
-
             // Descay
             GetDescay=descay;
             int d=(int)(GetDescay/DescayMaximum*255);
@@ -871,8 +823,6 @@ namespace rabcrClient {
             GetCount=count;
             Id=id;
             Texture=tex;
-
-            ColorWhite=Color.White;
 
             // Descay
             GetDescay=descay;
@@ -917,8 +867,6 @@ namespace rabcrClient {
             Id=id;
             Texture=tex;
 
-            ColorWhite=Color.White;
-
             // Descay
             GetDescay=descay;
             int d=(int)(GetDescay/DescayMaximum*255);
@@ -933,37 +881,28 @@ namespace rabcrClient {
             //bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
         }
 
-          public ItemInvFood32(Texture2D tex, ushort id) {
+        public ItemInvFood32(Texture2D tex, ushort id) {
             DescayMaximum=GameMethods.FoodMaxDescay(id);
             GetCount=GetCount=GameMethods.FoodMaxCount(id);
             Id=id;
             Texture=tex;
 
-            ColorWhite=Color.White;
-
             // Descay
             int d=(int)(GetDescay/DescayMaximum*255);
-      //      colorDescay=new Color((byte)(255-d),(byte)d,0);
-               colorDescay=new Color((uint)((255 << 24) | (d << 8) | (255-d)));
+            colorDescay=new Color((uint)((255 << 24) | (d << 8) | (255-d)));
 
-            // Count
-           // CountMaximum=GameMethods.FoodMaxCount(id);
-           // int v=(int)(GetCount/(float)CountMaximum*30+0.49f);
             bar2.Width=-1;
-            //bar1=new Rectangle(x, y+28, 32, 5);
-           // bar2=new Rectangle(x+1, y+29, v, 3);
-            //bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
         }
         #region Draw
         public override void Draw() {
-            Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+            Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
 
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, Color.Black);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar1, Global.ColorBlack);
             Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar2, colorDescay);
-            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, ColorWhite);
+            Rabcr.spriteBatch.Draw(Rabcr.Pixel, bar3, Global.ColorWhite);
         }
 
-        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
         #endregion
 
         #region Save
@@ -991,7 +930,7 @@ namespace rabcrClient {
         }
         #endregion
 
-        public override DInt GetPos() => new DInt{ X=(int)posTex.X, Y=(int)posTex.Y };
+        public override DInt GetPos() => new() { X=(int)posTex.X, Y=(int)posTex.Y };
 
         public override void SetPos(int x, int y){
             posTex.X=x;
@@ -1019,7 +958,6 @@ namespace rabcrClient {
     class ItemInvNonStackable16: ItemInv {
         public readonly Texture2D Texture;
         Rectangle posTex;
-        Color ColorWhite=Color.White;
 
         public ItemInvNonStackable16(Texture2D tex, ushort id, int x, int y){
             posTex=new Rectangle(x, y, 32, 32);
@@ -1034,12 +972,12 @@ namespace rabcrClient {
         }
 
         #region Draw
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
 
-        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
         #endregion
 
-        public override DInt GetPos() => new DInt{X=posTex.X, Y=posTex.Y }/*(posTex.X, posTex.Y)*/;
+        public override DInt GetPos() => new() { X=posTex.X, Y=posTex.Y };
 
         public override void SetPos(int x, int y) {
             posTex.X=x;
@@ -1057,7 +995,7 @@ namespace rabcrClient {
 
         public override int GetPosY() => posTex.Y;
 
-        public override Vector2 GetPosVector2() => new Vector2{ X=posTex.X, Y=posTex.Y };
+        public override Vector2 GetPosVector2() => new() { X=posTex.X, Y=posTex.Y };
     }
 
     class ItemInvNonStackable32: ItemInv {
@@ -1065,7 +1003,6 @@ namespace rabcrClient {
         #region Varibles
         public readonly Texture2D Texture;
         Vector2 posTex;
-        Color ColorWhite=Color.White;
         #endregion
 
         public ItemInvNonStackable32(Texture2D tex, ushort id, int x, int y){
@@ -1086,9 +1023,9 @@ namespace rabcrClient {
         }
 
         #region Draw
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
 
-        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, ColorWhite);
+        public override void DrawCreative() => Rabcr.spriteBatch.Draw(Texture, posTex, Global.ColorWhite);
         #endregion
 
         #region Save
@@ -1103,7 +1040,7 @@ namespace rabcrClient {
             posTex.Y=y;
         }
 
-        public override DInt GetPos() => new DInt{X=(int)posTex.X, Y=(int)posTex.Y }/*(, )*/;
+        public override DInt GetPos() => new() { X=(int)posTex.X, Y=(int)posTex.Y }/*(, )*/;
 
         public override ItemNonInv ToNon() => new ItemNonInvNonStackable(Id);
 
@@ -1136,7 +1073,7 @@ namespace rabcrClient {
             color=c;
         }
 
-        public ItemInvBasicColoritzed32NonStackable(Texture2D tex, ushort id, Color c){
+        public ItemInvBasicColoritzed32NonStackable(Texture2D tex, ushort id, Color c) {
             Id=id;
             Texture=tex;
             color=c;

@@ -6,14 +6,14 @@ public class DInt : IEquatable<DInt>{
 
     public int X, Y;
 
-    public DInt () { }
+    public DInt() { }
 
     public DInt (int x, int y) {
         X = x;
         Y = y;
     }
 
-	public Vector2 ToVector() => new Vector2(X, Y);
+	public Vector2 ToVector() => new(X, Y);
 
     public DInt Clone() => (DInt)MemberwiseClone();
 

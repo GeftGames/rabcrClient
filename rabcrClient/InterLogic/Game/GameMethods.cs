@@ -2645,7 +2645,9 @@ namespace rabcrClient {
                             new ItemNonInvBasic((ushort)Items.Yarn,1)
                         )
                     },
-                (ushort)Items.Rope => new CraftingRecipe[] { new CraftingRecipe(new ItemNonInvBasic((ushort)Items.Yarn, 3), new ItemNonInvBasic((ushort)Items.Rope, 1)) },
+                (ushort)Items.Rope => new CraftingRecipe[] { 
+                    new CraftingRecipe(new CraftingIn[]{new CraftingIn(new ItemNonInvBasic((ushort)Items.Yarn, 3)) }, new ItemNonInvBasic((ushort)Items.Rope, 1)) 
+                },
                 (ushort)Items.Nail => new CraftingRecipe[] {
                         new CraftingRecipe(
                             new CraftingIn[]{
@@ -4113,15 +4115,15 @@ namespace rabcrClient {
                 #endregion
 
                 #region Vegetable
-                case (ushort)Items.Carrot: return 99;
-                case (ushort)Items.Peas: return 99;
-                case (ushort)Items.Onion: return 99;
-                case (ushort)Items.Seaweed: return 99;
+                case (ushort)Items.Carrot: return 10;
+                case (ushort)Items.Peas: return 10;
+                case (ushort)Items.Onion: return 10;
+                case (ushort)Items.Seaweed: return 10;
 
                 // bush
-                case (ushort)Items.Blueberries: return 99;
-                case (ushort)Items.Strawberry: return 99;
-                case (ushort)Items.Rashberry: return 99;
+                case (ushort)Items.Blueberries: return 10;
+                case (ushort)Items.Strawberry: return 10;
+                case (ushort)Items.Rashberry: return 10;
                 #endregion
 
                 #region Soup
