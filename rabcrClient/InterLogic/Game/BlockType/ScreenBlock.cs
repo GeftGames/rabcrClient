@@ -20,16 +20,11 @@ namespace rabcrClient {
             set {
                 screen=value;
                 rectangle.X=rectangle.Width * screen;
-              //  rectangle = new Rectangle(rectangle.Width * screen,0, rectangle.Width, rectangle.Height);
             }
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, rectangle, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, rectangle, Global.ColorWhite);
 
-        public override Block CloneDown() {
-            ScreenBlock s=new ScreenBlock(Texture, Position, rectangle.Width, rectangle.Height, Id);
-            s.Position.Y+=16;
-            return s;
-        }
+        public override Block CloneDown() => new ScreenBlock(Texture, new Vector2(Position.X, Position.Y+16), rectangle.Width, rectangle.Height, Id);
     }
 }

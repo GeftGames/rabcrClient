@@ -23,7 +23,7 @@ namespace rabcrClient {
             ticks=0;
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, (float)System.Math.Sin(ticks/10f+offsed)*0.25f*(1-ticks/100f)/*(ticks/100f)*/, vecOrigin, 1f, SpriteEffects.None, 0);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, Global.ColorWhite, (float)System.Math.Sin(ticks/10f+offsed)*0.25f*(1-ticks/100f)/*(ticks/100f)*/, vecOrigin, 1f, SpriteEffects.None, 0);
 
         public NormalBlock TurnOff() => new() {
             Texture=Texture,

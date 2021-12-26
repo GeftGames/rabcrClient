@@ -23,6 +23,11 @@ namespace rabcrClient {
         public const float ScaleMediumToSmall=0.8421052631578947f;
         public const float ScaleBiggestToBig=0.525f;
 
+        public static Color ColorWhite=Color.White;
+        public static Color ColorBlack=Color.Black;
+        public static Color ColorGreen=Color.Green;
+        public static Color ColorRed=Color.Red;
+
         public static string GameName;//="Rabigoncraft the Most of My World";//Omicronecraft
 
         //public static string MessageGedoInfo="/Message \"<Bold>Informace o GeDo tagech</Bold>" +

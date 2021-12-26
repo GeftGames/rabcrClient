@@ -10,6 +10,8 @@ namespace rabcrClient {
         public Tree tree;
 
         Vector2 vecOrigin;
+
+        // Autumn color
         public Color Color;
         #endregion
 
@@ -19,7 +21,7 @@ namespace rabcrClient {
             Texture = texture;
             Id = id;
             Position = position;
-            Color=ColorWhite;
+            Color=Global.ColorWhite;
         }
 
         public void SetOrigin() {
@@ -31,15 +33,14 @@ namespace rabcrClient {
             else Rabcr.spriteBatch.Draw(Texture, Position, Color);
         }
 
-        public override Block CloneDown() {
-            LeavesBlock n = new() {
+        public override Block CloneDown() => new LeavesBlock() {
                 Texture=Texture,
                 Id=Id,
-                Position=Position,
-                Color=ColorWhite,
+                Position=new Vector2(Position.X,Position.Y+16),
+                Color=Global.ColorWhite,
             };
-            n.Position.Y+=16;
-            return n;
-        }
+        //    n.Position.Y+=16;
+        //    return n;
+      //  }
     }
 }

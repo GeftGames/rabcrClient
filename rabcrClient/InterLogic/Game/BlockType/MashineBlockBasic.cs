@@ -33,7 +33,7 @@ namespace rabcrClient {
 
             int e=(int)(Energy*18f);
 
-			Rabcr.spriteBatch.Draw(Texture, Position, new Rectangle(16*((int)screen),0,16,16), ColorWhite);
+			Rabcr.spriteBatch.Draw(Texture, Position, new Rectangle(16*((int)screen),0,16,16), Global.ColorWhite);
 			Rabcr.spriteBatch.Draw(Rabcr.Pixel, new Rectangle((int)Position.X-2, (int)Position.Y-6,20,5), Color.Black);
 			Rabcr.spriteBatch.Draw(Rabcr.Pixel, new Rectangle((int)Position.X-1, (int)Position.Y-5,e,3), Color.Green);
 			Rabcr.spriteBatch.Draw(Rabcr.Pixel, new Rectangle((int)Position.X-1+e,(int)Position.Y-5,18-e,3), Color.Red);

@@ -3,11 +3,11 @@
 namespace rabcrClient {
     public abstract class Block{
 
-        public static Color ColorWhite=Color.White;
+     //   public static Color ColorWhite=Color.White;
 
         public ushort Id;
 
-        public Block() { }
+     //   public Block() { }
 
         public abstract void Draw();
 

@@ -63,22 +63,21 @@ namespace rabcrClient {
             if (GetMass==0) { Rabcr.spriteBatch.Draw(Texture, Position, Color.Black); return; }
             #endif
 
-            if (Fill) Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
-            else Rabcr.spriteBatch.Draw(Texture, pos, rec, ColorWhite);
+            if (Fill) Rabcr.spriteBatch.Draw(Texture, Position, Global.ColorWhite);
+            else Rabcr.spriteBatch.Draw(Texture, pos, rec, Global.ColorWhite);
         }
 
-        public override Block CloneDown() {
-            Water w = new Water {
+        public override Block CloneDown() => new Water {
                 Texture=Texture,
                 Id=Id,
-                Position=Position,
+                Position=/*Position*/new Vector2(Position.X,Position.Y+16),
                 GetMass=GetMass,
                 rec=rec,
                 Fill=Fill,
                 pos=pos
             };
-            w.Position.Y+=16;
-            return w;
-        }
+         ///   w.Position.Y+=16;
+         //   return w;
+       // }
     }
 }

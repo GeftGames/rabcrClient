@@ -28,11 +28,10 @@ namespace rabcrClient {
 			if (screen>=divideC) screen = 0;
             rec.X=width*(int)screen;
 
-			Rabcr.spriteBatch.Draw(Texture, Position, rec/*new Rectangle(width*(int)screen, 0, width, height)*/, ColorWhite);
+			Rabcr.spriteBatch.Draw(Texture, Position, rec/*new Rectangle(width*(int)screen, 0, width, height)*/, Global.ColorWhite);
         }
 
-        public override Block CloneDown() {
-            AnimatedBlock a = new AnimatedBlock(Texture, Position, width, height, Id);
+        public override Block CloneDown() => new AnimatedBlock(Texture, new Vector2(Position.X,Position.Y+16)/*Position*/, width, height, Id);
            /* AnimatedBlock a = new AnimatedBlock{
                 Texture=Texture,
                 Id=Id,
@@ -42,8 +41,8 @@ namespace rabcrClient {
                 Position=Position,
                 rec=rec,
             };*/
-            Position.Y+=16;
-            return a;
-        }
+          //  Position.Y+=16;
+         //   return a;
+      //  }
     }
 }

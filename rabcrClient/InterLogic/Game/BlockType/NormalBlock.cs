@@ -17,16 +17,15 @@ namespace rabcrClient {
             Position = position;
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Global.ColorWhite);
 
-        public override Block CloneDown() {
-            NormalBlock n = new NormalBlock {
+        public override Block CloneDown() => new NormalBlock{
                 Texture=Texture,
                 Id=Id,
-                Position=Position
+                Position=new Vector2(/*n.*/Position.X, /*n.*/Position.Y+16)/*Position*/
             };
-            n.Position.Y+=16;
-            return n;
-        }
+          //  n.Position.Y+=16;
+           // return n;
+        //}
     }
 }

@@ -18,16 +18,15 @@ namespace rabcrClient {
             Position = position;
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Global.ColorWhite);
 
-        public override Block CloneDown() {
-            WoodBlock n = new WoodBlock{
+        public override Block CloneDown() => new WoodBlock{
                 Texture=Texture,
                 Id=Id,
-                Position=Position
+                Position=new Vector2(Position.X,Position.Y+16)/*Position*/
             };
-            n.Position.Y+=16;
-            return n;
-        }
+          //  n.Position.Y+=16;
+          //  return n;
+      //  }
     }
 }

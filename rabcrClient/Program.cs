@@ -45,8 +45,8 @@ namespace rabcrClient {
                                // Global.OnlineAccount=false;
                                 Setting.Name="Geft";
                                 Setting.Path=args[1]+"\\"+Setting.Name+"\\";
-                                using (var game = new Rabcr()) game.Run();
-                          //  }
+                            using var game = new Rabcr(); game.Run();
+                            //  }
                         } else ShowError("Zkontrolujte si dvojté uvozovky v argumentu programu");
                         break;
 
@@ -71,8 +71,8 @@ namespace rabcrClient {
                                 }
                             }
 
-                            using (Message message = new Message(language: language, Header: Header, text: Text)) message.Run();
-                        }
+                        using Message message = new(language: language, Header: Header, text: Text); message.Run();
+                    }
 
 
                         break;
@@ -92,8 +92,8 @@ namespace rabcrClient {
             } else {
                 //bool x=BanStateProcedure();
                 //if (x){
-                    using (var game = new Rabcr()) game.Run();
-               // }
+                using var game = new Rabcr(); game.Run();
+                // }
             }
 
             //bool BanStateProcedure() {
@@ -151,7 +151,7 @@ namespace rabcrClient {
             //    }
             //}
 
-            void ShowError(string error) {
+            static void ShowError(string error) {
                 Console.WriteLine("ERROR - Hra by se měla spouštět: rabcr.exe /Game <cesta> <jméno>");
                 MessageBox.Show("Hra by se měla spouštět: rabcr.exe /Game <cesta> <jméno>\r\n\r\nPodrobnosti:\r\n"+error,"Chyba - špatné argumenty", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
