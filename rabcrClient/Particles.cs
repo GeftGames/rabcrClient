@@ -36,7 +36,7 @@ namespace rabcrClient {
         //	public float Angle;
 
         public float Size;
-        readonly int Height;
+        readonly int Height, Width;
 
         public ParticleRain(float size, float vSpeed) {
             Size=size;
@@ -53,6 +53,7 @@ namespace rabcrClient {
             //   Color=Color.Blue*();
             VSpeed =vSpeed*(size*0.5f+0.5f);
             Height=Size<0.25f ? 3 : (Size<0.75f ? 4 : 5);
+            Width=Size<0.5f ? 1 : 2;
         }
 
         public void Update() {
@@ -63,7 +64,7 @@ namespace rabcrClient {
         public void Draw(float x, float y,float a) {
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), /*Size<0.75f ? 1 :*/ 1, Height),
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
                 color: Color*a
             );
         }
@@ -71,19 +72,19 @@ namespace rabcrClient {
         public void DrawBetterQuality(float x, float y,float a) {
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x)+1, (int)(Position.Y+0.5f+y)+1, /*Size<0.75f ? 1 :*/ 1, Height),
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x)+1, (int)(Position.Y+0.5f+y)+1, Width, Height),
                 color: Color.Black*a*0.05f
             );
 
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y)-1, /*Size<0.75f ? 1 :*/ 1, Height),
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y)-1, Width, Height),
                 color: Color.White*a*0.05f
             );
 
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), /*Size<0.75f ? 1 :*/ 1, Height),
+                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
                 color: Color*a
             );
         }
