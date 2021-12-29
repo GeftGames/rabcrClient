@@ -39,8 +39,13 @@ namespace rabcrClient {
             public CraftingOut[] Output;
 
             public CraftingRecipe(ItemNonInv input, ItemNonInv output) {
-                Input=new CraftingIn[]{new CraftingIn(new ItemNonInv[]{input })};
+                Input=new CraftingIn[]{new CraftingIn(input)};
                 Output=new CraftingOut[]{new CraftingOut{Item=output, EveryTime=true} };
+            }
+        
+            public CraftingRecipe(ushort input, ushort output) {
+                Input=new CraftingIn[]{new CraftingIn(new ItemNonInvBasic(input, 1) )};
+                Output=new CraftingOut[]{new CraftingOut{Item=new ItemNonInvBasic(output, 1), EveryTime=true} };
             }
 
             public CraftingRecipe(CraftingIn[] input, ItemNonInv output) {
@@ -62,6 +67,10 @@ namespace rabcrClient {
                 Input=new CraftingIn[]{ input };
                 Output=new CraftingOut[]{ output };
             }
+            //public CraftingRecipe(ItemNonInv input, ItemNonInv output) {
+            //    Input=new CraftingIn[]{ new CraftingIn(input) };
+            //    Output=new CraftingOut[]{ new CraftingOut{ Item=output, EveryTime=true} };
+            //}
 
             public CraftingRecipe(CraftingIn[] input, CraftingOut[] output) {
                 Input=input;
@@ -114,7 +123,10 @@ namespace rabcrClient {
             }
 
             public static CraftingIn AnyWater(int a) {
-                return new CraftingIn(new ItemNonInv[]{new ItemNonInvTool((ushort)Items.BottleWater,a), new ItemNonInvTool((ushort)Items.BucketWater,a)/*,new ItemNonInv((ushort)Items.JugWithWater,a)*/});
+                return new CraftingIn(new ItemNonInv[]{
+                    new ItemNonInvTool((ushort)Items.BottleWater,a), 
+                    new ItemNonInvTool((ushort)Items.BucketWater,a)/*,new ItemNonInv((ushort)Items.JugWithWater,a)*/
+                });
             }
 
             public static CraftingIn AnyOil(int a) {
@@ -648,6 +660,7 @@ namespace rabcrClient {
                 case (ushort)Items.KapokLeacesFlowering: return 1124;
                 case (ushort)Items.KapokLeavesFibre: return 1125;
                 case (ushort)Items.AcaciaLeaves: return 1122;
+                case (ushort)Items.SpruceLeavesWithSnow: return 1614;
                 case (ushort)Items.AcaciaWood: return 1123;
                 case (ushort)Items.RubberTreeLeaves: return 1120;
                 case (ushort)Items.RubberTreeWood: return 1121;
@@ -3373,22 +3386,22 @@ namespace rabcrClient {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.ShovelHeadAluminium,1))
                     },
                 (ushort)Items.ShearsHeadAluminium => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.AluminiumIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadAluminium,1))
+                        new CraftingRecipe((ushort)Items.AluminiumIngot, (ushort)Items.ShearsHeadAluminium)
                     },
                 (ushort)Items.ShearsHeadCopper => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.CopperIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadCopper,1))
+                        new CraftingRecipe((ushort)Items.CopperIngot, (ushort)Items.ShearsHeadCopper)
                     },
                 (ushort)Items.ShearsHeadBronze => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.BronzeIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadBronze,1))
+                        new CraftingRecipe((ushort)Items.BronzeIngot, (ushort)Items.ShearsHeadBronze)
                     },
                 (ushort)Items.ShearsHeadIron => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.IronIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadIron,1))
+                        new CraftingRecipe((ushort)Items.IronIngot, (ushort)Items.ShearsHeadIron)
                     },
                 (ushort)Items.ShearsHeadGold => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.GoldIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadGold,1))
+                        new CraftingRecipe((ushort)Items.GoldIngot, (ushort)Items.ShearsHeadGold)
                     },
                 (ushort)Items.ShearsHeadSteel => new CraftingRecipe[] {
-                        new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.ShearsHeadSteel,1))
+                        new CraftingRecipe((ushort)Items.SteelIngot, (ushort)Items.ShearsHeadSteel)
                     },
                 (ushort)Items.KnifeHeadSteel => new CraftingRecipe[] {
                         new CraftingRecipe(new ItemNonInvBasic((ushort)Items.SteelIngot,1),new ItemNonInvBasic((ushort)Items.KnifeHeadSteel,1))
@@ -4217,6 +4230,7 @@ namespace rabcrClient {
                 case (ushort)Items.KapokLeaves: return true;
                 case (ushort)Items.KapokLeavesFibre: return true;
                 case (ushort)Items.KapokLeacesFlowering: return true;
+                case (ushort)Items.SpruceLeavesWithSnow: return true;
                 #endregion
 
                 #region Sapling
