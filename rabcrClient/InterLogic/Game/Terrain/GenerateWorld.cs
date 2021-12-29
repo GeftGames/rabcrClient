@@ -84,31 +84,33 @@ namespace rabcrClient {
 
     public class GenerateWorld {
      
-        void SetLeave(GChunk chunk, int x, int y, ushort id, GenTree tree){
-            if (chunk.TopBlocks[y]==0){
+        void SetLeave(GChunk chunk, int x, int y, ushort id, GenTree tree) {
+            if (chunk.TopBlocks[y]==0) {
                 chunk.TopBlocks[y]=id;
-                byte by=(byte)y;
-                tree.AddLeave(x, by);
+            //    byte by=(byte)y;
+                tree.TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
+              //  tree.AddLeave(x, by);
 
                 if (chunk.SetLightPosHalf) {
-                    if (y<chunk.LightPosHalf) chunk.LightPosHalf=by;
+                    if (y<chunk.LightPosHalf) chunk.LightPosHalf=(byte)y;
                 } else {
-                 //   chunk.Half=(byte)1;
-                    chunk.LightPosHalf=by;
+                    chunk.LightPosHalf=(byte)y;
+                    chunk.SetLightPosHalf=true;
                 }
-                chunk.SetLightPosHalf=true;
             }
         }
 
         void SetWood(GChunk chunk, int x, int y, ushort id, GenTree tree){
             if (chunk.SolidBlocks[y]==0) {
                 chunk.BackBlocks[y]=id;
+//                chunk.T[y]==0;
 
-                tree.AddWood(x, y);
+               // tree.AddWood(x, y);
+               tree.TitlesWood.Add(new UShortAndByte((ushort)x, (byte)y));
             }
         }
 
-        readonly List<GenLiveObject> LiveObjects = new List<GenLiveObject>();
+        readonly List<GenLiveObject> LiveObjects = new();
        
         enum HotBiome:byte{
             None,
@@ -553,15 +555,30 @@ namespace rabcrClient {
                 GenerateBiome(biome.Humidity,biome.Temterature,biome.Changer,biome.oceanIndex==1);
             }
 
-            for (int i=100; i<terrain.Count-100; i+=40+FastRandom.Int(20)) {
-                CaveGenerator(i, FastRandom.Int(terrain[i].LightPosFull+5, 80));
+            for (int i=100; i<terrain.Count-100; i+=40+FastRandom.Int(20+20)) {
+                CaveGenerator(i, FastRandom.Int(terrain[i].LightPosFull+5+2, 80));
+            }
+
+            for (int x=0; x<terrain.Count; x++) {
+                GChunk chunk=terrain[x];
+                if (chunk.LightPosFull < 124) {
+                    if (chunk.SolidBlocks[chunk.LightPosFull+1]==0) {
+                        int y=chunk.LightPosFull+1;
+                        for (; y<125; y++) { 
+                            if (chunk.SolidBlocks[y]!=0) {
+                                chunk.LightPosFull=(byte)y;
+                                break;
+                            }
+                        } 
+                    }
+                }
             }
 
             Save("Earth");
 
 
             {
-                List<byte> bytes = new List<byte>{
+                List<byte> bytes = new() {
                     (byte)BiomeDataList.Count
                 };
 
@@ -1976,11 +1993,11 @@ namespace rabcrClient {
                             break;
 
                         case 3:
-                            chunk.AddPlantFlax(/*(ushort)BlockId.,*/(byte)(terrainHeight-1));
+                            chunk.AddPlantFlax((byte)(terrainHeight-1));
                             break;
 
                         case 4:
-                            chunk.AddPlantCarrot(/*(ushort)BlockId.,*/(byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlantCarrot((byte)(terrainHeight-1));
                             break;
 
                         case 5:
@@ -5415,7 +5432,7 @@ namespace rabcrClient {
         void TreeApple(int x, int y) {
             treeChange=2+FastRandom.Int2();
 
-            GenTree tree=new GenTree(x, y-1);
+            GenTree tree=new(x, y-1);
             LiveObjects.Add(tree);
 
             GChunk
@@ -5778,12 +5795,12 @@ namespace rabcrClient {
 
             //SetWood(x,   y, (ushort)BlockId.KapokWood, tree);
 
-            if (chunkXP1.SolidBlocks[y]!=0) SetWood(chunkXP1, x+1, y, (ushort)BlockId.KapokWood, tree);
-            if (chunkXM1.SolidBlocks[y]!=0) SetWood(chunkXM1, x-1, y, (ushort)BlockId.KapokWood, tree);
+            SetWood(chunkXP1, x+1, y, (ushort)BlockId.KapokWood, tree);
+            SetWood(chunkXM1, x-1, y, (ushort)BlockId.KapokWood, tree);
 
-            if (chunkX.SolidBlocks[y-1]!=0) SetWood(chunkX, x,   y-1, (ushort)BlockId.KapokWood, tree);
-            if (chunkXP1.SolidBlocks[y-1]!=0) SetWood(chunkXP1, x+1, y-1, (ushort)BlockId.KapokWood, tree);
-            if (chunkXM1.SolidBlocks[y-1]!=0) SetWood(chunkXM1, x-1, y-1, (ushort)BlockId.KapokWood, tree);
+            SetWood(chunkX, x,   y-1, (ushort)BlockId.KapokWood, tree);
+            SetWood(chunkXP1, x+1, y-1, (ushort)BlockId.KapokWood, tree);
+            SetWood(chunkXM1, x-1, y-1, (ushort)BlockId.KapokWood, tree);
 
             if (FastRandom.Bool()) {
                 SetWood(chunkXP1, x+1, y-2, (ushort)BlockId.KapokWood, tree);
@@ -6393,7 +6410,7 @@ namespace rabcrClient {
             float angle=FastRandom.Rotatin();
             (Vector2, float, float)[] points=new (Vector2, float, float)[len];
 
-            Vector2 lastPoint=new Vector2(x,y);
+            Vector2 lastPoint=new(x,y);
 
             float lastRnd=FastRandom.Float();
             for (int i=0; i<len; i++) {
@@ -6419,7 +6436,6 @@ namespace rabcrClient {
 
                 angle+=(FastRandom.Float()-0.5f)*0.1f;
                 points[i].Item3=(angle*ta)/2f;
-
             }
 
             Vector2[] fin=new Vector2[len];
@@ -6463,180 +6479,181 @@ namespace rabcrClient {
             }
 
             void RemoveBlock(int xx, int yy) {
+                GChunk chunk=terrain[xx];
                 ushort solidId=terrain[xx].SolidBlocks[yy];
 
                 if (solidId!=0) {
 
                     switch (solidId) {
                         case (ushort)BlockId.StoneBasalt:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackBasalt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackBasalt;
                             break;
 
                         case (ushort)BlockId.StoneDiorit:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDiorit;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDiorit;
                             break;
 
                         case (ushort)BlockId.StoneDolomite:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDolomite;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDolomite;
                             break;
 
                         case (ushort)BlockId.StoneGabbro:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackGabbro;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGabbro;
                             break;
 
                         case (ushort)BlockId.StoneGneiss:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackGneiss;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGneiss;
                             break;
 
                         case (ushort)BlockId.StoneLimestone:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackLimestone;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackLimestone;
                             break;
 
                         case (ushort)BlockId.StoneRhyolite:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackRhyolite;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackRhyolite;
                             break;
 
                         case (ushort)BlockId.StoneSandstone:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSandstone;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSandstone;
                             break;
 
                         case (ushort)BlockId.StoneSchist:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSchist;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSchist;
                             break;
 
                         case (ushort)BlockId.OreAluminium:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackAluminium;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackAluminium;
                             break;
 
                         case (ushort)BlockId.OreCoal:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackCoal;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCoal;
                             break;
 
                         case (ushort)BlockId.OreCopper:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackCopper;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCopper;
                             break;
 
                         case (ushort)BlockId.OreGold:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackGold;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGold;
                             break;
 
                         case (ushort)BlockId.OreIron:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackIron;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackIron;
                             break;
 
                         case (ushort)BlockId.OreSaltpeter:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSaltpeter;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSaltpeter;
                             break;
 
                         case (ushort)BlockId.OreSilver:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSilver;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSilver;
                             break;
 
                         case (ushort)BlockId.OreSulfur:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSulfur;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSulfur;
                             break;
 
                         case (ushort)BlockId.OreTin:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackTin;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackTin;
                             break;
 
                         case (ushort)BlockId.Dirt:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.Sand:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackSand;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSand;
                             break;
 
                         case (ushort)BlockId.Gravel:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackGravel;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGravel;
                             break;
 
                         case (ushort)BlockId.Cobblestone:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackCobblestone;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCobblestone;
                             break;
 
                         case (ushort)BlockId.Clay:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackClay;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackClay;
                             break;
 
                         case (ushort)BlockId.GrassBlockClay:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackClay;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackClay;
                             break;
 
                         case (ushort)BlockId.GrassBlockCompost:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.GrassBlockDesert:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.GrassBlockForest:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.GrassBlockHills:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.GrassBlockJungle:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
 
                         case (ushort)BlockId.GrassBlockPlains:
-                            terrain[xx].SolidBlocks[yy]=0;
-                            terrain[xx].BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
                             break;
                     }
 
-                    if (terrain[xx].SolidBlocks[yy-1]!=0) {
-                        ushort idTop=terrain[xx].TopBlocks[yy-1];
+                    if (chunk.SolidBlocks[yy-1]!=0) {
+                        ushort idTop=chunk.TopBlocks[yy-1];
                         if (idTop!=0) {
                             switch (idTop) {
-                                case (ushort)BlockId.GrassDesert:   terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.GrassForest:   terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.GrassHills:    terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.GrassJungle:   terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.GrassPlains:   terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.Heather:       terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.Dandelion:     terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.Violet:        terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.Rose:          terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.BranchALittle1:terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.BranchALittle2:terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.BranchFull:    terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.BranchWithout: terrain[xx].TopBlocks[yy-1]=0; break;
-                                case (ushort)BlockId.Alore:         terrain[xx].TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassDesert:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassForest:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassHills:    chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassJungle:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassPlains:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Heather:       chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Dandelion:     chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Violet:        chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Rose:          chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchALittle1:chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchALittle2:chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchFull:    chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchWithout: chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Alore:         chunk.TopBlocks[yy-1]=0; break;
                             }
                         }
                     }
