@@ -26461,43 +26461,47 @@ if (Setting.UpScalingSuperSapling!=1f) {
 
 		Color GetColorBackNoRain() {
 			// Day
-			if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
+			if (time>=(dayStart+1f)*hour && time<=dayEnd*hour) {
 				return Color.LightSkyBlue;
 
 			// Night
-			} else if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
+			} else if (time<=dayStart*hour || time>=(dayEnd+1f)*hour) {
 				return ColorNightColorBack;
 
 			// Sun rising (before sun)
 			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) {
-				if (Setting.BackgroundFancy) {
-					float a=-(dayStart*hour-time)/(hour);
-					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
-				} else return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, -(dayStart*hour-time)/(hour));
+				//if (Setting.BackgroundFancy) {
+				//	float a=-(dayStart*hour-time)/(hour);
+					//return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, -(dayStart*hour-time)/((float)hour));
 
-			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour) {
+			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1f)*hour) {
 
 				// Sun rising (before sun)
-				if (Setting.BackgroundFancy) {
-					float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
-					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
-				} else return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f+((dayStart+0.5f)*hour-time)/hour);
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
+				//	return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
+				//} else 
+					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f+((dayStart+0.5f)*hour-time)/(float)hour);
 
 			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
 
 				// Sun setting
-				if (Setting.BackgroundFancy) {
-					float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
-					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
-				} else return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
+				//} else 
+					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f-((dayEnd+0.5f)*hour-time)/((float)hour*2f));
 
-			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) {
+			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1f)*hour) {
 
 				// Sun setting
-				if (Setting.BackgroundFancy) {
-					float a=((dayEnd+1)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
-				} else return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, ((dayEnd+1)*hour-time)/(hour*2));
+			//	if (Setting.BackgroundFancy) {
+				//	float a=((dayEnd+1)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, ((dayEnd+1f)*hour-time)/((float)hour*2f));
 
 			}
 			return Color.LightSkyBlue;
@@ -26514,34 +26518,38 @@ if (Setting.UpScalingSuperSapling!=1f) {
 
 			// Sun rising (before sun)
 			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) {
-				if (Setting.BackgroundFancy) {
-					float a=-(dayStart*hour-time)/(hour);
-					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
-				} else return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, -(dayStart*hour-time)/(hour));
+				//if (Setting.BackgroundFancy) {
+				//	float a=-(dayStart*hour-time)/(hour);
+				//	return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, -(dayStart*hour-time)/(hour));
 
 			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour) {
 
 				// Sun rising (before sun)
-				if (Setting.BackgroundFancy) {
-					float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
-					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
-				} else return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f+((dayStart+0.5f)*hour-time)/hour);
+			//	if (Setting.BackgroundFancy) {
+				//	float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
+				//	return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
+				//} else 
+					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f+((dayStart+0.5f)*hour-time)/hour);
 
 			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
 
 				// Sun setting
-				if (Setting.BackgroundFancy) {
-					float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
-				} else return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
+				//} else 
+					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
 
 			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) {
 
 				// Sun setting
-				if (Setting.BackgroundFancy) {
-					float a=((dayEnd+1)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
-				} else return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, ((dayEnd+1)*hour-time)/(hour*2));
+			//	if (Setting.BackgroundFancy) {
+				//	float a=((dayEnd+1)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, ((dayEnd+1)*hour-time)/(hour*2));
 
 			}
 			return ColorDayRainBack;
