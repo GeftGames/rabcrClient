@@ -2672,7 +2672,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*Setting.UpScalingSuperSapling, Setting.Zoom*Setting.UpScalingSuperSapling, 0);
 			ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
 			if (Setting.UpScalingSuperSapling!=1f) MatrixUpScaling = Matrix.CreateScale(Setting.UpScalingSuperSapling, Setting.UpScalingSuperSapling, 0);
-
+		//	else MatrixUpScaling = Matrix.CreateScale(1f, 1f, 0);
 			newKeyboardState = Keyboard.GetState();
 			newMouseState = Mouse.GetState();
 			oldKeyboardState = newKeyboardState;
@@ -2686,7 +2686,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			terrain = new Terrain[TerrainLength = int.Parse(File.ReadAllText(pathToWorld + world + "Generated.txt"))];
 
-			maxInvCount = 32+8;
+			maxInvCount = 5+9*5;//32+8+10+1+1;
 			if (Global.WorldDifficulty == 1) maxInvCount+=9;
 			#endregion
 			int startUpItems=-1;
@@ -3399,6 +3399,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (Setting.UpScalingSuperSapling!=1f) targetGame.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
+			Debug.WriteLine("EndOf Saving");
 		}
 
 		public override unsafe void Update(GameTime gameTime) {
@@ -3418,7 +3419,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				mouseRightRelease=false;
 
 				if (newMouseState.LeftButton==ButtonState.Pressed) {
-				  MousePos.mouseLeftDown=  mouseLeftDown=true;
+				  MousePos.mouseLeftDown = mouseLeftDown=true;
 					if (oldMouseState.LeftButton==ButtonState.Released) mouseLeftPress=true;
 				} else {
 					 MousePos.mouseLeftDown= mouseLeftDown=false;
@@ -3579,7 +3580,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						} else {
 							// Double Ecs press
 							if (inventory==InventoryType.GameMenu) {
-								Shutdown();
+								//Shutdown();
 								Rabcr.GoTo(new Menu(new MenuSingleplayer()));
 							} else inventory=InventoryType.Normal;
 						}
@@ -4714,7 +4715,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 							// Exit game
 							if (buttonExit.Update()) {
-								Shutdown();
+								//Shutdown();
+							//	Save();
 								Rabcr.GoTo(new Menu(new MenuSingleplayer()));
 							}
 
@@ -6533,6 +6535,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 
+				foreach (ShortAndByte mm in FurnaceStone) {
+					MashineBlockBasic m=(MashineBlockBasic)terrain[mm.X].TopBlocks[mm.Y];
+
+					if (m.Position.X>=terrainStartIndexX*16) {
+						if (m.Position.X<=terrainStartIndexW*16) {
+							if (m.Position.Y>=terrainStartIndexY*16) {
+								if (m.Position.Y<=terrainStartIndexH*16) {
+									if (m.Energy>0) {
+									//	m.Energy-=0.01f;
+										//if (m.Energy<0) m.Energy=0;
+										spriteBatch.Draw(lightMaskRoundTexture, new Rectangle((int)m.Position.X-48*2+8, (int)m.Position.Y-48*2+8, 96*2, 96*2), lampColorLight);
+									}
+								}
+							}
+						}
+					}
+				}
+
 				if (playerLight) spriteBatch.Draw(lightMaskRoundTexture, new Rectangle((int)PlayerX-48*2+8, (int)PlayerY-48*2+8, 96*2, 96*2), lampColorLight);
 				spriteBatch.End();
 				#endregion
@@ -6746,7 +6766,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (Setting.SnowAndRain) {
 					if (/*rain*/actualRainForce>0f) {
 					//	int x, y;
-						spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					if (Setting.UpScalingSuperSapling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 						int cx=0;
 						int cy=0;
 						Rabcr.spriteBatch=spriteBatch;
@@ -6901,7 +6922,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						//EffectFog.Parameters["Octaves"].SetValue(3);
 						
 						if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
-						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, effect: EffectFog, MatrixUpScaling);
+						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
 						EffectFog.Techniques[0].Passes[0].Apply();
 
 						spriteBatch.Draw(pixel, Fullscreen, Color.White);
@@ -6940,8 +6961,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 #region Weather Foreground
 				
 				if (actualRainForce>0f) {
-					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
-
+					if (Setting.UpScalingSuperSapling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 					Rabcr.spriteBatch=spriteBatch;
 					//if (Temperature<0f) {
 					//	Color c=Color.White*actualRainForce;
@@ -11650,8 +11671,8 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					return;
 
 			case (ushort)BlockId.Rocks:
-					AchievementStoneAge=true;
-				switch (FastRandom.Int(100)) {
+				AchievementStoneAge=true;
+				switch (FastRandom.Int(200)) {
 					case 0: DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16); return;
 					case 1: DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16); return;
 					case 2: DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16); return;
@@ -11674,35 +11695,17 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					case 19: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
 					case 20: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
 					case 21: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
-					case 22: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 23: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 24: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 25: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 26: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 27: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 28: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 29: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 30: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 31: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 32: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 33: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 34: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 35: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 36: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 37: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 38: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 39: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 40: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 41: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 42: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 43: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 44: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 45: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 46: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
 					case 47: DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16); return;
 					case 48: DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16); return;
-					default: DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16); return;
+					default: 
+						switch (FastRandom.Int(3)) {
+							case 0: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
+							case 1: DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16); return;
+							case 2: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
+						}
+						break;
 				}
+				break;
 
 				case (ushort)BlockId.Compost:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Compost, 1), X16, Y16);
