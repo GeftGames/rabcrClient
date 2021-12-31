@@ -1152,8 +1152,8 @@ namespace rabcrClient {
 		Texture2D[] TextureRocks;
 		#region Weather & time (day/night)
 		float windForce;
-		int dayLenght=4800;
-		const int hour=200;
+		const/**/ int dayLenght=24*hour/**/;
+		const int hour=10/*200*/;
 		readonly List<Rectangle>
 			lightsFull=new(),
 			lightsHalf=new();
@@ -1501,7 +1501,9 @@ namespace rabcrClient {
 		Color FogColor=Color.Transparent;
         public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 		RasterizerState rasterizerState;
+		const float noon=(dayEnd-(dayStart+1))*hour;
 		public unsafe override void Init() {
+			
 			sampling=Setting.UpScalingSuperSapling==-1? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
 			//Setting.UpScalingSuperSapling=1.00001f;
 		//	Setting.Multisapling=16;
@@ -5708,6 +5710,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					
 				}
 
+				//text
+				Temperature=GetTemperature(BiomePlayer.Name);
+
 				if (timer5<-0.1f) {
 					if (wind) WaveGrassDuringWind();
 								rainWaveForce=((float)Math.Sin(time/600f))*0.5f+0.5f;
@@ -6253,7 +6258,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					Temperature=GetTemperature(BiomePlayer.Name);
+					//Temperature=GetTemperature(BiomePlayer.Name);
 
 
 					for (int i=0; i<TerrainLength/100; i++) GrowTreeFood(i*100);
@@ -9058,6 +9063,8 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 							fpss=0;
 						}
+						float hours=(int)((float)time/hour);
+						float minutes=(time-hours*hour)/(float)hour*60f/*/60f*/;
 						if (gameTime.ElapsedGameTime.TotalMilliseconds!=0) {
 							GameDraw.DrawTextShadowMin(5, 5,"< Information for developers > (F1 hide)" + Environment.NewLine +
 							//"[Player] X: " + (int)PlayerX + ", Y: " +  (int)PlayerY + Environment.NewLine +
@@ -9068,7 +9075,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 							"[Temperature]: "+Math.Round(Temperature,1)+ Environment.NewLine +
 							"[Gravity]: "+Math.Round(gravity*20f,2)+Environment.NewLine+
 							//"[Rain]: "+rain+ Environment.NewLine +
-							"[Date]: Y: "+year+", Day: "+day+", Time: " +time/hour+":" + ((int)((time- (time/hour*hour))*(60f/hour))).ToString("00")+Environment.NewLine +
+							"[Date]: Y: "+year+", Day: "+day+", Time: " +hours.ToString("00")+":" + (minutes).ToString("00")+Environment.NewLine +
 						//	Environment.NewLine +
 							"[Drawing surface size] "+((terrainStartIndexW-terrainStartIndexX)*(terrainStartIndexH-terrainStartIndexY))+Environment.NewLine +
 							//Environment.NewLine +
@@ -12238,6 +12245,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Dirt, 1), X16, Y16);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockHills:
@@ -12245,6 +12257,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowPlains:
@@ -12252,6 +12269,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowDesert:
@@ -12259,6 +12281,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowJungle:
@@ -12266,6 +12293,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowHills:
@@ -12273,6 +12305,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowForest:
@@ -12280,6 +12317,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowClay:
@@ -12287,6 +12329,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowCompost:
@@ -12294,6 +12341,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockJungle:
@@ -12301,6 +12353,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockCompost:
@@ -12308,13 +12365,21 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockPlains:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Dirt, 1), X16, Y16);
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
-					terrain[X].IsBackground[Y]=true;
-					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.Planks:
@@ -22580,7 +22645,7 @@ if (sampling!=1f) {
 					if (o.Name==world) {
 						gravity=(float)(6.67259e-11*o.Mass/(o.MeanDiameter*o.MeanDiameter*1000000))/20f;
 						notNeedScafander=o.astrO==AstrO.Life;
-						dayLenght=(int)(o.DayLenght*200);
+					//	dayLenght=(int)(o.DayLenght*hour);
 						return;
 					}
 				}
@@ -25852,9 +25917,9 @@ if (sampling!=1f) {
 #endif
         }
 
-		/// <param name="temperatureSpeedChange">From 1 to 8, bigger for more humid</param>
+		/// <param name="temperatureSpeedChange">From 0 to 1, 0=fastly after sun rise, 1 late in time when sun fall</param>
 		/// <returns></returns>
-		float TemperatureFromTo(int daySummerTemperature, int nightSummerTemperature, int dayWinterTemperature, int nightWinterTemperature, float temperatureSpeedChange=6) {
+		float TemperatureFromTo(int daySummerTemperature, int nightSummerTemperature, int dayWinterTemperature, int nightWinterTemperature, float temperatureSpeedChange=0.45f) {
 			float tempDay, tempNight;
 
 			if (day>22 && day<200){
@@ -25868,14 +25933,42 @@ if (sampling!=1f) {
 				tempNight=(1-FastMath.Smooth((day-200)/178f))*(nightSummerTemperature-nightWinterTemperature)+nightWinterTemperature;
 			}
 
-			float noon=(dayEnd-(dayStart+1))*hour;
+		//	float noon=(dayEnd-(dayStart+1))*hour;
+		//Debug.WriteLine(tempDay);
+		//Debug.WriteLine(tempNight);
 
-			// Rising temp
-			if (time>dayStart*hour && time<noon) return FastMath.Smooth((time-dayStart*hour)/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
-			//aftenoon
-			else if (time>noon) return FastMath.Smooth((time-noon)/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
-			//before sun rise
-			else return FastMath.Smooth((time-(noon-dayStart*hour))/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
+		
+
+			// Rising temp after rozednivani
+			int _time=time-(int)(dayStart*hour);
+			if (_time<0)_time+=24*hour;
+
+			float maximumInHour=(dayEnd-dayStart)*temperatureSpeedChange*hour;
+			float nightTempChange=(tempDay-tempNight)/10f;
+			//float dayEndE=dayEnd*hour-maximumInHour;
+
+			// rising
+			if (_time<maximumInHour) return FastMath.Smooth(_time/maximumInHour)*(tempDay-tempNight-nightTempChange)+tempNight;
+			if (_time<dayEnd*hour-dayStart*hour) return tempDay-nightTempChange*(1f-_time/(dayEnd*hour-dayStart*hour));
+			if (_time<dayEnd*hour-dayStart*hour+maximumInHour) {
+				float start=dayEnd*hour-dayStart*hour;
+				float end=dayEnd*hour-dayStart*hour+maximumInHour;
+				return FastMath.Smooth(1f-(_time-start)/(end-start)) *(tempDay-tempNight+nightTempChange)+tempNight;
+			}
+			//night
+			float _dayLenght=(dayStart-dayEnd)*hour;
+			float _nightLenght=24*hour-_dayLenght;
+			return (1f-(_time-maximumInHour)/(_nightLenght))*(nightTempChange)+tempNight;
+
+			// Rising temp until noon
+		//	if (time>dayStart*hour && time<noon) return FastMath.Smooth((time-dayStart*hour)/(/*noon-dayStart*hour*/dayLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	// aftenoon
+		//	else if (time>noon && time<dayEnd*hour) return FastMath.Smooth((noon-time)/(/*noon-dayEnd*hour*/dayLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	// night after aftenoon
+		//	else if (time>dayEnd*hour) return FastMath.Smooth((time-dayEnd*hour)/(/*dayEnd*hour-noon*/nightLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	//before sun rise
+		//	else return FastMath.Smooth(time/(nightLenght/2f))*(tempDay-tempNight)+tempNight;
+		////	else return FastMath.Smooth((time/*-(noon-dayStart*hour)*/)/(/*noon-dayStart*hour*/nightLenght/2f))*(tempDay-tempNight)+tempNight;
 		}
 
 		void ChangeLeavesForceEverything() {
@@ -26517,7 +26610,7 @@ if (sampling!=1f) {
 				return ColorDayRainBack;
 
 			// Night
-			} else if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
+			} else if (time<=dayStart*hour || time>=(dayEnd+1f)*hour) {
 				return ColorNightColorBackRain;
 
 			// Sun rising (before sun)
@@ -26528,7 +26621,7 @@ if (sampling!=1f) {
 				//} else 
 					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, -(dayStart*hour-time)/(hour));
 
-			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour) {
+			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1f)*hour) {
 
 				// Sun rising (before sun)
 			//	if (Setting.BackgroundFancy) {
