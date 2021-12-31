@@ -21,7 +21,7 @@ namespace rabcrClient {
            // if (Count==1){
                 if (W==16 && H==16) {
                     int ww=(int)(Global.ItemAnimation*W*0.75f);
-                    if (Global.ItemAnimation>=0) Rabcr.spriteBatch.Draw(Texture,new Rectangle(X+(int)((W-ww)/2f),(int)(Y+H*0.25f),ww,(int)(H*0.75f)),Color.White);
+                    if (Global.ItemAnimation>=0) Rabcr.spriteBatch.Draw(Texture,new Rectangle(X+(int)((W-ww)/2f),(int)(Y+H*0.25f),ww,(int)(H*0.75f)), Global.ColorWhite);
                     else Rabcr.spriteBatch.Draw(Texture,new Rectangle(X+(int)((W+ww)/2f),(int)(Y+H*0.25f),-ww,(int)(H*0.75f)),null, Color.DarkGray,0,Vector2.Zero,SpriteEffects.FlipHorizontally,0);
 
                     //if (Global.ItemAnimation>=0) Rabcr.spriteBatch.Draw(Texture,new Rectangle(X+(int)((W-Global.ItemAnimation*W*0.75f)/2f),(int)(Y+H*0.25f),(int)(W*Global.ItemAnimation*0.75f),(int)(H*0.75f)),Color.White);

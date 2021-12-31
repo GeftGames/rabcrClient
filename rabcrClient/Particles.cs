@@ -16,12 +16,15 @@ namespace rabcrClient {
         public Color Color;
 
         public void Update() {
-            HSpeed+=gravity*0.5f;
-            Position.Y+=HSpeed;
+            VSpeed+=gravity*0.5f;
+            if (VSpeed>3)VSpeed=3;
 
-            Position.X+=VSpeed;
+            Position.Y+=VSpeed;
+
+            
 
             if (Position.Y>=LimitY) Position.Y=LimitY;
+            else Position.X+=HSpeed;
         }
 
         public void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Source, Color*(Disepeard/50f));

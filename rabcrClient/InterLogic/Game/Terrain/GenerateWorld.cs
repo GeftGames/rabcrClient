@@ -4934,7 +4934,6 @@ namespace rabcrClient {
 
                             for (int i=0; i<countWood; i++) {
                                 UShortAndByte sab=tree.TitlesWood[i];
-
                                 bytesLiveObject.Add((byte)sab.X);
                                 bytesLiveObject.Add((byte)(sab.X>>8));
                                 bytesLiveObject.Add(sab.Y);

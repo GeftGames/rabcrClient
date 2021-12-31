@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace rabcrClient {
     public class FallingBlockInfo{
         public NormalBlock block;
-        public DInt to, to16;
+        public DInt to, to16, from;
         public bool side;
     }
 
