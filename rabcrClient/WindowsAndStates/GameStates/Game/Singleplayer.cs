@@ -14,7 +14,7 @@ namespace rabcrClient {
 
 		#region Varibles
 		SoundEffectInstance SoundWind, SoundRain;
-
+		float sampling;
 		enum Precipitation : byte {
 			None,
 			Snowing,
@@ -1502,7 +1502,7 @@ namespace rabcrClient {
         public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 		RasterizerState rasterizerState;
 		public unsafe override void Init() {
-
+			sampling=Setting.UpScalingSuperSapling==-1? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
 			//Setting.UpScalingSuperSapling=1.00001f;
 		//	Setting.Multisapling=16;
 
@@ -2669,9 +2669,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			#endregion
 
 			#region Set basic
-			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*Setting.UpScalingSuperSapling, Setting.Zoom*Setting.UpScalingSuperSapling, 0);
+			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*sampling, Setting.Zoom*sampling, 0);
 			ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
-			if (Setting.UpScalingSuperSapling!=1f) MatrixUpScaling = Matrix.CreateScale(Setting.UpScalingSuperSapling, Setting.UpScalingSuperSapling, 0);
+			if (sampling!=1f) MatrixUpScaling = Matrix.CreateScale(sampling, sampling, 0);
 		//	else MatrixUpScaling = Matrix.CreateScale(1f, 1f, 0);
 			newKeyboardState = Keyboard.GetState();
 			newMouseState = Mouse.GetState();
@@ -3132,8 +3132,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			//#endif
 
 			Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*(float)Setting.UpScalingSuperSapling, 
-				Global.WindowHeightHalf*(float)Setting.UpScalingSuperSapling, 
+				Global.WindowWidthHalf*sampling, 
+				Global.WindowHeightHalf*sampling, 
 			0));
 
 			TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
@@ -3145,7 +3145,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
-			if (Setting.UpScalingSuperSapling!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*Setting.UpScalingSuperSapling), (int)(Global.WindowHeight*Setting.UpScalingSuperSapling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			if (sampling!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 
 			//dayAlpha
 			if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
@@ -3329,8 +3329,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				
 		//	}
 
-			weatherWindowWidth=(int)(Global.WindowWidth*Setting.UpScalingSuperSapling)+5;
-			weatherWindowHeight=(int)(Global.WindowHeight*Setting.UpScalingSuperSapling)+3;
+			weatherWindowWidth=(int)(Global.WindowWidth*sampling)+5;
+			weatherWindowHeight=(int)(Global.WindowHeight*sampling)+3;
 		}
 
 		public override void Shutdown() {
@@ -3396,7 +3396,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			cpuUsage?.Dispose();
 
 			modificatedLightTarget.Dispose();
-			if (Setting.UpScalingSuperSapling!=1f) targetGame.Dispose();
+			if (sampling!=1f) targetGame.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
 			Debug.WriteLine("EndOf Saving");
@@ -6467,7 +6467,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				// Draw full lights
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Setting.UpScalingSuperSapling==1f ? camera : cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, sampling==1f ? camera : cameraNoOpMultisapling);
 
                 foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
@@ -6482,7 +6482,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				spriteBatch.End();
 
 				// Draw high light
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Setting.UpScalingSuperSapling==1f ? camera : cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, sampling==1f ? camera : cameraNoOpMultisapling);
 
 				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
@@ -6558,7 +6558,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Draw game
-				if (Setting.UpScalingSuperSapling==1f) {
+				if (sampling==1f) {
 					Graphics.SetRenderTarget(null/*targetGame*/);
 					Graphics.Clear(Color.Transparent);
 				} else Graphics.SetRenderTarget(/*null*/targetGame);
@@ -6766,7 +6766,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (Setting.SnowAndRain) {
 					if (/*rain*/actualRainForce>0f) {
 					//	int x, y;
-					if (Setting.UpScalingSuperSapling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					if (sampling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 						int cx=0;
 						int cy=0;
@@ -6921,7 +6921,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					
 						//EffectFog.Parameters["Octaves"].SetValue(3);
 						
-						if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
+						if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
 						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
 						EffectFog.Techniques[0].Passes[0].Apply();
 
@@ -6950,7 +6950,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+					if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, transformMatrix: MatrixUpScaling);
 
 					spriteBatch.Draw(pixel, Fullscreen, FogColor*oc*0.2f);
@@ -6961,7 +6961,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 #region Weather Foreground
 				
 				if (actualRainForce>0f) {
-					if (Setting.UpScalingSuperSapling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					if (sampling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 					Rabcr.spriteBatch=spriteBatch;
 					//if (Temperature<0f) {
@@ -7733,9 +7733,9 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					for (int i = 0; i<Particles.Count; i++) Particles[i].Draw();
 				}
 				spriteBatch.End();
-				if (Setting.UpScalingSuperSapling!=1f) {
+				if (sampling!=1f) {
 					Graphics.SetRenderTarget(null);
-					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, BlendState.AlphaBlend, Setting.UpScalingSuperSapling<1f ? SamplerState.PointWrap: SamplerState.LinearWrap);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, BlendState.AlphaBlend, sampling<1f ? SamplerState.PointWrap: SamplerState.LinearWrap);
 					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
 					spriteBatch.End();
 				}
@@ -7761,7 +7761,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 					EffectVignetting.Parameters["HSize"].SetValue(HSize);
 					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
 
-					if (Setting.UpScalingSuperSapling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
+					if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting, MatrixUpScaling);
 
 					//spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearClamp, null, null, EffectVignetting, Setting.UpScalingSuperSapling!=1f ? MatrixUpScaling : null);
@@ -9110,11 +9110,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 			SetCaptionInventory();
 			
 			Translation= ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*(float)Setting.UpScalingSuperSapling /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
-				Global.WindowHeightHalf*(float)Setting.UpScalingSuperSapling /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
+				Global.WindowWidthHalf*sampling /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
+				Global.WindowHeightHalf*sampling /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
 			0));
 
-			if (Setting.UpScalingSuperSapling!=1){
+			if (sampling!=1){
 				TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
 			}
 
@@ -9125,9 +9125,9 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 
 			modificatedLightTarget?.Dispose();
 			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-			if (Setting.UpScalingSuperSapling!=1f) {
+			if (sampling!=1f) {
 				targetGame?.Dispose();
-				targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*Setting.UpScalingSuperSapling), (int)(Global.WindowHeight*Setting.UpScalingSuperSapling), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+				targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			}
 			if (Global.WorldDifficulty==2) {
 				if (inventory==InventoryType.Creative) {
@@ -10565,10 +10565,14 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		}
 
 		bool NoAround(int x, int y) {
-			if (y<125) if (terrain[x+1].IsSolidBlocks[y]) return false;
-			if (y>0) if (terrain[x-1].IsSolidBlocks[y]) return false;
-			if (x<TerrainLength) if (terrain[x].IsSolidBlocks[y+1]) return false;
-			if (y>0) if (terrain[x].IsSolidBlocks[y-1]) return false;
+			if (x<TerrainLength) if (terrain[x+1].IsSolidBlocks[y]) 
+					return false;
+			if (x>0) if (terrain[x-1].IsSolidBlocks[y]) 
+					return false;
+			if (y<125) if (terrain[x].IsSolidBlocks[y+1]) 
+					return false;
+			if (y>0) if (terrain[x].IsSolidBlocks[y-1]) 
+					return false;
 			return true;
 		}
 
@@ -16420,9 +16424,9 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 		}
 
 		void CameraMatrix() {
-			if (Setting.Scale.Without==Setting.currentScale) {
+			//if (Setting.Scale.Without==Setting.currentScale) {
 			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
-if (Setting.UpScalingSuperSapling!=1f) { 
+if (sampling!=1f) { 
 				cameraNoOpMultisapling=Matrix.CreateTranslation(
 					new Vector3(
 					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
@@ -16447,31 +16451,31 @@ if (Setting.UpScalingSuperSapling!=1f) {
 					) * Translation;
 			//	}
 				return;
-			}
+			//}
 
-			if (Setting.Scale.Proportions==Setting.currentScale) {
-				float
-					_screenScaleW = Global.WindowWidth/848f,
-					_screenScaleH = Global.WindowHeight/560f;
+			//if (Setting.Scale.Proportions==Setting.currentScale) {
+			//	float
+			//		_screenScaleW = Global.WindowWidth/848f,
+			//		_screenScaleH = Global.WindowHeight/560f;
 
-				if (_screenScaleH > _screenScaleW) {
-					camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-						Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)* Translation;
-						return;
-				} else {
-					camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-						Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)* Translation;
-						return;
-				}
-			}
+			//	if (_screenScaleH > _screenScaleW) {
+			//		camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//			Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)* Translation;
+			//			return;
+			//	} else {
+			//		camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//			Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)* Translation;
+			//			return;
+			//	}
+			//}
 
-			camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-				Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))* Translation;
+			//camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//	Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))* Translation;
 		}
 
 		Matrix CameraMatrixNoZoom(out int xx, out int yy) {
 		//	if (Setting.Scale.Without==Setting.currentScale) {
-			float z=Setting.UpScalingSuperSapling*Setting.Zoom;
+			float z=sampling*Setting.Zoom;
 			//if (Setting.Zoom<2.5)z=1*upscalingMultisapling;
 			//else z=2;
 
@@ -16481,7 +16485,7 @@ if (Setting.UpScalingSuperSapling!=1f) {
 			weatherWindowWidth=(int)(Global.WindowWidth*z/**upscalingMultisapling*/)+5;
 			weatherWindowHeight=(int)(Global.WindowHeight*z/**upscalingMultisapling*/)+5;
 
-			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * Setting.UpScalingSuperSapling, Global.WindowHeightHalf * Setting.UpScalingSuperSapling, 0));
+			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * sampling, Global.WindowHeightHalf * sampling, 0));
 			//}
 
 			//if (Setting.Scale.Proportions==Setting.currentScale) {
@@ -22240,25 +22244,25 @@ if (Setting.UpScalingSuperSapling!=1f) {
 		#endregion
 
 		void SetMousePos() {
-			if (Setting.Scale.Without==Setting.currentScale) {
+		//	if (Setting.Scale.Without==Setting.currentScale) {
 				mousePos = new Vector2((newMouseState.X-Global.WindowWidthHalf)*divider_zoom/*/Setting.Zoom*/+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)*divider_zoom/*/Setting.Zoom*/+WindowCenterY);
 				return;
-			}
+			//}
 
-			if (Setting.Scale.Proportions==Setting.currentScale) {
-				float screenScaleH = Global.WindowHeight/560f;
-				float screenScaleW = Global.WindowWidth/848f;
+			//if (Setting.Scale.Proportions==Setting.currentScale) {
+			//	float screenScaleH = Global.WindowHeight/560f;
+			//	float screenScaleW = Global.WindowWidth/848f;
 
-				if (screenScaleH>screenScaleW) {
-					mousePos= new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW*divider_zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW*divider_zoom)+WindowCenterY);
-					return;
-				} else {
-					mousePos = new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH*divider_zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH*divider_zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
-					return;
-				}
-			}
+			//	if (screenScaleH>screenScaleW) {
+			//		mousePos= new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW*divider_zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW*divider_zoom)+WindowCenterY);
+			//		return;
+			//	} else {
+			//		mousePos = new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH*divider_zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH*divider_zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
+			//		return;
+			//	}
+			//}
 
-			mousePos= new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)*divider_zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)*divider_zoom+WindowCenterY);
+			//mousePos= new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)*divider_zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)*divider_zoom+WindowCenterY);
 		}
 
 		void MobileON() => ( mobileOS=new Mobile.System { Content=Rabcr.content } ).Init();
