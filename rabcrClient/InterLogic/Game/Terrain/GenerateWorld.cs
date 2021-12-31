@@ -2143,9 +2143,9 @@ namespace rabcrClient {
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Dandelion;
                             break;
 
-                        case 4:
-                            chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
-                            break;
+                        //case 4:
+                        //    chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
+                        //    break;
 
                         case 5:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassPlains;
@@ -2724,9 +2724,9 @@ namespace rabcrClient {
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassPlains;
                             break;
 
-                        case 4:
-                            chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
-                            break;
+                        //case 4:
+                        //    chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
+                        //    break;
 
                         case 5:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
