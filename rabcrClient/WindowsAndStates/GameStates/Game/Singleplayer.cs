@@ -1153,7 +1153,7 @@ namespace rabcrClient {
 		#region Weather & time (day/night)
 		float windForce;
 		const/**/ int dayLenght=24*hour/**/;
-		const int hour=10/*200*/;
+		const int hour=200;
 		readonly List<Rectangle>
 			lightsFull=new(),
 			lightsHalf=new();

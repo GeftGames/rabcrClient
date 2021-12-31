@@ -344,16 +344,16 @@ namespace rabcrClient {
             }
 
             //Scale
-            {
-                SettingSwitcher button=new(tex, Lang.Texts[128], new string[]{ Lang.Texts[148], Lang.Texts[149], Lang.Texts[150]}, (int)Setting.currentScale);
-                button.Click+=ClickScale;
-                settings.Add(button);
+            //{
+            //    SettingSwitcher button=new(tex, Lang.Texts[128], new string[]{ Lang.Texts[148], Lang.Texts[149], Lang.Texts[150]}, (int)Setting.currentScale);
+            //    button.Click+=ClickScale;
+            //    settings.Add(button);
 
-                void ClickScale() {
-                    Setting.currentScale=(Setting.Scale)button.selected;
-                    Global.ChangedSettings=true;
-                }
-            }
+            //    void ClickScale() {
+            //        Setting.currentScale=(Setting.Scale)button.selected;
+            //        Global.ChangedSettings=true;
+            //    }
+            //}
 
             //FPS
             {

@@ -13,11 +13,11 @@ namespace rabcrClient {
     }
 
     struct Setting {  
-        public enum Scale :byte{
-            Without,
-            Proportions,
-            Fill,
-        } 
+        //public enum Scale :byte{
+        //    Without,
+        //    Proportions,
+        //    Fill,
+        //} 
         public enum Window:byte {
             Normal,
             Maxi,
@@ -55,9 +55,9 @@ namespace rabcrClient {
         // Settings
         public static bool Background=true;
         public static bool Fps=false;
-        public static Window currentWindow;
+      public static Window currentWindow;
         public static bool Vignetting=true;
-        public static Scale currentScale;
+     //   public static Scale currentScale;
         public static float Zoom=3;
         public static float VolumeMusic=.5f;
         public static float VolumeEffects=1;
@@ -166,8 +166,8 @@ namespace rabcrClient {
                 (byte)Fog,
               //  (byte)GraphicsProfile,
 
-                (byte)currentScale,
-                (byte)currentWindow,
+               //   (byte)currentScale,
+              (byte)currentWindow,
                 Background ? (byte)1: (byte)0,
                 Global.YoungPlayer ? (byte)1: (byte)0,
                 Fps ? (byte)1: (byte)0,
@@ -239,8 +239,8 @@ namespace rabcrClient {
                     //GraphicsProfile=(Setting.GraphicsProfile)(*current++);
 
 
-                    currentScale=(Scale)(*current++);
-                    currentWindow=(Window)(*current++);
+                 //     currentScale=(Scale)(*current++);
+                  currentWindow=(Window)(*current++);
 
                     Background = (*current++) == 1;
                     Global.YoungPlayer = (*current++) == 1;

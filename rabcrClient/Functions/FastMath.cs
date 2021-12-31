@@ -100,7 +100,7 @@ namespace rabcrClient {
             if (input<0.5f) return 2*input*input;
             else return -2*(input-1)*(input-1)+1;
         }
-
+      
         public unsafe static float InvSqrt3(float x) {
            float xhalf = 0.5f*x;
            int i = *(int*)&x;

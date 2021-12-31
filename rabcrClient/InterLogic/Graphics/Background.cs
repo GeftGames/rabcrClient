@@ -538,29 +538,30 @@ Texture2D[] rocksTexture;
 		Texture2D GetDataTexture(string path) => Rabcr.Game.Content.Load<Texture2D>(Setting.StyleName+"\\Textures\\"+path);
 
         Matrix CameraMatrix() {
-            if (Setting.Scale.Without == Setting.currentScale) return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) * Translation;
+            //if (Setting.Scale.Without == Setting.currentScale) 
+                return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) * Translation;
 
-            if (Setting.Scale.Proportions == Setting.currentScale) {
-                float _screenScaleW = Global.WindowWidth / 848f;
-                float _screenScaleH = Global.WindowHeight / 560f;
+            //if (Setting.Scale.Proportions == Setting.currentScale) {
+            //    float _screenScaleW = Global.WindowWidth / 848f;
+            //    float _screenScaleH = Global.WindowHeight / 560f;
 
-                if (_screenScaleH > _screenScaleW) {
-                    return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                        MatrixZoom*
-                        Matrix.CreateScale(_screenScaleW, _screenScaleW, 0) *
-                        Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
-                } else {
-                    return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                        MatrixZoom*
-                        Matrix.CreateScale(_screenScaleH, _screenScaleH, 0) *
-                        Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
-                }
-            }
+            //    if (_screenScaleH > _screenScaleW) {
+            //        return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
+            //            MatrixZoom*
+            //            Matrix.CreateScale(_screenScaleW, _screenScaleW, 0) *
+            //            Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+            //    } else {
+            //        return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
+            //            MatrixZoom*
+            //            Matrix.CreateScale(_screenScaleH, _screenScaleH, 0) *
+            //            Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+            //    }
+            //}
 
-            return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                Matrix.CreateScale(new Vector3(Global.WindowWidth / 848f, Global.WindowHeight / 560f, 0)) *
-                MatrixZoom *
-                Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+            //return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
+            //    Matrix.CreateScale(new Vector3(Global.WindowWidth / 848f, Global.WindowHeight / 560f, 0)) *
+            //    MatrixZoom *
+            //    Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
         }
 
         bool isDisposed;

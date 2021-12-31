@@ -17913,25 +17913,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
         }
 
         void SetMousePos() {
-            if (Setting.Scale.Without==Setting.currentScale) {
+           // if (Setting.Scale.Without==Setting.currentScale) {
                 mousePos=new Vector2((newMouseState.X-Global.WindowWidthHalf)/Setting.Zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/Setting.Zoom+WindowCenterY);
                 return;
-            }
+          //  }
 
-            if (Setting.Scale.Proportions==Setting.currentScale) {
-                float screenScaleH = Global.WindowHeight/560f;
-                float screenScaleW = Global.WindowWidth/848f;
+            //if (Setting.Scale.Proportions==Setting.currentScale) {
+            //    float screenScaleH = Global.WindowHeight/560f;
+            //    float screenScaleW = Global.WindowWidth/848f;
 
-                if (screenScaleH>screenScaleW) {
-                    mousePos=new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW/Setting.Zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW/Setting.Zoom)+WindowCenterY);
-                    return;
-                } else {
-                    mousePos=new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH/Setting.Zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH/Setting.Zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
-                    return;
-                }
-            }
+            //    if (screenScaleH>screenScaleW) {
+            //        mousePos=new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW/Setting.Zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW/Setting.Zoom)+WindowCenterY);
+            //        return;
+            //    } else {
+            //        mousePos=new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH/Setting.Zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH/Setting.Zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
+            //        return;
+            //    }
+            //}
 
-            mousePos=new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)/Setting.Zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)/Setting.Zoom+WindowCenterY);
+            //mousePos=new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)/Setting.Zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)/Setting.Zoom+WindowCenterY);
         }
 
         void PlayerGravity() {
@@ -17987,28 +17987,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
         }
 
         void CameraMatrix() {
-            if (Setting.Scale.Without==Setting.currentScale) {
+          //  if (Setting.Scale.Without==Setting.currentScale) {
                 camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*Translation;
                 return;
-            }
+          //  }
 
-            if (Setting.Scale.Proportions==Setting.currentScale) {
-                float _screenScaleW = Global.WindowWidth/848f;
-                float _screenScaleH = Global.WindowHeight/560f;
+            //if (Setting.Scale.Proportions==Setting.currentScale) {
+            //    float _screenScaleW = Global.WindowWidth/848f;
+            //    float _screenScaleH = Global.WindowHeight/560f;
 
-                if (_screenScaleH>_screenScaleW) {
-                    camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-                        Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)*Translation;
-                    return;
-                } else {
-                    camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-                        Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)*Translation;
-                    return;
-                }
-            }
+            //    if (_screenScaleH>_screenScaleW) {
+            //        camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+            //            Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)*Translation;
+            //        return;
+            //    } else {
+            //        camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+            //            Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)*Translation;
+            //        return;
+            //    }
+            //}
 
-            camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-                Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))*Translation;
+            //camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+            //    Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))*Translation;
         }
 
         void SetPlayerPos(int x, int y) {
