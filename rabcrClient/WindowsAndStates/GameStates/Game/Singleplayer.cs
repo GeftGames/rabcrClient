@@ -1080,12 +1080,10 @@ namespace rabcrClient {
 		bool notNeedScafander;
 
 		float PlayerX, PlayerY;
-	 //   int intPlayerX, intPlayerY;
 
 		int playerImg;
-	//	int playerImg2=100;
 		int playerState;
-	   int distanceToGround=0;
+	    int distanceToGround=0;
 		float gravitySpeed=0;
 		bool playerLight=false;
 		#endregion
@@ -1152,15 +1150,13 @@ namespace rabcrClient {
 		Texture2D[] TextureRocks;
 		#region Weather & time (day/night)
 		float windForce;
-		const/**/ int dayLenght=24*hour/**/;
+		const int dayLenght=24*hour;
 		const int hour=200;
 		readonly List<Rectangle>
 			lightsFull=new(),
 			lightsHalf=new();
 
 		// Rain
-		//int rainDuration;
-		//int windDuration;
 		int changeRain = 1250;
 		List<ParticleRain> rainDots, rainDots2;
 		List<ParticleSnow> /*snowDots,*/ snowDots2;
@@ -1292,6 +1288,7 @@ namespace rabcrClient {
 
 		Vector2 mousePos;
 		int mousePosRoundX, mousePosRoundY;
+		Vector2 mousePosRoundVector=Vector2.Zero;
 		readonly DInt mousePosDiv16=new();
 		  //  mousePosRound=new DInt(),
 		  //  mouseRealPos=new DInt();
@@ -3445,7 +3442,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					} else mousePosChanged=true;
 				}
 
-				if (mousePosChanged) {
+				if (mousePosChanged || changePosition) {
 					SetMousePos();
 					mousePosDiv16.X=(int)mousePos.X/16;
 					mousePosDiv16.Y=(int)mousePos.Y/16;
@@ -3453,15 +3450,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					mousePosRoundX=mousePosDiv16.X*16;
 					mousePosRoundY=mousePosDiv16.Y*16;
 
-				   MousePos.mouseRealPosX= mouseRealPosX=newMouseState.X;
-				   MousePos.mouseRealPosY= mouseRealPosY=newMouseState.Y;
-				}else if (changePosition) {
-					SetMousePos();
-					mousePosDiv16.X=(int)mousePos.X/16;
-					mousePosDiv16.Y=(int)mousePos.Y/16;
+				    MousePos.mouseRealPosX= mouseRealPosX=newMouseState.X;
+				    MousePos.mouseRealPosY= mouseRealPosY=newMouseState.Y;
 
-					mousePosRoundX=mousePosDiv16.X*16;
-					mousePosRoundY=mousePosDiv16.Y*16;
+					mousePosRoundVector.X=mousePosRoundX;
+					mousePosRoundVector.Y=mousePosRoundY;
 				}
 				#endregion
 
@@ -3625,6 +3618,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						StopSnowing();
 					}
 				}
+
+				UpdateFallingBlocks();
 
 				#region Movement
 				if (inventory==InventoryType.Normal) {
@@ -4223,7 +4218,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 													if (destroingBlockType==(ushort)BlockId.Sand) DestroySandUp(destroyBlockX, destroyBlockY-1);
 
-													if (GameMethods.IsFallingBlock(destroingBlockType))
+													if (destroyBlockY>0) CheckBlockFallling(destroyBlockX, destroyBlockY-1);
 
 													if (Global.WorldDifficulty!=2) {
 
@@ -4252,65 +4247,66 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										case BlockType.Top:
 											{
 												Terrain chunk=terrain[destroyBlockX];
+												if (chunk.IsTopBlocks[destroyBlockY]){
+													switch (destroingBlockType) {
+														case (ushort)BlockId.Lamp:
+															lightsLamp.Remove((MashineBlockBasic)chunk.TopBlocks[destroyBlockY]);
+															break;
 
-												switch (destroingBlockType) {
-													case (ushort)BlockId.Lamp:
-														lightsLamp.Remove((MashineBlockBasic)chunk.TopBlocks[destroyBlockY]);
-														break;
+														case (ushort)BlockId.Windmill:
+															RemoveFromWintable(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.Windmill:
-														RemoveFromWintable(destroyBlockX,destroyBlockY);
-														break;
+														//case (ushort)BlockId.Barrel:
+														//    RemoveFromBarrels(destroyBlockX,destroyBlockY);
+														//    break;
 
-													//case (ushort)BlockId.Barrel:
-													//    RemoveFromBarrels(destroyBlockX,destroyBlockY);
-													//    break;
+														case (ushort)BlockId.Flag:
+															RemoveFromWintable(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.Flag:
-														RemoveFromWintable(destroyBlockX,destroyBlockY);
-														break;
+														case (ushort)BlockId.CactusBig:
+															DestroyCactusBig(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.CactusBig:
-														DestroyCactusBig(destroyBlockX,destroyBlockY);
-														break;
+														case (ushort)BlockId.CactusSmall:
+															DestroyCactusSmall(destroyBlockX,destroyBlockY);
+															break;
+													}
 
-													case (ushort)BlockId.CactusSmall:
-														DestroyCactusSmall(destroyBlockX,destroyBlockY);
-														break;
-												}
-
-												if (GameMethods.IsLeave(destroingBlockType)) {
-													Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
-													if (tree!=null) {
-														List<UShortAndByte> leaves=tree.TitlesLeaves;
-														for (int i = 0; i<leaves.Count; i++) {
-															if (leaves[i].X==destroyBlockX){
-																if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+													if (GameMethods.IsLeave(destroingBlockType)) {
+														Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
+														if (tree!=null) {
+															List<UShortAndByte> leaves=tree.TitlesLeaves;
+															for (int i = 0; i<leaves.Count; i++) {
+																if (leaves[i].X==destroyBlockX){
+																	if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+																}
 															}
 														}
 													}
-												}
 
-												chunk.TopBlocks[destroyBlockY]=null;
-												chunk.IsTopBlocks[destroyBlockY]=false;
+													chunk.TopBlocks[destroyBlockY]=null;
+													chunk.IsTopBlocks[destroyBlockY]=false;
 
-												chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY, id: destroingBlockType);
+													chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY, id: destroingBlockType);
 
-												if (destroingBlockType==(ushort)BlockId.Label
-												|| destroingBlockType==(ushort)BlockId.SolarPanel
-												|| destroingBlockType==(ushort)BlockId.Watermill
-												|| destroingBlockType==(ushort)BlockId.Windmill
-												|| destroingBlockType==(ushort)BlockId.FurnaceElectric
-												|| destroingBlockType==(ushort)BlockId.Macerator
-												|| destroingBlockType==(ushort)BlockId.Radio
-												|| destroingBlockType==(ushort)BlockId.Lamp
-												|| destroingBlockType==(ushort)BlockId.Miner) {
-													RefreshAroundLabels(destroyBlockX, destroyBlockY);
-												}
+													if (destroingBlockType==(ushort)BlockId.Label
+													|| destroingBlockType==(ushort)BlockId.SolarPanel
+													|| destroingBlockType==(ushort)BlockId.Watermill
+													|| destroingBlockType==(ushort)BlockId.Windmill
+													|| destroingBlockType==(ushort)BlockId.FurnaceElectric
+													|| destroingBlockType==(ushort)BlockId.Macerator
+													|| destroingBlockType==(ushort)BlockId.Radio
+													|| destroingBlockType==(ushort)BlockId.Lamp
+													|| destroingBlockType==(ushort)BlockId.Miner) {
+														RefreshAroundLabels(destroyBlockX, destroyBlockY);
+													}
 
-												if (Global.WorldDifficulty!=2) {
-													GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
-													RemovePartTool();
+													if (Global.WorldDifficulty!=2) {
+														GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
+														RemovePartTool();
+													} 
 												}
 											}
 											break;
@@ -4559,7 +4555,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									Particles.RemoveAt(i);
 								} else i++;
 
-								if (p.Position.Y!=p.LimitY) p.Update();
+								if (p.Position.Y<=p.LimitY) 
+									p.Update();
+							//	else {
+								//	i--;
+								//	Particles.RemoveAt(i);
+							//	}
 							}
 						}
 					}
@@ -7728,7 +7729,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				#endregion
-if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, mousePosRoundY), new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16),Color.White);
+if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16),Color.White);
 
 				if (debug) {
 					foreach (Energy r in energy) r.Draw();
@@ -9524,86 +9525,35 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						switch (chunk.TopBlocks[y].Id) {
 							case (ushort)BlockId.BucketWithLatex:
 								DropItemFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Resin,1), mousePosRoundX, mousePosRoundY);
-
-								//if (chunk.IsBackground[y]){
-								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
-								//} else {
-								//    chunk.SolidBlocks[y]=new AirSolidBlock{
-								//        Top=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY))
-								//    };
-								//}
-								//chunk.IsTopBlocks[y]=true;
-
-							  //  ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
 								bucketRubber.Add(new ShortAndByte(x, y));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.PlumLeavesWithPlums:
 								DropFoodFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum,1), mousePosRoundX, mousePosRoundY);
-								////((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-
-								//if (chunk.IsBackground[y]){
-								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//} else {
-								//    chunk.SolidBlocks[y]=new AirSolidBlock{
-								//        Top=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY))
-								//    };
-								//}
-
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.CherryLeavesWithCherries:
 								DropFoodFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry,1), mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.CherryLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.AppleLeavesWithApples:
 								DropFoodFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple,1), mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.AppleLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.LemonLeavesWithLemons:
 								DropFoodFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.LemonLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.OrangeLeavesWithOranges:
 								DropFoodFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OrangeLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.OliveLeavesWithOlives:
 								DropFoodFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OliveLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.KapokLeacesFibre:
 								DropItemFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.KapokLeaces,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 						}
 
@@ -9689,7 +9639,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockHills
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockJungle
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockPlains) {
-							chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Dirt, new Vector2(mousePosRoundX, mousePosRoundY));
+							chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Dirt, mousePosRoundVector);
 							barEnergy+=0.02f;
 							barWater+=0.02f;
 							if (barEnergy>32) barEnergy=32;
@@ -9697,7 +9647,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockClay) {
-							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Clay, new Vector2(mousePosRoundX, mousePosRoundY));
+							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Clay, mousePosRoundVector);
 							barEnergy+=0.02f;
 							barWater+=0.02f;
 							if (barEnergy>32) barEnergy=32;
@@ -9705,7 +9655,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockCompost) {
-							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Compost, new Vector2(mousePosRoundX, mousePosRoundY));
+							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Compost, mousePosRoundVector);
 							barEnergy+=0.02f;
 							barWater+=0.02f;
 							if (barEnergy>32) barEnergy=32;
@@ -9928,16 +9878,19 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						if (!chunk.IsSolidBlocks[y])  {
 							ushort blockId=GameMethods.SolidBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block = SolidBlockFromId(blockId, new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block = SolidBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (chunk.StartSomething>y)chunk.StartSomething=y;
 									chunk.SolidBlocks[y]=block;
 									chunk.IsSolidBlocks[y]=true;
 
+
 									chunk.RefreshLightingAddSolid(x, y);
 
 									InventoryRemoveSelectedItem();
+
+									CheckBlockFallling(x,y);
 									return;
 								}
 							}
@@ -9959,16 +9912,16 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 												switch (id) {
 													case (ushort)Items.Seeds:
                                                             chunk.TopBlocks[y] = FastRandom.Int(10) switch {
-                                                                1 => TopBlockFromId((ushort)BlockId.Orchid, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                2 => TopBlockFromId((ushort)BlockId.Rose, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                3 => TopBlockFromId((ushort)BlockId.Heather, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                4 => TopBlockFromId((ushort)BlockId.Violet, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                5 => TopBlockFromId((ushort)BlockId.GrassDesert, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                6 => TopBlockFromId((ushort)BlockId.GrassForest, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                7 => TopBlockFromId((ushort)BlockId.GrassHills, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                8 => TopBlockFromId((ushort)BlockId.GrassJungle, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                9 => TopBlockFromId((ushort)BlockId.GrassPlains, new Vector2(mousePosRoundX, mousePosRoundY)),
-                                                                _ => TopBlockFromId((ushort)BlockId.Dandelion, new Vector2(mousePosRoundX, mousePosRoundY)),
+                                                                1 => TopBlockFromId((ushort)BlockId.Orchid, mousePosRoundVector),
+                                                                2 => TopBlockFromId((ushort)BlockId.Rose, mousePosRoundVector),
+                                                                3 => TopBlockFromId((ushort)BlockId.Heather, mousePosRoundVector),
+                                                                4 => TopBlockFromId((ushort)BlockId.Violet, mousePosRoundVector),
+                                                                5 => TopBlockFromId((ushort)BlockId.GrassDesert, mousePosRoundVector),
+                                                                6 => TopBlockFromId((ushort)BlockId.GrassForest, mousePosRoundVector),
+                                                                7 => TopBlockFromId((ushort)BlockId.GrassHills, mousePosRoundVector),
+                                                                8 => TopBlockFromId((ushort)BlockId.GrassJungle, mousePosRoundVector),
+                                                                9 => TopBlockFromId((ushort)BlockId.GrassPlains, mousePosRoundVector),
+                                                                _ => TopBlockFromId((ushort)BlockId.Dandelion, mousePosRoundVector),
                                                             };
                                                             chunk.IsTopBlocks[y]=true;
 														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
@@ -10075,7 +10028,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						if (!chunk.IsBackground[y]) {
 							ushort blockId=GameMethods.BackBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block=BackBlockFromId(blockId,new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block=BackBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
@@ -10095,7 +10048,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 						if (!chunk.IsTopBlocks[y]) {
 							ushort blockId=GameMethods.TopBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block=TopBlockFromId(blockId, new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block=TopBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (GameMethods.IsDirtPlaceable(blockId)) {
@@ -15374,9 +15327,17 @@ if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, 
 									ushort x=(ushort)(*current++ | (*current++<<8));
 									byte y=*current++;
 									if (terrain[x].IsBackground[y]) {
-										((WoodBlock)terrain[x].Background[y]).tree=tree;
+										if (terrain[x].Background[y] is WoodBlock w) {
+											w.tree=tree;
 
-										tree.TitlesWood.Add(new UShortAndByte(x, y));
+											tree.TitlesWood.Add(new UShortAndByte(x, y));
+										} 
+										#if DEBUG
+										else { 
+											throw new Exception("ERROR while loading, it may case wrong generated world");
+										}
+										#endif
+
 									}
 								}
 
@@ -19303,7 +19264,7 @@ if (sampling!=1f) {
 			//	Vector2 vec=new(x, y);
 
 				if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Color.LightBlue);
-				else spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Color.White);
+				else spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Global.ColorWhite);
 				vec.Y+=40;
 			}
 
@@ -25135,107 +25096,154 @@ if (sampling!=1f) {
 			return int.MinValue;
 		}
 
-		//void UpdateFallingBlocks() {
-		//    for (int i=0; i<fallingBlocks.Count;) {
-		//        FallingBlockInfo d = fallingBlocks[i];
-		//        NormalBlock block=d.block;
+        void UpdateFallingBlocks() {
+            for (int i = 0; i < fallingBlocks.Count;) {
+                FallingBlockInfo d = fallingBlocks[i];
+                NormalBlock block=d.block;
 
-		//        // Only down
-		//        block.Position.Y++;
-		//        if (d.side) {
-		//            if (block.Position.X<d.to16.X) block.Position.X++;
-		//            else block.Position.X--;
-		//        }
+                // Only down
+                block.Position.Y++;
+                //if (d.side) {
+                //    if (block.Position.X < d.to16.X) block.Position.X++;
+                //    else block.Position.X--;
+                //}
 
-		//        if (block.Position.Y==d.to16.X) {
-		//            fallingBlocks.RemoveAt(i);
-		//        } else i++;
+                if (block.Position.Y == d.to16.Y) {
+					Terrain chunkFrom=terrain[d.from.X];
+					Terrain chunkTo=terrain[d.to.X];
+					chunkFrom.SolidBlocks[d.from.Y]=null;
+					chunkFrom.IsSolidBlocks[d.from.Y]=false;
 
-		//    }
-		//}
+					chunkTo.SolidBlocks[d.to.Y]=block;
+					chunkTo.IsSolidBlocks[d.to.Y]=true;
 
-		//void CheckBlocksAfterRemove(int x, int y) {
-		//    if (y>0) {
-		//        if (terrain[x].IsSolidBlocks[y-1]) {
-		//            Block b =terrain[x].SolidBlocks[y-1];
-		//            if (b is NormalBlock n) {
-		//                terrain[x].SolidBlocks[y]=n;
-		//                terrain[x].SolidBlocks[y-1]=null;
+					if (chunkTo.IsTopBlocks[d.to.Y]) { 
+						GetItemsFromBlock(chunkTo.TopBlocks[d.to.Y].Id, d.to.X, d.to.Y);
+						chunkTo.IsTopBlocks[d.to.Y]=false;
+						chunkTo.TopBlocks[d.to.Y]=null;
+					}
 
-		//                fallingBlocks.Add(new FallingBlockInfo {
-		//                    block=n,
-		//                    to=new DInt{X=x, Y=y-1 },
-		//                    to16=new DInt{X=x*16, Y=(y-1)*16 }
-		//                });
-		//                return;
-		//            }
-		//        }
+					if (chunkTo.IsBackground[d.to.Y]) { 
+						GetItemsFromBlock(chunkTo.Background[d.to.Y].Id, d.to.X, d.to.Y);
+						chunkTo.IsBackground[d.to.Y]=false;
+						chunkTo.Background[d.to.Y]=null;
+					}
+				
+					chunkFrom.RefreshLightingRemoveSolid(d.from.X, d.from.Y);
+					chunkTo.RefreshLightingAddSolid(d.to.X, d.to.Y);
 
-		//        if (FastRandom.Bool()) {
-		//            if (terrain[x-1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x-1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x-1].SolidBlocks[y-1]=null;
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
+					//if (block is NormalBlock b) {
+						Texture2D tex = block.Texture;
 
-		//            if (terrain[x+1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x+1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x+1].SolidBlocks[y-1]=null;
+						for (int j=0; j<8; j++) {
+							float z=FastRandom.Float();
+							Particles.Add(new ParticleMess {
+								Disepeard=50,
+								Texture=tex,
+								Position=new Vector2(d.to.X*16f+(j)*2, d.to.Y*16+8),
+								Source= z>0.5f ? new Rectangle(j, 0, 2, 2) : new Rectangle(j, 0, 1, 1),
+								HSpeed=(j-4f)*0.1f+FastRandom.Float()*0.2f/*-1.5f-z*/,
+								VSpeed=-1-z/*(i-4)*0.1f*/,
+								LimitY=d.to.Y*16+16,
+								Color=(FastRandom.Bool() ? Color.Gray : Color.LightGray)* ((FastRandom.Float()+1)*0.5f)
+							});
+						}
+					//}
+					
+		
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
-		//        }else{
-		//            if (terrain[x+1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x+1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x+1].SolidBlocks[y-1]=null;
+                    fallingBlocks.RemoveAt(i);
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
+					if (d.from.Y>0)CheckBlockFallling(d.from.X,d.from.Y-1);
+                }
+                else i++;
 
-		//            if (terrain[x-1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x-1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x-1].SolidBlocks[y-1]=null;
+            }
+        }
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
-		//        }
-		//    }
-		//}
+        //void CheckBlocksAfterRemove(int x, int y) {
+        //    if (y>0) {
+        //        if (terrain[x].IsSolidBlocks[y-1]) {
+        //            Block b =terrain[x].SolidBlocks[y-1];
+        //            if (b is NormalBlock n) {
+        //                terrain[x].SolidBlocks[y]=n;
+        //                terrain[x].SolidBlocks[y-1]=null;
 
-		static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
+        //                fallingBlocks.Add(new FallingBlockInfo {
+        //                    block=n,
+        //                    to=new DInt{X=x, Y=y-1 },
+        //                    to16=new DInt{X=x*16, Y=(y-1)*16 }
+        //                });
+        //                return;
+        //            }
+        //        }
+
+        //        if (FastRandom.Bool()) {
+        //            if (terrain[x-1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x-1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x-1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+
+        //            if (terrain[x+1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x+1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x+1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+        //        }else{
+        //            if (terrain[x+1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x+1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x+1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+
+        //            if (terrain[x-1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x-1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x-1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
 			if (a1==a2) return true;
 			if (a1.Length!=a2.Length) return false;
 
@@ -25707,11 +25715,11 @@ if (sampling!=1f) {
 						Particles.Add(new ParticleMess {
 							Disepeard=50,
 							Texture=tex,
-							Position=new Vector2(x, d.Y*16-1f),
+							Position=new Vector2(x, d.Y*16-3f),
 							Source=new Rectangle(i, 0, z>0.5f ? 2 : 1, z>0.5f ? 2 : 1),
-							HSpeed=-1.5f-z,
-							VSpeed=(i-4+FastRandom.FloatHalf()/**0.5f*/)*0.1f,
-							LimitY=(x<blocks[1].X*16) ? blocks[0].Y*16-2 : blocks[1].Y*16-2,
+							HSpeed=(i-4+FastRandom.FloatHalf()/**0.5f*/)*0.1f,
+							VSpeed=-2.5f-z,
+							LimitY=((x<blocks[1].X*16) ? blocks[0].Y*16 : blocks[1].Y*16)-(z>0.5f ? 2 : 1),
 							Color=(FastRandom.Bool() ? Color.White : Color.LightGray) * ((FastRandom.Float()+1)*0.5f)
 						});
 					}
@@ -25725,15 +25733,15 @@ if (sampling!=1f) {
 					Texture2D tex = b.Texture;
 
 					for (int i=0; i<8; i++) {
-						float z=FastRandom.Float();
+						int z=FastRandom.Int2()+1;
 						Particles.Add(new ParticleMess {
 							Disepeard=50,
 							Texture=tex,
-							Position=new Vector2(PlayerX+(i-4), d.Y*16-1f),
-							Source=new Rectangle(i, 0, z>0.5f ? 2 : 1, z>0.5f ? 2 : 1),
-							HSpeed=-1.5f-z,
-							VSpeed=(i-4)*0.1f,
-							LimitY=d.Y*16-2,
+							Position=new Vector2(PlayerX+(i-4), d.Y*16-3f),
+							Source=new Rectangle(i, 0, z, z),
+							HSpeed=(i-4)*0.1f,
+							VSpeed= -1.5f - z*0.5f,
+							LimitY=d.Y*16-z,
 							Color=(FastRandom.Bool() ? Color.White : Color.LightGray)* ((FastRandom.Float()+1)*0.5f)
 						});
 					}
@@ -26768,6 +26776,26 @@ if (sampling!=1f) {
 				throw new Exception("Manual error");
 			}
 			return false;
+		}
+
+		void CheckBlockFallling(int x, int y) {
+			Terrain chunk=terrain[x];
+			if (chunk.IsSolidBlocks[y]) {
+				if (!chunk.IsSolidBlocks[y+1]) {
+					if (GameMethods.IsFallingBlock(chunk.SolidBlocks[y].Id)) {
+						int fallTo=y+1;
+						while (!chunk.IsSolidBlocks[fallTo+1]) {  fallTo++; }
+
+						fallingBlocks.Add(new FallingBlockInfo(){ 
+							block=(NormalBlock)chunk.SolidBlocks[y],
+							to=new DInt(x, fallTo/*-1*/),
+							from=new DInt(x, y/*-1*/),
+							to16=new DInt(x*16, fallTo*16/*-16*/)
+						//	side=true
+						});
+					}
+				}
+			}
 		}
 	}
 }
