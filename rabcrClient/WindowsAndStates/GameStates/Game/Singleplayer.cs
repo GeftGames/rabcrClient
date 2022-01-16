@@ -19,7 +19,7 @@ namespace rabcrClient {
 		Vector2 EarthShakeP1, EarthShakeP2, EarthShakePA;
 		#region Varibles
 		SoundEffectInstance SoundWind, SoundRain;
-		float sampling;
+		float SuperSamplingActing=-1;
 		float scrollBuffer=0f;
 		enum Precipitation : byte {
 			None,
@@ -770,10 +770,10 @@ namespace rabcrClient {
 			snowTopTexture,
 
 			// Bars
-			barEatTexture,
-			barWaterTexture,
-			barOxygenTexture,
-			barHeartTexture,
+			//barEatTexture,
+			//barWaterTexture,
+			//barOxygenTexture,
+			//barHeartTexture,
 
 			// Textures blocks
 			//rocks0Texture,
@@ -1266,7 +1266,7 @@ namespace rabcrClient {
 
 		float WindowXPlayer, WindowYPlayer;
 
-		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2;
+		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2, targetGame4;
 
 		readonly BlendState Multiply = new() {
 			AlphaSourceBlend=Blend.Zero,
@@ -1302,11 +1302,13 @@ namespace rabcrClient {
 		#endregion
 
 		#region Bars
-		float barWater = 16;
-		float barEat = 16;
-		float barOxygen=0;
-		float barHeart=16;
-		float barEnergy=0;
+		//float barWater = 16;
+		//float barEat = 16;
+		//float barOxygen=0;
+		//float barHeart=16;
+		//float barEnergy=0;
+
+		GameBar barWater, barEat, barOxygen, barHeart, barEnergy;
 		#endregion
 
 		#region Debug
@@ -1404,26 +1406,25 @@ namespace rabcrClient {
 			for (int i2=0; i2<Global.WindowHeight; i2++){ 
 				if (wind) {
 					for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-						int addSide=Global.WindowHeightHalf;
 						if (windRirectionRight) {
 							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
 								if (Setting.BetterSnowAndRain) {
 									if (FastRandom.Bool())
 										snowDotsSmall.Add(
 											new ParticleSnowSmall(gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10+i2 },
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
 												HSpeed=windForce*0.5f
 										});
 									else 
 										snowDots2.Add(
 											new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10+i2 },
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
 												HSpeed=windForce*0.5f
 										});
 								} else { 
 									if (FastRandom.Bool()) snowDots2.Add(
 										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10+i2 },
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
 											HSpeed=windForce*0.5f
 									});
 								}
@@ -1434,18 +1435,18 @@ namespace rabcrClient {
 									if (FastRandom.Bool())
 										snowDotsSmall.Add(
 											new ParticleSnowSmall(gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10+i2 },
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
 												HSpeed=-windForce*0.5f
 										});
 									else snowDots2.Add(
 										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10+i2 },
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
 											HSpeed=-windForce*0.5f
 										});
 								} else { 
 									if (FastRandom.Bool()) snowDots2.Add(
 										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10+i2 },
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
 											HSpeed=-windForce*0.5f
 										});
 								}
@@ -1505,9 +1506,220 @@ namespace rabcrClient {
         public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 		RasterizerState rasterizerState;
 		const float noon=(dayEnd-(dayStart+1))*hour;
+
+		void SetSuperSampling() {
+			// No SSAA
+			if (Setting.UpScalingSuperSapling==1f) {
+				SuperSamplingActing=1f;
+				return;
+			}
+
+			// Pixelizer SSAA
+			if (Setting.UpScalingSuperSapling<1f) {
+				SuperSamplingActing=1f/Setting.Zoom;
+				targetGame?.Dispose();
+				targetGame=new RenderTarget2D(Graphics, 
+					(int)(Global.WindowWidth*SuperSamplingActing), 
+					(int)(Global.WindowHeight*SuperSamplingActing), 
+					false, 
+					SurfaceFormat.Color, 
+					DepthFormat.Depth24, 
+					1, 
+					RenderTargetUsage.PlatformContents);
+				return;
+			}
+
+			float maxUpscaling=20f;
+            if (Graphics.GraphicsProfile==GraphicsProfile.HiDef) {
+                float scale = 8192f/Global.WindowWidth;
+                if (scale<maxUpscaling)maxUpscaling=scale;
+
+                scale = 8192f/Global.WindowHeight;
+                if (scale<maxUpscaling) maxUpscaling=scale;
+            } else { 
+                float scale = 4096f/Global.WindowWidth;
+                if (scale<maxUpscaling) maxUpscaling=scale;
+
+                scale = 4096f/Global.WindowHeight;
+                if (scale<maxUpscaling) maxUpscaling=scale;
+            }
+
+			if (Setting.UpScalingSuperSapling==2f) {
+				if (maxUpscaling>=Setting.UpScalingSuperSapling) { 
+					SuperSamplingActing=2f;
+						targetGame?.Dispose();
+						targetGame=new RenderTarget2D(
+							Graphics, 
+							Global.WindowWidth*2, 
+							Global.WindowHeight*2, 
+							false, 
+							SurfaceFormat.Color, 
+							DepthFormat.Depth24Stencil8, 
+							1, 
+							RenderTargetUsage.PlatformContents
+						);
+					return;
+				} else { 
+					SuperSamplingActing=1f;
+					targetGame?.Dispose();
+					return;
+				}
+			}
+
+			if (Setting.UpScalingSuperSapling==4f) {
+				if (maxUpscaling>=4f) { 
+					SuperSamplingActing=4f;
+
+					targetGame?.Dispose();
+					targetGame=new RenderTarget2D(
+						Graphics, 
+						Global.WindowWidth*4, 
+						Global.WindowHeight*4, 
+						false, 
+						SurfaceFormat.Color, 
+						DepthFormat.Depth24Stencil8, 
+						1, 
+						RenderTargetUsage.PlatformContents
+					);
+
+					targetGame2?.Dispose();
+					targetGame2=new RenderTarget2D(
+						Graphics, 
+						Global.WindowWidth*2, 
+						Global.WindowHeight*2, 
+						false, 
+						SurfaceFormat.Color, 
+						DepthFormat.Depth24Stencil8, 
+						1, 
+						RenderTargetUsage.PlatformContents
+					);
+					return;
+				} else { 
+					if (maxUpscaling>=2f) {
+						SuperSamplingActing=2f;
+
+						targetGame?.Dispose();
+						targetGame=new RenderTarget2D(
+							Graphics, 
+							Global.WindowWidth*2, 
+							Global.WindowHeight*2, 
+							false, 
+							SurfaceFormat.Color, 
+							DepthFormat.Depth24Stencil8, 
+							1, 
+							RenderTargetUsage.PlatformContents
+						);
+
+						targetGame2?.Dispose();
+						return;
+					} else {
+						SuperSamplingActing=1f;
+						targetGame?.Dispose();
+						targetGame2?.Dispose();
+						return;
+					}
+				}
+			}
+			
+			//if (Setting.UpScalingSuperSapling==8f) {
+			//	if (maxUpscaling>=Setting.UpScalingSuperSapling) { 
+			//		SuperSamplingActing=Setting.UpScalingSuperSapling;
+               
+			//		targetGame?.Dispose();
+			//		targetGame=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*8, 
+			//			Global.WindowHeight*8, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
+
+			//		targetGame2?.Dispose();
+			//		targetGame2=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*4, 
+			//			Global.WindowHeight*4, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
+
+			//		targetGame4?.Dispose();
+			//		targetGame4=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*2, 
+			//			Global.WindowHeight*2, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
+			//		return;
+			//	} else { 
+			//		if (maxUpscaling>=4f) {
+			//			SuperSamplingActing=4f;
+			//			targetGame?.Dispose();
+			//			targetGame=new RenderTarget2D(
+			//				Graphics, 
+			//				Global.WindowWidth*4, 
+			//				Global.WindowHeight*4, 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
+
+			//			targetGame2?.Dispose();
+			//			targetGame2=new RenderTarget2D(
+			//				Graphics, 
+			//				Global.WindowWidth*2, 
+			//				Global.WindowHeight*2, 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
+
+			//			targetGame4?.Dispose();
+			//		} else if (maxUpscaling>=2f) {
+			//			SuperSamplingActing=2f;
+			//			targetGame?.Dispose();
+			//			targetGame=new RenderTarget2D(
+			//				Graphics, 
+			//				(int)(Global.WindowWidth*SuperSamplingActing), 
+			//				(int)(Global.WindowHeight*SuperSamplingActing), 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
+
+			//			targetGame2?.Dispose();
+			//			targetGame4?.Dispose();
+			//			return;
+			//		} else {
+			//			SuperSamplingActing=1f;
+			//			targetGame?.Dispose();
+			//			targetGame2?.Dispose();
+			//			targetGame4?.Dispose();
+			//			return;
+			//		}
+			//	}
+			//}
+		}
+
 		public unsafe override void Init() {
 			invertedMouseValue = Setting.InvertedMouse ? -1 : 1;
-			sampling=(Setting.UpScalingSuperSapling<=0) ? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
+		//	SuperSamplingActing=(Setting.UpScalingSuperSapling<=0) ? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
 			//Setting.UpScalingSuperSapling=1.00001f;
 		//	Setting.Multisapling=16;
 
@@ -2286,12 +2498,12 @@ namespace rabcrClient {
 			invRashberryTexture=GetDataTexture("Plants/ForInventory/Rashberry");
 			invBlueberryTexture=GetDataTexture("Plants/ForInventory/Blueberry");
 			flaxInvTexture=GetDataTexture("Plants/ForInventory/Flax");
- barEnergyTexture=GetDataTexture("Bars/Lightning");
- scrollbarUpTexture=GetDataTexture("Buttons/Scrollbar/Top");
+		
+			scrollbarUpTexture=GetDataTexture("Buttons/Scrollbar/Top");
 			scrollbarBetweenTexture=GetDataTexture("Buttons/Scrollbar/Center");
 			scrollbarDownTexture=GetDataTexture("Buttons/Scrollbar/Bottom");
-		radioInvTexture=GetDataTexture("Blocks/ForInventory/Radio");
-  sunTexture = GetDataTexture("Particles/Sun");
+			radioInvTexture=GetDataTexture("Blocks/ForInventory/Radio");
+			sunTexture = GetDataTexture("Particles/Sun");
 
 			fishTexture0 = GetDataTexture("Animals/Fish/Fish0");
 			fishTexture1 = GetDataTexture("Animals/Fish/Fish1");
@@ -2309,11 +2521,12 @@ namespace rabcrClient {
 
 destructionTexture = GetDataTexture("Animations/destruction");
 			TextureMoon = GetDataTexture("Animations/Moon");
-			barEatTexture= GetDataTexture("Bars/Eat");
-			barWaterTexture = GetDataTexture("Bars/Water");
-			barOxygenTexture = GetDataTexture("Bars/Oxygen");
-			barHeartTexture = GetDataTexture("Bars/Heart");
+			//barEatTexture= 
+			//barWaterTexture =
+			//barOxygenTexture = 
+			//barHeartTexture = 
 
+		
 			#endregion
 
 			#region Player
@@ -2673,10 +2886,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			lightsLamp=new List<MashineBlockBasic>();
 			#endregion
 
+			barEnergy=new GameBar(GetDataTexture("Bars/Lightning"),4+4*36);
+			barEat=new GameBar(GetDataTexture("Bars/Eat"), 4+3*36);
+			barWater=new GameBar(GetDataTexture("Bars/Water"), 4+2*36);
+			barOxygen= new GameBar(GetDataTexture("Bars/Oxygen"), 4+1*36);
+			barHeart=new GameBar(GetDataTexture("Bars/Heart"), 4+0*36);
+
 			#region Set basic
-			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*sampling, Setting.Zoom*sampling, 0);
-			ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
-			if (sampling!=1f) MatrixUpScaling = Matrix.CreateScale(sampling, sampling, 0);
+			
 		//	else MatrixUpScaling = Matrix.CreateScale(1f, 1f, 0);
 			newKeyboardState = Keyboard.GetState();
 			newMouseState = Mouse.GetState();
@@ -2752,11 +2969,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					time =int.Parse(sr.ReadLine());
 					if (time>dayLenght)time=0;
 					colorAlpha = Color.White;
-					barWater = float.Parse(sr.ReadLine());
-					barEat = float.Parse(sr.ReadLine());
-					barHeart = float.Parse(sr.ReadLine());
-					barOxygen = float.Parse(sr.ReadLine());
-
+					barWater.Value = float.Parse(sr.ReadLine());
+					barEat.Value  = float.Parse(sr.ReadLine());
+					barHeart .Value = float.Parse(sr.ReadLine());
+					barOxygen.Value  = float.Parse(sr.ReadLine());
+					barEnergy.Value  = float.Parse(sr.ReadLine());
+					
 					PlayerX = int.Parse(sr.ReadLine());
 					PlayerY = int.Parse(sr.ReadLine());
 
@@ -2788,6 +3006,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				precipitation=FastRandom.Bool();
 				changeRain=FastRandom.Int(1250);
+
+				barEnergy.Value=0;
+				barEat.Value=0;
+				barWater.Value=0;
+				barOxygen.Value=0;
+				barHeart.Value=16;
 			}
 
 			if (File.Exists(pathToWorld+@"\Clothes.bin")) {
@@ -2990,13 +3214,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return *(float*)&n;
 					}
 				}
-				for (; i<InventoryNormal.Length; i++) {
-					InventoryNormal[i]=itemBlank;
-				}
+				for (; i<InventoryNormal.Length; i++) InventoryNormal[i]=itemBlank;
 			} else {
-				for (int i=0; i<InventoryNormal.Length; i++) {
-					InventoryNormal[i]=itemBlank;
-				}
+				for (int i=0; i<InventoryNormal.Length; i++)  InventoryNormal[i]=itemBlank;
 
 				switch (startUpItems) {
 					case (int)StartUpItems.Basic:
@@ -3136,22 +3356,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			//CheckTerrain("After Load()");
 			//#endif
 
-			Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*sampling, 
-				Global.WindowHeightHalf*sampling, 
-			0));
-
-			TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf, 
-				Global.WindowHeightHalf, 
-			0));
+		
 
 			sunLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
-			if (sampling!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-			if (sampling==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+		
+			//if (SuperSamplingActing!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*SuperSamplingActing), (int)(Global.WindowHeight*SuperSamplingActing), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//if (SuperSamplingActing==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			////if (SuperSamplingActing==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			//dayAlpha
 			if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
 			 //   dayAlpha=(((time-hour*7f)/hour/2f))+1f;
@@ -3315,6 +3529,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	Graphics.RasterizerState.MultiSampleAntiAlias=Setting.Multisapling>1;
 			 Graphics.PresentationParameters.MultiSampleCount = Setting.Multisapling;
 			GraphicsManager.ApplyChanges();
+			SetSuperSampling();
+			ZoomMatrix = Matrix.CreateScale(Setting.Zoom*SuperSamplingActing, Setting.Zoom*SuperSamplingActing, 0);
+			ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
+			
+			if (SuperSamplingActing!=1f) MatrixUpScaling = Matrix.CreateScale(SuperSamplingActing, SuperSamplingActing, 0);
+				Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
+				Global.WindowWidthHalf*SuperSamplingActing, 
+				Global.WindowHeightHalf*SuperSamplingActing, 
+			0));
+
+			TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
+				Global.WindowWidthHalf, 
+				Global.WindowHeightHalf, 
+			0));
+			
 			//Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
 
 		//	if ((int)Setting.AnimationsGame==(int)Setting.GameAnimations.NormalQuality) {
@@ -3334,8 +3563,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				
 		//	}
 
-			weatherWindowWidth=(int)(Global.WindowWidth*sampling)+5;
-			weatherWindowHeight=(int)(Global.WindowHeight*sampling)+3;
+			weatherWindowWidth=(int)(Global.WindowWidth*SuperSamplingActing)+5;
+			weatherWindowHeight=(int)(Global.WindowHeight*SuperSamplingActing)+3;
 		}
 
 		public override void Shutdown() {
@@ -3401,11 +3630,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			cpuUsage?.Dispose();
 
 			modificatedLightTarget.Dispose();
-			if (sampling!=1f) targetGame.Dispose();
-			if (sampling==4f) targetGame2.Dispose();
+			targetGame?.Dispose();
+			targetGame2?.Dispose();
+			targetGame4?.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
 			Debug.WriteLine("EndOf Saving");
+
+			
 		}
 
 		public override unsafe void Update(GameTime gameTime) {
@@ -3739,27 +3971,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						bool swmove=false;
 					 //   bool swim;
 						if (canbreatheDuringSwimming) {
-							barOxygen--;
-							if (barOxygen<0)barOxygen=0;
+							barOxygen.Value--;
+							if (barOxygen.Value<0f) barOxygen.Value=0f;
 						} else {
 
-							if (barOxygen>32) {
-								barHeart+=.08f;
-								if (barHeart>32) Die(Lang.Texts[161]);
-							}else  barOxygen+=0.05f;
+							if (barOxygen.Value>32f) {
+								barHeart.Value+=.08f;
+								if (barHeart.Value>32f) Die(Lang.Texts[161]);
+							}else  barOxygen.Value+=0.05f;
 						}
 
 						if (newKeyboardState.IsKeyDown(Setting.KeyJump)) {
 							if (CheckLadder()) {
 								PlayerY--;
 
-								barEnergy+=0.01f;
-								barWater+=0.01f;
+								barEnergy.Value+=0.01f;
+								barWater.Value+=0.01f;
 								gravitySpeed=-2f;
 							} else if (swimming) {
 								PlayerY--;
-								barEnergy+=0.01f;
-								barWater+=0.01f;
+								barEnergy.Value+=0.01f;
+								barWater.Value+=0.01f;
 								gravitySpeed=-1f;
 								swmove=true;
 							} else {
@@ -3768,7 +4000,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										gravitySpeed=-7;
 										PlayerY--;
 
-										barEnergy+=0.05f;
+										barEnergy.Value+=0.05f;
 									}
 								}
 							}
@@ -3786,7 +4018,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (keyLeft != keyRight) {
 							if (keyLeft) {
 								// move
-								if (barEnergy<31) {
+								if (barEnergy.Value<31f) {
 									if (newKeyboardState.IsKeyDown(Setting.KeyRun)) {
 										needSpeed=4;
 									  //  barEnergy-=0.02f;
@@ -3795,7 +4027,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								speedDir=-1;
 							} else {
 								// move
-								if (barEnergy<31) {
+								if (barEnergy.Value<31f) {
 									if (newKeyboardState.IsKeyDown(Setting.KeyRun)) {
 										needSpeed=4;
 									  //  barEnergy-=0.02f;
@@ -3821,7 +4053,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						if (speed>0) {
 							swmove=true;
-							if (barEnergy<36+0.02f*speed)barEnergy+=0.018f*speed;
+							if (barEnergy.Value<36+0.02f*speed) barEnergy.Value+=0.018f*speed;
 
 							//right
 							if (speedDir==1) {
@@ -4068,7 +4300,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			   //             }
 					 //   }
 
-						if (barEnergy>32) barEnergy=32;
+						if (barEnergy.Value>32f) barEnergy.Value=32f;
 
 						PlayerGravity();
 					}
@@ -4706,8 +4938,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										|| lb.Id==(ushort)BlockId.LemonLeavesWithLemons
 
 										|| lb.Id==(ushort)BlockId.MangroveLeaves
+										|| lb.Id==(ushort)BlockId.AcaciaLeaves
+
 										) {
-											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*FastRandom.Float(),*/windRirectionRight,precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
+											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*FastRandom.Float(),*/windRirectionRight, precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
 												texture=lb.Texture
 											};
 											FallingLeaves.Add(fl);
@@ -4744,7 +4978,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							while (text.Length*13>750) text=text.Substring(0,text.Length-1);
 							if (newText!=text || textWriting==null) {
 								int xx=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
-								while (text.Length*13>750) text=text.Substring(0,text.Length-1);
+								while (text.Length*13>750) text=text.Substring(0, text.Length-1);
 
 								int m = BitmapFont.bitmapFont18.MeasureTextSingleLineX(text);
 								textWriting=new TextWithMeasure(text,xx-m/2+5,Global.WindowHeightHalf-55-50+5+5/*,BitmapFont.bitmapFont18*/);
@@ -4755,11 +4989,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									inventory=0;
 									diserpeard=255;
 
-								   // DInt m=;
-
 									int texts= BitmapFont.bitmapFont18.MeasureTextSingleLineX(text)/2;
 									int x=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
-									gedo=new GeDo(text,x-texts+20-10,Global.WindowHeightHalf-40-50-3);
+									gedo=new GeDo(text, x-texts+20-10,Global.WindowHeightHalf-40-50-3);
 									textWriting=null;
 								}
 							}
@@ -5527,17 +5759,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region  bars
-				if (barEnergy<=32) {
-					if (barEnergy>0) {
-						if (barEat>=0) {
-							if (barWater>=0) {
-								barEat+=0.0006f;
-								barWater+=0.0008f;
-								barEnergy-=0.04f;
+				if (barEnergy.Value<=32f) {
+					if (barEnergy.Value>0f) {
+						if (barEat.Value>=0f) {
+							if (barWater.Value>=0f) {
+								barEat.Value+=0.0006f;
+								barWater.Value+=0.0008f;
+								barEnergy.Value-=0.04f;
 
-								if (barEat<0) barEat=0;
-								if (barWater>32) barWater=32;
-								if (barEnergy<0) barEnergy=0;
+								if (barEat.Value<0f) barEat.Value=0f;
+								if (barWater.Value>32f) barWater.Value=32f;
+								if (barEnergy.Value<0f) barEnergy.Value=0f;
 							}
 						}
 					}
@@ -5549,26 +5781,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (Temperature<0) {
 						if (wind) {
 							for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-								int addSide=Global.WindowHeightHalf;
 								if (windRirectionRight) {
 									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
 										if (Setting.BetterSnowAndRain) {
 											if (FastRandom.Bool())
 												snowDotsSmall.Add(
 													new ParticleSnowSmall(gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10 },
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
 														HSpeed=windForce*0.5f
 												});
 											else 
 												snowDots2.Add(
 													new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10 },
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
 														HSpeed=windForce*0.5f
 												});
 										} else { 
 											if (FastRandom.Bool()) snowDots2.Add(
 												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide), Y=-10 },
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
 													HSpeed=windForce*0.5f
 											});
 										}
@@ -5579,18 +5810,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (FastRandom.Bool())
 												snowDotsSmall.Add(
 													new ParticleSnowSmall(gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
 														HSpeed=-windForce*0.5f
 												});
 											else snowDots2.Add(
 												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
 													HSpeed=-windForce*0.5f
 												});
 										} else { 
 											if (FastRandom.Bool()) snowDots2.Add(
 												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
 													HSpeed=-windForce*0.5f
 												});
 										}
@@ -5628,9 +5859,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					} else {
 						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-							for (int i=0; i<(Global.WindowWidth+10)/300; i++){
+							for (int i=0; i<(Global.WindowWidth+10)/300; i++) {
 								if (Setting.BetterSnowAndRain) 
-									rainDots.Add(new ParticleRain(FastRandom.Float()*0.8f+0.2f, gravity*20f+0.2f) { Position=new Vector2{X=FastRandom.Int(/*848*/weatherWindowWidth+20)-10, Y=-10 },HSpeed=windForce });
+									rainDots.Add(new ParticleRain(FastRandom.Float()*0.8f+0.2f, gravity*20f+0.2f) { 
+										Position=new Vector2{X=FastRandom.Int(weatherWindowWidth+20)-10, Y=-10 },
+										HSpeed=windForce 
+									});
 							}
 						}
 						if (Global.HasSoundGraphics) {
@@ -5655,7 +5889,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					int w=(int)WindowY-8, w2=(int)WindowY/*+*/-8;
 
-					for (int x=(terrainStartIndexX>2 ? terrainStartIndexX-2 : terrainStartIndexX); x<terrainStartIndexW+2 && x<TerrainLength; x++) {
+					for (int x=terrainStartIndexX>2 ? terrainStartIndexX-2 : terrainStartIndexX; x<terrainStartIndexW+2 && x<TerrainLength; x++) {
 						Terrain chunk=terrain[x];
 						int f=chunk.LightPosFull16;
 
@@ -6306,18 +6540,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 								}
 								if (!airj) {
-									barOxygen+=0.25f;
-									if (barOxygen>32) {
-										barOxygen=32;
-										barHeart+=0.3f;
-										if (barHeart>32) {
+									barOxygen.Value+=0.25f;
+									if (barOxygen.Value>32f) {
+										barOxygen.Value=32f;
+										barHeart.Value+=0.3f;
+										if (barHeart.Value>32f) {
 											Die(Lang.Texts[297]);
 										}
 									}
 								}
 							} else {
-								barHeart+=0.5f;
-								if (barHeart>32) {
+								barHeart.Value+=0.5f;
+								if (barHeart.Value>32f) {
 									Die(Lang.Texts[299]);
 								}
 							}
@@ -6358,25 +6592,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 
 					#region Bars
-					if (barEat<5 && barWater<5) {
-						barHeart-=.06f;
-						if (barHeart<0) barHeart=0;
+					if (barEat.Value<5f && barWater.Value<5f) {
+						barHeart.Value-=.06f;
+						if (barHeart.Value<0f) barHeart.Value=0f;
 					}
 
-					if (barEat>25 && barWater>25) {
-						barHeart+=.06f;
-						if (barHeart>32) Die(Lang.Texts[162]);
+					if (barEat.Value>25 && barWater.Value>25f) {
+						barHeart.Value+=.06f;
+						if (barHeart.Value>32f) Die(Lang.Texts[162]);
 					}
 
 					if (DetectLava) {
-						barHeart+=.06f;
-						if (barHeart>32) Die(Lang.Texts[163]);
+						barHeart.Value+=.06f;
+						if (barHeart.Value>32f) Die(Lang.Texts[163]);
 					}
 
-					if (barEnergy>31) {
+					if (barEnergy.Value>31f) {
 						if (FastRandom.Bool_33_333Percent()/* Int(3)==1*/) {
-							barHeart+=.01f;
-							if (barHeart>32) Die(Lang.Texts[164]);
+							barHeart.Value+=.01f;
+							if (barHeart.Value>32f) Die(Lang.Texts[164]);
 						}
 					}
 					#endregion
@@ -6518,7 +6752,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				string m=Lang.Texts[28];
 				string respawntext=Lang.Texts[29]+" "+(int)((timerStayDied/(60/2)+1));
 				int meas=BitmapFont.bitmapFont18.MeasureTextSingleLineX(m);
-				textDie=new Text(m,Global.WindowWidthHalf-meas/2,Global.WindowHeightHalf-60,BitmapFont.bitmapFont18);
+				textDie=new Text(m, Global.WindowWidthHalf-meas/2, Global.WindowHeightHalf-60, BitmapFont.bitmapFont18);
 				textDie.Draw(spriteBatch);
 
 				int textDieInfom=BitmapFont.bitmapFont18.MeasureTextSingleLineX(diedInfo);
@@ -6538,7 +6772,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				// Draw full lights
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, sampling==1f ? camera : cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, SuperSamplingActing==1f ? camera : cameraNoOpMultisapling);
 
                 foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
@@ -6553,7 +6787,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				spriteBatch.End();
 
 				// Draw high light
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, sampling==1f ? camera : cameraNoOpMultisapling);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, SuperSamplingActing==1f ? camera : cameraNoOpMultisapling);
 
 				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
@@ -6629,10 +6863,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Draw game
-				if (sampling==1f) {
-					Graphics.SetRenderTarget(null/*targetGame*/);
+				if (SuperSamplingActing==1f) {
+					Graphics.SetRenderTarget(null);
 					Graphics.Clear(Color.Transparent);
-				} else Graphics.SetRenderTarget(/*null*/targetGame);
+				} else Graphics.SetRenderTarget(targetGame);
 
 				#region Draw background
 				if (changeRain<10) {
@@ -6837,7 +7071,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (Setting.SnowAndRain) {
 					if (/*rain*/actualRainForce>0f) {
 					//	int x, y;
-					if (sampling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 						int cx=0;
 						int cy=0;
@@ -6880,8 +7114,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
                 #endregion
-			//	Graphics.SetRenderTarget(null/*targetGame*/);
-				//Graphics.Clear(Color.Transparent);
+
                 if (Setting.WavingElements) {
 					if (wind) {
 						int x=0;
@@ -6947,8 +7180,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				foreach (FallingLeave fl in FallingLeaves) fl.Draw();
 
 				foreach (GunShot gs in GunShots) gs.Draw();
-
-				
+								
 				// Draw items
 				foreach (Item i in DroppedItems) i.DrawItem();
 
@@ -6992,7 +7224,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					
 						//EffectFog.Parameters["Octaves"].SetValue(3);
 						
-						if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
+						if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
 						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
 						EffectFog.Techniques[0].Passes[0].Apply();
 
@@ -7021,7 +7253,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, transformMatrix: MatrixUpScaling);
 
 					spriteBatch.Draw(pixel, Fullscreen, FogColor*oc*0.2f);
@@ -7032,7 +7264,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 #region Weather Foreground
 				
 				if (actualRainForce>0f) {
-					if (sampling!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
+					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, MatrixUpScaling/*CameraMatrixNoZoom(out int x, out int y)*/);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 					Rabcr.spriteBatch=spriteBatch;
 					//if (Temperature<0f) {
@@ -7806,18 +8038,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				spriteBatch.End();
 
-				if (sampling<1f){ 
+				if (SuperSamplingActing<1f) { 
 					Graphics.SetRenderTarget(null);
 					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointWrap);
 					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
 					spriteBatch.End();
-				}else if (sampling==2f){ 
+				} else if (SuperSamplingActing==2f) { 
 					Graphics.SetRenderTarget(null);
-					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.LinearWrap);
 					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
 					spriteBatch.End();
-				}else if (sampling >= 4f) {
-					//var targetGame2=targetGame;
+				} else if (SuperSamplingActing == 4f) {
 					Graphics.SetRenderTarget(targetGame2);
 					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
 					spriteBatch.Draw(targetGame, new Rectangle(0,0, Global.WindowWidth*2, Global.WindowHeight*2), color: Color.White);
@@ -7827,11 +8058,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
                     spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
                     spriteBatch.Draw(targetGame2, Fullscreen, color: Color.White);
                     spriteBatch.End();
-                }
+                } 
+				//else if (SuperSamplingActing == 8f) {
+    //                //Graphics.SetRenderTarget(targetGame2);
+    //                //spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+    //                //spriteBatch.Draw(targetGame, new Rectangle(0, 0, Global.WindowWidth*4, Global.WindowHeight*4), color: Color.White);
+    //                //spriteBatch.End();
+
+    //                //Graphics.SetRenderTarget(targetGame4);
+    //                //spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+    //                //spriteBatch.Draw(targetGame2, new Rectangle(0, 0, Global.WindowWidth*2, Global.WindowHeight*2), color: Color.White);
+    //                //spriteBatch.End();
+
+    //                Graphics.SetRenderTarget(null);
+    //                spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+    //                spriteBatch.Draw(targetGame/*4*/, Fullscreen, color: Color.White);
+    //                spriteBatch.End();
+    //            }
 
                 // Draw lighting on game
-                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: /*BlendState.Additive*/Multiply, samplerState: SamplerState.PointWrap);
-                spriteBatch.Draw(texture: modificatedLightTarget, Fullscreen/*position: Vector2Zero*//*new Rectangle(0,0,(int)(Global.WindowWidth*upscalingMultisapling),(int)(Global.WindowHeight*upscalingMultisapling))*/, color: Color.White);
+                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply, samplerState: SamplerState.PointWrap);
+                spriteBatch.Draw(texture: modificatedLightTarget, Fullscreen, color: Color.White);
                 spriteBatch.End();
                 #endregion
 
@@ -7850,7 +8097,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					EffectVignetting.Parameters["HSize"].SetValue(HSize);
 					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
 
-					if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
+					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting/*, MatrixUpScaling*/);
 
 					//spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearClamp, null, null, EffectVignetting, Setting.UpScalingSuperSapling!=1f ? MatrixUpScaling : null);
@@ -7869,26 +8116,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					Rabcr.spriteBatch=spriteBatch;
 					#region Draw Bars
 					if (Global.WorldDifficulty!=2) {
-						int barE=(int)barEnergy, barO=(int)barOxygen, barW=(int)barWater, barEa=(int)barEat, barH=(int)barHeart;
-						// Energy bar
-						spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36,8),new Rectangle(0,0,32,barE),ColorGray);
-						spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36,8+barE),new Rectangle(0,barE,32,32-barE),Color.White);
+						barEat.Draw();
+						barOxygen.Draw();
+						barEnergy.Draw();
+						barHeart.Draw();
+						barWater.Draw();
 
-						// Oxygen bar
-						spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8),new Rectangle(0,0,32,barO),ColorGray);
-						spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8+barO),new Rectangle(0,barO,32,32-barO),Color.White);
+						//int barE=(int)barEnergy, barO=(int)barOxygen, barW=(int)barWater, barEa=(int)barEat, barH=(int)barHeart;
+						//// Energy bar
+						//spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36, 8), new Rectangle(0,0,32,barE),ColorGray);
+						//spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36, 8+barE), new Rectangle(0,barE,32,32-barE),Color.White);
 
-						// Water bar
-						spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8),new Rectangle(0,0,32,barW),ColorGray);
-						spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8+barW),new Rectangle(0,barW,32,32-barW),Color.White);
+						//// Oxygen bar
+						//spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8), new Rectangle(0,0,32,barO),ColorGray);
+						//spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8+barO), new Rectangle(0,barO,32,32-barO), Color.White);
 
-						// Eat bar
-						spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8),new Rectangle(0,0,32,barEa),ColorGray);
-						spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8+barEa),new Rectangle(0,barEa,32,32-barEa),Color.White);
+						//// Water bar
+						//spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8),new Rectangle(0,0,32,barW),ColorGray);
+						//spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8+barW),new Rectangle(0,barW,32,32-barW),Color.White);
 
-						// Heart bar
-						spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8), new Rectangle(0,0,32,barH),ColorGray);
-						spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8+barH), new Rectangle(0,barH,32,32-barH),Color.White);
+						//// Eat bar
+						//spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8),new Rectangle(0,0,32,barEa),ColorGray);
+						//spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8+barEa),new Rectangle(0,barEa,32,32-barEa),Color.White);
+
+						//// Heart bar
+						//spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8), new Rectangle(0,0,32,barH),ColorGray);
+						//spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8+barH), new Rectangle(0,barH,32,32-barH),Color.White);
 					}
 					#endregion
 
@@ -9199,14 +9452,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (dontDoGame) return;
 
 			SetCaptionInventory();
-			
+			SetSuperSampling();
 			Translation= ZoomMatrix*Matrix.CreateTranslation(new Vector3(
-				Global.WindowWidthHalf*sampling /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
-				Global.WindowHeightHalf*sampling /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
+				Global.WindowWidthHalf*SuperSamplingActing /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
+				Global.WindowHeightHalf*SuperSamplingActing /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
 			0));
 
-			if (sampling!=1){
+			if (SuperSamplingActing!=1){
 				TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+			}
+
+			if (Global.WorldDifficulty==0) {
+				barEat.Resize();
+				barWater.Resize();
+				barHeart.Resize();
+				barEnergy.Resize();
+				barOxygen.Resize();
 			}
 
 			Fullscreen=new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight);
@@ -9216,15 +9477,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			modificatedLightTarget?.Dispose();
 			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-			if (sampling!=1f) {
-				targetGame?.Dispose();
-				targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//if (SuperSamplingActing!=1f) {
+			//	targetGame?.Dispose();
+			//	targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*SuperSamplingActing), (int)(Global.WindowHeight*SuperSamplingActing), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 
-				if (sampling==4f) {
-					targetGame2?.Dispose();
-					targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-				} 
-			}
+			//	if (SuperSamplingActing==4f) {
+			//		targetGame2?.Dispose();
+			//		targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//	} 
+			//}
+			
 			if (Global.WorldDifficulty==2) {
 				if (inventory==InventoryType.Creative) {
 
@@ -9652,8 +9914,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							leaves.Id=newLeavesId;
 							leaves.Texture=leavesTexture;
 
-							barEnergy+=0.02f;
-							if (barEnergy>32) barEnergy=32;
+							barEnergy.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
 						}
 						void DropItemFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
 							DropItemToPos(new ItemNonInvBasic(itemId), mousePosRoundX, mousePosRoundY);
@@ -9662,8 +9924,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							leaves.Id=newLeavesId;
 							leaves.Texture=leavesTexture;
 
-							barEnergy+=0.02f;
-							if (barEnergy>32) barEnergy=32;
+							barEnergy.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
 						}
 					}
 				}
@@ -9678,8 +9940,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 
 								case (ushort)BlockId.Strawberry:
@@ -9687,8 +9949,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 
 								case (ushort)BlockId.Rashberry:
@@ -9696,8 +9958,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 							}
 						}
@@ -9708,8 +9970,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#region Drink Water
 				if (chunk.IsTopBlocks[y]) {
 					if (chunk.TopBlocks[y].Id==(ushort)BlockId.WaterBlock) {
-						barWater--;
-						if (barWater<0)barWater=0;
+						barWater.Value--;
+						if (barWater.Value<0f)barWater.Value=0f;
 						return;
 					}
 				}
@@ -9728,26 +9990,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockJungle
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockPlains) {
 							chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Dirt, mousePosRoundVector);
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockClay) {
 							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Clay, mousePosRoundVector);
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockCompost) {
 							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Compost, mousePosRoundVector);
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						}
@@ -9804,8 +10066,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						leaves.Id=newLeavesId;
 						leaves.Texture=newLeavesTexture;
 
-						barEnergy+=0.02f;
-						if (barEnergy>32) barEnergy=32;
+						barEnergy.Value+=0.02f;
+						if (barEnergy.Value>32f) barEnergy.Value=32f;
 						InventoryRemoveSelectedItem();
 					}
 				 }
@@ -10324,11 +10586,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				timerStayDied=255;
 				died=true;
 
-				barHeart=0;
-				barOxygen=0;
-				barWater=0;
-				barEnergy=0;
-				barEat=0;
+				barHeart.Value=0f;
+				barOxygen.Value=0f;
+				barWater.Value=0f;
+				barEnergy.Value=0f;
+				barEat.Value=0f;
 			}
 		}
 
@@ -16543,7 +16805,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			//if (Setting.Scale.Without==Setting.currentScale) {
 			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
-if (sampling!=1f) { 
+			if (SuperSamplingActing!=1f) { 
 				cameraNoOpMultisapling=Matrix.CreateTranslation(
 					new Vector3(
 					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.X,
@@ -16592,7 +16854,7 @@ if (sampling!=1f) {
 
 		Matrix CameraMatrixNoZoom(out int xx, out int yy) {
 		//	if (Setting.Scale.Without==Setting.currentScale) {
-			float z=sampling*Setting.Zoom;
+			float z=SuperSamplingActing*Setting.Zoom;
 			//if (Setting.Zoom<2.5)z=1*upscalingMultisapling;
 			//else z=2;
 
@@ -16602,7 +16864,7 @@ if (sampling!=1f) {
 			weatherWindowWidth=(int)(Global.WindowWidth*z/**upscalingMultisapling*/)+5;
 			weatherWindowHeight=(int)(Global.WindowHeight*z/**upscalingMultisapling*/)+5;
 
-			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * sampling, Global.WindowHeightHalf * sampling, 0));
+			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * SuperSamplingActing, Global.WindowHeightHalf * SuperSamplingActing, 0));
 			//}
 
 			//if (Setting.Scale.Proportions==Setting.currentScale) {
@@ -19428,18 +19690,18 @@ if (sampling!=1f) {
 		}
 
 		void ItemEat() {
-			if (barEat>1) {
+			if (barEat.Value>1f) {
 			switch (InventoryNormal[boxSelected].Id) {
 				case (ushort)Items.Banana:
-					barEat -=10;
-					barWater -=1;
+					barEat.Value -=10f;
+					barWater.Value -=1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Olive:
-					barEat -=2;
-					barWater -=0.1f;
+					barEat.Value -=2f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
@@ -19451,133 +19713,133 @@ if (sampling!=1f) {
 					break;
 
 				case (ushort)Items.Boletus:
-					barEat -=1.5f;
-					barWater -=0.1f;
+					barEat.Value -=1.5f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Champignon:
-					barEat -=1.5f;
-					barWater -=0.1f;
+					barEat .Value-=1.5f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Lemon:
-					barEat -=5;
-					barWater -=3;
+					barEat.Value -=5f;
+					barWater.Value -=3f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Orange:
-					barEat -=9;
-					barWater -=3;
+					barEat.Value -=9f;
+					barWater.Value -=3f;
 					InventoryRemoveSelectedItem();
 				 if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Cherry:
-					barEat -=2;
-					barWater -=0.1f;
+					barEat.Value -=2f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BucketWater:
-					barEat -=0.01f;
-					barWater -=20;
+					barEat.Value -=0.01f;
+					barWater.Value -=20f;
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Bucket,1), PlayerX, PlayerY);
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Dandelion:
-					barEat -=2;
-					barWater -=0.01f;
+					barEat.Value -=2f;
+					barWater.Value -=0.01f;
 					InventoryRemoveSelectedItem();
 				   if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Plum:
-					barEat -=5;
-					barWater -=0.05f;
+					barEat.Value -=5f;
+					barWater.Value -=0.05f;
 					InventoryRemoveSelectedItem();
 				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Rashberry:
-					barEat -=2;
-					barWater -=0.3f;
+					barEat.Value -=2f;
+					barWater.Value -=0.3f;
 					InventoryRemoveSelectedItem();
 				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Apple:
-					barEat -=12;
-					barWater--;
+					barEat.Value -=12f;
+					barWater.Value--;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.RabbitMeatCooked:
-					barEat -=30;
-					barWater -=2;
+					barEat.Value -=30f;
+					barWater.Value -=2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.RabbitMeat:
-					barEat -=10;
-					barWater -=1;
+					barEat.Value -=10;
+					barWater.Value -=1;
 					if (FastRandom.Bool_20Percent()) {
-						barHeart +=5;
-						if (barHeart>32)barHeart=32;
+						barHeart.Value +=5f;
+						if (barHeart.Value>32f)barHeart.Value=32f;
 					}
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Strawberry:
-					barEat -=3;
-					barWater -=0.5f;
+					barEat.Value -=3f;
+					barWater.Value -=0.5f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.WheatSeeds:
-					barEat--;
-					barWater -=0.002f;
+					barEat.Value--;
+					barWater.Value -=0.002f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Blueberries:
-					barEat-=2;
-					barWater -=0.2f;
+					barEat.Value-=2f;
+					barWater.Value -=0.2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.boiledEgg:
-					barEat-=2;
-					barWater -=0.2f;
+					barEat.Value-=2f;
+					barWater.Value -=0.2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BowlWithMushrooms:
-					barEat-=15;
-					barWater -=5f;
+					barEat.Value-=15f;
+					barWater.Value -=5f;
 					InventoryRemoveSelectedItem();
 					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BowlWithVegetables:
-					barEat-=15;
-					barWater -=5f;
+					barEat.Value-=15;
+					barWater.Value -=5f;
 					InventoryRemoveSelectedItem();
 					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
@@ -19586,18 +19848,18 @@ if (sampling!=1f) {
 			}
 
 			//drink
-			if (barWater>1) {
+			if (barWater.Value>1f) {
 				switch (InventoryNormal[boxSelected].Id) {
 					case (ushort)Items.BottleWater:
 						{
 							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater-bottle.GetCount/3f;
+							float d=barWater.Value-bottle.GetCount/3f;
 							if (d<0) {
-								barWater=0;
+								barWater.Value=0f;
 								InventoryNormal[boxSelected]=new ItemInvBasic32(bottleEmptyTexture,(ushort)Items.Bottle,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
 							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater*3);
-								barWater=d;
+								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+								barWater.Value=d;
 							}
 						}
 						break;
@@ -19605,23 +19867,23 @@ if (sampling!=1f) {
 					case (ushort)Items.BucketWater:
 						{
 							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater-bottle.GetCount/3f;
+							float d=barWater.Value-bottle.GetCount/3f;
 							if (d<0) {
-								barWater=0;
+								barWater.Value=0f;
 								InventoryNormal[boxSelected]=new ItemInvBasic32(ItemBucketTexture,(ushort)Items.Bucket,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
 							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater*3);
-								barWater=d;
+								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+								barWater.Value=d;
 							}
 						}
 						break;
 				}
 			}
 
-			if (barEat>32)barEat=32;
-			if (barWater>32)barWater=32;
-			if (barEat<0)barEat=0;
-			if (barWater<0)barWater=0;
+			if (barEat.Value>32)barEat.Value=32f;
+			if (barWater.Value>32)barWater.Value=32f;
+			if (barEat.Value<0)barEat.Value=0f;
+			if (barWater.Value<0)barWater.Value=0f;
 		}
 
 		// Crafting basic
@@ -25797,10 +26059,11 @@ AddShake(d.to.X*16, d.to.Y*16);
 				time+"\r\n"+
 			   // dayAlpha+"\r\n"+
 
-				barWater+"\r\n"+
-				barEat+"\r\n"+
-				barHeart+"\r\n"+
-				barOxygen+"\r\n"+
+				barWater.Value+"\r\n"+
+				barEat.Value+"\r\n"+
+				barHeart.Value+"\r\n"+
+				barOxygen.Value+"\r\n"+
+				barEnergy.Value+"\r\n"+
 
 				(int)PlayerX+"\r\n"+
 				(int)PlayerY+"\r\n"+

@@ -29,6 +29,8 @@ namespace rabcrClient {
         }
 
         private void buttonSend_Click(object sender, EventArgs e) {
+            buttonSend.Enabled=false;
+            buttonSend.BackColor=System.Drawing.Color.Gray;
             //   DialogResult dr=MessageBox.Show(text+Environment.NewLine+Environment.NewLine+details+Environment.NewLine+ex.Message, cap, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                    // if (dr==DialogResult.Yes) {
                 ManagementObjectSearcher searcher  = new("SELECT * FROM Win32_DisplayConfiguration");

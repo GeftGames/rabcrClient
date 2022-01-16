@@ -497,33 +497,33 @@ namespace rabcrClient {
 
             // Upscaling
             {
-                float maxUpscaling=20f;
-                if (Graphics.GraphicsProfile==GraphicsProfile.HiDef){
-                    float scale = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                    if (scale<maxUpscaling)maxUpscaling=scale;
+                //float maxUpscaling=20f;
+                //if (Graphics.GraphicsProfile==GraphicsProfile.HiDef){
+                //    float scale = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                //    if (scale<maxUpscaling)maxUpscaling=scale;
 
-                    float scale2 = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    if (scale2<maxUpscaling) maxUpscaling=scale2;
-                } else { 
-                    float scale = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                    if (scale<maxUpscaling) maxUpscaling=scale;
+                //    float scale2 = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                //    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                //} else { 
+                //    float scale = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                //    if (scale<maxUpscaling) maxUpscaling=scale;
 
-                    float scale2 = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    if (scale2<maxUpscaling) maxUpscaling=scale2;
-                }
-                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
-                    if (Setting.UpScalingSuperSapling==16) Setting.UpScalingSuperSapling=8;
-                } 
-                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
-                    if (Setting.UpScalingSuperSapling==8) Setting.UpScalingSuperSapling=4;
-                }
-                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
-                    if (Setting.UpScalingSuperSapling==4) Setting.UpScalingSuperSapling=2;
-                }
+                //    float scale2 = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                //    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                //}
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==16) Setting.UpScalingSuperSapling=8;
+                //} 
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==8) Setting.UpScalingSuperSapling=4;
+                //}
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==4) Setting.UpScalingSuperSapling=2;
+                //}
 
-                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
-                    if (Setting.UpScalingSuperSapling==2) Setting.UpScalingSuperSapling=1;
-                }
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==2) Setting.UpScalingSuperSapling=1;
+                //}
                // Setting.UpScalingSuperSapling=1;
                 int index=-1;
                 index = (int)Setting.UpScalingSuperSapling switch {
@@ -532,7 +532,7 @@ namespace rabcrClient {
                     1 => 1,
                     2 => 2,
                     4 => 3,
-                  //  8 => 4,
+                   // 8 => 4,
                   //  16 => 5,
                     _ => 0,
                 };
@@ -540,9 +540,10 @@ namespace rabcrClient {
                // if (maxUpscaling>=16) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]};
               //  else if (maxUpscaling>=8) res=new string[]{ Lang.Texts[1607], Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604]};
                // else 
-                if (maxUpscaling>=4) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]};
-                else if (maxUpscaling>=2) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276]};
-                else res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87]};
+               /* if (maxUpscaling>=8) */res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]/*, Lang.Texts[1604]*/};
+                //if (maxUpscaling>=4) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]};
+                //else if (maxUpscaling>=2) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276]};
+                //else res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87]};
                 SettingSwitcher button = new(tex, Lang.Texts[1606], res, index);
                 button.Click += () => {
                     Setting.UpScalingSuperSapling = button.selected switch {
@@ -550,11 +551,11 @@ namespace rabcrClient {
                         1 => 1,
                         2 => 2,
                         3 => 4,
-                     //   4 => 8,
+                    //    4 => 8,
                        // 5 => 16,
                         _ => -1
                     };
-                    if (Setting.UpScalingSuperSapling>maxUpscaling) Setting.UpScalingSuperSapling=1;
+                  //  if (Setting.UpScalingSuperSapling>maxUpscaling) Setting.UpScalingSuperSapling=1;
                     Global.ChangedSettings = true;
                 };
                 settings.Add(button);

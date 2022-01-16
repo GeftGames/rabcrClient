@@ -10,7 +10,7 @@ namespace rabcrClient {
         public static int WindowWidthHalf=300;
 
         public static int WindowHeightHalf=250;
-        public static int WorldDifficulty;
+        public static int WorldDifficulty; // 0==surival 1==text 2==Creative
         public static bool HasSoundGraphics=true;
 
         public static bool ChangedSettings;

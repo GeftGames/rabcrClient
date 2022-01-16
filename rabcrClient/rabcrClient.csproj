@@ -79,6 +79,7 @@
     <Compile Include="FormError.Designer.cs">
       <DependentUpon>FormError.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameBar.cs" />
     <Compile Include="Particles.cs" />
     <Compile Include="ClothesTypes.cs" />
     <Compile Include="Functions\FastMath.cs" />
