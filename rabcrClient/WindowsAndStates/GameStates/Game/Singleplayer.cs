@@ -11,10 +11,16 @@ using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
     class SinglePlayer: Screen {
-
+		int EarthShakeTimeInnerPer=10;
+		int EarthShakeTime;
+		const float divider255=1/255f;
+		float EarthShakeSize;
+		float EarthShakeActualSize;
+		Vector2 EarthShakeP1, EarthShakeP2, EarthShakePA;
 		#region Varibles
 		SoundEffectInstance SoundWind, SoundRain;
 		float sampling;
+		float scrollBuffer=0f;
 		enum Precipitation : byte {
 			None,
 			Snowing,
@@ -1260,7 +1266,7 @@ namespace rabcrClient {
 
 		float WindowXPlayer, WindowYPlayer;
 
-		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame;
+		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2;
 
 		readonly BlendState Multiply = new() {
 			AlphaSourceBlend=Blend.Zero,
@@ -1370,7 +1376,7 @@ namespace rabcrClient {
         //  Vector2 vector_x0_y4;
         #endregion
         #endregion
-
+		int invertedMouseValue;
         #region Weather changes
         void StopRaining() {
 			if (Global.HasSoundGraphics) {
@@ -1500,8 +1506,8 @@ namespace rabcrClient {
 		RasterizerState rasterizerState;
 		const float noon=(dayEnd-(dayStart+1))*hour;
 		public unsafe override void Init() {
-			
-			sampling=Setting.UpScalingSuperSapling==-1? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
+			invertedMouseValue = Setting.InvertedMouse ? -1 : 1;
+			sampling=(Setting.UpScalingSuperSapling<=0) ? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
 			//Setting.UpScalingSuperSapling=1.00001f;
 		//	Setting.Multisapling=16;
 
@@ -3145,7 +3151,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
 			if (sampling!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-
+			if (sampling==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			//dayAlpha
 			if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
 			 //   dayAlpha=(((time-hour*7f)/hour/2f))+1f;
@@ -3396,6 +3402,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			modificatedLightTarget.Dispose();
 			if (sampling!=1f) targetGame.Dispose();
+			if (sampling==4f) targetGame2.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
 			Debug.WriteLine("EndOf Saving");
@@ -3619,15 +3626,73 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 
+				if (EarthShakeTime>0) { 
+				//	EarthShakeActualSize=EarthShakeSize*(float)Math.Sin(EarthShakeTime/10f);
+					EarthShakeActualSize=EarthShakeSize;
+				
+					
+					if (EarthShakeTime%EarthShakeTimeInnerPer==0) { 
+						EarthShakeP2=EarthShakeP1;
+						EarthShakeP1=new Vector2((FastRandom.Float()-0.5f)*EarthShakeActualSize, (FastRandom.Float()-0.5f)*EarthShakeActualSize);
+						//if (EarthShakeP2==Vector2.Zero)EarthShakeP2=EarthShakeP1;
+						EarthShakeTimeInnerPer=5+FastRandom.Int(10);
+					}//
+					EarthShakeTime--;
+					float divider=EarthShakeTime%EarthShakeTimeInnerPer;
+					float deltaX=(EarthShakeP2.X-EarthShakeP1.X)/divider;
+					float deltaY=(EarthShakeP2.Y-EarthShakeP1.Y)/divider;
+					if (float.IsInfinity(deltaX))deltaX=0;
+					if (float.IsInfinity(deltaY))deltaY=0;
+					EarthShakePA.X=(EarthShakeP1.X+deltaX)*(EarthShakeTime/100f);
+					EarthShakePA.Y=(EarthShakeP1.Y+deltaY)*(EarthShakeTime/100f);
+					//EarthShakeP2=new DInt(FastRandom.Float()*EarthShakeActualSize, FastRandom.Float()*EarthShakeActualSize);
+				}
+
 				UpdateFallingBlocks();
 
 				#region Movement
 				if (inventory==InventoryType.Normal) {
 					if (newMouseState.ScrollWheelValue != previousScrollValue) {
 						if (newMouseState.ScrollWheelValue < previousScrollValue) {
-							if (boxSelected<4) boxSelected++;
+							//if (boxSelected<4) {
+								if (Setting.Touchpad) {
+									if (newMouseState.ScrollWheelValue - previousScrollValue<-30 || scrollBuffer<-30) { 
+										if (Setting.InvertedMouse) {
+											if (boxSelected!=0) boxSelected--; 
+										} else if (boxSelected<4) boxSelected++; 
+										scrollBuffer=0; 
+									} else scrollBuffer+= newMouseState.ScrollWheelValue - previousScrollValue;
+								} else { 
+									if (newMouseState.ScrollWheelValue - previousScrollValue<0) {
+										if (Setting.InvertedMouse) {
+											if (boxSelected!=0) boxSelected--;
+										} else {
+											if (boxSelected<4) 
+											boxSelected++;
+										}; 
+									}
+								}
+							//}
 						} else if (newMouseState.ScrollWheelValue > previousScrollValue) {
-							if (boxSelected!=0) boxSelected--;
+							//if (boxSelected!=0) {
+								if (Setting.Touchpad) {
+									if (newMouseState.ScrollWheelValue - previousScrollValue>30 || scrollBuffer>30) { 
+										if (Setting.InvertedMouse) { 
+											if (boxSelected<4) boxSelected++; 
+										} else if (boxSelected!=0) boxSelected--; 
+										scrollBuffer=0; 
+									} else scrollBuffer += newMouseState.ScrollWheelValue - previousScrollValue;
+								} else { 
+									if (newMouseState.ScrollWheelValue - previousScrollValue>0) {
+										if (Setting.InvertedMouse) {
+											if (boxSelected<4) boxSelected++; 
+										} else {
+											if (boxSelected!=0) 
+											boxSelected--;
+										}
+									}
+								}
+						//	}
 						}
 					}
 
@@ -4199,22 +4264,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 													chunk.RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY);
 
-													if (destroingBlockType==(ushort)BlockId.Dirt
-													|| destroingBlockType==(ushort)BlockId.GrassBlockDesert
-													|| destroingBlockType==(ushort)BlockId.GrassBlockForest
-													|| destroingBlockType==(ushort)BlockId.GrassBlockHills
-													|| destroingBlockType==(ushort)BlockId.GrassBlockJungle
-													|| destroingBlockType==(ushort)BlockId.GrassBlockClay
-													|| destroingBlockType==(ushort)BlockId.GrassBlockCompost
-													|| destroingBlockType==(ushort)BlockId.Compost
-													|| destroingBlockType==(ushort)BlockId.GrassBlockPlains) {
-														DestroyGrassUp(destroyBlockX, destroyBlockY-1);
+													//if (destroingBlockType==(ushort)BlockId.Dirt
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockDesert
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockForest
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockHills
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockJungle
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockClay
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockCompost
+													//|| destroingBlockType==(ushort)BlockId.Compost
+													//|| destroingBlockType==(ushort)BlockId.GrassBlockPlains) {
+													//	DestroyGrassUp(destroyBlockX, destroyBlockY-1);
 
-														if (Global.WorldDifficulty!=2) {
-														    chunk.Background[destroyBlockY]=new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
-													}
+													//	if (Global.WorldDifficulty!=2) {
+													//	    chunk.Background[destroyBlockY]=new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX*16, destroyBlockY*16));
+													//		chunk.IsBackground[destroyBlockY]=true;
+													//	}
+													//}
 
 													if (destroingBlockType==(ushort)BlockId.Sand) DestroySandUp(destroyBlockX, destroyBlockY-1);
 
@@ -4223,20 +4288,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 													if (Global.WorldDifficulty!=2) {
 
 
-														if (destroingBlockType==(ushort)BlockId.OreAluminium) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.OreAluminium) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
-														if (destroingBlockType==(ushort)BlockId.BackDiorit) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.BackDiorit) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
-														if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
 														GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
 														RemovePartTool();
@@ -4573,7 +4638,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										p.ticks++;
 										i++;
 									} else {
-										terrain[(int)(p.Position.X/16f)].TopBlocks[(int)(p.Position.Y/16f)]=p.TurnOff();
+										terrain[(int)(p.Position.X*divider_16)].TopBlocks[(int)(p.Position.Y*divider_16)]=p.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
 								} else if (WavingPlants[i] is FruitPlantWaving z) {
@@ -4582,7 +4647,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										z.ticks++;
 										i++;
 									} else {
-										List<Plant> plants=terrain[(int)(z.Position.X/16f)].Plants;
+										List<Plant> plants=terrain[(int)(z.Position.X*divider_16)].Plants;
 										plants[plants.IndexOf(z)]=z.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
@@ -4656,7 +4721,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							for (int i = 0; i<FallingLeaves.Count; ) {
 								FallingLeave l = FallingLeaves[i];
 								l.Update();
-								int ch=(int)(l.Position.X/16f);
+								int ch=(int)(l.Position.X*divider_16);
 								if (terrain[ch].LightPosFull16<=l.Position.Y) {
 									FallingLeaves.RemoveAt(i);
 								} else i++;
@@ -4822,7 +4887,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 								if (previousScrollValue!=newMouseState.ScrollWheelValue) {
 									if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 										inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 									}
 
@@ -4877,7 +4942,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}else{
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}
 								//if (inventoryScrollbarValueCraftingMax>6*4) {
@@ -4943,7 +5008,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							} else {
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}
 
@@ -5010,7 +5075,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}else{
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 
 								} else if (inventoryScrollbarValueCraftingMax>6*4) {
@@ -5060,7 +5125,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								} else if (inventoryScrollbarValueCraftingMax>6*4) {
 											if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
@@ -5110,7 +5175,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 								} else {
 									if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 										inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 									}
 
@@ -5165,7 +5230,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										CreativeGetItems();
 
 										if (In(Global.WindowWidthHalf-300+4+200+4-100-100+60-14,Global.WindowHeightHalf-200+2+200+16+40-8,Global.WindowWidthHalf+300,Global.WindowHeightHalf+200+16)) {
-											creativeScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+											creativeScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 											scrollBarCreative=(int)(inventoryScrollbar.scale*(inventoryScrollbarValueCraftingMax-45));
 										}
 
@@ -5364,7 +5429,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							} else {
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}else if (inventoryScrollbarValueCraftingMax>6*4) {
 											if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
@@ -5599,8 +5664,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								int h=chunk.LightPosHalf16-8;
 
 							//	if (w<h) {
-									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, h-w2));
-									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, chunk.LightPosFull16-w2));
+									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY-(int)EarthShakePA.Y-1, 16+40+40, h-w2+(int)EarthShakePA.Y+1));
+									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY-(int)EarthShakePA.Y-1, 16+40+40, chunk.LightPosFull16-w2+(int)EarthShakePA.Y+1));
 								//original:	lightsHalf.Add(new Rectangle(x*16-40,h/* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 								//	lightsHalf.Add(new Rectangle(x*16-40,(int)WindowY /*h*//* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 							//	}else{
@@ -6992,7 +7057,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						else foreach (ParticleRain r in rainDots2) r.Draw(x, y, actualRainForce);
 					}
 					spriteBatch.End();
-						
 				}
 				
 				#endregion
@@ -7011,6 +7075,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                     //for (int i = 0; i < chunk.Mobs.Count; i++) chunk.Mobs[i].Draw();
                 }
                 #endregion
+
                 #region Player
                 if (rocket) {
 					if (rocketDown) {
@@ -7729,7 +7794,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				#endregion
-if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16),Color.White);
+
+				if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16), Color.White);
 
 				if (debug) {
 					foreach (Energy r in energy) r.Draw();
@@ -7739,12 +7805,29 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 					for (int i = 0; i<Particles.Count; i++) Particles[i].Draw();
 				}
 				spriteBatch.End();
-				if (sampling!=1f) {
+
+				if (sampling<1f){ 
 					Graphics.SetRenderTarget(null);
-					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, BlendState.AlphaBlend, sampling<1f ? SamplerState.PointWrap: SamplerState.LinearWrap);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointWrap);
 					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
 					spriteBatch.End();
-				}
+				}else if (sampling==2f){ 
+					Graphics.SetRenderTarget(null);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
+					spriteBatch.End();
+				}else if (sampling >= 4f) {
+					//var targetGame2=targetGame;
+					Graphics.SetRenderTarget(targetGame2);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Draw(targetGame, new Rectangle(0,0, Global.WindowWidth*2, Global.WindowHeight*2), color: Color.White);
+					spriteBatch.End();
+
+					Graphics.SetRenderTarget(null);
+                    spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+                    spriteBatch.Draw(targetGame2, Fullscreen, color: Color.White);
+                    spriteBatch.End();
+                }
 
                 // Draw lighting on game
                 spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: /*BlendState.Additive*/Multiply, samplerState: SamplerState.PointWrap);
@@ -7768,7 +7851,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
 
 					if (sampling==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
-					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting, MatrixUpScaling);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting/*, MatrixUpScaling*/);
 
 					//spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearClamp, null, null, EffectVignetting, Setting.UpScalingSuperSapling!=1f ? MatrixUpScaling : null);
 					EffectVignetting.Techniques[0].Passes[0].Apply();
@@ -8896,123 +8979,123 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 								//bar
 								spriteBatch.Draw(TextureBarBarrel, new Vector2(Global.WindowWidthHalf-300+4+42, Global.WindowHeightHalf-200+2+4+217), Color.White);
 
-								int a=(int)(barrel.LiquidAmount/255f*146);
+								int a=(int)(barrel.LiquidAmount*divider255*146);
 
 								switch (barrel.LiquidId) {
 									case (byte)LiquidId.Water:
-										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.WaterSalt:
-										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.Lava:
-										spriteBatch.Draw(lavaTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(lavaTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.DyeArmy:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorArmy/* new Color((byte)34,(byte)48,(byte)17,(byte)255)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorArmy/* new Color((byte)34,(byte)48,(byte)17,(byte)255)*/);
 										break;
 
 									case (byte)LiquidId.DyeBlack:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Black);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Black);
 										break;
 
 									case (byte)LiquidId.DyeBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Blue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Blue);
 										break;
 
 									case (byte)LiquidId.DyeBrown:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Brown);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Brown);
 										break;
 
 									case (byte)LiquidId.DyeGray:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Gray);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Gray);
 										break;
 
 									case (byte)LiquidId.DyeWhite:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.DyeYellow:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Yellow);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Yellow);
 										break;
 
 									case (byte)LiquidId.DyeViolet:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Violet);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Violet);
 										break;
 
 									case (byte)LiquidId.DyeTeal:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Teal);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Teal);
 										break;
 
 									case (byte)LiquidId.DyeSpringGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorSpringGreen/* new Color(143, 225, 44)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorSpringGreen/* new Color(143, 225, 44)*/);
 										break;
 
 									case (byte)LiquidId.DyeRoseQuartz:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorRoseQuartz/*new Color(170, 152, 169)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorRoseQuartz/*new Color(170, 152, 169)*/);
 										break;
 
 									case (byte)LiquidId.DyeRed:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Red);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Red);
 										break;
 
 									case (byte)LiquidId.DyeDarkRed:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkRed);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkRed);
 										break;
 
 									case (byte)LiquidId.DyePurple:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Purple);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Purple);
 										break;
 
 									case (byte)LiquidId.DyePink:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Pink);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Pink);
 										break;
 
 									case (byte)LiquidId.DyeOrange:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Orange);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Orange);
 										break;
 
 									case (byte)LiquidId.DyeOlive:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Olive);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Olive);
 										break;
 
 									case (byte)LiquidId.DyeMagenta:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Magenta);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Magenta);
 										break;
 
 									case (byte)LiquidId.DyeLightGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightGreen);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightGreen);
 										break;
 
 									case (byte)LiquidId.DyeLightGray:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightGray);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightGray);
 										break;
 
 									case (byte)LiquidId.DyeLightBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightBlue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightBlue);
 										break;
 
 									case (byte)LiquidId.DyeGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Green);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Green);
 										break;
 
 									case (byte)LiquidId.DyeDarkGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkGreen);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkGreen);
 										break;
 
 									case (byte)LiquidId.DyeGold:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Gold);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Gold);
 										break;
 
 									case (byte)LiquidId.DyeDarkBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkBlue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkBlue);
 										break;
 
 									default:
-										spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 								}
@@ -9136,6 +9219,11 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 			if (sampling!=1f) {
 				targetGame?.Dispose();
 				targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*sampling), (int)(Global.WindowHeight*sampling), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+
+				if (sampling==4f) {
+					targetGame2?.Dispose();
+					targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+				} 
 			}
 			if (Global.WorldDifficulty==2) {
 				if (inventory==InventoryType.Creative) {
@@ -12181,6 +12269,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
 						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+						if (chunk.StartSomething>Y) chunk.StartSomething=Y;
 					}
 					return;
 
@@ -15070,7 +15159,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 										{
 											MashineBlockBasic fs = (MashineBlockBasic)block;
 
-											fs.Energy=*current++/255f;
+											fs.Energy=*current++*divider255;
 
 											LoadInventoryMashine(fs.Inv,InvMaxFurnaceStone);
 
@@ -15085,7 +15174,7 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 
 									case (ushort)BlockId.OxygenMachine:
 										LoadInventoryMashine(((MashineBlockBasic)block).Inv=new ItemInv[1],1);
-										((MashineBlockBasic)block).Energy=*current++/255f;
+										((MashineBlockBasic)block).Energy=*current++*divider255;
 										OxygenMachines.Add(new ShortAndByte(pos, length));
 										break;
 
@@ -16450,13 +16539,15 @@ if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rec
 		}
 
 		void CameraMatrix() {
+	
+
 			//if (Setting.Scale.Without==Setting.currentScale) {
 			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
 if (sampling!=1f) { 
 				cameraNoOpMultisapling=Matrix.CreateTranslation(
 					new Vector3(
-					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
-					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
+					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.X,
+					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.Y,
 					//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
 					//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
 						0
@@ -16468,8 +16559,8 @@ if (sampling!=1f) {
 				//}else{
 					camera=Matrix.CreateTranslation(
 						new Vector3(
-						-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
-						-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
+						-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.X,
+						-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.Y,
 						//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
 						//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
 							0
@@ -25096,25 +25187,55 @@ if (sampling!=1f) {
 			return int.MinValue;
 		}
 
+		void AddShake(float x, float y) {
+			float distanceToPlayer=FastMath.Distance(PlayerX, PlayerY, x, y);
+			//if (distanceToPlayer<20)  EarthShakeSize+=7;
+			//if (distanceToPlayer<40)  EarthShakeSize+=6;
+			//if (distanceToPlayer<80)  EarthShakeSize+=5;
+			//if (distanceToPlayer<120) EarthShakeSize+=4;
+			//if (distanceToPlayer<180) EarthShakeSize+=3;
+			//if (distanceToPlayer<250) EarthShakeSize+=2;
+			//if (distanceToPlayer<400) EarthShakeSize+=1;
+			//if (distanceToPlayer<800) EarthShakeSize+=0.5f;
+			//float add=15-5.5f*(float)Math.Log10(distanceToPlayer+10);
+			float add=(100f-distanceToPlayer*0.2f)/(10f+distanceToPlayer*0.15f);
+			if (add<0) return;
+			EarthShakeSize+=add;
+
+			if (EarthShakeSize>10) EarthShakeSize=10;
+
+			EarthShakeTime=(int)(EarthShakeSize*10);
+			if (EarthShakeTime>50)EarthShakeTime=50;
+			if (EarthShakeTime<10)EarthShakeTime=10;
+		}
+
         void UpdateFallingBlocks() {
             for (int i = 0; i < fallingBlocks.Count;) {
                 FallingBlockInfo d = fallingBlocks[i];
                 NormalBlock block=d.block;
 
+				
+				
+
                 // Only down
-                block.Position.Y++;
+				d.Speed+=gravity/3f;
+				if (d.Speed>5) d.Speed=5;
+               // block.Position.Y++;
+                block.Position.Y+=d.Speed;
                 //if (d.side) {
                 //    if (block.Position.X < d.to16.X) block.Position.X++;
                 //    else block.Position.X--;
                 //}
+			//	bool transform = block.Position.Y+d.Speed>= d.to16.Y
 
-                if (block.Position.Y == d.to16.Y) {
+                if (block.Position.Y+d.Speed>= d.to16.Y) {
 					Terrain chunkFrom=terrain[d.from.X];
 					Terrain chunkTo=terrain[d.to.X];
 					chunkFrom.SolidBlocks[d.from.Y]=null;
 					chunkFrom.IsSolidBlocks[d.from.Y]=false;
-
+AddShake(d.to.X*16, d.to.Y*16);
 					chunkTo.SolidBlocks[d.to.Y]=block;
+					block.Position.Y=d.to16.Y;
 					chunkTo.IsSolidBlocks[d.to.Y]=true;
 
 					if (chunkTo.IsTopBlocks[d.to.Y]) { 
@@ -25132,6 +25253,7 @@ if (sampling!=1f) {
 					chunkFrom.RefreshLightingRemoveSolid(d.from.X, d.from.Y);
 					chunkTo.RefreshLightingAddSolid(d.to.X, d.to.Y);
 
+					
 
 					//if (block is NormalBlock b) {
 						Texture2D tex = block.Texture;
