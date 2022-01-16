@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Management;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace rabcrClient {
@@ -12,8 +6,6 @@ namespace rabcrClient {
 
         [STAThread]
         static void Main(string[] args) {
-
-
 
 #if !DEBUG
             try{
@@ -26,9 +18,7 @@ namespace rabcrClient {
             Args
             Use: "...\rabcrClient.exe" Path="C:\Users\..." Type="Message" Name="Player" Text=""
 
-
             */
-
 
             if (args.Length>0) {
                 switch (args[0]) {
@@ -52,7 +42,8 @@ namespace rabcrClient {
 
                     case "/Message":{
                         int language=-1;
-                        /*langFilePath="",*/string  Text="Error no text found", Header="Message";
+                        string  Text="Error no text found", 
+                                Header="Message";
 
                             foreach (string arg in args) {
                                 string[] a=arg.Split('=');
@@ -73,8 +64,6 @@ namespace rabcrClient {
 
                         using Message message = new(language: language, Header: Header, text: Text); message.Run();
                     }
-
-
                         break;
 
                     case "/CheckServer":
@@ -92,7 +81,8 @@ namespace rabcrClient {
             } else {
                 //bool x=BanStateProcedure();
                 //if (x){
-                using var game = new Rabcr(); game.Run();
+                using var game = new Rabcr(); 
+                game.Run();
                 // }
             }
 
@@ -158,144 +148,142 @@ namespace rabcrClient {
 
             #if !DEBUG
             } catch (Exception ex) {
+                FormError fe=new(ex,  DateTime.Now);
+                fe.ShowDialog();
+
+        //        CultureInfo ci = CultureInfo.InstalledUICulture;
+        //        string cap, text, details;
+
+        //        switch (ci.TwoLetterISOLanguageName) {
+        //            case "cs":
+        //                cap="Chyba hry";
+        //                text="Nastala chyba hry, chcete poslat vývojářům anonymní informace o chybě?";
+        //                details="Detail chyby";
+        //                break;
+
+        //            case "pl":
+        //                cap="Błąd gry";
+        //                text="Wystąpił błąd w grze, czy chcesz wysłać anonimowe informacje o błędzie do programistów?";
+        //                details="Szczegóły błędu";
+        //                break;
+
+        //            case "sk":
+        //                cap="Chyba hry";
+        //                text="Nastala chyba hry, chcete poslať vývojárom anonymné informácie o chybe?";
+        //                details="Detail chyby";
+        //                break;
+
+        //            case "de":
+        //                cap="Spielfehler";
+        //                text="Es ist ein Spielfehler aufgetreten. Möchten Sie anonyme Fehlerinformationen an Entwickler senden?";
+        //                details="Fehlerdetail";
+        //                break;
+
+        //            case "jp":
+        //                cap="ゲームエラー";
+        //                text="ゲームエラーが発生しました。匿名のエラー情報を開発者に送信しますか？";
+        //                details="エラーの詳細";
+        //                break;
+
+        //            default:
+        //                cap="Game error";
+        //                text="A game error has occurred, do you want to send anonymous error information to developers?";
+        //                details="Error detail";
+        //                break;
+        //        }
+
+        //        //try {
+        //            DialogResult dr=MessageBox.Show(text+Environment.NewLine+Environment.NewLine+details+Environment.NewLine+ex.Message, cap, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+        //            if (dr==DialogResult.Yes) {
+        //               ManagementObjectSearcher searcher  = new("SELECT * FROM Win32_DisplayConfiguration");
+
+        //                // graphics
+        //                string graphicsCard = string.Empty;
+        //                foreach (ManagementObject mo in searcher.Get()) {
+        //                    foreach (PropertyData property in mo.Properties) {
+        //                       if (property.Name == "Description") {
+        //                           graphicsCard = property.Value.ToString();
+        //                       }
+        //                    }
+        //                }
+
+        //                // Ram
+        //                ManagementObjectSearcher search = new ManagementObjectSearcher("Select * From Win32_PhysicalMemory");
+        //                ulong total = 0;
+        //                foreach (ManagementObject ram in search.Get()) {
+        //                    total += (ulong)ram.GetPropertyValue("Capacity");
+        //                }
+
+        //                string send=
+        //                    "?a="+Release.VersionString +
+        //                    "&b="+Release.Date.Replace(" ", "%20") +
+        //                    "&c="+GetOsVersionText()+ "%20"+RuntimeInformation.OSArchitecture +
+        //                    "&d="+ Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")+
+        //                    "&e="+Environment.ProcessorCount.ToString() +
+        //                    "&f="+graphicsCard.Replace(" ", "%20")  +
+        //                    "&g="+ex.Message.Replace(" ", "%20") +
+        //                    "&p="+CultureInfo.InstalledUICulture.Name;
+
+        //                // StackTrace
+        //                System.Diagnostics.StackTrace st=new System.Diagnostics.StackTrace(ex, true);
+        //                int count = st.FrameCount;
 
 
-                CultureInfo ci = CultureInfo.InstalledUICulture;
-                string cap, text, details;
+        //                if (count>1) {
+        //                StackFrame sf2=st.GetFrame(1);
+        //                    FileInfo fi2 =new FileInfo(sf2.GetFileName());
+        //                    string trace="&r="+fi2.Name+"-method: "+sf2.GetMethod().Name.ToString()+ ", line: "+sf2.GetFileLineNumber() +Environment.NewLine;
+        //                    trace=trace.Replace(" ","%20");
+        //                    send+=trace;
+        //                } else send+="&r=";
 
-                switch (ci.TwoLetterISOLanguageName) {
-                    case "cs":
-                        cap="Chyba hry";
-                        text="Nastala chyba hry, chcete poslat vývojářům anonymní informace o chybě?";
-                        details="Detail chyby";
-                        break;
-
-                    case "pl":
-                        cap="Błąd gry";
-                        text="Wystąpił błąd w grze, czy chcesz wysłać anonimowe informacje o błędzie do programistów?";
-                        details="Szczegóły błędu";
-                        break;
-
-                    case "sk":
-                        cap="Chyba hry";
-                        text="Nastala chyba hry, chcete poslať vývojárom anonymné informácie o chybe?";
-                        details="Detail chyby";
-                        break;
-
-                    case "de":
-                        cap="Spielfehler";
-                        text="Es ist ein Spielfehler aufgetreten. Möchten Sie anonyme Fehlerinformationen an Entwickler senden?";
-                        details="Fehlerdetail";
-                        break;
-
-                    case "jp":
-                        cap="ゲームエラー";
-                        text="ゲームエラーが発生しました。匿名のエラー情報を開発者に送信しますか？";
-                        details="エラーの詳細";
-                        break;
-
-                    default:
-                        cap="Game error";
-                        text="A game error has occurred, do you want to send anonymous error information to developers?";
-                        details="Error detail";
-                        break;
-                }
-
-                //try {
-                    DialogResult dr=MessageBox.Show(text+Environment.NewLine+Environment.NewLine+details+Environment.NewLine+ex.Message, cap, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                    if (dr==DialogResult.Yes) {
-                       ManagementObjectSearcher searcher  = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
-
-                        // graphics
-                        string graphicsCard = string.Empty;
-                        foreach (ManagementObject mo in searcher.Get()) {
-                            foreach (PropertyData property in mo.Properties) {
-                               if (property.Name == "Description") {
-                                   graphicsCard = property.Value.ToString();
-                               }
-                            }
-                        }
-
-                        // Ram
-                        ManagementObjectSearcher search = new ManagementObjectSearcher("Select * From Win32_PhysicalMemory");
-                        ulong total = 0;
-                        foreach (ManagementObject ram in search.Get()) {
-                            total += (ulong)ram.GetPropertyValue("Capacity");
-                        }
-
-                        string send=
-                            "?a="+Release.VersionString +
-                            "&b="+Release.Date.Replace(" ", "%20") +
-                            "&c="+GetOsVersionText()+ "%20"+RuntimeInformation.OSArchitecture +
-                            "&d="+ Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")+
-                            "&e="+Environment.ProcessorCount.ToString() +
-                            "&f="+graphicsCard.Replace(" ", "%20")  +
-                            "&g="+ex.Message.Replace(" ", "%20") +
-                            "&p="+CultureInfo.InstalledUICulture.Name;
-
-                        // StackTrace
-                        System.Diagnostics.StackTrace st=new System.Diagnostics.StackTrace(ex, true);
-                        int count = st.FrameCount;
+        //                // trace inner
+        //                if (count>0) {
+        //                    System.Diagnostics.StackFrame sf = st.GetFrame(0);
+        //                    FileInfo fi = new(sf.GetFileName());
+        //                    string trace = "&h="+fi.Name+"-method: "+sf.GetMethod().Name.ToString()+", line: "+sf.GetFileLineNumber()+Environment.NewLine;
+        //                    trace=trace.Replace(" ", "%20");
+        //                    send+=trace;
+        //                } else send+="&h=";
 
 
-                        if (count>1) {
-                            System.Diagnostics.StackFrame sf2=st.GetFrame(1);
-                            FileInfo fi2 =new FileInfo(sf2.GetFileName());
-                            string trace="&r="+fi2.Name+"-method: "+sf2.GetMethod().Name.ToString()+ ", line: "+sf2.GetFileLineNumber() +Environment.NewLine;
-                            trace=trace.Replace(" ","%20");
-                            send+=trace;
-                        } else send+="&r=";
+        //Clipboard.SetText(Release.stringRRE+send);
+        //                // Antispawn
+        //                System.Threading.Thread.Sleep(200);
 
-                        // trace inner
-                        if (count>0) {
-                            System.Diagnostics.StackFrame sf = st.GetFrame(0);
-                            FileInfo fi = new FileInfo(sf.GetFileName());
-                            string trace = "&h="+fi.Name+"-method: "+sf.GetMethod().Name.ToString()+", line: "+sf.GetFileLineNumber()+Environment.NewLine;
-                            trace=trace.Replace(" ", "%20");
-                            send+=trace;
-                        } else send+="&h=";
+        //                // Run
+        //                WebClient wc=new();
+        //                string result=wc.DownloadString(Release.stringRRE+send);
+        //                //System.Diagnostics.Process.Start();
+        //                if (result.StartsWith("O|")){
+        //                    Console.WriteLine("send");
+        //                }else Console.WriteLine("not send");
 
 
-        Clipboard.SetText(Release.stringRRE+send);
-                        // Antispawn
-                        System.Threading.Thread.Sleep(200);
+        //                // Antispawn
+        //                System.Threading.Thread.Sleep(200);
+        //                Environment.Exit(-1);
 
-                        // Run
-                        WebClient wc=new WebClient();
-                        string result=wc.DownloadString(Release.stringRRE+send);
-                        //System.Diagnostics.Process.Start();
-                        if (result.StartsWith("O|")){
-                            Console.WriteLine("send");
-                        }else Console.WriteLine("not send");
-
-
-                        // Antispawn
-                        System.Threading.Thread.Sleep(200);
-                        Environment.Exit(-1);
-
-                        string GetOsVersionText(){
-                            switch (Environment.OSVersion.Version.Major) {
-                                case 10: return "win10";
-                                case 6:
-                                    switch (Environment.OSVersion.Version.Minor){
-                                        case 1: return "win 7 (or 2008 R2)";
-                                        case 2: return "win 8";
-                                        case 3: return "win 8.1";
-                                        case 0: return "win Vista (or 2008)";
-                                        default: return "win";
-                                    }
-
-                                case 5:
-                                    switch (Environment.OSVersion.Version.Minor) {
-                                        case 0: return "win 2000";
-                                        case 1: return "win XP";
-                                        case 2: return "win 2003";
-                                        default: return "win";
-                                    }
-                                default: return "win";
-                            }
-                        }
-                    }
+        //            static string GetOsVersionText(){
+        //                return Environment.OSVersion.Version.Major switch {
+        //                    10 => "win10",
+        //                    6 => Environment.OSVersion.Version.Minor switch {
+        //                        1 => "win 7 (or 2008 R2)",
+        //                        2 => "win 8",
+        //                        3 => "win 8.1",
+        //                        0 => "win Vista (or 2008)",
+        //                        _ => "win",
+        //                    },
+        //                    5 => Environment.OSVersion.Version.Minor switch {
+        //                        0 => "win 2000",
+        //                        1 => "win XP",
+        //                        2 => "win 2003",
+        //                        _ => "win",
+        //                    },
+        //                    _ => "win",
+        //                };
+        //            }
+        //            }
 
             }
             #endif
