@@ -204,4 +204,10 @@ namespace rabcrClient {
                 layerDepth: 1f);
         }
     }
+    public class FallingBlockInfo {
+        public NormalBlock block;
+        public DInt to, to16, from;
+        public bool side;
+        public float Speed;
+    }
 }

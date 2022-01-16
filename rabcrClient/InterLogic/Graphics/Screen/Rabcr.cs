@@ -159,7 +159,15 @@ namespace rabcrClient {
             //    Graphics.RasterizerState.MultiSampleAntiAlias=true;
             GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
             void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
-                e.GraphicsDeviceInformation.GraphicsProfile = GraphicsProfile.HiDef;
+                if (Setting.GraphicsProfile==GraphicsProfile.HiDef) { 
+                    try{ 
+                        e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+                    }catch{ 
+                        Setting.GraphicsProfile=GraphicsProfile.Reach;
+                        e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+                    }
+                }else e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+
                 e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount=Setting.Multisapling;
             //    //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
                 Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);

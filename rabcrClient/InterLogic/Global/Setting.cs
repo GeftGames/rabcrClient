@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
@@ -72,6 +73,9 @@ namespace rabcrClient {
         public static FogTypes Fog=FogTypes.Fancy;
         public static bool BetterSnowAndRain=true;
         public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
+
+        public static GraphicsProfile GraphicsProfile =GraphicsProfile.Reach;
+
         public static float NightBrightness=0.6f;
         public static float slideChangeTime=0.05f;
 
@@ -93,8 +97,10 @@ namespace rabcrClient {
         public static Microsoft.Xna.Framework.Input.Keys KeyDropItem=Microsoft.Xna.Framework.Input.Keys.LeftControl;
 
         public static Microsoft.Xna.Framework.Input.Keys KeyExit=Microsoft.Xna.Framework.Input.Keys.Escape;
-        public static Microsoft.Xna.Framework.Input.Keys KeyFlyMode=Microsoft.Xna.Framework.Input.Keys.F4;
+        public static Keys KeyFlyMode=Microsoft.Xna.Framework.Input.Keys.F4;
         public static Microsoft.Xna.Framework.Input.Keys KeyShowInfo=Microsoft.Xna.Framework.Input.Keys.F1;
+        public static bool Touchpad=false;
+        public static bool InvertedMouse=false;
         #endregion
 
         public static void CreateSettings() {
@@ -151,8 +157,10 @@ namespace rabcrClient {
                 (byte)KeyExit,
                 (byte)KeyShowInfo,
 
+
                 (byte)CurrentLanguage,
                 Constants.AnimationsControls ? (byte)1 : (byte)0,
+                InvertedMouse ? (byte)1 : (byte)0,
                 WavingElements ? (byte)1 : (byte)0,
                 Clouds ? (byte)1 : (byte)0,
                 BackgroundFancy ? (byte)1 : (byte)0,
@@ -162,7 +170,12 @@ namespace rabcrClient {
                 SnowAndRain ? (byte)1 : (byte)0,
                 Vignetting ? (byte)1 : (byte)0,
                 SunAndMoon ? (byte)1 : (byte)0,
+
+                (byte)Multisapling,
                 (byte)(UpScalingSuperSapling*10),
+                (byte)GraphicsProfile,
+
+                //(byte)(UpScalingSuperSapling),
                 (byte)Fog,
               //  (byte)GraphicsProfile,
 
@@ -223,6 +236,7 @@ namespace rabcrClient {
 
                     CurrentLanguage=*current++;
                     Constants.AnimationsControls=(*current++) == 1;
+                    InvertedMouse=(*current++) == 1;
                     WavingElements=(*current++) == 1;
                     Clouds=(*current++) == 1;
                     BackgroundFancy=(*current++) == 1;
@@ -232,7 +246,13 @@ namespace rabcrClient {
                     SnowAndRain=(*current++) == 1;
                     Vignetting=(*current++) == 1;
                     SunAndMoon=(*current++) == 1;
-                    UpScalingSuperSapling=(*current++)/10f;
+
+                    Multisapling=(*current++);
+               // (byte)(UpScalingSuperSapling*10),
+  UpScalingSuperSapling=(*current++)/10f;
+                    GraphicsProfile=(GraphicsProfile)(*current++);
+
+                  
                     Fog=(FogTypes)(*current++);
 
 

@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Publish\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>none</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -73,6 +73,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Commands.cs" />
+    <Compile Include="FormError.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormError.Designer.cs">
+      <DependentUpon>FormError.cs</DependentUpon>
+    </Compile>
     <Compile Include="Particles.cs" />
     <Compile Include="ClothesTypes.cs" />
     <Compile Include="Functions\FastMath.cs" />
@@ -410,6 +416,9 @@
     <None Include="Resources\FontInfo latin 34.bin" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FormError.resx">
+      <DependentUpon>FormError.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InterLogic\DrawComponents\Classic\Components\GTextBox.resx">
       <DependentUpon>GTextBox.cs</DependentUpon>
     </EmbeddedResource>

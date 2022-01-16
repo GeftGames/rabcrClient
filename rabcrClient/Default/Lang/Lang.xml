@@ -5,6 +5,8 @@
     <Lang EnglishName="Czech" Quality="5" NativeName="Čeština (Spisovná)" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
     <Lang EnglishName="Slovak" Quality="4" NativeName="Slovenčina" Flag="SK" Name="slk" Base="ces" Category="European&gt;Slavic" alphabet="AÁÄBCČDĎDzDžEÉFGHChIÍJKLĹĽaáäbcčdďdzdžeéfghchiíjklĺľMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽmnňoóôpqrŕsštťuúvwxyýzž" FontFile="latin" />
     <Lang EnglishName="Moravian" Quality="3" NativeName="Moravština" Name="mor" Flag="mor" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Silezian" Quality="0" NativeName="Ślůński" Name="slu" Flag="slu" Base="pol" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Po nasymu" Quality="0" NativeName="Po nasymu" Name="slu-pna" Flag="slu" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="Polish" Quality="3" NativeName="Polski" Flag="PL" Name="pol" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄĆĘŁŃÓŚŹŻąćęłńóśźż" Category="European&gt;Slavic" FontFile="latin" />
     <Lang EnglishName="German" Quality="3" NativeName="Deutsch" Name="deu" Flag="DE,AT,CH,LI,BE,LU" Base="eng" alphabet="AÄBCDEFGHIJKLMNOÖPQRSTUÜVWXYZaäbcdefghijklmnoöpqrstuüvwxyzß" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
     <Lang EnglishName="Japanese" Quality="3" NativeName="日本語 (標準語)" Name="jpn" Flag="JP" Base="enu" Category="Asian&gt;Japanese" FontFile="japanese" />
@@ -98,7 +100,7 @@
     <Lang EnglishName="Welsh" Quality="2" NativeName="Cymraeg" Name="cym" Base="eng" UseBase="true" Category="European&gt;Celtic" FontFile="latin" info="https://translation2.paralink.com/English-Welsh-Translation/" />
     <Lang EnglishName="Tongan" Quality="2" NativeName="lea faka-Tonga" Name="ton" Category="Oceanic" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
     <Lang EnglishName="Tahitian" Quality="2" NativeName="Reo Tahiti" Name="tah" Category="Oceanic" FontFile="latin" />
-    <Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanáckê" Name="mor-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
+    <Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanácke" Name="mor-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
     <Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácky" Name="mor-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
     <Lang EnglishName="Valašsko dialect" Quality="1" NativeName="Valašsky" Name="mor-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
     <Lang EnglishName="Hantec slang" Quality="1" NativeName="Brněnský hantec" Name="mor-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
@@ -115,7 +117,7 @@
     <a id="0">
       <eng>Generated in</eng>
       <ces>Vygenerováno za</ces>
-      <mor-ha>Vêgenerovány za</mor-ha>
+      <mor-ha>Vegenerovány za</mor-ha>
       <ces-ce>Vygenerový za</ces-ce>
       <slk>Vygenerované za</slk>
       <deu>Generiert in</deu>
@@ -201,7 +203,7 @@
     <a id="1">
       <eng>Back</eng>
       <ces>Zpět</ces>
-      <mor-ha>Zpátkê</mor-ha>
+      <mor-ha>Zpátke</mor-ha>
       <hsb>Wrócić</hsb>
       <mor>Zpátky</mor>
       <deu>Zurück</deu>
@@ -368,7 +370,7 @@
     <a id="3">
       <eng>Keyboard</eng>
       <ces>Klávesy</ces>
-      <mor-ha>Klávesê</mor-ha>
+      <mor-ha>Klávese</mor-ha>
       <hsb>Tastatura</hsb>
       <deu>Tastatur</deu>
       <jpn>キーボード</jpn>
@@ -780,7 +782,7 @@
       <eng>Close</eng>
       <ces>Ukončit</ces>
       <hsb>Začinić</hsb>
-      <mor-ha>Ôkončêt</mor-ha>
+      <mor-ha>Okončet</mor-ha>
       <deu>Schließen</deu>
       <slk>Ukončiť</slk>
       <fra>Quitter le jeu</fra>
@@ -886,7 +888,7 @@
     <a id="16">
       <eng>Add</eng>
       <ces>Přidat</ces>
-      <mor-ha>Přêdat</mor-ha>
+      <mor-ha>Předat</mor-ha>
       <hsb>Aděrować</hsb>
       <deu>Hinzufügen</deu>
       <slk>Pridať</slk>
@@ -1299,7 +1301,7 @@
       <eng>The folder RabcrData has corrupted or missing content</eng>
       <ces>Složka RabcrData má požkozený nebo chybějící obsah</ces>
       <ces-ce>Složka RabcrData má požkozenej nebo chybějící obsah</ces-ce>
-      <mor-ha>Složka RabcrData má požkozeny data nebo s chêbnym obsahem</mor-ha>
+      <mor-ha>Složka RabcrData má požkozeny data nebo s chebnym obsahem</mor-ha>
       <slk>Zložka RabcrData má pożkodenia alebo chýbajúci obsah</slk>
       <pol>Folder RabcrData ma uszkodzoną lub brakującą zawartość</pol>
       <jpn>フォルダーRabcrDataのコンテンツが破損しているか欠落しています</jpn>
@@ -1622,7 +1624,7 @@
     <a id="26">
       <eng>Go to the menu</eng>
       <ces>Zpět do menu</ces>
-      <mor-ha>Zpátkê do menô</mor-ha>
+      <mor-ha>Zpátke do meno</mor-ha>
       <hsb>Chodźić do menu</hsb>
       <slk>Späť do menu</slk>
       <por>Vá para o menu</por>
@@ -1813,7 +1815,7 @@
     <a id="29">
       <eng>Respawn in</eng>
       <ces>Znovuzrodíš se za</ces>
-      <mor-ha>Znovô se narodiš za</mor-ha>
+      <mor-ha>Znovo se narodiš za</mor-ha>
       <slk>Znovuzrodíš sa za</slk>
       <pol>Odrodzenie w</pol>
       <eo>Malaperigita eng</eo>
@@ -2076,7 +2078,7 @@
       <eng>Adjusting</eng>
       <ces>Nastavuji</ces>
       <mor>Nastavuju</mor>
-      <mor-ha>Nastavôjô</mor-ha>
+      <mor-ha>Nastavojo</mor-ha>
       <slk>Nastavujem</slk>
       <pol>Naregulowanie</pol>
       <jpn>調整中</jpn>
@@ -2282,7 +2284,7 @@
     <a id="57">
       <eng>Cancel</eng>
       <ces>Zrušit</ces>
-      <mor-ha>Anôlovat</mor-ha>
+      <mor-ha>Anolovat</mor-ha>
       <hsb>Přetorhnyć</hsb>
       <deu>Abbrechen</deu>
       <slk>Zrušiť</slk>
@@ -2366,7 +2368,7 @@
     <a id="58">
       <eng>Apply</eng>
       <ces>Použít</ces>
-      <mor-ha>Póžit</mor-ha>
+      <mor-ha>Póžet</mor-ha>
       <hsb>Wužiwać</hsb>
       <deu>Übernehmen</deu>
       <jpn>アプライ</jpn>
@@ -2719,7 +2721,7 @@
       <eng>The size of the world</eng>
       <ces>Velikost světa</ces>
       <hsb>Wulkósć swěta</hsb>
-      <mor-ha>Velêkosť sfěta</mor-ha>
+      <mor-ha>Velikosť sfěta</mor-ha>
       <slk>Veľkosť sveta</slk>
       <pol>Wielkość świata</pol>
       <por>O tamanho do mundo</por>
@@ -2809,7 +2811,7 @@
       <eng>Load world from file</eng>
       <ces>Načíst svět ze souboru</ces>
       <hsb>Swět wobchadźeć wot dataja</hsb>
-      <mor-ha>Načést sfět ze sóborô</mor-ha>
+      <mor-ha>Načést sfět ze sóboro</mor-ha>
       <slk>Načítať svet zo súboru</slk>
       <pol>Załaduj świat z pliku</pol>
       <por>Carregar mundo do arquivo</por>
@@ -2921,7 +2923,7 @@
     <a id="71">
       <eng>Edit world</eng>
       <ces>Upravit svět</ces>
-      <mor-ha>Ôpravêt sfět</mor-ha>
+      <mor-ha>Opravit sfět</mor-ha>
       <hsb>Wobdźěłać swět</hsb>
       <deu>Bearbeiten</deu>
       <slk>Upraviť svet</slk>
@@ -3011,7 +3013,7 @@
     <a id="72">
       <eng>You can use GeDo tags</eng>
       <ces>Můžete použít GeDo značky</ces>
-      <mor-ha>Mužete póžit GeDo značkê</mor-ha>
+      <mor-ha>Mužete póžit GeDo značke</mor-ha>
       <slk>Môžete použiť GeDo značky</slk>
       <pol>Możesz użyć tagów GeDo</pol>
       <nld>U kunt GeDo-tags gebruiken</nld>
@@ -3279,7 +3281,7 @@
     <a id="75">
       <eng>Clean</eng>
       <ces>Vyčistit</ces>
-      <mor-ha>Vêčêstit</mor-ha>
+      <mor-ha>Večestit</mor-ha>
       <deu>Putzen</deu>
       <slk>Vyčistiť</slk>
       <spa>Limpio</spa>
@@ -3458,7 +3460,7 @@
     <a id="78">
       <eng>Notes</eng>
       <ces>Poznámky</ces>
-      <mor-ha>Poznámkê</mor-ha>
+      <mor-ha>Poznámke</mor-ha>
       <pol>Notatki</pol>
       <jpn>ノート</jpn>
       <deu>Anmerkungen</deu>
@@ -3774,7 +3776,7 @@
     <a id="82">
       <eng>Player</eng>
       <ces>Postavička</ces>
-      <mor-ha>Postavêčka</mor-ha>
+      <mor-ha>Postavečka</mor-ha>
       <jpn>プレーヤー</jpn>
       <pol>Charakter</pol>
       <spa>Jugador</spa>
@@ -3936,7 +3938,7 @@
     <a id="84">
       <eng>Depending on sex will be generated clothes</eng>
       <ces>Podle pohlaví bude vygenerováno oblečení</ces>
-      <mor-ha>Podli pohlavi bôde včegenerované obšata</mor-ha>
+      <mor-ha>Podli pohlavi bode vegenerovana obšata</mor-ha>
       <slk>Podľa pohlavia bude vygenerované oblečenie</slk>
       <pol>Odzież będzie generowana według płci</pol>
       <jpn>性別によって生成される服</jpn>
@@ -4017,7 +4019,7 @@
     <a id="85">
       <eng>Man</eng>
       <ces>Muž</ces>
-      <mor-ha>Môž</mor-ha>
+      <mor-ha>Mož</mor-ha>
       <hsb>Muž</hsb>
       <deu>Mann</deu>
       <jpn>男</jpn>
@@ -4096,7 +4098,7 @@
     <a id="86">
       <eng>Enabled</eng>
       <ces>Zapnuto</ces>
-      <mor-ha>Zapnôté</mor-ha>
+      <mor-ha>Zapnoté</mor-ha>
       <deu>Aktiviert</deu>
       <jpn>有効化</jpn>
       <slk>Zapnuté</slk>
@@ -4176,7 +4178,7 @@
     <a id="87">
       <eng>Disabled</eng>
       <ces>Vypnuto</ces>
-      <mor-ha>Vêpnôté</mor-ha>
+      <mor-ha>Vepnoté</mor-ha>
       <deu>Deaktiviert</deu>
       <jpn>無効</jpn>
       <slk>Vypnuté</slk>
@@ -4338,7 +4340,7 @@
     <a id="89">
       <eng>Mature player</eng>
       <ces>Věk postavičky</ces>
-      <mor-ha>Leta postavêčkê</mor-ha>
+      <mor-ha>Leta postavečke</mor-ha>
       <pol>Dojrzały gracz</pol>
       <fra>Joueur mature</fra>
       <ita>Giocatore maturo</ita>
@@ -4894,6 +4896,9 @@
       <eng>Keyboard</eng>
       <ces>Klávesnice</ces>
       <mor-ha>Klávesnica</mor-ha>
+      <mor>Klávesnica</mor>
+      <mor-va>Klávesnica</mor-va>
+      <mor-sl>Klávesnica</mor-sl>
       <deu>Tastatur</deu>
       <jpn>キーボード</jpn>
       <slk>Klávesnica</slk>
@@ -5217,7 +5222,7 @@
     <a id="104">
       <eng>Jumping</eng>
       <ces>Skákání</ces>
-      <mor-ha>Vêskákováni</mor-ha>
+      <mor-ha>Veskákováni</mor-ha>
       <deu>Springen</deu>
       <jpn>ジャンプ</jpn>
       <slk>Skákanie</slk>
@@ -5298,7 +5303,7 @@
     <a id="106">
       <eng>Accelerate</eng>
       <ces>Zrychlení</ces>
-      <mor-ha>Rêchléši pohêb</mor-ha>
+      <mor-ha>Rechléši poheb</mor-ha>
       <srp>Убрзати</srp>
       <swa>Kuharakisha</swa>
       <ltz>Beschleunegen</ltz>
@@ -5536,7 +5541,7 @@
     <a id="111">
       <eng>Open bubble and write some text</eng>
       <ces>Otevřít bublinu ke psaní</ces>
-      <mor-ha>Otevř žbolêno ke psani</mor-ha>
+      <mor-ha>Otevř žboleno ke psani</mor-ha>
       <ces-ce>Votevřít bublinu ke psaní</ces-ce>
       <slk>Otvoriť bublinu na písanie</slk>
       <deu>Chat</deu>
@@ -5618,7 +5623,7 @@
     <a id="112">
       <eng>Drop item</eng>
       <ces>Vyhození itemu</ces>
-      <mor-ha>Vêhozeni itemô</mor-ha>
+      <mor-ha>Vehozeni itemo</mor-ha>
       <slk>Vyhodenie itema</slk>
       <pol>Upuść przedmiot</pol>
       <spa>Descarta un objeto</spa>
@@ -5780,7 +5785,7 @@
     <a id="115">
       <eng>Go from game to the menu</eng>
       <ces>Ze hry do menu</ces>
-      <mor-ha>Ze hrê do menô</mor-ha>
+      <mor-ha>Ze hre do meno</mor-ha>
       <pol>Od gry do menu</pol>
       <jpn>ゲームからメニューへ</jpn>
       <deu>Gehe vom Spiel zum Menü</deu>
@@ -5861,7 +5866,7 @@
     <a id="121">
       <eng>Language</eng>
       <ces>Jazyk</ces>
-      <mor-ha>Jazêk</mor-ha>
+      <mor-ha>Jazek</mor-ha>
       <hsb>Rěč</hsb>
       <deu>Sprache</deu>
       <jpn>言語</jpn>
@@ -5944,7 +5949,7 @@
     <a id="123">
       <eng>Game elements</eng>
       <ces>Herní prvky</ces>
-      <mor-ha>Herni prvkê</mor-ha>
+      <mor-ha>Herni prvke</mor-ha>
       <slk>Herné prvky</slk>
       <jpn>ゲーム要素</jpn>
       <spa>Elementos del juego</spa>
@@ -6173,7 +6178,7 @@
     <a id="126">
       <eng>Zoom</eng>
       <ces>Přiblížení</ces>
-      <mor-ha>Přêbléžêni</mor-ha>
+      <mor-ha>Přebléženi</mor-ha>
       <deu>Vergrößern</deu>
       <slk>Priblíženie</slk>
       <jpn>ズーム</jpn>
@@ -6244,8 +6249,8 @@
     </a>
     <a id="128">
       <eng>Type of scale</eng>
-      <ces>Typ roztáhnutí</ces>
-      <mor-ha>Têp roztáhnôti</mor-ha>
+      <ces>Typ roztáhnoutí</ces>
+      <mor-ha>Tep roztáhnóti</mor-ha>
       <deu>Stretch-Tipp</deu>
       <slk>Typ roztiahnutia</slk>
       <ita>Tipo di stiramento</ita>
@@ -6466,7 +6471,7 @@
     <a id="134">
       <eng>Loudness</eng>
       <ces>Hlasitost</ces>
-      <mor-ha>Hlasêtost</mor-ha>
+      <mor-ha>Hlasetost</mor-ha>
       <deu>Lautstärke</deu>
       <slk>Hlasitosť</slk>
       <jpn>ボリューム</jpn>
@@ -6545,7 +6550,7 @@
       <eng>Music</eng>
       <hsb>Hudźba</hsb>
       <ces>Hlasitost písní</ces>
-      <mor-ha>Hlasêtost vêbřenkováni môzekê</mor-ha>
+      <mor-ha>Hlasetost vebřenkováni mozeke</mor-ha>
       <deu>Musik</deu>
       <slk>Hlasitosť piesní</slk>
       <pol>Muzyka</pol>
@@ -6625,7 +6630,7 @@
     <a id="137">
       <eng>Effects</eng>
       <ces>Hlasitost efektů</ces>
-      <mor-ha>Hlasêtost vêbřenkováni efektô</mor-ha>
+      <mor-ha>Hlasetost vebřenkováni efektu</mor-ha>
       <slk>Hlasitosť efektov</slk>
       <jpn>音響効果</jpn>
       <pol>Efekty</pol>
@@ -6705,7 +6710,7 @@
     <a id="139">
       <eng>Length of transition</eng>
       <ces>Rychlost přechodu</ces>
-      <mor-ha>Rêchlost přechodô</mor-ha>
+      <mor-ha>Rechlosť přechodo</mor-ha>
       <slk>Rýchlosť prechodu</slk>
       <spa>Duración de la transición</spa>
       <ita>Lunghezza della transizione</ita>
@@ -6979,7 +6984,7 @@
       <eng>I've had 18 years</eng>
       <ces>Dosáhl jsem 18 let</ces>
       <mor>Su starší 18 let</mor>
-      <mor-ha>Sô starši 18 let</mor-ha>
+      <mor-ha>So starši 18 let</mor-ha>
       <slk>Dosiahol som 18 rokov</slk>
       <eo>Mi havis 18 jarojn</eo>
       <ukr>У мене було 18 років</ukr>
@@ -7445,7 +7450,9 @@
     <a id="149">
       <eng>Proportion</eng>
       <ces>Dle poměru</ces>
-      <mor-ha>Podli poměrô</mor-ha>
+      <mor-ha>Podli poměro</mor-ha>
+      <mor-va>Podla poměru</mor-va>
+      <mor-sl>Podla poměru</mor-sl>
       <slk>Podľa pomeru</slk>
       <spa>Proporción</spa>
       <ita>Proporzione</ita>
@@ -7525,7 +7532,7 @@
     <a id="150">
       <eng>Fill</eng>
       <ces>Vyplnit</ces>
-      <mor-ha>Vêplnit</mor-ha>
+      <mor-ha>Veplnit</mor-ha>
       <deu>Ausfüllen</deu>
       <slk>Vyplniť</slk>
       <pol>Wypełnij</pol>
@@ -8109,7 +8116,7 @@
     <a id="157">
       <eng>Clothes and crafting</eng>
       <ces>Oblečení a vyrábění</ces>
-      <mor-ha>Obšata a vêráběni</mor-ha>
+      <mor-ha>Obšata a veráběni</mor-ha>
       <deu>Bekleidung und Fertigung</deu>
       <slk>Oblečenie a vyrábanie</slk>
       <spa>Prendas de vestir y la fabricación</spa>
@@ -8348,7 +8355,7 @@
     <a id="160">
       <eng>Choose an item</eng>
       <ces>Vyberte item</ces>
-      <mor-ha>Vêberte item</mor-ha>
+      <mor-ha>Veberte item</mor-ha>
       <fij>Digitaka e dua na ka</fij>
       <pol>Wybierz przedmiot </pol>
       <deu>Wähle einen Gegenstand</deu>
@@ -8414,7 +8421,7 @@
     <a id="161">
       <eng>You can't breathe water</eng>
       <ces>Nemůžeš dýchat vodu</ces>
-      <mor-ha>Nemužeš déchat vodô</mor-ha>
+      <mor-ha>Nemužeš déchat vodo</mor-ha>
       <slk>Nemôžeš dýchať vodu</slk>
       <eo>Vi ne povas spiri akvon</eo>
       <spa>No puedes respirar agua</spa>
@@ -8512,7 +8519,7 @@
       <eng>You should eat and drink</eng>
       <ces>Měl bys jíst a pít</ces>
       <mor>Měl bys něco sníst a pít se</mor>
-      <mor-ha>Měl bês něco snist a napit se</mor-ha>
+      <mor-ha>Měl bes něco snist a napit se</mor-ha>
       <slk>Mal by si jesť a piť</slk>
       <eo>Vi devas manĝi kaj trinki</eo>
       <spa>Deberías comer y beber</spa>
@@ -8700,8 +8707,8 @@
       <eng>You were drawn to death</eng>
       <ces>Byl jsi utahán k smrti</ces>
       <mor>Byls utahán ke smrti</mor>
-      <mor-ha>Bêls ôtahán ke smrti</mor-ha>
-      <ces-ce>Byl si utahanej ke smrti</ces-ce>
+      <mor-ha>Bels otahán ke smrti</mor-ha>
+      <ces-ce>Byl si utahan ke smrti</ces-ce>
       <slk>Bol si uťahaný na smrť</slk>
       <jpn>死に疲れていました</jpn>
       <jpn-oita>死に疲れちょった</jpn-oita>
@@ -8799,7 +8806,7 @@
     <a id="165">
       <eng>Toadstool is poisonous</eng>
       <ces>Muchomůrka je jedovatá</ces>
-      <mor-ha>Môchomurka se dá jist jen jednó</mor-ha>
+      <mor-ha>Mochomurka se dá jist jen jednó</mor-ha>
       <slk>Muchotrávka je jedovatá</slk>
       <eo>Toadstool estas venena</eo>
       <spa>Toadstool es venenoso</spa>
@@ -8898,7 +8905,7 @@
     <a id="166">
       <eng>Fly</eng>
       <ces>Přiletět</ces>
-      <mor-ha>Přêlétnót</mor-ha>
+      <mor-ha>Přelitnót</mor-ha>
       <deu>Fliege</deu>
       <slk>Priletieť</slk>
       <eo>Flugu</eo>
@@ -8977,7 +8984,7 @@
     <a id="167">
       <eng>Create</eng>
       <ces>Vytvořit</ces>
-      <mor-ha>Vêtvořit</mor-ha>
+      <mor-ha>Vetvořit</mor-ha>
       <deu>Erstellen</deu>
       <slk>Vytvoriť</slk>
       <pol>Stwórz</pol>
@@ -9063,7 +9070,7 @@
     <a id="168">
       <eng>Sewing machine</eng>
       <ces>Šicí stroj</ces>
-      <mor-ha>Šêci stroj</mor-ha>
+      <mor-ha>Šeci stroj</mor-ha>
       <slk>Šijací stroj</slk>
       <eo>Kudromaŝino</eo>
       <cat>Màquina de cosir</cat>
@@ -9142,7 +9149,7 @@
     <a id="169">
       <eng>Macerator</eng>
       <ces>Drtič</ces>
-      <mor-ha>Krôšedlo</mor-ha>
+      <mor-ha>Krošedlo</mor-ha>
       <deu>Mazerator</deu>
       <slk>Drvič</slk>
       <spa>Macerador</spa>
@@ -9281,6 +9288,7 @@
     <a id="171">
       <eng>Items</eng>
       <ces>Itemy</ces>
+      <mor-ha>Iteme</mor-ha>
       <deu>Gegenstände</deu>
       <pol>Przedmioty</pol>
       <eo>Eroj</eo>
@@ -9359,9 +9367,10 @@
     <a id="172">
       <eng>Wooden box</eng>
       <ces>Dřevěná truhlice</ces>
-      <mor-ha>Dřevěná trôhleca</mor-ha>
+      <mor-ha>Dřevěná trohleca</mor-ha>
       <mor-sl>Dřevěná kostna</mor-sl>
       <mor-va>Dřevěná truhła</mor-va>
+      <mor>Dřevěná truhla</mor>
       <deu>Holztruhe</deu>
       <slk>Drevená truhlica</slk>
       <pol>Drewniana skrzynia</pol>
@@ -9441,7 +9450,7 @@
     <a id="173">
       <eng>Box</eng>
       <ces>Truhlice</ces>
-      <mor-ha>Trôhleca</mor-ha>
+      <mor-ha>Trohleca</mor-ha>
       <mor-va>Truhła</mor-va>
       <mor-sl>Žigla</mor-sl>
       <deu>Truhe</deu>
@@ -9683,8 +9692,8 @@
       <eng>Charger</eng>
       <ces>Nabíječka</ces>
       <mor-ha>Nabiječka</mor-ha>
-      <deu>Ladegerät</deu>
       <slk>Nabíjačka</slk>
+      <deu>Ladegerät</deu>
       <pol>Ładowarka</pol>
       <fra>Chargeur</fra>
       <eo>Ŝargilo</eo>
@@ -9759,6 +9768,7 @@
     <a id="177">
       <eng>Mining machine</eng>
       <ces>Vrták</ces>
+      <mor-ha>Těžebné stroj</mor-ha>
       <slk>Ťažobný stroj</slk>
       <pol>Wiertło</pol>
       <cat>Miner</cat>
@@ -9891,7 +9901,7 @@
     <a id="179">
       <eng>Folder with music</eng>
       <ces>Složka s hudbou</ces>
-      <mor-ha>Složka s môzekó</mor-ha>
+      <mor-ha>Složka s mozekó</mor-ha>
       <slk>Zložka s hudbou</slk>
       <eo>Dosierujo kun muziko</eo>
       <pol>Folder z muzyką</pol>
@@ -9971,7 +9981,7 @@
     <a id="180">
       <eng>Shelf</eng>
       <ces>Polička</ces>
-      <mor-ha>Polêčka</mor-ha>
+      <mor-ha>Polečka</mor-ha>
       <deu>Gestell</deu>
       <slk>Polica</slk>
       <pol>Półka</pol>
@@ -10219,7 +10229,7 @@
     <a id="183">
       <eng>Creative</eng>
       <ces>Tvořivá</ces>
-      <mor-ha>Tvořêvá</mor-ha>
+      <mor-ha>Tvořevá</mor-ha>
       <deu>Kreativ</deu>
       <slk>Tvorivá</slk>
       <jpn>クリエイティブ</jpn>
@@ -10300,7 +10310,7 @@
     <a id="188">
       <eng>Add new world</eng>
       <ces>Přidat nový svět</ces>
-      <mor-ha>Přêdat nové sfět</mor-ha>
+      <mor-ha>Předat nové sfět</mor-ha>
       <ces-ce>Přidat novej svět</ces-ce>
       <slk>Pridať nový svět</slk>
       <pol>Dodaj nowy świat</pol>
@@ -10385,7 +10395,6 @@
       <ces>Skrýt náhled</ces>
       <mor-ha>Skovat náhled</mor-ha>
       <mor>Skovat náhled</mor>
-      <mor>Schovat náhled</mor>
       <ces-ce>Skrejt náhled</ces-ce>
       <slk>Skryť náhľad</slk>
       <eo>Kaŝi spoiler</eo>
@@ -10477,7 +10486,9 @@
     <a id="190">
       <eng>Create portable world</eng>
       <ces>Zabalit svět do archivu</ces>
-      <mor-ha>Zabalêt sfět do archivô</mor-ha>
+      <mor-ha>Zabalet sfět do archivo</mor-ha>
+      <mor-va>Zabaliť svjet do archivu</mor-va>
+      <mor-sl>Zabaliť svjet do archivu</mor-sl>
       <slk>Zabaliť svet do archívu</slk>
       <eo>Krei portebla mondo</eo>
       <spa>Crea un mundo portátil</spa>
@@ -10571,6 +10582,8 @@
       <ces>Smazat celý svět</ces>
       <ces-ce>Smazat celej svět</ces-ce>
       <mor-ha>Smazat celé sfět</mor-ha>
+      <mor-va>Smazať cełý svjet</mor-va>
+      <mor-sl>Smazať cełý svjet</mor-sl>
       <slk>Odstráni celý svet</slk>
       <eo>Forigas la tutan mondon</eo>
       <spa>Elimina todo el mundo</spa>
@@ -10667,10 +10680,11 @@
     </a>
     <a id="192">
       <eng>Where to save the world?</eng>
-      <ces-ce>Smazat celej svět</ces-ce>
-      <mor-ha>Kam ôložêt sfět</mor-ha>
-      <ces>Kam uložit svět</ces>
-      <slk>Kam uložiť svet</slk>
+      <ces>Kam mám uložit svět?</ces>
+      <ces-ce>Kam uložit svět?</ces-ce>
+      <mor-ha>Kam oložet sfět</mor-ha>
+      <slu>Kaj mŏm ulożić śwjot?</slu>
+      <slu-pna>Kaj mům ulożić śwjot?</slu-pna>
       <eo>Kie savi la mondon?</eo>
       <spa>¿Dónde salvar al mundo?</spa>
       <pol>Gdzie uratować świat?</pol>
@@ -12156,7 +12170,7 @@
     <a id="211">
       <eng>Check if I'o using the latest version of the game</eng>
       <ces>Zkontrolovat zda používám nejnovější verzi hry</ces>
-      <mor-ha>Skontrolovat ešlê póživám nénovjéši verzi hrê</mor-ha>
+      <mor-ha>Skontrolovat ešle póživám nénovjéši verzi hre</mor-ha>
       <slk>Zkontrolovat či používam najnovšiu verzií hry</slk>
       <spa>Comprueba si estoy usando la última versión del juego</spa>
       <pol>Sprawdź, czy korzystam z najnowszej wersji gry</pol>
@@ -12446,7 +12460,7 @@
     <a id="215">
       <eng>Sign in</eng>
       <ces>Přihlášení</ces>
-      <mor-ha>Přêhlášeni</mor-ha>
+      <mor-ha>Přehlášeni</mor-ha>
       <slk>Prihlásenie</slk>
       <jpn>サインイン</jpn>
       <pol>Zaloguj się</pol>
@@ -12527,7 +12541,7 @@
     <a id="216">
       <eng>Choose a world</eng>
       <ces>Vyberte si svět</ces>
-      <mor-ha>Vêberte si sfět</mor-ha>
+      <mor-ha>Veberte si sfět</mor-ha>
       <slk>Vyberte si svet</slk>
       <pol>Wybierz świat</pol>
       <eo>Elektu mondon</eo>
@@ -12796,7 +12810,9 @@
     <a id="219">
       <eng>Prepare for regeneration</eng>
       <ces>Připravit k přegenerování</ces>
-      <mor-ha>Přêpravit k přegenerováni</mor-ha>
+      <mor-ha>Přepravit k přegenerováni</mor-ha>
+      <mor-va>Připraviť k přegenerování</mor-va>
+      <mor-sl>Připraviť k přegenerování</mor-sl>
       <slk>Pripraviť k pregenerovanie</slk>
       <eo>Preparu por regenerado</eo>
       <spa>Prepárate para la regeneración</spa>
@@ -13166,7 +13182,7 @@
       <eng>Save + Optimize</eng>
       <ces>Uložení + Optimalizace</ces>
       <ces-ce>Uložení + Voptimalizace</ces-ce>
-      <mor-ha>Ôložêni + optimalizace</mor-ha>
+      <mor-ha>Oložêni + optimalizaca</mor-ha>
       <slk>Uloženie + Optimalizácia</slk>
       <eo>Konservi + Optimigi</eo>
       <spa>Guardar + Optimizar</spa>
@@ -14064,7 +14080,7 @@
     <a id="238">
       <eng>We've detected errors, check Data</eng>
       <ces>Objevili jsme chyby, zkontrolujte Data</ces>
-      <mor-ha>Vêštáralê sme mélkê, skontrolôjte Data</mor-ha>
+      <mor-ha>Veštáralê sme mélke, skontrolôjte Data</mor-ha>
       <slk>Objavili sme chyby, kontrolujte Data</slk>
       <pol>Znaleźliśmy błędy, sprawdź dane</pol>
       <jpn>エラーを検出しました。データを確認してください</jpn>
@@ -14398,7 +14414,7 @@
     <a id="248">
       <eng>Crafting</eng>
       <ces>Vyrábění</ces>
-      <mor-ha>Vêráběni</mor-ha>
+      <mor-ha>Veráběni</mor-ha>
       <slk>Vyrábanie</slk>
       <jpn>クラフト</jpn>
       <deu>Basteln</deu>
@@ -16253,32 +16269,19 @@
       <jpn>五倍</jpn>
     </a>
     <a id="281">
-      <eng>
-        <Bold>Ex. 1</Bold> Solve the equation 2*x-%num%=0 and type the number in the box</eng>
-      <ces>
-        <Bold>Př. 1</Bold> Vyřešte rovnici 2*x-%num%=0 a číslo napište do pole</ces>
-      <mor>
-        <Bold>Př. 1</Bold> Vyřešte rovnicu 2*x-%num%=0 a číslo napište do pole</mor>
-      <mor-ha>
-        <Bold>Př. 1</Bold> Vêřešte rovnicô 2*x-%num%=0 a čislo napište do pole</mor-ha>
-      <deu>
-        <Bold>Bsp. 1</Bold> Lösen Sie die Gleichung 2*x-%num%=0 und geben Sie die Zahl in das Feld ein</deu>
-      <jpn>
-        <Bold>例 1</Bold> 方程式 2*x-％num％=0 を解き、ボックスに数値を入力します</jpn>
-      <slk>
-        <Bold>Pr. 1</Bold> Vyriešte rovnicu 2*x-%num%=0 a do poľa zadajte číslo</slk>
-      <fra>
-        <Bold>Ex. 1</Bold> Résolvez l'équation 2*x-%num%=0 et tapez le nombre dans la case</fra>
-      <ita>
-        <Bold>Es. 1</Bold> Risolvi l'equazione 2*x-%num%=0 e digita il numero nella casella</ita>
-      <spa>
-        <Bold>Ej. 1</Bold> Resuelve la ecuación 2*x-%num%=0 y escribe el número eng el cuadro</spa>
-      <pol>
-        <Bold>Np. 1</Bold> Rozwiąż równanie 2*x-%num%=0 i wpisz liczbę w polu</pol>
-      <jpn-oita>
-        <Bold>例 1</Bold> 方程式 2*x-%num%=0 ぅ解き、ボックスに数値ぅ入力する</jpn-oita>
-      <jpn-kyot>
-        <Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-kyot>
+      <eng><Bold>Ex. 1</Bold> Solve the equation 2*x-%num%=0 and type the number in the box</eng>
+      <ces><Bold>Př. 1</Bold> Vyřešte rovnici 2*x-%num%=0 a číslo napište do pole</ces>
+      <mor><Bold>Př. 1</Bold> Vyřešte rovnicu 2*x-%num%=0 a číslo napište do pole</mor>
+      <mor-ha><Bold>Př. 1</Bold> Veřešte rovnicô 2*x-%num%=0 a čislo napište do pole</mor-ha>
+      <deu><Bold>Bsp. 1</Bold> Lösen Sie die Gleichung 2*x-%num%=0 und geben Sie die Zahl in das Feld ein</deu>
+      <jpn><Bold>例 1</Bold> 方程式 2*x-％num％=0 を解き、ボックスに数値を入力します</jpn>
+      <slk><Bold>Pr. 1</Bold> Vyriešte rovnicu 2*x-%num%=0 a do poľa zadajte číslo</slk>
+      <fra><Bold>Ex. 1</Bold> Résolvez l'équation 2*x-%num%=0 et tapez le nombre dans la case</fra>
+      <ita><Bold>Es. 1</Bold> Risolvi l'equazione 2*x-%num%=0 e digita il numero nella casella</ita>
+      <spa><Bold>Ej. 1</Bold> Resuelve la ecuación 2*x-%num%=0 y escribe el número eng el cuadro</spa>
+      <pol><Bold>Np. 1</Bold> Rozwiąż równanie 2*x-%num%=0 i wpisz liczbę w polu</pol>
+      <jpn-oita><Bold>例 1</Bold> 方程式 2*x-%num%=0 ぅ解き、ボックスに数値ぅ入力する</jpn-oita>
+      <jpn-kyot><Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-kyot>
       <jpn-haka>
         <Bold>例 1</Bold> 方程式 2*x-%num%=0 ば解き、ボックスに数値ば入力する</jpn-haka>
       <jpn-miya>
@@ -16299,10 +16302,8 @@
         <Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-yama>
       <jpn-iyo>
         <Bold>例 1</Bold> 方程式 2*x-%num%=0 解き、ボックスに数値入力する</jpn-iyo>
-      <jpn-awa>
-        <Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-awa>
-      <jpn-tosa>
-        <Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-tosa>
+      <jpn-awa><Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-awa>
+      <jpn-tosa><Bold>例 1</Bold> 方程式 2*x-%num%=0 を解き、ボックスに数値を入力する</jpn-tosa>
       <por>Ex. 1 Resolva a equação 2*x-%num%=0 e digite o número na caixa</por>
       <dan>Eks. 1 Løs ligningen 2*x-%num%=0, og skriv tallet i boksen</dan>
       <cat>Ex. 1 Resoleu l'equació 2*x-%num%=0 i escriviu el número al quadre</cat>
@@ -16962,7 +16963,7 @@
     <a id="289">
       <eng>Hydrochloric acid</eng>
       <ces>kyselina chlorovodíková</ces>
-      <mor-ha>kêselêna chlorovodiková</mor-ha>
+      <mor-ha>keselena chlorovodiková</mor-ha>
       <slk>Kyselina chlorovodíková</slk>
       <spa>Ácido clorhídrico</spa>
       <fra>Acide chlorhydrique</fra>
@@ -17492,7 +17493,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="294">
       <eng>Show program details</eng>
       <ces>Zobrazit detaily programu</ces>
-      <mor-ha>Zobrazit detajlê programô</mor-ha>
+      <mor-ha>Zobrazit detajle programo</mor-ha>
       <slk>Zobraziť detaily programu</slk>
       <kur>Hûrguliyên bernameyê nîşan bidin</kur>
       <spa>Mostrar detalles del programa</spa>
@@ -17582,7 +17583,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="295">
       <eng>Hide program details</eng>
       <ces>Skrýt detaily programu</ces>
-      <mor-ha>Skovat detaily programô</mor-ha>
+      <mor-ha>Skovat detaily programo</mor-ha>
       <mor>Schovat detaily programu</mor>
       <ces-ce>Skrejt detaily programu</ces-ce>
       <slk>Skryť detaily programu</slk>
@@ -17769,7 +17770,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="297">
       <eng>You ran out of air</eng>
       <ces>Došel ti vzduch</ces>
-      <mor-ha>Nebêls dlóho na luftô</mor-ha>
+      <mor-ha>Nebels dlóho na lufto</mor-ha>
       <pol>Zabrakło ci powietrza</pol>
       <slk>Došiel ti vzduch</slk>
       <hun>Elfogyott a levegő</hun>
@@ -17868,7 +17869,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="298">
       <eng>Apparatus for air production</eng>
       <ces>Přístroj na tvorbu vzduchu</ces>
-      <mor-ha>Přéstroj na vêráběni luftô</mor-ha>
+      <mor-ha>Přéstroj na veráběni lufto</mor-ha>
       <pol>Urządzenia do produkcji powietrza</pol>
       <slk>Prístroj na tvorbu vzduchu</slk>
       <hun>Készülékek levegő előállításához</hun>
@@ -17959,7 +17960,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="299">
       <eng>You need a spacesuit to survive</eng>
       <ces>Potřebuješ skafandr aby si přežil</ces>
-      <mor-ha>Môsiš mět skafandr abês přežil</mor-ha>
+      <mor-ha>Mosiš mět skafandr abes přežil</mor-ha>
       <pol>Urządzenia do produkcji powietrza</pol>
       <slk>Potrebuješ skafander aby si prežil</slk>
       <hun>Szüksége van egy kosztümre a túléléshez</hun>
@@ -18139,7 +18140,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="301">
       <eng>Constructed</eng>
       <ces>Umělé</ces>
-      <mor-ha>Ôměly</mor-ha>
+      <mor-ha>Oměly</mor-ha>
       <pol>Języki sztuczne</pol>
       <slk>Umelé jazyky</slk>
       <spa>Lenguajes artificiales</spa>
@@ -19126,7 +19127,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="314">
       <eng>Building world...</eng>
       <ces>Sestavování světa...</ces>
-      <mor-ha>Sfět se nastrmélôje...</mor-ha>
+      <mor-ha>Sfět se nastrméloje...</mor-ha>
       <vie>Xây dựng thế giới...</vie>
       <slk>Zostavovanie sveta...</slk>
       <pol>Składanie świata...</pol>
@@ -19372,99 +19373,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <fij>ITukutuku vakayaloyalo</fij>
       <glg>Perfil de gráficos</glg>
     </a>
-    <a id="343">
-      <eng>This setting will be applied after restart.</eng>
-      <ces>Tohle nastavení bude aplikováno až po znovuspuštění.</ces>
-      <mor-ha>Tohle nastaveni bôde aplikováné až po znovôspôštěni.</mor-ha>
-      <slk>Toto nastavenie bude aplikované po znovuspustenie.</slk>
-      <jpn>この設定は再起動後に適用されます。</jpn>
-      <jpn-saga>こん設定は再起動後に適用さるっ。</jpn-saga>
-      <jpn-naga>こん設定は再起動後に適用さるる。</jpn-naga>
-      <jpn-kuma>こん設定は再起動後に適用さるる。</jpn-kuma>
-      <jpn-miya>こん設定は再起動後に適用さるる。</jpn-miya>
-      <jpn-tsug>この設定は再起動後さ適用されます。</jpn-tsug>
-      <jpn-izum>この設定は再起動後に適用されー。</jpn-izum>
-      <jpn-hiro>この設定は再起動後に適用される。</jpn-hiro>
-      <jpn-okay>この設定は再起動後に適用される。</jpn-okay>
-      <jpn-yama>この設定は再起動後に適用される。</jpn-yama>
-      <jpn-iyo>この設定は再起動後に適用される。</jpn-iyo>
-      <jpn-awa>この設定は再起動後に適用される。</jpn-awa>
-      <jpn-tosa>この設定は再起動後に適用される。</jpn-tosa>
-      <pol>To ustawienie zostanie zastosowane po ponownym uruchomieniu.</pol>
-      <deu>Diese Einstellung wird nach dem Neustart angewendet.</deu>
-      <spa>Esta configuración se aplicará después del reinicio.</spa>
-      <ita>Questa impostazione verrà applicata dopo il riavvio.</ita>
-      <por>Essa configuração será aplicada após a reinicialização.</por>
-      <dan>Denne indstilling anvendes efter genstart.</dan>
-      <fra>Ce paramètre sera appliqué après le redémarrage.</fra>
-      <cat>Aquest paràmetre s'aplicarà després del reinici.</cat>
-      <ukr>Це налаштування буде застосовано після перезавантаження.</ukr>
-      <nld>Deze instelling wordt toegepast na opnieuw opstarten.</nld>
-      <zch>重新啟動後將應用此設置。</zch>
-      <kor>이 설정은 다시 시작한 후에 적용됩니다.</kor>
-      <ara>سيتم تطبيق هذا الإعداد بعد إعادة التشغيل.</ara>
-      <uig>بۇ تەڭشەك قايتا قوزغىتىلغاندىن كېيىن قوللىنىلىدۇ.</uig>
-      <urd>اس ترتیب کا اطلاق دوبارہ شروع ہونے کے بعد ہوگا۔</urd>
-      <srp>Ово подешавање ће се применити након поновног покретања.</srp>
-      <kur>Vê mîhengê dê piştî destpêkirinê were sepandin.</kur>
-      <svl>Ta nastavitev bo uporabljena po ponovnem zagonu.</svl>
-      <mkd>Оваа поставка ќе се примени по рестартирање.</mkd>
-      <bul>Тази настройка ще бъде приложена след рестартиране.</bul>
-      <eo>Ĉi tiu agordo estos aplikita post rekomenco.</eo>
-      <fin>Tätä asetusta käytetään uudelleenkäynnistyksen jälkeen.</fin>
-      <swe>Denna inställning kommer att tillämpas efter omstart.</swe>
-      <alb>Ky cilësim do të zbatohet pas rinisjes.</alb>
-      <swa>Mpangilio huu utatumika baada ya kuanza upya.</swa>
-      <ltz>Dës Astellung gëtt nom Restart applizéiert.</ltz>
-      <gla>Thèid an suidheachadh seo a chuir an sàs an dèidh ath-thòiseachadh.</gla>
-      <hin>यह सेटिंग पुनरारंभ करने के बाद लागू की जाएगी।</hin>
-      <mar>रीस्टार्ट नंतर ही सेटिंग लागू होईल.</mar>
-      <nep>यो सेटिंग पुन: शुरू पछि लागू हुनेछ।</nep>
-      <zul>Lokhu kulungiselelwa kuzosetshenziswa ngemuva kokuqala kabusha.</zul>
-      <la>Hic applicari posse post occasum erit sileo.</la>
-      <gle>Cuirfear an socrú seo i bhfeidhm tar éis atosú.</gle>
-      <hun>Ezt a beállítást az újraindítás után alkalmazzák.</hun>
-      <fil>Ang setting na ito ay ilalapat pagkatapos ng restart.</fil>
-      <lit>Šis nustatymas bus pritaikytas iš naujo paleidus.</lit>
-      <hrv>Ova postavka primijenit će se nakon ponovnog pokretanja.</hrv>
-      <ind>Pengaturan ini akan diterapkan setelah restart.</ind>
-      <lav>Šis iestatījums tiks lietots pēc restartēšanas.</lav>
-      <mlt>Dan l-issettjar jiġi applikat wara li terġa 'tibda.</mlt>
-      <nor>Denne innstillingen blir brukt etter omstart.</nor>
-      <ron>Această setare va fi aplicată după repornire.</ron>
-      <afr>Hierdie instelling sal toegepas word na herbegin.</afr>
-      <xho>Olu seto luya kusetyenziswa emva kokuqalisa kwakhona.</xho>
-      <kin>Igenamiterere rizakoreshwa nyuma yo gutangira.</kin>
-      <mri>Ka whakamahia tenei tautuhinga i muri i te tiimata.</mri>
-      <eus>Ezarpen hau berrabiarazi ondoren aplikatuko da.</eus>
-      <bos>Ova postavka primijenit će se nakon ponovnog pokretanja.</bos>
-      <ceb>Ang kini nga setting ig-apply pagkahuman sa pagsugod usab.</ceb>
-      <nya>Zokonzera izi zidzagwiritsidwa ntchito poyambiranso.</nya>
-      <fris>Dizze ynstelling sil wurde tapast nei herstarten.</fris>
-      <glg>Esta configuración aplicarase despois do reinicio.</glg>
-      <hat>Anviwònman sa a pral aplike apre rekòmanse.</hat>
-      <hau>Za'a yi amfani da wannan saitin bayan sake kunnawa.</hau>
-      <haw>E noi ʻia kēia hoʻonohonoho ma hope o ka hoʻomaka hou ʻana.</haw>
-      <hmn>Qhov kev teeb tsa no yuav raug siv tom qab pib dua.</hmn>
-      <ibo>Ntọala a ga-etinye n'ọrụ mgbe ịmalitegharị.</ibo>
-      <mon>Энэ тохиргоог дахин эхлүүлсний дараа хэрэгжүүлэх болно.</mon>
-      <mlg>Ity toe-javatra ity dia hampiharina aorian'ny famerenana amin'ny laoniny.</mlg>
-      <msa>Tetapan ini akan digunakan setelah dimulakan semula.</msa>
-      <tat>Бу көйләү яңадан башланганнан соң кулланылачак.</tat>
-      <jav>Setelan iki bakal ditrapake sawise diwiwiti maneh.</jav>
-      <yor>Eto yii yoo lo lẹhin atunbere.</yor>
-      <cos>Questa impostazione serà applicata dopu u riavvio.</cos>
-      <isl>Þessari stillingu verður beitt eftir endurræsingu.</isl>
-      <kaz>Бұл параметр қайта іске қосылғаннан кейін қолданылады.</kaz>
-      <sna>Izvi zvichaiswa mushure mekutanga zvekare.</sna>
-      <sot>Peakanyo ena e tla sebelisoa kamora ho qala bocha.</sot>
-      <vie>Cài đặt này sẽ được áp dụng sau khi khởi động lại.</vie>
-      <est>See seade rakendatakse pärast taaskäivitamist.</est>
-      <cym>Bydd y gosodiad hwn yn cael ei gymhwyso ar ôl ailgychwyn.</cym>
-      <ton>ʻE fakaʻaongaʻi ʻa e tukunga ko ʻeni hili hano toe kamata.</ton>
-      <fij>Na ituvatuva oqo ena vakayagataki ni oti na veivakayayataki tale.</fij>
-      <por-br>Esta configuração será aplicada após a reinicialização.</por-br>
-    </a>
+   
     <a id="320">
       <eng>Basic</eng>
       <ces>Základní</ces>
@@ -21057,7 +20966,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <jpn>その他のオプションについては、グラフィックコントロールパネルを参照してください</jpn>
       <ces>Více nastavení naleznete v ovládacím panelu grafiky</ces>
       <mor>Víc nastavení nandete v ovládacím panelu grafiky</mor>
-      <mor-ha>Vic nastaveni nandete v ovládacim panelô grafikê</mor-ha>
+      <mor-ha>Vic nastaveni nandete v ovládacim panelo grafike</mor-ha>
       <slk>Viac nastavení nájdete v ovládacom paneli grafiky</slk>
       <pol>Więcej ustawień można znaleźć w graficznym panelu sterowania</pol>
       <deu>Weitere Optionen finden Sie in der Grafiksteuerung</deu>
@@ -21139,7 +21048,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Control panel is opening.|It takes a few seconds...||Not opening?|Check "NVIDIA Display Constrainer LS" service.</eng>
       <ces>Otevírá se ovládací panel.|Vyčkejte pár sekund...||Neotevírá se?|Zkontrolujte službu "NVIDIA Display Constrainer LS".</ces>
       <mor>Otvírá se ovládací panel.|Počkejte pár sekund...||Neotvírá se?|Skontrolujte službu "NVIDIA Display Constrainer LS".</mor>
-      <mor-ha>Otvirá se ovládaci panel.|Počkéte pár sekund...||Neotvirá se?|Skontrolôjte slôžbô "NVIDIA Display Constrainer LS".</mor-ha>
+      <mor-ha>Otvirá se ovládaci panel.|Počkéte pár sekund...||Neotvirá se?|Skontrolojte složbo "NVIDIA Display Constrainer LS".</mor-ha>
       <ces-ce>Votevírá se ovládací panel.|Dejte tomu pár sekund...||Nevotevírá se?|Zkontrolujte službu "NVIDIA Display Constrainer LS".</ces-ce>
       <slk>Otvára sa ovládací panel.|Dajte tomu pár sekúnd...||neotvára sa?|Skontrolujte službu "NVIDIA Display Constrainer LS".</slk>
       <pol>Panel sterowania otwiera się.|Daj mu kilka sekund...||Nie otwiera się?|Sprawdź usługę „NVIDIA Display Constrainer LS”.</pol>
@@ -21387,7 +21296,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <jpn>この世界は古いバージョンで作成されているため、このバージョンと互換性がありません</jpn>
       <ces>Tento svět byl vytvořen ve starší verzi, která není kompatibilní s nynější</ces>
       <mor>Tento svět byl vytvořen ve starší verzi, která néni kompatibilní s touhle</mor>
-      <mor-ha>Tento sfět bêl vêtvořené ve staré verzi, kerá néni kompatibilni s tóhle</mor-ha>
+      <mor-ha>Tento sfět bel vetvořené ve staré verzi, kerá néni kompatibilni s tóhle</mor-ha>
       <slk>Tento svet bol vytvorený v staršej verzii, ktorá nie je kompatibilná s terajšou</slk>
       <pol>Ten świat został stworzony w starszej wersji, która nie jest kompatybilna z obecną</pol>
       <deu>Diese Welt wurde mit einer alten Version erstellt und ist daher nicht mit dieser Version kompatibel</deu>
@@ -22359,7 +22268,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ton>Meki</ton>
       <fij>Levu cake</fij>
       <por-br>Max</por-br>
-      <ces>Max. Max</ces>
+      <ces>Max</ces>
       <gle>Uas</gle>
       <kur>MAX</kur>
       <mri>Ātawhi</mri>
@@ -23534,7 +23443,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Iron pickaxe</eng>
       <ces>Železný krumpáč</ces>
       <ces-ce>Železnej krumpáč</ces-ce>
-      <mor-ha>Železné krômpáč</mor-ha>
+      <mor-ha>Železné krompáč</mor-ha>
       <slk>Železný krompáč</slk>
       <pol>Żelazny kilof</pol>
       <jpn>鉄のツルハシ</jpn>
@@ -24413,7 +24322,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Kamenný nůž</ces>
       <mor-sl>Kamenný fedrmesr</mor-sl>
       <mor-va>Kamenný núž</mor-va>
-      <slk>Kamenný nôž</slk>
+      <slk>Kamenný nož</slk>
       <jpn>ストーンナイフ</jpn>
       <pol>Kamienny nóż</pol>
       <deu>Steinmesser</deu>
@@ -24494,7 +24403,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Železný nůž</ces>
       <mor-ha>Železné nuž</mor-ha>
       <ces-ce>Železnej nůž</ces-ce>
-      <slk>Železný nôž</slk>
+      <slk>Železný nož</slk>
       <deu>Eisenmesser</deu>
       <jpn>アイアンナイフ</jpn>
       <pol>Żelazny nóż</pol>
@@ -28773,6 +28682,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1077">
       <eng>Dirt</eng>
       <ces>Hlína</ces>
+      <mor-ha>Hlena</mor-ha>
       <pol>Brud</pol>
       <slk>Hlina</slk>
       <spa>Suciedad</spa>
@@ -30650,7 +30560,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1101">
       <eng>Spruce leaves</eng>
       <ces>Smrkové jehličí</ces>
-      <mor-ha>Jehleči ze smrkô</mor-ha>
+      <mor-ha>Jehleči ze smrko</mor-ha>
       <slk>Smrekové ihličie</slk>
       <jpn>スプルースの葉</jpn>
       <pol>Igły świerkowe</pol>
@@ -33348,7 +33258,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1135">
       <eng>Desert grass with dirt</eng>
       <ces>Pouštní tráva s hlínou</ces>
-      <mor-ha>Póštní tráva s hlinó</mor-ha>
+      <mor-ha>Póštní tráva s hlenó</mor-ha>
       <slk>Púštna tráva s hlinou</slk>
       <jpn>土と砂漠の草</jpn>
       <pol>Trawa pustynna z gliną</pol>
@@ -33429,7 +33339,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1136">
       <eng>Forest grass with dirt</eng>
       <ces>Lesní tráva s hlínou</ces>
-      <mor-ha>Lesni tráva se hlinó</mor-ha>
+      <mor-ha>Lesni tráva se hlenó</mor-ha>
       <slk>Lesná tráva s hlinou</slk>
       <jpn>土と森の草</jpn>
       <pol>Trawa leśna z gliną</pol>
@@ -33511,7 +33421,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1137">
       <eng>Hills grass with dirt</eng>
       <ces>Horská tráva s hlínou</ces>
-      <mor-ha>Horská tráva se hlinó</mor-ha>
+      <mor-ha>Horská tráva se hlenó</mor-ha>
       <slk>Horská tráva s hlinou</slk>
       <jpn>土と丘の草</jpn>
       <pol>Trawa górska z gliną</pol>
@@ -33593,7 +33503,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1138">
       <eng>Jungle grass with dirt</eng>
       <ces>Tropická tráva s hlínou</ces>
-      <mor-ha>Tropická tráva s hlinó</mor-ha>
+      <mor-ha>Tropická tráva s hlenó</mor-ha>
       <slk>Tropická tráva s hlinou</slk>
       <jpn>土と密林の草</jpn>
       <pol>Tropikalna trawa z gliną</pol>
@@ -33674,7 +33584,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1139">
       <eng>Plains grass with dirt</eng>
       <ces>Stepní tráva s hlínou</ces>
-      <mor-ha>Stepni tráva se hlinó</mor-ha>
+      <mor-ha>Stepni tráva se hlenó</mor-ha>
       <slk>Stepná tráva s hlinou</slk>
       <jpn>土と平野草</jpn>
       <pol>Trawa stepowa z gliną</pol>
@@ -36197,6 +36107,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1171">
       <eng>Dirt background</eng>
       <ces>Pozadí hlíny</ces>
+      <mor-ha>Pozadi hlene</mor-ha>
       <jpn>土の背景</jpn>
       <slk>Pozadie hliny</slk>
       <pol>Tło gliny</pol>
@@ -47866,6 +47777,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Sticks</eng>
       <ces>Větev</ces>
       <mor>Haluz</mor>
+      <mor-va>Krkoš</mor-va>
       <jpn>スティック</jpn>
       <slk>Klacek</slk>
       <pol>Kij</pol>
@@ -48861,6 +48773,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1341">
       <eng>Space boots</eng>
       <ces>Vesmírné boty</ces>
+      <mor-va>Vesmírnej boty</mor-va>
+      <mor-ha>Vesmírny baganče</mor-ha>
       <ces-ce>Vesmírný boty</ces-ce>
       <jpn>スペースブーツ</jpn>
       <slk>Vesmírne topánky</slk>
@@ -60579,8 +60493,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1501">
       <eng>The award can only be used in adventure mode, otherwise it would be too easy</eng>
-      <ces>Ocenění lze používat jen v dobrodružném módu, jinak by to bylo příliš jednoduché</ces>
-      <ces-ce>Tak hele vocenění jen v dobrodružným módu, jinak by to bylo příliš jednoduchý</ces-ce>
+      <ces>Ocenění lze používat jen v dobrodružném modu, jinak by to bylo příliš jednoduché</ces>
+      <ces-ce>Tak hele vocenění jen v dobrodružným modu, jinak by to bylo příliš jednoduchý</ces-ce>
+      <mor-ha>Tož oceněni jenom v dobrodružnym módo, ináč be to belo opravdo jednodochy</mor-ha>
       <slk>Ocenenie je možné používať len v dobrodružnom módu, inak by to bolo príliš jednoduché</slk>
       <jpn>アワードはアドベンチャーモードでのみ使用できます。そうでない場合は簡単すぎます。</jpn>
       <fra>Le prix ne peut être utilisé qu'en mode aventure, sinon ce serait trop facile</fra>
@@ -61484,7 +61399,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Fly mode in creative</eng>
       <ces>Létající mod v kreativním modu</ces>
       <mor>Létající mód v kreativním módu</mor>
-      <mor-ha>Létajici mód v kreativnim módu</mor-ha>
+      <mor-ha>Litaci mód v kreativnim módo</mor-ha>
       <slk>Lietajúci mód v kreatívnom móde</slk>
       <jpn>クリエイティブのフライモード</jpn>
       <fra>Mode Fly en création</fra>
@@ -66536,8 +66451,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <fra-ca>Onglet (5 espaces)</fra-ca>
     </a>
     <a id="1583">
-      <ces>Skrýt všechny typy tagů</ces>
       <eng>Hide all types of tags</eng>
+      <ces>Skrýt všechny typy tagů</ces>
+      <mor>Skovat všecky typy tagů</mor>
+      <mor-ha>Skovat všecke tepe tagu</mor-ha>
+      <slk>Skryť všetky typy tagov</slk>
       <fra>Masquer tous les types de balises</fra>
       <ara>إخفاء جميع أنواع العلامات</ara>
       <spa>Ocultar todo tipo de etiquetas</spa>
@@ -66549,7 +66467,6 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ukr>Сховати всі типи тегів</ukr>
       <kor>모든 유형의 태그 숨기기</kor>
       <zch>隱藏所有類型的標籤</zch>
-      <slk>Skryť všetky typy tagov</slk>
       <swe>Dölj alla typer av taggar</swe>
       <cat>Amaga tot tipus d'etiquetes</cat>
       <fin>Piilota kaiken tyyppiset tunnisteet</fin>
@@ -66726,7 +66643,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1586">
       <eng>Lemonade</eng>
       <ces>Šumivá voda</ces>
-      <mor>Šumivá limonáda</mor>
+      <mor>Limonáda</mor>
       <fij>Wainimoli</fij>
       <por-br>Limonada</por-br>
       <deu>Limonade</deu>
@@ -66899,6 +66816,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1589">
       <eng>Medium</eng>
       <ces>Střední</ces>
+      <mor-ha>Středni</mor-ha>
       <slk>Stredný</slk>
       <pol>Średni</pol>
       <deu>Mittel</deu>
@@ -67015,7 +66933,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1591">
       <eng>Graphics card note</eng>
-      <ces>Poznámka ke grafické kartě</ces>
+      <ces>Poznámka k grafické kartě</ces>
+      <mor-ha>Poznámka ke graficky kartě</mor-ha>
       <slk>Poznámka grafickej karty</slk>
       <pol>Uwaga karty graficznej</pol>
       <deu>Grafikkarten-Anmerkung</deu>
@@ -67081,7 +67000,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1592">
       <eng>It looks like you have another more powerful graphics card,</eng>
       <ces>Vypadáto, že máte další lepší grafickou kartu,</ces>
-      <slk>Vyzerá to, že máte ďalšiu vynikajúcu grafickú kartu,</slk>
+      <mor-ha>Vepadáto, že máte dalši lepši grafickó karto,</mor-ha>
+      <mor-va>Vyzerá to, že máte další lepší grafickú kartu,</mor-va>
+      <slk>Vyzerá to, že máte ďalšiu lepšie grafickú kartu,</slk>
       <pol>Wygląda na to, że masz kolejną mocniejszą kartę graficzną,</pol>
       <deu>Es sieht so aus, als hätten Sie eine weitere leistungsfähigere Grafikkarte,</deu>
       <jpn>もう一度強力なグラフィックカードを持っているように見えます、</jpn>
@@ -67144,6 +67065,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1593">
       <eng>but now it is probably used slower.</eng>
       <ces>ale asi používáte tu pomalejší</ces>
+      <mor-ha>ale ase poožéváte to pomaléši</mor-ha>
       <slk>Ale teraz sa pravdepodobne používa pomalšie.</slk>
       <pol>Ale teraz prawdopodobnie jest używany wolniej.</pol>
       <deu>Aber jetzt wird es wahrscheinlich langsamer verwendet.</deu>
@@ -67209,7 +67131,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Currently Using gpu: </eng>
       <ces>Právě používaná gpu: </ces>
       <mor>Fčilka používaná gpu: </mor>
-      <slk>V súčasnosti používajte GPU: </slk>
+      <slk>Práve používané GPU: </slk>
       <pol>Obecnie korzystanie z GPU: </pol>
       <deu>Derzeit mit GPU: </deu>
       <jpn>現在GPUを使用しています: </jpn>
@@ -67328,6 +67250,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1598">
       <eng>Fog</eng>
       <ces>Mlha</ces>
+      <mor-va>Mha</mor-va>
       <slk>Hmla</slk>
       <pol>Mgła</pol>
       <deu>Nebel</deu>
@@ -67391,6 +67314,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1599">
       <eng>Waving elements</eng>
       <ces>Vlnící se objekty</ces>
+      <mor-va>Płápołajucí se objekty</mor-va>
       <slk>Mávacie prvky</slk>
       <pol>Macha elementami</pol>
       <deu>Wellenförmige Elemente</deu>
@@ -67586,6 +67510,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1602">
       <eng>None</eng>
       <ces>Žádné</ces>
+      <mor-ha>Žádny</mor-ha>
       <slk>Nefajčiarsky</slk>
       <pol>Nic</pol>
       <jpn>なし</jpn>
@@ -67652,6 +67577,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Hezké</ces>
       <mor>Pěkné</mor>
       <mor-ha>Pěkny</mor-ha>
+      <mor-va>Pěkné</mor-va>
       <slk>Vymazať</slk>
       <pol>Wymyślny</pol>
       <deu>Schick</deu>
@@ -67707,60 +67633,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <jpn>16倍</jpn>
     </a>
     <a id="1606">
-      <eng>Upscaling AA</eng>
-      <ces>Vyhlazení zvětšením</ces>
-      <slk>Upscaling AA</slk>
-      <pol>Upscaling AA</pol>
-      <deu>Upscaling Aa</deu>
-      <jpn>アップスケーリングAA</jpn>
-      <fra>Amorcaling AA</fra>
-      <dan>Opskalering AA</dan>
-      <cat>AA UPSCALING AA</cat>
-      <mkd>Зголемување на АА</mkd>
-      <la>Upscaling aa</la>
-      <eo>UpSaling aa</eo>
-      <gle>Upscaling aa</gle>
-      <ukr>Upscaling aa</ukr>
-      <srp>УпСцалинг АА</srp>
-      <hun>Az AA felemelkedése</hun>
-      <lit>Upscaling aa</lit>
-      <svl>Upcaling aa</svl>
-      <hrv>Upscaling aa</hrv>
-      <ind>UPSCALING AA</ind>
-      <ltz>Upscaling Aa</ltz>
-      <lav>Upscaling aa</lav>
-      <mlt>Upscaling aa</mlt>
-      <nor>Oppskalering AA</nor>
-      <nld>Upscaling aa</nld>
-      <ron>Îmbunătățirea AA</ron>
-      <swe>Uppskalande AA</swe>
-      <kur>AA-yê nûve dike</kur>
-      <gla>Àrdachadh aa</gla>
-      <zul>Ukuphakama kwe-AA</zul>
-      <afr>Upscaling aa</afr>
-      <xho>Inyuka i-aa</xho>
-      <kin>Upscal aa</kin>
-      <mri>Upscalcalya AA</mri>
-      <eus>AA upinging</eus>
-      <ceb>Pag-update sa AA</ceb>
-      <nya>Kukulitsa aa</nya>
-      <fris>Upscaling aa</fris>
-      <glg>Upscaling aa</glg>
-      <hat>Upscaling aa</hat>
-      <hau>Againsing AA</hau>
-      <haw>UPScalling AA</haw>
-      <ibo>Na-ebili aa</ibo>
-      <mon>Upscaling aa</mon>
-      <msa>Upscaling aa</msa>
-      <tat>Күтәрелеш А.А</tat>
-      <kor>업 스케일링 AA</kor>
-      <zch>升級AA</zch>
-      <hin>Upscaling aa</hin>
-      <nep>AA UPCCING AA</nep>
-      <mar>Upscaling aa</mar>
-      <fij>Matanivola Levu CakeSA</fij>
-      <por-br>Upscaling AA</por-br>
-      <fra-ca>Mise à l’échelle de l’AA</fra-ca>
+      <eng>Supersampling</eng>
+      <ces>Supersampling</ces>
     </a>
     <a id="1607">
       <eng>1/x</eng>
@@ -67768,6 +67642,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1608">
       <eng>Falling leaves</eng>
       <ces>Padající listí</ces>
+      <mor-ha>Padajici lesti</mor-ha>
       <slk>Padajúce listy</slk>
       <pol>Opadające liście</pol>
       <deu>Fallende Blätter</deu>
@@ -67875,6 +67750,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1610">
       <eng>Fancy background</eng>
       <ces>Hezké pozadí</ces>
+      <mor>Pěkné pozadí</mor>
+      <mor-ha>Pěkny pozadi</mor-ha>
       <slk>Na pozadí</slk>
       <pol>Fantazyjny tło</pol>
       <deu>Fancy-Hintergrund</deu>
@@ -67940,6 +67817,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Better snow and rain</eng>
       <ces>Lepší sníh a déšť</ces>
       <mor>Lepší sníh a dyšť</mor>
+      <mor-ha>Lepši snih a dyšť</mor-ha>
+      <mor-va>Onakvjejší sněh a déšč</mor-va>
       <slk>Lepší sneh a dážď</slk>
       <pol>Lepszy śnieg i deszcz</pol>
       <deu>Besserer Schnee und Regen</deu>
@@ -68125,6 +68004,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1614">
       <eng>Spruce leaves with snow</eng>
       <ces>Smrkové jehličí se sněhem</ces>
+      <mor-ha>Smrkovy jehleči se sněhem</mor-ha>
+      <mor-va>Smrekové spenčí se sněhem</mor-va>
       <slk>Smrekové listy so snehom</slk>
       <pol>Świerkowe liście ze śniegiem</pol>
       <deu>Fichtenblätter mit Schnee</deu>
@@ -68185,6 +68066,16 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <mar>बर्फ सह spruce पाने</mar>
       <fij>Drauni uca cevata</fij>
       <fra-ca>Feuilles d’épinette avec de la neige</fra-ca>
+    </a>
+
+    <a id="1615">
+      <eng>Invert mouse scroll</eng>
+      <ces>Obrátit posun kolečkem</ces>
+    </a>
+    <a id="1616">
+      <eng>Some settings will be applied after restart.</eng>
+      <ces>Některé nastavení bude aplikováno až po znovuspuštění.</ces>
+      <mor-ha>Nekery nastaveni bode aplikováné až po znovospoštěni.</mor-ha>
     </a>
   </Data>
 </XMLFile>

@@ -275,7 +275,6 @@ namespace rabcrClient {
             _ => false,
         };
         
-
 		public static bool IsSelectedKnife(ushort id) 
             => id switch {
                 (ushort)Items.KnifeCopper => true,
@@ -1202,6 +1201,7 @@ namespace rabcrClient {
                 (ushort)Items.StoneRhyolite => (ushort)BlockId.StoneRhyolite,
                 (ushort)Items.StoneSandstone => (ushort)BlockId.StoneSandstone,
                 (ushort)Items.StoneSchist => (ushort)BlockId.StoneSchist,
+                (ushort)Items.StoneAnorthosite => (ushort)BlockId.Anorthosite,
                 // Ore
                 (ushort)Items.OreAluminium => (ushort)BlockId.OreAluminium,
                 (ushort)Items.OreCopper => (ushort)BlockId.OreCopper,
@@ -1381,6 +1381,7 @@ namespace rabcrClient {
         static readonly ushort[] FallingBlocks={
             (ushort)BlockId.Sand,
             (ushort)BlockId.Dirt,
+            (ushort)BlockId.Gravel,
             (ushort)BlockId.GrassBlockClay,
             (ushort)BlockId.GrassBlockCompost,
             (ushort)BlockId.GrassBlockDesert,
@@ -1395,9 +1396,9 @@ namespace rabcrClient {
 
         public static bool IsFallingBlock(ushort blockId) {
             foreach (ushort i in FallingBlocks) {
-                if (blockId==i) return true;
+                if (blockId==i) return true; 
             }
-            return true;
+            return false;
         }
 
         public static bool CanDestroy(ushort blockId) {
@@ -4571,7 +4572,6 @@ namespace rabcrClient {
                 _ => false,
             };
         
-
         public static bool IsItemInvTool32(ushort id) 
             => id switch {
                 // Hoe

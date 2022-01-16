@@ -24,7 +24,7 @@ namespace rabcrClient {
         float smoothMouse=0;
         int PageHeight=1290+60+70+60+90+90+90+90+90+90+500;
         #endregion
-
+        bool afterrestart;
         public override void Init() {
             buttonMenu= new Button(Textures.ButtonLongLeft,Lang.Texts[1]);
             buttonMenu.Click+=ClickMenu;
@@ -48,7 +48,11 @@ namespace rabcrClient {
             Resize();
         }
 
-        void ClickMenu(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
+        void ClickMenu(object sender, EventArgs e) {
+            if (afterrestart) System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
+
+            ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
+        }
 
         void Move(object sender, EventArgs e) {
             start=-1;
@@ -263,13 +267,19 @@ namespace rabcrClient {
             }
             {
                 SettingKey button=new(tex, Lang.Texts[1514], Setting.KeyShowInfo);
-                button.Click+=ClickKeyRun;
-                settings.Add(button);
-
-                void ClickKeyRun() {
+                button.Click += () => {
                     Setting.KeyShowInfo=button.Key;
                     Global.ChangedSettings=true;
-                }
+                };
+                settings.Add(button);
+            }
+            {
+                SettingOnOff button=new(tex, Lang.Texts[1615], Setting.InvertedMouse);
+                button.Click += () => {
+                    Setting.InvertedMouse=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
             }
             #endregion
 
@@ -468,7 +478,7 @@ namespace rabcrClient {
                     16 => 4,
                     _ => 0,
                 };
-                SettingSwitcher button = new(tex, Lang.Texts[1609], new string[]{ Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
+                SettingSwitcher button = new(tex, Lang.Texts[1609], new string[]{ Lang.Texts[87/*272*/], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
                 button.Click += () => {
                     Setting.Multisapling = button.selected switch {
                         0 => 1,
@@ -477,41 +487,91 @@ namespace rabcrClient {
                         3 => 8,
                         4 => 16,
                         _ => 0
-                    }; ;
+                    };
                     Global.ChangedSettings = true;
+                    afterrestart=true;
+                  //  System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
                 };
                 settings.Add(button);
             }
 
             // Upscaling
             {
+                float maxUpscaling=20f;
+                if (Graphics.GraphicsProfile==GraphicsProfile.HiDef){
+                    float scale = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    if (scale<maxUpscaling)maxUpscaling=scale;
+
+                    float scale2 = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                } else { 
+                    float scale = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    if (scale<maxUpscaling) maxUpscaling=scale;
+
+                    float scale2 = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                }
+                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                    if (Setting.UpScalingSuperSapling==16) Setting.UpScalingSuperSapling=8;
+                } 
+                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                    if (Setting.UpScalingSuperSapling==8) Setting.UpScalingSuperSapling=4;
+                }
+                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                    if (Setting.UpScalingSuperSapling==4) Setting.UpScalingSuperSapling=2;
+                }
+
+                if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                    if (Setting.UpScalingSuperSapling==2) Setting.UpScalingSuperSapling=1;
+                }
+               // Setting.UpScalingSuperSapling=1;
                 int index=-1;
-                index = (int)Setting.Multisapling switch {
+                index = (int)Setting.UpScalingSuperSapling switch {
                     -1 => 0,
+                    0 => 0,
                     1 => 1,
                     2 => 2,
                     4 => 3,
-                    8 => 4,
-                    16 => 5,
+                  //  8 => 4,
+                  //  16 => 5,
                     _ => 0,
                 };
-                SettingSwitcher button = new(tex, Lang.Texts[1606], new string[]{ Lang.Texts[1607], Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
+                string[] res;
+               // if (maxUpscaling>=16) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]};
+              //  else if (maxUpscaling>=8) res=new string[]{ Lang.Texts[1607], Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604]};
+               // else 
+                if (maxUpscaling>=4) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]};
+                else if (maxUpscaling>=2) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276]};
+                else res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87]};
+                SettingSwitcher button = new(tex, Lang.Texts[1606], res, index);
                 button.Click += () => {
-                    Setting.Multisapling = button.selected switch {
+                    Setting.UpScalingSuperSapling = button.selected switch {
                         0 => 0,
                         1 => 1,
                         2 => 2,
                         3 => 4,
-                        4 => 8,
-                        5 => 16,
+                     //   4 => 8,
+                       // 5 => 16,
                         _ => -1
-                    }; ;
+                    };
+                    if (Setting.UpScalingSuperSapling>maxUpscaling) Setting.UpScalingSuperSapling=1;
                     Global.ChangedSettings = true;
                 };
                 settings.Add(button);
             }
 
-         
+            // Graphics profile
+            {
+                SettingSwitcher button = new(tex, Lang.Texts[319], new string[]{ Lang.Texts[318], Lang.Texts[317] }, (int)Setting.GraphicsProfile);
+                button.Click += () => {
+                    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+                    Global.ChangedSettings=true;
+                    afterrestart=true;
+                    //System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
+                };
+                settings.Add(button);
+            }
+
             //{
             //    SettingSwitcher button = new(tex, Lang.Texts[125], new string[]{ Lang.Texts[1587], Lang.Texts[1588], Lang.Texts[1589], Lang.Texts[1590]}, (int)Setting.AnimationsGame);
             //    button.Click+=ClickAnimations;

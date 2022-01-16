@@ -53,7 +53,7 @@ namespace rabcrClient {
             }
         }
 
-        public Color ToColor() => new Color(R, G, B);
+        public Color ToColor() => new(R, G, B);
     }
 
     class MainMenu :MenuScreen {
@@ -88,8 +88,8 @@ namespace rabcrClient {
                 var buttonSingleplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[6]);
                 buttonSingleplayer.Click+=GoToSingleplayer;
 
-                var buttonMultiplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[7]);
-                buttonMultiplayer.Click+=GoToMultiplayer;
+               // var buttonMultiplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[7]);
+               // buttonMultiplayer.Click+=GoToMultiplayer;
 
                 var buttonSetting = new Button(Textures.ButtonLongLeft, Lang.Texts[8]);
                 buttonSetting.Click+=GoToSettings;
@@ -106,9 +106,9 @@ namespace rabcrClient {
                 buttonsSide=new Button[]{
                     buttonSingleplayer,
 
-                    #if DEBUG
-                    buttonMultiplayer,
-                    #endif
+                    //#if DEBUG
+                    //buttonMultiplayer,
+                    //#endif
 
                     buttonCharacter,
                     buttonSetting,
