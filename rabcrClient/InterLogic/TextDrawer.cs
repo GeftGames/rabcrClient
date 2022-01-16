@@ -96,8 +96,9 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {
-                        Debug.Write(chs[ch]+" ");
+                    if (chs[ch] == font.Glyphs[gg].Char) {
+                        g=font.Glyphs[gg];
+                   
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -124,7 +125,9 @@ namespace rabcrClient {
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�' == font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
+
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, Y+g.Y),
@@ -227,8 +230,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {
-
+                    if (chs[ch]==font.Glyphs[gg].Char) {
+                        g = font.Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -251,7 +254,8 @@ namespace rabcrClient {
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�'==font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, Y+g.Y),
@@ -599,7 +603,8 @@ namespace rabcrClient {
         void BuildTextNormal(string txt){
             List<DrawingChar> tmpChs=new();
             char[] chs=txt.ToArray();
-            int posx=X, posY=Y;
+            int posx=X, 
+                posY=Y;
 
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
@@ -608,8 +613,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {
-
+                    if (chs[ch]==font.Glyphs[gg].Char) {
+                        g = font.Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -641,7 +646,8 @@ namespace rabcrClient {
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�' == font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, posY+g.Y),
@@ -819,7 +825,8 @@ namespace rabcrClient {
             int glyphsLen=Glyphs.Length;
             for (int i = 0; i<chs.Length; i++) {
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if (chs[i]==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                    if (chs[i] == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -850,8 +857,9 @@ namespace rabcrClient {
                 // Unknown char
                 if (add)continue;
                 if (chs[i]=='\r')continue;
-                for (int gg = 0; gg</*font.*/Glyphs.Length; gg++) {
-                    if ('�'==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                for (int gg = 0; gg<Glyphs.Length; gg++) {
+                    if ('�' == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         tmpChs.Add(
                             new DrawingChar {
                                 Pos=new Vector2(posx+g.X, y+g.Y),
@@ -951,8 +959,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if (chs[i]==(char)/*font.*/Glyphs[gg].Code){
-                        g = /*font.*/Glyphs[gg];
+                    if (chs[i]==Glyphs[gg].Char){
+                        g = Glyphs[gg];
 
                         if (g.visible) {
                             tmpChs.Add(
@@ -995,7 +1003,8 @@ namespace rabcrClient {
                 // Unknown char
                 if (add) continue;
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if ('�'==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                    if ('�' == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         tmpChs.Add(
                             new Glyph {
                                 X=g.X,
@@ -1003,7 +1012,8 @@ namespace rabcrClient {
                                 W=g.W,
                                 H=g.H,
                                 DrawRectangle=g.DrawRectangle,
-                                visible=g.visible
+                                visible=g.visible,
+                                
                             }
                         );
                         posx+=g.DrawRectangle.Width+g.X+g.W;
@@ -1063,10 +1073,12 @@ namespace rabcrClient {
             List<Glyph> tmpGlyphs=new();
 
             for (int i=0; i<bytes.Length; ) {
+                int code=(int)(uint)(bytes[i+3] | bytes[i+2]<<8 | bytes[i+1]<<16 | bytes[i]<<24);
                 Glyph g = new() {
-                    Code=(int)(uint)(bytes[i+3] | bytes[i+2]<<8 | bytes[i+1]<<16 | bytes[i]<<24),
+                 //   Code=,
                 };
-                if (g.visible=bytes[i+4]==1){
+                g.Char=(char)code;
+                if (g.visible=bytes[i+4]==1) {
 
                     g.DrawRectangle=new Rectangle(
                         (ushort)(bytes[i+5+1] | bytes[i+4+1]<<8),
@@ -1196,12 +1208,12 @@ namespace rabcrClient {
             if (txt==null) return new DInt{X=0, Y=0 }/*(0,0)*/;
 
             char[] chs=txt.ToCharArray();
-
+            Glyph g;
             int X=0, Y = 0;
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         X+=g.DrawRectangle.Width+g.X;
                         if (Y<g.DrawRectangle.Height+g.H+g.Y) Y=g.DrawRectangle.Height+g.H+g.Y;
                         break;
@@ -1215,12 +1227,12 @@ namespace rabcrClient {
             if (txt==null) return new DInt{X=0, Y=0 }/*(0,0)*/;
 
             char[] chs=txt.ToCharArray();
-
+            Glyph g;
             int X=0;
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         X+=g.DrawRectangle.Width+g.X;
                         break;
                     }
@@ -1231,19 +1243,65 @@ namespace rabcrClient {
 #endregion
 
 #region Measure Width
-        public int MeasureTextSingleLineX(string txt){
+        //public void Test() { 
+        //    Stopwatch sw1=new Stopwatch();
+        //    Stopwatch sw2=new Stopwatch();
+        //    int len1=0;
+        //    int len2=0;
+        //    Thread.Sleep(1000);
+        //       sw2.Start();
+        //    for (int j=0; j<1600; j++) { 
+        //        for (int i=0; i<1600; i++) { 
+        //            if (!string.IsNullOrEmpty(Lang.Texts[i])) len2+=MeasureTextSingleLineX2(Lang.Texts[i]);
+        //        }
+        //    }
+        //    sw2.Stop();  
+            
+        //    sw1.Start();
+        //    for (int j=0; j<1600; j++) { 
+        //        for (int i=0; i<1600; i++) { 
+        //            if (!string.IsNullOrEmpty(Lang.Texts[i])) len1+=MeasureTextSingleLineX(Lang.Texts[i]);
+        //        }
+        //    }
+        //    sw1.Stop();
+
+        //    sw2.Start();
+        //    for (int j=0; j<1600; j++) { 
+        //        for (int i=0; i<1600; i++) { 
+        //            if (!string.IsNullOrEmpty(Lang.Texts[i])) len2+=MeasureTextSingleLineX2(Lang.Texts[i]);
+        //        }
+        //    }
+        //    sw2.Stop();
+
+        //    sw1.Start();
+        //    for (int j=0; j<1600; j++) { 
+        //        for (int i=0; i<1600; i++) { 
+        //            if (!string.IsNullOrEmpty(Lang.Texts[i])) len1+=MeasureTextSingleLineX(Lang.Texts[i]);
+        //        }
+        //    }
+        //    sw1.Stop();
+     
+
+       
+
+
+        //    Debug.WriteLine("MeasureTextSingleLineX "+sw1.Elapsed.TotalMilliseconds+" "+len1);
+        //    Debug.WriteLine("MeasureTextSingleLineX2 "+sw2.Elapsed.TotalMilliseconds+" "+len2);
+        //}
+     
+        public int MeasureTextSingleLineX(string txt) {
             if (txt==null) return 0;
             int X=0;
 
             char[] chs=txt.ToCharArray();
+            Glyph g;
 
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
-                        if (g.visible) {
-                            X+=g.DrawRectangle.Width+g.X+g.W;
-                        } else X+=g.W;
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
+                        if (g.visible) X+=g.DrawRectangle.Width+g.X+g.W;
+                        else X+=g.W;
                         break;
                     }
                 }
@@ -1257,11 +1315,12 @@ namespace rabcrClient {
             if (txt==null) return 0;
             char[] chs=txt.ToCharArray();
             int Y = 0;
+            Glyph g;
 
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i] == Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         if (Y<g.DrawRectangle.Height+g.H+g.Y) Y=g.DrawRectangle.Height+g.H+g.Y;
                         break;
                     }
@@ -1287,9 +1346,10 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch]==Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
-                            sb.Draw(Bitmap,new Vector2(posx,y+g.Y), g.DrawRectangle,Color.White);
+                            sb.Draw(Bitmap, new Vector2(posx, y+g.Y), g.DrawRectangle, Color.White);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
                         } else {
                             posx+=g.W;
@@ -1309,13 +1369,12 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch]==Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
                             sb.Draw(Bitmap,new Vector2(posx,y+g.Y), g.DrawRectangle,color);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
-                        } else// {
-                            posx+=g.W;
-                        //}
+                        } else posx+=g.W;
                         break;
                     }
                 }
@@ -1357,9 +1416,11 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch] == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
+
                         if (g.visible) {
-                            sb.Draw(Bitmap,new Vector2(posx,y/*+g.Y*/), g.DrawRectangle,color,0.2f,new Vector2(-g.X, -g.Y),1,SpriteEffects.None,1);
+                            sb.Draw(Bitmap, new Vector2(posx, y), g.DrawRectangle, color, 0.2f, new Vector2(-g.X, -g.Y), 1f, SpriteEffects.None, 1f);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
                         } else {
                             posx+=g.W;
@@ -1369,28 +1430,23 @@ namespace rabcrClient {
                 }
             }
         }
-#endregion
+        #endregion
 
         public string MaxSizeOfString(string s, int w) {
-          //  System.Diagnostics.Debug.WriteLine("Shorting: "+s);
             int ww=w-w3dots;
             int x=MeasureTextSingleLineX(s);
             if (x>ww) {
-                //if (s.StartsWith("Ma")){
-                //    Console.WriteLine(w);
-                //    }
-
-                // string need to be smaller
-             //   int w2=0;
                 char[] chs=s.ToCharArray();
-                int ch/*=-1*/;
+                int ch;
                 Glyph g;
 
 
                 for (ch = 0; ch<chs.Length; ch++) {
-                    if (ww<=/*w2*/0)break;
+                    if (ww<=0)break;
                     for (int gg = 0; gg<Glyphs.Length; gg++) {
-                        if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                        if (chs[ch]==Glyphs[gg].Char) {
+                            g = Glyphs[gg];
+
                             if (g.visible) {
                                 ww-=g.DrawRectangle.Width+g.X+g.W;
                             } else {
@@ -1400,26 +1456,10 @@ namespace rabcrClient {
                         }
                     }
                 }
-            //    if (ch==-1)return s;
-                if (ch==0)return"";
-             //   if (ch!=chs.Length) {
-                    // String need to be smller
-                   //if (x<MeasureTextSingleLineX(s.Substring(0,ch-1)+"...")){
-                   // Console.WriteLine("!");
-                   // }
-                   //if (s.Contains('\u8206')) System.Diagnostics.Debug.WriteLine("..."+s.Substring(0,ch-1));
-                 //else
 
-                //if (isArabic(s)) {
-                //    System.Diagnostics.Debug.WriteLine("..."+s.Substring(0,ch-1));
-                //    return "..."+s.Substring(0,ch-1);
-                //}else{
-                  //  System.Diagnostics.Debug.WriteLine(s.Substring(0,ch-1)+"...");
-                    return s.Substring(0,ch-1)+"...";
-             //   }
-
-                //}
-              //  else return s;
+                if (ch==0) return"";
+           
+                return s.Substring(0, ch-1)+"...";
             }
 
             return s;
@@ -1459,7 +1499,8 @@ namespace rabcrClient {
 
     public class Glyph {
         public Rectangle DrawRectangle;
-        public int Code;
+      //  public int Code;
+        public char Char;
         public int X, Y, W, H;
         public bool visible;
     }
