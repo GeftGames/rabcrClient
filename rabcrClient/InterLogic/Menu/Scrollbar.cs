@@ -31,11 +31,11 @@ namespace rabcrClient {
 
         float bscale;
         float drawscale;
-
+        int invertMouse=Setting.InvertedMouse ? -1 : 1;
         public void Scroll(float x) {
             if (height>maxheight)return;
             if (height<19)return;
-            scale=(scale*maxheight+x)/maxheight;
+            scale=(scale*maxheight+x*invertMouse)/maxheight;
             drawscale=scale;
             if (scale>1) {scale=1+(scale-1)/2f; drawscale=1; }
             else if (scale<0) {scale/=2f; drawscale=0;}
