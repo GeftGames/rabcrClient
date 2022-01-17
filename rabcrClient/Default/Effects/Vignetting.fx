@@ -12,6 +12,10 @@ struct VertexShaderOutput {
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
+float rand(float2 vec) {
+	return frac(sin(dot(vec, float2(56, 78))) * 1000.0);
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR {
 	float x;
 	float y;
@@ -22,7 +26,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR {
 	if (input.TextureCoordinates.y < 0.5f) y = (0.5f-input.TextureCoordinates.y) * HSize;
 	else y = (input.TextureCoordinates.y - 0.5f) * HSize;
 
-	return float4(0, 0, 0, Intensity * (y*y + x*x));
+	
+	return float4(0, 0, 0, Intensity * (y * y + x * x) + rand(input.TextureCoordinates.xy)/256);
 }
 
 technique SpriteDrawing {
