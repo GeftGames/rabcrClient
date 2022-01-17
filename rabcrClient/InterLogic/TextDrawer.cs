@@ -1482,10 +1482,9 @@ namespace rabcrClient {
         }
 
         public bool IsArabic(string s){
-            if (Lang.IsArabic){
-
+            if (Lang.IsArabic) {
                 return true;
-            }else{
+            } else {
                 foreach (char ch in s) {
                     switch (ch) {
                         case 'ى': return true;
@@ -1499,7 +1498,7 @@ namespace rabcrClient {
 
     public class Glyph {
         public Rectangle DrawRectangle;
-      //  public int Code;
+        // public int Code;
         public char Char;
         public int X, Y, W, H;
         public bool visible;
