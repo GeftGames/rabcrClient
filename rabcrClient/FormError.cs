@@ -170,6 +170,7 @@ namespace rabcrClient {
                 text+="Graphics card: "+graphicsCard+"\r\n";
                 text+="Ram: "+(total/1024/1024)+"MB\r\n";
                 text+="CultureInfo: "+CultureInfo.InstalledUICulture.Name+"\r\n";
+                text+="Screen: "+System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width+"x"+System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height+"px\r\n";
                 text+="\r\n";
                 text+="<Exception>\r\n";
                 text+="Error time: "+errorTime.ToLongDateString()+"\r\n";
