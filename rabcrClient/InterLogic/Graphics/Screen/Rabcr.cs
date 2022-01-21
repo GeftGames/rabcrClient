@@ -2,15 +2,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Color = Microsoft.Xna.Framework.Color;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace rabcrClient {
@@ -22,7 +19,6 @@ namespace rabcrClient {
         public static Game Game;
         public static Texture2D Pixel;
         public static Texture2D Pixel2;
-       // public static FastRandom random;
         public static SpriteBatch spriteBatch;
         static bool exiting=false;
         static bool saved=false;
@@ -33,8 +29,6 @@ namespace rabcrClient {
 
         public Rabcr() {
             newMouseState=new MouseState();
-            //Activated += ActivateMyGame;
-            //Deactivated += DeactivateMyGame;
             bool runWithArgs=Environment.GetCommandLineArgs().Length>=3;
             Game=this;
 
@@ -109,9 +103,7 @@ namespace rabcrClient {
                 if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
            //     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
                 if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
-              //  if (!Directory.Exists(Setting.Path+"\\Servers"))Directory.CreateDirectory(Setting.Path+"\\Servers");
-
-                //Log.Init();
+          
 
                 if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
                     switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){
@@ -147,9 +139,7 @@ namespace rabcrClient {
                 }
 
             #endregion
-            //    Setting.Multisapling=16;
-          //  Setting.UpScalingSuperSapling=1f;
-
+          
             GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
 
@@ -160,9 +150,9 @@ namespace rabcrClient {
             GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
             void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
                 if (Setting.GraphicsProfile==GraphicsProfile.HiDef) { 
-                    try{ 
+                    try { 
                         e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
-                    }catch{ 
+                    } catch { 
                         Setting.GraphicsProfile=GraphicsProfile.Reach;
                         e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
                     }
@@ -170,19 +160,10 @@ namespace rabcrClient {
 
                 e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount=Setting.Multisapling;
             //    //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
-                Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
+              //  Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
             }
             GraphicsManager.PreferMultiSampling = Setting.Multisapling>1 /*|| Setting.Multisapling==0*/;
-            //    GraphicsManager.GraphicsDevice..BeforeDeviceCreated += Graphics_BeforeDeviceCreated;
-            //	        Graphics.PresentationParameters.MultiSampleCount = 8;
-            //	GraphicsManager.PreferMultiSampling = true;
-
-
-            // void Graphics_BeforeDeviceCreated(object sender, PresentationParameters e)
-            //   {
-            //       e.MultiSampleCount = 16;
-            //    }
-
+           
             try {
                 GraphicsManager.ApplyChanges();
             } catch{ }
@@ -193,11 +174,12 @@ namespace rabcrClient {
             content=Content;
 
             (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
-            (Pixel2 = new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White,Color.White,Color.White,Color.White });
+            (Pixel2 = new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White, Color.White, Color.White, Color.White });
 
-       //     random=new FastRandom();
-
-            Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
+            Window.Position=new Microsoft.Xna.Framework.Point(
+                    (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f), 
+                    (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f)
+                );
             {
                 Form MyGameForm = (Form)Control.FromHandle(Window.Handle);
                 MyGameForm.LocationChanged+=Window_ClientSizeChanged;
@@ -291,12 +273,14 @@ namespace rabcrClient {
         }
 
         void MyGameForm_FormClosing(object sender, FormClosingEventArgs e) {
-            Console.WriteLine("Closing game");
+            Debug.WriteLine("Closing screen");
             exiting=true;
             screen.Shutdown();
 
-            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) {Setting.SaveSetting(); if (exiting) saved=true;}
-            else {
+            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) {
+                Setting.SaveSetting(); 
+                if (exiting) saved=true;
+            } else {
                 saved=true;
             }
 
@@ -326,7 +310,7 @@ namespace rabcrClient {
                 }
             }
 
-            if (resize){
+            if (resize) {
                 GraphicsManager.ApplyChanges();
                 if (screen!=null) screen.Resize();
             }
