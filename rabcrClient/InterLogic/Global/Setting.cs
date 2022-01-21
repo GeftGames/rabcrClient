@@ -74,7 +74,7 @@ namespace rabcrClient {
         public static bool BetterSnowAndRain=true;
         public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
 
-        public static GraphicsProfile GraphicsProfile =GraphicsProfile.Reach;
+        public static GraphicsProfile GraphicsProfile =GraphicsProfile.HiDef;
 
         public static float NightBrightness=0.6f;
         public static float slideChangeTime=0.05f;
@@ -102,6 +102,10 @@ namespace rabcrClient {
         public static bool Touchpad=false;
         public static bool InvertedMouse=false;
         #endregion
+
+        //void SetDefault(){
+        //    Rabcr.Graphics.Adapter.
+        //}
 
         public static void CreateSettings() {
            // Debug.WriteLine("Creating new settings");

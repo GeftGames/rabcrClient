@@ -629,7 +629,7 @@ namespace rabcrClient {
             }
         }
 
-        public ItemInvFood16(Texture2D tex, ushort id, int count, int maxcount, float descay, float descayMax, int x, int y){
+        public ItemInvFood16(Texture2D tex, ushort id, int count, int maxcount, float descay, float descayMax, int x, int y) {
             posTex=new Rectangle(x, y, 32, 32);
             DescayMaximum=descayMax;
             GetCount=count;
@@ -659,6 +659,26 @@ namespace rabcrClient {
 
             // Descay
             GetDescay=descay;
+            int d=(int)(GetDescay/DescayMaximum*255);
+            colorDescay=new Color((uint)((255 << 24) | (d << 8) | (255-d)));
+
+            // Count
+            int v=(int)((GetCount/(float)CountMaximum*30)+0.49f);
+            bar1= new Rectangle(x, y+28, 32, 5);
+            bar2=new Rectangle(x+1, y+29, v, 3);
+            bar3=new Rectangle(x+1+v, y+29, 30-v, 3);
+        }
+
+        public ItemInvFood16(Texture2D tex, ushort id, int count, int x, int y) {
+            posTex=new Rectangle(x, y, 32, 32);
+            DescayMaximum=GameMethods.FoodMaxDescay(id);
+            GetCount=count;
+            Id=id;
+            Texture=tex;
+            CountMaximum=GameMethods.FoodMaxCount(id);
+
+            // Descay
+            GetDescay=0;
             int d=(int)(GetDescay/DescayMaximum*255);
             colorDescay=new Color((uint)((255 << 24) | (d << 8) | (255-d)));
 

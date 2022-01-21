@@ -57,7 +57,13 @@ namespace rabcrClient {
             float dx=x1-x2, dy=y1-y2;
             return (int)System.Math.Sqrt(dx*dx+dy*dy);
         }
-         /// <summary>
+
+        public static int Distance(int x1, int y1, int x2, int y2) {
+            float dx=x1-x2, dy=y1-y2;
+            return (int)System.Math.Sqrt(dx*dx+dy*dy);
+        }
+
+        /// <summary>
         /// Smooth linear function
         /// </summary>
         /// <param name="input">If it's distance*sqrt(2)>comp </param>
@@ -110,8 +116,8 @@ namespace rabcrClient {
            return x;
         }
 
-        public static int Abs(int input) => input>=0 ? input: -input;
+        public static int Abs(int input) => input>=0 ? input  : -input;
 
-        public static float Abs(float input) => input>=0f ? input: -input;
+        public static float Abs(float input) => input>=0f ? input : -input;
     }
 }
