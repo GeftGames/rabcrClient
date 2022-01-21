@@ -2947,7 +2947,7 @@ namespace rabcrClient {
                             break;
 
                         case 1:
-                            TreeKapok(pos, terrainHeight);
+                            TreeKapok(pos-1, terrainHeight);
                             break;
 
                         case 2:
@@ -4256,14 +4256,14 @@ namespace rabcrClient {
         unsafe void Save(string name) {
             world++;
 
-            List<byte> bytes=new List<byte>();
-            List<byte> bytesLiveObject = new List<byte> {
+            List<byte> bytes=new();
+            List<byte> bytesLiveObject = new() {
                 (byte)LiveObjects.Count,
                 (byte)(LiveObjects.Count>>8),
                 (byte)(LiveObjects.Count>>16)
             };
 
-            List<byte> tmpBytes=new List<byte>();
+            List<byte> tmpBytes=new();
 
             for (int x=0; x<generatePos-7; x++) {
                 GChunk chunk=terrain[x];
