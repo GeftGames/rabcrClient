@@ -5,14 +5,16 @@ namespace rabcrClient {
     class GameBar {
         public float Value{ 
             get => barValue;
-            set { SetBarValue(value); }
+            set { 
+                SetBarValue(value); 
+            }
         }
         float barValue=-10;
-        Texture2D texture;
+        readonly Texture2D texture;
 
         Vector2 PosNor, PosGray;
         Rectangle RecNor, RecGray;
-        int Pos;
+        readonly int Pos;
 
         public GameBar(Texture2D tex, int pos) {  
             texture=tex;
