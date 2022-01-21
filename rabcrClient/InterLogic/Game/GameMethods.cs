@@ -1311,6 +1311,7 @@ namespace rabcrClient {
                 (ushort)Items.Alore => (ushort)BlockId.Alore,
                 (ushort)Items.PlantRose => (ushort)BlockId.Rose,
                 (ushort)Items.PlantViolet => (ushort)BlockId.Violet,
+                (ushort)Items.Heater => (ushort)BlockId.Heather,
                 (ushort)Items.Dandelion => (ushort)BlockId.Dandelion,
                 (ushort)Items.PlantOrchid => (ushort)BlockId.Orchid,
                 (ushort)Items.CactusBig => (ushort)BlockId.CactusBig,
