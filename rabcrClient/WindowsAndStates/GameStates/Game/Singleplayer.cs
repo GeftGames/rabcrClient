@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
     class SinglePlayer: Screen {
-
+		float destroyingTime;
 		#region Varibles
 		Color FogColor=Color.Transparent;
 		RasterizerState rasterizerState;
@@ -839,7 +839,7 @@ namespace rabcrClient {
 			rabbitWalkTexture,
 			sunTexture,
 
-			barEnergyTexture,
+			//barEnergyTexture,
 
 			plateCopperTexture,
 			plateIronTexture,
@@ -1397,7 +1397,7 @@ namespace rabcrClient {
 
 		float WindowXPlayer, WindowYPlayer;
 
-		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2, targetGame4;
+		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2/*, targetGame4*/;
 
 		readonly BlendState Multiply = new() {
 			AlphaSourceBlend=Blend.Zero,
@@ -3442,7 +3442,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			modificatedLightTarget.Dispose();
 			targetGame?.Dispose();
 			targetGame2?.Dispose();
-			targetGame4?.Dispose();
+			//targetGame4?.Dispose();
 			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
 			Debug.WriteLine("EndOf Saving");
@@ -4485,7 +4485,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 									destroing=false;
 								}
-							} else destroing=false;
+							} else {destroing=false; }
 
 						} else {
 							if (notshot) {
@@ -4496,7 +4496,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 						}
-					} else destroing=false;
+					} else {destroing=false;}
 
 					if (newKeyboardState.IsKeyDown(Setting.KeyDropItem)) {
 						if (oldKeyboardState.IsKeyUp(Setting.KeyDropItem)) {
@@ -4771,7 +4771,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										) {
 											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), windRirectionRight, precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
-												texture=lb.Texture
+												texture=lb.Texture,
+												color=lb.Color,
 											};
 											FallingLeaves.Add(fl);
 										}
@@ -7423,7 +7424,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									Vector2 center=(hand+rameno)/2;
 
 									handAngle=(float)Math.Atan2(rameno.Y-hand.Y, rameno.X-hand.X)+FastMath.PIHalf;
+									{
+										int id=InventoryNormal[boxSelected].Id;
+										//if (id!=(int)Items.Gun) {
+											if (destroing){ 
+												destroyingTime+=0.1f;
+											}else{ 
+												if (destroyingTime<(int)(destroyingTime+0.5f)) { 
+													destroyingTime+=0.1f;
+												}else destroyingTime=0;
+											}
 
+											handAngle+=(float)Math.Sin(destroyingTime*FastMath.PI);
+										//}
+									}
 									// Legs
 									if (ClothesLegs!=null) {
 										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerStaticLegs, vector, Setting.ColorSkin);
