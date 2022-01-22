@@ -387,9 +387,9 @@ Texture2D[] rocksTexture;
                 #region Draw lighting
                 Graphics.SetRenderTarget(fogTarget);
                 Graphics.Clear(Color.Black);
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive,SamplerState.PointClamp, null, null, null, camera);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, null, null, null, camera);
 
-                for (int x= startIndex; x<endIndex; x++) spriteBatch.Draw(lightmap, terrain[x].LightVec, Color.White);
+                for (int x = startIndex; x<endIndex; x++) spriteBatch.Draw(lightmap, terrain[x].LightVec, Color.White);
 
                 for (int i = 0; i<lights.Length; i++) spriteBatch.Draw(lightMaskLineTexture, lights[i], Color.White);
 
