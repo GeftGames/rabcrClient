@@ -57,10 +57,10 @@ namespace rabcrClient {
                     "&b="+Release.Date.Replace(" ", "%20") +
                     "&c="+GetOsVersionText()+ "%20"+RuntimeInformation.OSArchitecture +
                     "&d="+ Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")+
-                    "&e="+Environment.ProcessorCount.ToString() +
+               //     "&e="+Environment.ProcessorCount.ToString() +
                     "&f="+graphicsCard.Replace(" ", "%20")  +
-                    "&g="+exception.Message.Replace(" ", "%20") +
-                    "&p="+CultureInfo.InstalledUICulture.Name;
+                    "&g="+exception.Message.Replace(" ", "%20") ;
+              //      "&p="+CultureInfo.InstalledUICulture.Name;
 
             // StackTrace
             StackTrace st=new(exception, true);
@@ -68,7 +68,7 @@ namespace rabcrClient {
 
 
                 if (count>1) {
-                StackFrame sf2=st.GetFrame(1);
+                    StackFrame sf2=st.GetFrame(1);
                     FileInfo fi2 =new(sf2.GetFileName());
                     string trace="&r="+fi2.Name+"-method: "+sf2.GetMethod().Name.ToString()+ ", line: "+sf2.GetFileLineNumber() +Environment.NewLine;
                     trace=trace.Replace(" ","%20");
@@ -91,6 +91,7 @@ namespace rabcrClient {
 
                 // Run
                 WebClient wc=new();
+                Console.WriteLine(Release.stringRRE+send);
                 string result=wc.DownloadString(Release.stringRRE+send);
                 //System.Diagnostics.Process.Start();
                 if (result.StartsWith("O|")){

@@ -5,16 +5,16 @@ namespace rabcrClient{
         public const int
             VersionMajor    = 0,
             VersionMinor    = 1,
-            VersionBuild    = 25,
+            VersionBuild    = 26,
             VersionRevision = 0;
 
-        public const string VersionString = "0.1.25.0";
+        public const string VersionString = "0.1.26.0";
 
         // Special name of version
         public const string VersionSpecialName = "";
 
         // Release date
-        public const string Date="17.07.2021";
+        public const string Date="22.01.2022";
 
 
 
