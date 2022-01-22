@@ -163,6 +163,7 @@ namespace rabcrClient {
         public Vector2 Position;
         public float angle;
         public float time;
+        public float alpha=1f;
 
         //	public float size;
       //  readonly Vector2 vecOrigin;
@@ -197,7 +198,7 @@ namespace rabcrClient {
                 position: /*new Vector2(*/Position/*.X, Position.Y)*/,
                 sourceRectangle: srcrec,
                 effects: SpriteEffects.None,
-                color: Color.White,
+                color: Color.White*alpha,
 				scale: /*1f*/0.5f*size+0.5f,
                 rotation: angle,
                 origin: /*vecOrigin*/Vector2.Zero,
