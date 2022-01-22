@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace rabcrClient {
     class ScreenBlock : Block{//static =no animation (fence,label)
 
-        public int screen;
         Rectangle rectangle;
+        public int screen;
         public Vector2 Position;
         public Texture2D Texture;
 
@@ -17,18 +17,14 @@ namespace rabcrClient {
         }
 
         public int Screen {
-            set{
+            set {
                 screen=value;
-                rectangle = new Rectangle(rectangle.Width * screen,0, rectangle.Width, rectangle.Height);
+                rectangle.X=rectangle.Width * screen;
             }
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, rectangle, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, rectangle, Global.ColorWhite);
 
-        public override Block CloneDown() {
-            ScreenBlock s=new ScreenBlock(Texture, Position, rectangle.Width, rectangle.Height, Id);
-            s.Position.Y+=16;
-            return s;
-        }
+        public override Block CloneDown() => new ScreenBlock(Texture, new Vector2(Position.X, Position.Y+16), rectangle.Width, rectangle.Height, Id);
     }
 }

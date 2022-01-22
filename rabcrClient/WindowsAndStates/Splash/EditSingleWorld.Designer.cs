@@ -40,14 +40,14 @@
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // timer1
-            // 
+            //
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
             this.panel1.Controls.Add(this.textPanel8);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -55,9 +55,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(530, 34);
             this.panel1.TabIndex = 10;
-            // 
+            //
             // textPanel8
-            // 
+            //
             this.textPanel8.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel8.BackColor = System.Drawing.Color.Transparent;
             this.textPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -68,9 +68,9 @@
             this.textPanel8.TabIndex = 9;
             this.textPanel8.TabStop = false;
             this.textPanel8.Text = "Upravit svět";
-            // 
+            //
             // panel2
-            // 
+            //
             this.panel2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.panel2.BackColor = System.Drawing.Color.WhiteSmoke;
             this.panel2.Controls.Add(this.news2);
@@ -82,10 +82,10 @@
             this.panel2.Size = new System.Drawing.Size(464, 82);
             this.panel2.TabIndex = 2;
             this.panel2.Visible = false;
-            // 
+            //
             // news2
-            // 
-            this.news2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.news2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.news2.BackColor = System.Drawing.Color.WhiteSmoke;
             this.news2.Location = new System.Drawing.Point(14, 8);
@@ -94,10 +94,10 @@
             this.news2.TabIndex = 9;
             this.news2.TabStop = false;
             this.news2.Text = "news2";
-            // 
+            //
             // bounds1
-            // 
-            this.bounds1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.bounds1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bounds1.BackColor = System.Drawing.Color.Transparent;
             this.bounds1.Location = new System.Drawing.Point(11, 5);
@@ -106,9 +106,9 @@
             this.bounds1.TabIndex = 0;
             this.bounds1.TabStop = false;
             this.bounds1.Text = "bounds1";
-            // 
+            //
             // customButton1
-            // 
+            //
             this.customButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.customButton1.BackColor = System.Drawing.Color.Transparent;
             this.customButton1.Disamble = false;
@@ -120,9 +120,9 @@
             this.customButton1.TabIndex = 2;
             this.customButton1.Text = "Pomoc s GeDo";
             this.customButton1.Click += new System.EventHandler(this.GButton1_Click);
-            // 
+            //
             // textPanel6
-            // 
+            //
             this.textPanel6.BackColor = System.Drawing.Color.Transparent;
             this.textPanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.textPanel6.ForeColor = System.Drawing.Color.Black;
@@ -133,9 +133,9 @@
             this.textPanel6.TabIndex = 9;
             this.textPanel6.TabStop = false;
             this.textPanel6.Text = "Můžete použít GeDo značky";
-            // 
+            //
             // panel3
-            // 
+            //
             this.panel3.Controls.Add(this.customButton5);
             this.panel3.Controls.Add(this.textPanel7);
             this.panel3.Controls.Add(this.textPanel2);
@@ -149,9 +149,9 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(447, 222);
             this.panel3.TabIndex = 3;
-            // 
+            //
             // customButton5
-            // 
+            //
             this.customButton5.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton5.BackColor = System.Drawing.Color.Transparent;
             this.customButton5.Disamble = false;
@@ -163,9 +163,9 @@
             this.customButton5.TabIndex = 4;
             this.customButton5.Text = "Smazat";
             this.customButton5.Click += new System.EventHandler(this.GButton5_Click);
-            // 
+            //
             // textPanel7
-            // 
+            //
             this.textPanel7.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel7.BackColor = System.Drawing.Color.Transparent;
             this.textPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -177,9 +177,9 @@
             this.textPanel7.TabIndex = 0;
             this.textPanel7.TabStop = false;
             this.textPanel7.Text = "Smazat svět";
-            // 
+            //
             // textPanel2
-            // 
+            //
             this.textPanel2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel2.BackColor = System.Drawing.Color.Transparent;
             this.textPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -191,9 +191,9 @@
             this.textPanel2.TabIndex = 0;
             this.textPanel2.TabStop = false;
             this.textPanel2.Text = "Vyčistit svět";
-            // 
+            //
             // textPanel5
-            // 
+            //
             this.textPanel5.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel5.BackColor = System.Drawing.Color.Transparent;
             this.textPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -205,10 +205,10 @@
             this.textPanel5.TabIndex = 0;
             this.textPanel5.TabStop = false;
             this.textPanel5.Text = "Exportovat";
-            // 
+            //
             // bar1
-            // 
-            this.bar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.bar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bar1.Location = new System.Drawing.Point(7, 188);
             this.bar1.Name = "bar1";
@@ -217,9 +217,9 @@
             this.bar1.TabStop = false;
             this.bar1.Value = 0F;
             this.bar1.Visible = false;
-            // 
+            //
             // customButton7
-            // 
+            //
             this.customButton7.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.customButton7.BackColor = System.Drawing.Color.Transparent;
             this.customButton7.Disamble = false;
@@ -231,10 +231,10 @@
             this.customButton7.TabIndex = 5;
             this.customButton7.Text = "Exportovat";
             this.customButton7.Click += new System.EventHandler(this.GButton7_Click);
-            // 
+            //
             // bounds3
-            // 
-            this.bounds3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.bounds3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bounds3.BackColor = System.Drawing.Color.Transparent;
             this.bounds3.Location = new System.Drawing.Point(4, 185);
@@ -244,9 +244,9 @@
             this.bounds3.TabStop = false;
             this.bounds3.Text = "bounds1";
             this.bounds3.Visible = false;
-            // 
+            //
             // customButton6
-            // 
+            //
             this.customButton6.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton6.BackColor = System.Drawing.Color.Transparent;
             this.customButton6.Disamble = false;
@@ -258,9 +258,9 @@
             this.customButton6.TabIndex = 3;
             this.customButton6.Text = "Vyčistit";
             this.customButton6.Click += new System.EventHandler(this.GButton6_Click);
-            // 
+            //
             // textPanel4
-            // 
+            //
             this.textPanel4.BackColor = System.Drawing.Color.Transparent;
             this.textPanel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.textPanel4.Location = new System.Drawing.Point(1, 160);
@@ -271,9 +271,9 @@
             this.textPanel4.TabStop = false;
             this.textPanel4.Text = "Proces";
             this.textPanel4.Visible = false;
-            // 
+            //
             // link1
-            // 
+            //
             this.link1.BackColor = System.Drawing.Color.Transparent;
             this.link1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Underline);
             this.link1.Location = new System.Drawing.Point(40, 132);
@@ -282,9 +282,9 @@
             this.link1.TabIndex = 1;
             this.link1.Text = "Zobrazit náhled";
             this.link1.Click += new System.EventHandler(this.Link1_Click);
-            // 
+            //
             // xTextBoxName
-            // 
+            //
             this.xTextBoxName.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.xTextBoxName.Location = new System.Drawing.Point(40, 89);
             this.xTextBoxName.Name = "xTextBoxName";
@@ -293,9 +293,9 @@
             this.xTextBoxName.StateSelect = GBounds.StateSelect.Between;
             this.xTextBoxName.TabIndex = 0;
             this.xTextBoxName.TextInTextBox = "";
-            // 
+            //
             // textPanel1
-            // 
+            //
             this.textPanel1.BackColor = System.Drawing.Color.Transparent;
             this.textPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.textPanel1.Location = new System.Drawing.Point(40, 60);
@@ -305,9 +305,9 @@
             this.textPanel1.TabIndex = 4;
             this.textPanel1.TabStop = false;
             this.textPanel1.Text = "Název světa";
-            // 
+            //
             // customButton3
-            // 
+            //
             this.customButton3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton3.BackColor = System.Drawing.Color.Transparent;
             this.customButton3.Disamble = false;
@@ -319,9 +319,9 @@
             this.customButton3.TabIndex = 7;
             this.customButton3.Text = "Použít";
             this.customButton3.Click += new System.EventHandler(this.GButton3_Click);
-            // 
+            //
             // customButton2
-            // 
+            //
             this.customButton2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton2.BackColor = System.Drawing.Color.Transparent;
             this.customButton2.Disamble = false;
@@ -333,9 +333,9 @@
             this.customButton2.TabIndex = 6;
             this.customButton2.Text = "Zrušit";
             this.customButton2.Click += new System.EventHandler(this.GButton2_Click);
-            // 
+            //
             // EditSingleWorld
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(253)))), ((int)(((byte)(253)))));

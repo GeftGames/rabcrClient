@@ -2,19 +2,19 @@ namespace rabcrClient{
     static class Release {
 
         // Name of version
-        public const int 
-            VersionMajor    = 0, 
-            VersionMinor    = 1, 
-            VersionBuild    = 25, 
+        public const int
+            VersionMajor    = 0,
+            VersionMinor    = 1,
+            VersionBuild    = 26,
             VersionRevision = 0;
 
-        public const string VersionString = "0.1.25.0";
+        public const string VersionString = "0.1.26.0";
 
         // Special name of version
         public const string VersionSpecialName = "";
 
         // Release date
-        public const string Date="17.07.2021";
+        public const string Date="22.01.2022";
 
 
 
@@ -134,9 +134,11 @@ namespace rabcrClient{
 
 
         #region Links
-        public const string 
+        public const string
             // Report error
             stringRRE="https://***.php",
+
+            stringBadTranslate ="https://***.php",
 
             // Send date through the anonymization gateway (hide ip) and check trolls
             // ... or it can go direct if you don't want to do, but its better to have gamejolt api code safe on the sever, because code its hidden!

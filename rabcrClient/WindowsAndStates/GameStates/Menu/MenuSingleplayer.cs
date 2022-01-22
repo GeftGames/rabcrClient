@@ -159,7 +159,7 @@ namespace rabcrClient {
             }
 
             if (buttonNewWorld.Click) {
-                string worldName = (Rabcr.random.Int(1000)+""+Rabcr.random.Int(1000)+""+Rabcr.random.Int(1000)).ToString();
+                string worldName = (FastRandom.Int(1000)+""+FastRandom.Int(1000)+""+FastRandom.Int(1000)).ToString();
 
                 using (AddSingleWorld asw = new AddSingleWorld(worldName)) {
                     asw.ShowDialog();
@@ -297,12 +297,12 @@ namespace rabcrClient {
                         if (s.generated){
                               s.ButtonPlay=new ButtonCenter(buttonPlayTexture) {
                                   Text=Lang.Texts[80],
-                                  center=true,
+                                  //center=true,
                             };
                         } else {
                               s.ButtonPlay=new ButtonCenter(buttonRightTexture) {
                                   Text=Lang.Texts[81],
-                                  center=true,
+                               //   center=true,
                             };
                         }
 

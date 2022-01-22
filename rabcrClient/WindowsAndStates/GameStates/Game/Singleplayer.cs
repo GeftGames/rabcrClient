@@ -11,38 +11,188 @@ using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
     class SinglePlayer: Screen {
+		float destroyingTime;
 		#region Varibles
-		static Color 
-			ColorArmy= new Color(0xff113022), // R 34, G 48, B 17, A 255
-			ColorSpringGreen=new Color(0xff2cff8f), //R 143, G 225, B 44, A 255
-			ColorRoseQuartz=new Color(0xffa998aa); //R 170, G 152, B 169
+		Color FogColor=Color.Transparent;
+		RasterizerState rasterizerState;
+		const float noon=(dayEnd-(dayStart+1))*hour;
+		Color black50=new(0,0,0,50);
+		int invertedMouseValue;
+        #region Weather changes
+        void StopRaining() {
+			if (Global.HasSoundGraphics) {
+				if (SoundRain.IsLooped){
+					SoundRain.IsLooped=false;
+					SoundRain.Stop();
+				}
+			}
+		}
+
+		void StartRaining() {
+			if (Global.HasSoundGraphics) {
+				if (!SoundRain.IsLooped){
+					SoundRain.Play();
+					SoundRain.IsLooped=true;
+				}
+			}
+		}
+
+		void StopSnowing() {
+
+		}
+
+		void StartSnowing() {
+			for (int i2=0; i2<Global.WindowHeight; i2++){ 
+				if (wind) {
+					for (int i=0; i<(weatherWindowWidth+600)/300; i++){
+						if (windRirectionRight) {
+							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+								if (Setting.BetterSnowAndRain) {
+									if (FastRandom.Bool())
+										snowDotsSmall.Add(
+											new ParticleSnowSmall(gravity+0.2f) {
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
+												HSpeed=windForce*0.5f
+										});
+									else 
+										snowDots2.Add(
+											new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
+												HSpeed=windForce*0.5f
+										});
+								} else { 
+									if (FastRandom.Bool()) snowDots2.Add(
+										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
+											HSpeed=windForce*0.5f
+									});
+								}
+							}
+						} else {
+							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+								if (Setting.BetterSnowAndRain) {
+									if (FastRandom.Bool())
+										snowDotsSmall.Add(
+											new ParticleSnowSmall(gravity+0.2f) {
+												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
+												HSpeed=-windForce*0.5f
+										});
+									else snowDots2.Add(
+										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
+											HSpeed=-windForce*0.5f
+										});
+								} else { 
+									if (FastRandom.Bool()) snowDots2.Add(
+										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
+											HSpeed=-windForce*0.5f
+										});
+								}
+										
+							}
+						}
+					}
+					if (Global.HasSoundGraphics) {
+						SoundWind.Play();
+						SoundWind.IsLooped=true;
+					}
+				} else {
+					for (int i=0; i<(weatherWindowWidth+10)/300; i++){
+						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+							if (Setting.BetterSnowAndRain) {
+								if (FastRandom.Bool()) 
+									snowDotsSmall.Add(new ParticleSnowSmall(gravity+0.2f) {
+										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
+										HSpeed=windForce*0.5f
+									});
+								else 
+									snowDots2.Add(new ParticleSnow(FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
+										HSpeed=windForce*0.5f
+									});
+							} else { 
+								snowDots2.Add(new ParticleSnow(FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
+										HSpeed=windForce*0.5f
+									});
+							}
+						}
+					}
+				}	
+			}
+		}
+
+		void StopWind() {
+			if (Global.HasSoundGraphics) {
+				if (SoundWind.IsLooped){
+					SoundWind.IsLooped=false;
+					SoundWind.Stop();
+				}
+			}
+		}
+
+		void StartWind() {
+		if (Global.HasSoundGraphics) {
+				if (!SoundWind.IsLooped){
+					SoundWind.Play();
+					SoundWind.IsLooped=true;
+				}
+			}
+		}
+        #endregion
+		Matrix transformMatrixS;
+		int EarthShakeTimeInnerPer=10;
+		int EarthShakeTime;
+		const float divider255=1/255f;
+		float EarthShakeSize;
+		float EarthShakeActualSize;
+		Vector2 EarthShakeP1, EarthShakeP2, EarthShakePA;
+		SoundEffectInstance SoundWind, SoundRain;
+		float SuperSamplingActing=-1;
+		float scrollBuffer=0f;
+		Texture2D TextureGrassBlockSnowCompost;
+		enum Precipitation : byte {
+			None,
+			Snowing,
+			Rain,
+		//	Storm
+		}
+		Precipitation CurrentPrecipitation=Precipitation.None;
+		static Color
+			ColorArmy= new(0xff113022), // R 34, G 48, B 17, A 255
+			ColorSpringGreen=new(0xff2cff8f), //R 143, G 225, B 44, A 255
+			ColorRoseQuartz=new(0xffa998aa); //R 170, G 152, B 169
 
 		float actualRainForce=0.75f;
 		float rainWaveForce;
 
 		#region Textures
 		Texture2D
+			TextureBranchesSnow,
 			TextureParrotStill,
 			TextureParrotFly,
 			TextureBin,
 			TextureEggDrop,TextureOxygenMachine, TextureAirTank, TextureAirTank2, TextureBarrel, TextureIngotSteel,
 			TextureItemEgg, TextureItemBoiledEgg, TextureWaterGraystyle, TextureChristmasStar,
-			TextureBarBarrel, pixel,
+			TextureBarBarrel, 
+			pixel,
+			pixel2,
 			TextureClouds,
 			TextureSunGradient,
-		
-			TextureChristmasBall, 
-			TextureChristmasBallYellow, 
-			TextureChristmasBallOrange, 
-			TextureChristmasBallRed, 
-			TextureChristmasBallPurple, 
-			TextureChristmasBallPink, 
-			TextureChristmasBallLightGreen, 
-			TextureChristmasBallBlue, 
+
+			TextureChristmasBall,
+			TextureChristmasBallYellow,
+			TextureChristmasBallOrange,
+			TextureChristmasBallRed,
+			TextureChristmasBallPurple,
+			TextureChristmasBallPink,
+			TextureChristmasBallLightGreen,
+			TextureChristmasBallBlue,
 			TextureChristmasBallTeal,
 			TextureAngelHair,
 			TextureAngelHairWithSpruceLeaves,
-			
+
 			TextureChristmasBallGrayWithLeaves,
 			TextureChristmasBallYellowWithLeaves,
 			TextureChristmasBallOrangeWithLeaves,
@@ -449,6 +599,7 @@ namespace rabcrClient {
 			//Spruce
 			spruceWoodTexture,
 			spruceLeavesTexture,
+			spruceLeavesWithSnowTexture,
 			spruceSaplingTexture,
 
 			// Linden
@@ -688,7 +839,7 @@ namespace rabcrClient {
 			rabbitWalkTexture,
 			sunTexture,
 
-			barEnergyTexture,
+			//barEnergyTexture,
 
 			plateCopperTexture,
 			plateIronTexture,
@@ -750,10 +901,10 @@ namespace rabcrClient {
 			snowTopTexture,
 
 			// Bars
-			barEatTexture,
-			barWaterTexture,
-			barOxygenTexture,
-			barHeartTexture,
+			//barEatTexture,
+			//barWaterTexture,
+			//barOxygenTexture,
+			//barHeartTexture,
 
 			// Textures blocks
 			//rocks0Texture,
@@ -923,7 +1074,7 @@ namespace rabcrClient {
 			AchievementIronAge,
 			AchievementFutureAge;
 		int weatherWindowWidth, weatherWindowHeight;
-		
+
 		float Temperature=float.NaN;
 		const float DescaySpeed=0.0001f;
 		List<FallingLeave> FallingLeaves;
@@ -950,9 +1101,9 @@ namespace rabcrClient {
 		const float WalkingHandMaxAngle=0.4f;
 		LiveObject[] LiveObjects;
 		bool windRirectionRight;
-		Effect EffectClouds;
+		Effect EffectClouds,EffectVignetting, EffectFog;
 	//	Texture2D TextureClouds;
-		readonly List<(Color, float)> Gradient=new List<(Color, float)>{
+		readonly List<(Color, float)> Gradient=new() {
 			(Color.CornflowerBlue, 0),
 		   // (new Color(40, 120, 229), 152/542f),
 			(new Color((byte)103, (byte)160, (byte)209), 268/542f),
@@ -963,20 +1114,20 @@ namespace rabcrClient {
 		};
 		//Texture2D TextureSunGradient;
 
-		readonly Color ColorNightRain=new Color((byte)218, (byte)227, (byte)235/*40,52,63*/);
-		readonly Color ColorNight=new Color((byte)222, (byte)233, (byte)237/*27,171,236*/);
+		readonly Color ColorNightRain=new((byte)218, (byte)227, (byte)235/*40,52,63*/);
+		readonly Color ColorNight=new((byte)222, (byte)233, (byte)237/*27,171,236*/);
 
-		readonly Color ColorDayRain=new Color((byte)233, (byte)238, (byte)243);//Color.Lerp(new Color(51,64,77), Color.WhiteSmoke, 0.5f);
+		readonly Color ColorDayRain=new((byte)233, (byte)238, (byte)243);//Color.Lerp(new Color(51,64,77), Color.WhiteSmoke, 0.5f);
 		readonly Color ColorDay= FastMath.Lerp(new Color((byte)240, (byte)243, (byte)246), Color.White, 0.5f);//Color.Lerp(new Color(96,163,231), Color.White, 0.9f);
 
-		readonly Color ColorSun=new Color((byte)246, (byte)241, (byte)229);//Color.Lerp(new Color(244,199,74), Color.White, 0.9f);
-		readonly Color ColorSunRain=new Color((byte)242, (byte)239, (byte)230);// Color.Lerp(new Color(76,69,50), Color.WhiteSmoke, 0.5f);
-		Color ColorDayRainBack=new Color((byte)114, (byte)176, (byte)214);
+		readonly Color ColorSun=new((byte)246, (byte)241, (byte)229);//Color.Lerp(new Color(244,199,74), Color.White, 0.9f);
+		readonly Color ColorSunRain=new((byte)242, (byte)239, (byte)230);// Color.Lerp(new Color(76,69,50), Color.WhiteSmoke, 0.5f);
+		Color ColorDayRainBack=new((byte)114, (byte)176, (byte)214);
 		float swimmingTicks;
 	//	Texture2D TextureBarBarrel, pixel;
-		FastRandom random;
+	//	FastRandom FastRandom;
 		float handAngle;
-		Color ColorLightBlue=Color.LightBlue;
+		//Color ColorLightBlue=Color.LightBlue;
 		DInt startMovePos;
 		const int HandSize=18;
 		ItemInvBlank itemBlank;
@@ -1009,9 +1160,9 @@ namespace rabcrClient {
 		Vector2 Vector2Zero;
 		Color colorAlpha;
 		List<GunShot> GunShots;
-		Color
-			ColorWhite,
-			ColorSmokeWhite=new Color((byte)240,(byte)240,(byte)240);
+		static readonly Color
+		//	Color.White,
+			ColorSmokeWhite=new((byte)240,(byte)240,(byte)240);
 
 		bool mousePosChanged;
 		bool cameraMove;
@@ -1032,7 +1183,7 @@ namespace rabcrClient {
 	//	Texture2D TextureItemEgg, TextureItemBoiledEgg, TextureWaterGraystyle, TextureChristmasStar;
 	   // readonly int craftingScrollbarValue;
 		bool easter;
-		bool radioplaying=false;  
+		bool radioplaying=false;
 		bool creativeTabCrafting=true;
 		float scrollBarCreative;
 		Text textDie, textDieInfo, textRespawnIn, textOpenInventory, textChooseItemWindow;
@@ -1066,12 +1217,10 @@ namespace rabcrClient {
 		bool notNeedScafander;
 
 		float PlayerX, PlayerY;
-	 //   int intPlayerX, intPlayerY;
-
+		int PlayerXInt, PlayerYInt;
 		int playerImg;
-	//	int playerImg2=100;
 		int playerState;
-	   int distanceToGround=0;
+	    int distanceToGround=0;
 		float gravitySpeed=0;
 		bool playerLight=false;
 		#endregion
@@ -1138,17 +1287,17 @@ namespace rabcrClient {
 		Texture2D[] TextureRocks;
 		#region Weather & time (day/night)
 		float windForce;
-		int dayLenght=4800;
+		const int dayLenght=24*hour;
 		const int hour=200;
-		readonly List<Rectangle> lightsFull=new List<Rectangle>();
-		readonly List<Rectangle> lightsHalf=new List<Rectangle>();
+		readonly List<Rectangle>
+			lightsFull=new(),
+			lightsHalf=new();
 
 		// Rain
-		//int rainDuration;
-		//int windDuration;
 		int changeRain = 1250;
-		List<ParticleRain> rainDots;
-		List<ParticleSnow> snowDots;
+		List<ParticleRain> rainDots, rainDots2;
+		List<ParticleSnow> /*snowDots,*/ snowDots2;
+		List<ParticleSnowSmall> snowDotsSmall;
 		bool wind, precipitation;
 
 		//Time
@@ -1212,7 +1361,7 @@ namespace rabcrClient {
 			buttonCraft1x,
 			buttonCraft10x,
 			buttonCraft100x,
-			
+
 			buttonContinue,
 			buttonExit,
 			buttonUseGiftCode,
@@ -1236,11 +1385,11 @@ namespace rabcrClient {
 			buttonInvChest,
 			buttonInvLegs,
 			buttonInvShoes,
-			buttonInvUnderwear;	
+			buttonInvUnderwear;
 		#endregion
 
 		#region Window
-		Matrix camera, ZoomMatrix, Translation;
+		Matrix camera, cameraNoOpMultisapling, ZoomMatrix, ZoomMatrixNoUpScaling, Translation, TranslationNoOpMultisapling, MatrixUpScaling;
 
 		float WindowXWithout, WindowYWithout,
 			WindowCenterX, WindowCenterY,
@@ -1248,9 +1397,9 @@ namespace rabcrClient {
 
 		float WindowXPlayer, WindowYPlayer;
 
-		RenderTarget2D sunLightTarget, modificatedLightTarget;
+		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2/*, targetGame4*/;
 
-		readonly BlendState Multiply = new BlendState {
+		readonly BlendState Multiply = new() {
 			AlphaSourceBlend=Blend.Zero,
 			AlphaDestinationBlend=Blend.SourceColor,
 			ColorSourceBlend=Blend.Zero,
@@ -1276,18 +1425,21 @@ namespace rabcrClient {
 
 		Vector2 mousePos;
 		int mousePosRoundX, mousePosRoundY;
-		readonly DInt mousePosDiv16=new DInt();
+		Vector2 mousePosRoundVector=Vector2.Zero;
+		readonly DInt mousePosDiv16=new();
 		  //  mousePosRound=new DInt(),
 		  //  mouseRealPos=new DInt();
 	   public static int mouseRealPosX, mouseRealPosY;
 		#endregion
 
 		#region Bars
-		float barWater = 16;
-		float barEat = 16;
-		float barOxygen=0;
-		float barHeart=16;
-		float barEnergy=0;
+		//float barWater = 16;
+		//float barEat = 16;
+		//float barOxygen=0;
+		//float barHeart=16;
+		//float barEnergy=0;
+
+		GameBar barWater, barEat, barOxygen, barHeart, barEnergy;
 		#endregion
 
 		#region Debug
@@ -1340,97 +1492,53 @@ namespace rabcrClient {
 
 		#region Colors
 		readonly Color
-			color_r200_g200_b200_a100= new Color((byte)200,(byte)200,(byte)200,(byte)100),
-			color_r0_g0_b0_a200 = new Color((byte)0,(byte)0,(byte)0,(byte)200),
-			color_r10_g140_b255 = new Color((byte)10,(byte)140,(byte)255),
-			color_r128_g128_b128= new Color((byte)128,(byte)128,(byte)128),
-			color_r128_g128_b128_a128= new Color((byte)128,(byte)128,(byte)128,(byte)128),
-			color_r150_g150_b150= new Color((byte)150,(byte)150,(byte)150),
-			color_r0_g0_b0_a100 = new Color((byte)0,(byte)0,(byte)0,(byte)100),
-			color_r255_g0_b0_a100 = new Color((byte)255, (byte)0, (byte)0, (byte)100),
-			color_r200_g200_b200=new Color((byte)200, (byte)200, (byte)200),
-			lampColorLight=new Color((byte)255, (byte)255, (byte)220, (byte)255);
+			color_r200_g200_b200_a100= new((byte)200,(byte)200,(byte)200,(byte)100),
+			color_r0_g0_b0_a200 = new((byte)0,(byte)0,(byte)0,(byte)200),
+			color_r10_g140_b255 = new((byte)10,(byte)140,(byte)255),
+			color_r128_g128_b128= new((byte)128,(byte)128,(byte)128),
+			color_r128_g128_b128_a128= new((byte)128,(byte)128,(byte)128,(byte)128),
+			color_r150_g150_b150= new((byte)150,(byte)150,(byte)150),
+			color_r0_g0_b0_a100 = new((byte)0,(byte)0,(byte)0,(byte)100),
+			color_r255_g0_b0_a100 = new((byte)255, (byte)0, (byte)0, (byte)100),
+			color_r200_g200_b200=new((byte)200, (byte)200, (byte)200),
+			lampColorLight=new((byte)255, (byte)255, (byte)220, (byte)255);
 		#endregion
 
 		#region Other
 		int walkingSoundDuration;
-	  //  Vector2 vector_x0_y4;
-		#endregion
-		#endregion
-		SoundEffectInstance SoundWind, SoundRain;
-		bool snowing;
-		enum Precipitation : byte { 
-			None,
-			Snowing,
-			Rain,
-		//	Storm
-		}
-		Precipitation CurrentPrecipitation=Precipitation.None;
-
-		void StopRaining() { 
-			if (Global.HasSoundGraphics) {
-				if (SoundRain.IsLooped){ 
-					SoundRain.IsLooped=false;
-					SoundRain.Stop();
-				}
-			}
-		}
-
-		void StartRaining() { 
-			if (Global.HasSoundGraphics) {
-				if (!SoundRain.IsLooped){ 
-					SoundRain.Play();
-					SoundRain.IsLooped=true;
-				}
-			}
-		}
-
-		void StopSnowing() { 
-			
-		}
-
-		void StartSnowing() { 
-		
-		}
-
-		void StopWind() { 
-			if (Global.HasSoundGraphics) {
-				if (SoundWind.IsLooped){ 
-					SoundWind.IsLooped=false;
-					SoundWind.Stop();
-				}
-			}
-		}
-
-		void StartWind() { 
-		if (Global.HasSoundGraphics) {
-				if (!SoundWind.IsLooped){ 
-					SoundWind.Play();
-					SoundWind.IsLooped=true;
-				}
-			}
-		}
-		
-		
-		public SinglePlayer(string dir) => pathToWorld=dir+"\\";
+        //  Vector2 vector_x0_y4;
+        #endregion
+        #endregion
+        public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 
 		public unsafe override void Init() {
-			random=Rabcr.random;
+			invertedMouseValue = Setting.InvertedMouse ? -1 : 1;
+		//	SuperSamplingActing=(Setting.UpScalingSuperSapling<=0) ? 1f/Setting.Zoom :Setting.UpScalingSuperSapling;
+			//Setting.UpScalingSuperSapling=1.00001f;
+		//	Setting.Multisapling=16;
+			SoundEffects.Shot=GetDataSoundEffect("Shot");
 			FallingLeaves=new List<FallingLeave>();
 			Particles=new List<ParticleMess>();
 			WavingPlants=new List<object>();
+
 			Fullscreen=new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight);
-			ConstNightAlpha=0.1f+0.4f*Setting.NightBrightness;
 			Vector2_2=new Vector2(2,2);
+
 			float m=0.5f+Setting.NightBrightness*0.5f;
+			ConstNightAlpha=0.1f+0.4f*Setting.NightBrightness;
 			ColorNightColorBack=new Color(m, m, m);
 			ColorNightColorBackRain=new Color(m, m, (int)(m*1.1f+0.5f));
 
 			itemBlank=new ItemInvBlank();
-			ColorWhite=Color.White;
-			pixel=Rabcr. Pixel;
+			//Color.White=Color.White;
+			pixel=Rabcr.Pixel;
+			pixel2=Rabcr.Pixel2;
 			Vector2Zero=Vector2.Zero;
+
 			EffectClouds=Content.Load<Effect>(Setting.StyleName+"/Effects/Clouds");
+			EffectVignetting=Content.Load<Effect>(Setting.StyleName+"/Effects/Vignetting");
+			EffectFog=Content.Load<Effect>(Setting.StyleName+"/Effects/Fog");
+
 			if (File.Exists(pathToWorld+"LastWorld.txt")) world=File.ReadAllText(pathToWorld+"LastWorld.txt");
 
 			if (string.IsNullOrEmpty(world)) world="Earth";
@@ -1444,7 +1552,7 @@ namespace rabcrClient {
 			CountGravity(new GeneratePlanetSystem().SunSystem());
 
 			easter=IsEaster();
-	
+
 
 			SoundWind=SoundEffects.Wind.CreateInstance();
 			SoundRain=SoundEffects.Rain.CreateInstance();
@@ -1452,11 +1560,11 @@ namespace rabcrClient {
 
 			#region Load textures
 			TextureTestTube=GetDataTexture(@"Items\Dye\TestTube");
-
+			TextureGrassBlockSnowCompost=GetDataTexture(@"Blocks\GrassBlocks\CompostWithSnow");
 			TextureChristmasBall=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBall");
-			TextureChristmasBallYellow=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallYellow"); 
-			TextureChristmasBallOrange=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallOrange"); 
-			TextureChristmasBallRed=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallRed"); 
+			TextureChristmasBallYellow=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallYellow");
+			TextureChristmasBallOrange=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallOrange");
+			TextureChristmasBallRed=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallRed");
 			TextureChristmasBallPurple=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallPurple");
 			TextureChristmasBallPink=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallPink");
 			TextureChristmasBallLightGreen=GetDataTexture(@"Items/Decorations/CristmasBalls/ChristmasBallLightGreen");
@@ -1465,11 +1573,11 @@ namespace rabcrClient {
 
 			TextureAngelHair=GetDataTexture(@"Items/Decorations/AngelHair");
 			TextureAngelHairWithSpruceLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/AngelHair");
-			
-			TextureChristmasBallGrayWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Gray"); 
-			TextureChristmasBallYellowWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Yellow"); 
-			TextureChristmasBallOrangeWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Orange"); 
-			TextureChristmasBallRedWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Red"); 
+
+			TextureChristmasBallGrayWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Gray");
+			TextureChristmasBallYellowWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Yellow");
+			TextureChristmasBallOrangeWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Orange");
+			TextureChristmasBallRedWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Red");
 			TextureChristmasBallPurpleWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Purple");
 			TextureChristmasBallPinkWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/Pink");
 			TextureChristmasBallLightGreenWithLeaves=GetDataTexture(@"Blocks/TreeBlocks/Spruce/ChristmasBalls/LightGreen");
@@ -1480,7 +1588,7 @@ namespace rabcrClient {
 			TextureParrotFly=GetDataTexture(@"Animals/Parrot/Flying");
 
 			CreateGradientTexture();
-		
+
 			#region Imventory
 			TextureBin=GetDataTexture("Inventories/bin");
 			TextureSelectCrafting=GetDataTexture("Buttons/Other/SelectyCrafting");
@@ -1886,6 +1994,7 @@ namespace rabcrClient {
 
 			#region Trees
 			TextureBranches = GetDataTexture("Blocks/TreeBlocks/Branches");
+			TextureBranchesSnow = GetDataTexture("Blocks/TreeBlocks/BranchesSnow");
 			// Oak
 			TextureOakWood = GetDataTexture("Blocks/TreeBlocks/Oak/Wood");
 			TextureOakLeaves = GetDataTexture("Blocks/TreeBlocks/Oak/Leaves");
@@ -1893,6 +2002,7 @@ namespace rabcrClient {
 			// Spruce
 			spruceWoodTexture = GetDataTexture("Blocks/TreeBlocks/Spruce/Wood");
 			spruceLeavesTexture = GetDataTexture("Blocks/TreeBlocks/Spruce/Leaves");
+			spruceLeavesWithSnowTexture = GetDataTexture("Blocks/TreeBlocks/Spruce/LeavesWithSnow");
 
 			// Linden
 			TextureLindenWood = GetDataTexture("Blocks/TreeBlocks/Linden/Wood");
@@ -2169,7 +2279,7 @@ namespace rabcrClient {
 			lightMaskLine2Texture=GetDataTexture("Particles/lightMaskLine2");
 			lightMaskTexture=GetDataTexture("Particles/lightMask");
 			lightMask2Texture=GetDataTexture("Particles/lightMask2");
-			
+
 			lightMaskRoundTexture=GetDataTexture("Particles/lightMaskRound");
 
 			solidFuelSmokeTexture=GetDataTexture("Particles/AnimationsRocket/Solid");
@@ -2182,12 +2292,12 @@ namespace rabcrClient {
 			invRashberryTexture=GetDataTexture("Plants/ForInventory/Rashberry");
 			invBlueberryTexture=GetDataTexture("Plants/ForInventory/Blueberry");
 			flaxInvTexture=GetDataTexture("Plants/ForInventory/Flax");
- barEnergyTexture=GetDataTexture("Bars/Lightning");
- scrollbarUpTexture=GetDataTexture("Buttons/Scrollbar/Top");
+		
+			scrollbarUpTexture=GetDataTexture("Buttons/Scrollbar/Top");
 			scrollbarBetweenTexture=GetDataTexture("Buttons/Scrollbar/Center");
 			scrollbarDownTexture=GetDataTexture("Buttons/Scrollbar/Bottom");
-		radioInvTexture=GetDataTexture("Blocks/ForInventory/Radio");
-  sunTexture = GetDataTexture("Particles/Sun");
+			radioInvTexture=GetDataTexture("Blocks/ForInventory/Radio");
+			sunTexture = GetDataTexture("Particles/Sun");
 
 			fishTexture0 = GetDataTexture("Animals/Fish/Fish0");
 			fishTexture1 = GetDataTexture("Animals/Fish/Fish1");
@@ -2205,11 +2315,12 @@ namespace rabcrClient {
 
 destructionTexture = GetDataTexture("Animations/destruction");
 			TextureMoon = GetDataTexture("Animations/Moon");
-			barEatTexture= GetDataTexture("Bars/Eat");
-			barWaterTexture = GetDataTexture("Bars/Water");
-			barOxygenTexture = GetDataTexture("Bars/Oxygen");
-			barHeartTexture = GetDataTexture("Bars/Heart");
+			//barEatTexture= 
+			//barWaterTexture =
+			//barOxygenTexture = 
+			//barHeartTexture = 
 
+		
 			#endregion
 
 			#region Player
@@ -2279,7 +2390,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				TextureWalking=GetDataTexture("ClothesAnimations/Walking/Feet/FormalShoes"),
 				TextureSwimming=GetDataTexture("ClothesAnimations/Swimming/Feet/FormalShoes"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Feet/FormalShoes"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 
 			ClothesPumps=new ClothesTypeBoots{
@@ -2300,7 +2411,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				TextureWalking=GetDataTexture("ClothesAnimations/Walking/Feet/SpaceBoots"),
 				TextureSwimming=GetDataTexture("ClothesAnimations/Swimming/Feet/SpaceBoots"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Feet/SpaceBoots"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 			#endregion
 
@@ -2336,7 +2447,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				TextureWalking=GetDataTexture("ClothesAnimations/Walking/Legs/SpaceTrousers"),
 				TextureSwimming=GetDataTexture("ClothesAnimations/Swimming/Legs/SpaceTrousers"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Legs/SpaceTrousers"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 			#endregion
 
@@ -2385,17 +2496,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			ClothesHad=new ClothesTypeHelmet{
 				TextureWalkingOrSwimming=GetDataTexture("ClothesAnimations/Walking/Head/Had"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Head/Had"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 			ClothesCrown=new ClothesTypeHelmet{
 				TextureWalkingOrSwimming=GetDataTexture("ClothesAnimations/Walking/Head/Crown"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Head/Crown"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 			ClothesSpaceHelmet=new ClothesTypeHelmet{
 				TextureWalkingOrSwimming=GetDataTexture("ClothesAnimations/Walking/Head/SpaceHelmet"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/Head/SpaceHelmet"),
-				Color=ColorWhite,
+				Color=Color.White,
 			};
 			#endregion
 
@@ -2487,7 +2598,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				TextureWalking=GetDataTexture("ClothesAnimations/Walking/ChestTop/"+dirChest+"/SpaceSuit"),
 				TextureStatic=GetDataTexture("ClothesAnimations/Static/ChestTop/"+dirChest+"/SpaceSuit"),
 				Texture2DClothHand=GetDataTexture("ClothesAnimations/Hand/ChestTop/SpaceSuit"),
-				Color=ColorWhite,
+				Color=Color.White,
 				handSize=HandClothSize.Full,
 			};
 			#endregion
@@ -2534,7 +2645,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			buttonExit=new GameButtonSmall(Textures.ButtonCenter){ Text=Lang.Texts[1478] };
 			buttonUseGiftCode=new GameButtonSmall(Textures.ButtonCenter){ Text=Lang.Texts[1476] };
 			buttonAcheavements=new GameButtonSmall(Textures.ButtonCenter){ Text=Lang.Texts[1477] };
-			
+
 			{
 				Texture2D button=GetDataTexture("Buttons/Other/Craft");
 				buttonNext=new GameButtonSmall(button) { Text="->" };
@@ -2560,13 +2671,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		  //  Barrels=new List<ShortAndByte>();
 			energy = new List<Energy>();
 			rainDots=new List<ParticleRain>();
-			snowDots=new List<ParticleSnow>();
+			//snowDots=new List<ParticleSnow>();
+			snowDotsSmall=new List<ParticleSnowSmall>();
+		//	if ((int)Setting.AnimationsGame>=(int)Setting.GameAnimations.NormalQuality) {
+				rainDots2=new List<ParticleRain>();
+				snowDots2=new List<ParticleSnow>();
+			//}
 			lightsLamp=new List<MashineBlockBasic>();
 			#endregion
 
-			#region Set basic
-			ZoomMatrix = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
+			barEnergy=new GameBar(GetDataTexture("Bars/Lightning"),4+4*36);
+			barEat=new GameBar(GetDataTexture("Bars/Eat"), 4+3*36);
+			barWater=new GameBar(GetDataTexture("Bars/Water"), 4+2*36);
+			barOxygen= new GameBar(GetDataTexture("Bars/Oxygen"), 4+1*36);
+			barHeart=new GameBar(GetDataTexture("Bars/Heart"), 4+0*36);
 
+			#region Set basic
+			
+		//	else MatrixUpScaling = Matrix.CreateScale(1f, 1f, 0);
 			newKeyboardState = Keyboard.GetState();
 			newMouseState = Mouse.GetState();
 			oldKeyboardState = newKeyboardState;
@@ -2580,23 +2702,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			terrain = new Terrain[TerrainLength = int.Parse(File.ReadAllText(pathToWorld + world + "Generated.txt"))];
 
-			maxInvCount = 32+8;
+			maxInvCount = 5+9*5;//32+8+10+1+1;
 			if (Global.WorldDifficulty == 1) maxInvCount+=9;
 			#endregion
 			int startUpItems=-1;
 
 			#region Files
 			if (File.Exists(pathToWorld+@"\Options.txt")) {
-				using (StreamReader sr = new StreamReader(pathToWorld+@"\Options.txt")) {
-					Global.WorldDifficulty=int.Parse(sr.ReadLine());
-					sr.ReadLine();
-					startUpItems=int.Parse(sr.ReadLine());
-				}
-			}
+                using StreamReader sr = new(pathToWorld + @"\Options.txt");
+                Global.WorldDifficulty = int.Parse(sr.ReadLine());
+                sr.ReadLine();
+                startUpItems = int.Parse(sr.ReadLine());
+            }
 
 			if (File.Exists(pathToWorld+@"\Settings.txt")) {
 			 //   int x,y;
-				using (StreamReader sr = new StreamReader(pathToWorld+@"\Settings.txt")) {
+				using (StreamReader sr = new(pathToWorld+@"\Settings.txt")) {
 				   /* string version =*/ sr.ReadLine();
 					//if (version!=Release.Version){
 					//    System.Windows.Forms.MessageBox.Show(Lang.Texts[344],Lang.Texts[343]);
@@ -2641,14 +2762,31 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					fly =bool.Parse(sr.ReadLine());
 					time =int.Parse(sr.ReadLine());
 					if (time>dayLenght)time=0;
-					colorAlpha = ColorWhite;
-					barWater = float.Parse(sr.ReadLine());
-					barEat = float.Parse(sr.ReadLine());
-					barHeart = float.Parse(sr.ReadLine());
-					barOxygen = float.Parse(sr.ReadLine());
+					colorAlpha = Color.White;
 
-					PlayerX = int.Parse(sr.ReadLine());
-					PlayerY = int.Parse(sr.ReadLine());
+
+					barWater.Value = float.Parse(sr.ReadLine());
+					if (barWater.Value<0) barWater.Value=0;
+					if (barWater.Value>32) barWater.Value=32;
+
+					barEat.Value  = float.Parse(sr.ReadLine());
+					if (barEat.Value<0) barWater.Value=0;
+					if (barEat.Value>32) barWater.Value=32;
+
+					barHeart.Value = float.Parse(sr.ReadLine());
+					if (barHeart.Value<0) barWater.Value=0;
+					if (barHeart.Value>32) barWater.Value=32;
+
+					barOxygen.Value  = float.Parse(sr.ReadLine());
+					if (barOxygen.Value<0) barWater.Value=0;
+					if (barOxygen.Value>32) barWater.Value=32;
+
+					barEnergy.Value  = float.Parse(sr.ReadLine());
+					if (barEnergy.Value<0) barWater.Value=0;
+					if (barEnergy.Value>32) barWater.Value=32;
+					
+					PlayerX = PlayerXInt = int.Parse(sr.ReadLine());
+					PlayerY = PlayerYInt = int.Parse(sr.ReadLine());
 
 					windForce= float.Parse(sr.ReadLine());
 					wind=bool.Parse(sr.ReadLine());
@@ -2671,13 +2809,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					AchievementFutureAge=bool.Parse(sr.ReadLine());
 				}
 
-				SetPlayerPos(PlayerX, PlayerY);
+				SetPlayerPos(PlayerXInt, PlayerYInt);
 			} else {
-				SetPlayerPos(random.Int(TerrainLength*16), 600);
+				SetPlayerPos(FastRandom.Int(TerrainLength*16), 600);
 				time=(int)(6.5f*hour);
 
-				precipitation=random.Bool();
-				changeRain=random.Int(1250);
+				precipitation=FastRandom.Bool();
+				changeRain=FastRandom.Int(1250);
+
+				barEnergy.Value=0;
+				barEat.Value=0;
+				barWater.Value=0;
+				barOxygen.Value=0;
+				barHeart.Value=16;
 			}
 
 			if (File.Exists(pathToWorld+@"\Clothes.bin")) {
@@ -2764,7 +2908,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				fixed (byte* pointer=bytes) {
 					byte* current=pointer;
 
-					for ( ; i<5; i++) {
+					for (; i<5; i++) {
 						ushort id = (ushort)(*current++ | (*current++ << 8));
 						if (id==0) InventoryNormal[i]=itemBlank;
 						else {
@@ -2819,7 +2963,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							#endif
 						}
 					}
-					for ( ; i<maxInvCount; i++) {
+					for (; i<maxInvCount; i++) {
 						ushort id = (ushort)(*current++ | (*current++ << 8));
 						if (id==0) InventoryNormal[i]=itemBlank;
 						else {
@@ -2880,13 +3024,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return *(float*)&n;
 					}
 				}
-				for (; i<InventoryNormal.Length; i++) {
-					InventoryNormal[i]=itemBlank;
-				}
+				for (; i<InventoryNormal.Length; i++) InventoryNormal[i]=itemBlank;
 			} else {
-				for (int i=0; i<InventoryNormal.Length; i++) {
-					InventoryNormal[i]=itemBlank;
-				}
+				for (int i=0; i<InventoryNormal.Length; i++)  InventoryNormal[i]=itemBlank;
 
 				switch (startUpItems) {
 					case (int)StartUpItems.Basic:
@@ -3022,14 +3162,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			Load();
+			//#if DEBUG
+			//CheckTerrain("After Load()");
+			//#endif
 
-			Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+		
 
 			sunLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
-
+		
+			//if (SuperSamplingActing!=1f) targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*SuperSamplingActing), (int)(Global.WindowHeight*SuperSamplingActing), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//if (SuperSamplingActing==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			////if (SuperSamplingActing==4f) targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, 1, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			//dayAlpha
 			if (time>=hour*dayStart && time<=hour*(dayStart+1)) {
 			 //   dayAlpha=(((time-hour*7f)/hour/2f))+1f;
@@ -3052,14 +3198,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			colorAlpha=new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
 
 			if (world=="Space station") {
-				PlayerX=1500*16;
+				PlayerXInt=1500*16;
 				changePosition=true;
 			}
 
 			SetPlayerClothes();
 
 			if (generate){
-				day=random.Int(356);
+				day=FastRandom.Int(356);
 				ChangeLeavesForceEverything();
 			}
 			timer5=15;
@@ -3078,18 +3224,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			   // Vector2 p2=InventoryGetPosClothesVector2(InventoryClothesSlotTShirt);
 
 				if (Setting.sex==Sex.Girl) {
-				   Color rndColor=Rabcr.random.ColorMonogame() /*new Color(random.Byte(), random.Byte(), random.Byte())*/;
+				   Color rndColor=FastRandom.ColorMonogame() /*new Color(FastRandom.Byte(), FastRandom.Byte(), FastRandom.Byte())*/;
 					if (Setting.MaturePlayer>0) {
 						InventoryClothes[InventoryClothesSlotBra]=new ItemInvBasicColoritzed32NonStackable(TextureItemBra, (ushort)Items.Bra, rndColor, InventoryGetPosClothesVector2(InventoryClothesSlotBra));
 					}else{
 						InventoryClothes[InventoryClothesSlotBra]=itemBlank;
 					}
 
-					switch (random.Int(3)) {
+					switch (FastRandom.Int(3)) {
 
 						// Dress type
 						case 0:
-							InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemDress,(ushort)Items.Dress, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
+							InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemDress,(ushort)Items.Dress, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
 							InventoryClothes[InventoryClothesSlotTrousers]=itemBlank;
 							break;
 
@@ -3097,25 +3243,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						default:
 							{
 								// On chest
-								if (random.Bool()) InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemShirt,(ushort)Items.Shirt, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
-								else InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemTShirt,(ushort)Items.TShirt, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
+								if (FastRandom.Bool()) InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemShirt,(ushort)Items.Shirt, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
+								else InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemTShirt,(ushort)Items.TShirt, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
 
 								// on legs
-								switch (random.Int4()) {
+								switch (FastRandom.Int4()) {
 									case 0:
-										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemSkirt, (ushort)Items.Skirt, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemSkirt, (ushort)Items.Skirt, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
 										break;
 
 									case 1:
-										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemShorts, (ushort)Items.Shorts, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemShorts, (ushort)Items.Shorts, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
 										break;
 
 									case 2:
-										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemArmyTrousers, (ushort)Items.ArmyTrousers, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemArmyTrousers, (ushort)Items.ArmyTrousers, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
 										break;
 
 									case 3:
-										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemJeans, (ushort)Items.Jeans, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+										InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemJeans, (ushort)Items.Jeans, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
 										break;
 								}
 
@@ -3123,17 +3269,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								InventoryClothes[InventoryClothesSlotUnderwear]=new ItemInvBasicColoritzed32NonStackable(TextureItemPanties, (ushort)Items.Panties, rndColor, InventoryGetPosClothesVector2(InventoryClothesSlotUnderwear));
 
 								// Shoes
-								switch (random.Int(3)) {
+								switch (FastRandom.Int(3)) {
 									case 0:
-										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemSneakers, (ushort)Items.Sneakers,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
+										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemSneakers, (ushort)Items.Sneakers, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
 										break;
 
 									case 1:
-										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemFormalShoes, (ushort)Items.FormalShoes,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
+										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemFormalShoes, (ushort)Items.FormalShoes, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
 										break;
 
 									case 2:
-										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemPumps, (ushort)Items.Pumps,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
+										InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemPumps, (ushort)Items.Pumps, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
 										break;
 								}
 							}
@@ -3146,20 +3292,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				} else {
 
 					// On chest
-					if (random.Bool()) InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemShirt,(ushort)Items.Shirt,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
-					else InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemTShirt,(ushort)Items.TShirt,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
+					if (FastRandom.Bool()) InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemShirt,(ushort)Items.Shirt,FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
+					else InventoryClothes[InventoryClothesSlotTShirt]=new ItemInvBasicColoritzed32NonStackable(TextureItemTShirt,(ushort)Items.TShirt,FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTShirt));
 
 					// on legs
-					if (random.Bool()) InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemArmyTrousers, (ushort)Items.ArmyTrousers, Rabcr.random.ColorMonogame(),InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
-					else InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemJeans, (ushort)Items.Jeans,Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+					if (FastRandom.Bool()) InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemArmyTrousers, (ushort)Items.ArmyTrousers, FastRandom.ColorMonogame(),InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
+					else InventoryClothes[InventoryClothesSlotTrousers]=new ItemInvBasicColoritzed32NonStackable(TextureItemJeans, (ushort)Items.Jeans,FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotTrousers));
 
 					// Underwear
-					if (random.Bool()) InventoryClothes[InventoryClothesSlotUnderwear]=new ItemInvBasicColoritzed32NonStackable(TextureItemBoxerShorts, (ushort)Items.BoxerShorts, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotUnderwear));
-					else InventoryClothes[InventoryClothesSlotUnderwear]=new ItemInvBasicColoritzed32NonStackable(TextureItemUnderpants, (ushort)Items.Underpants, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotUnderwear));
+					if (FastRandom.Bool()) InventoryClothes[InventoryClothesSlotUnderwear]=new ItemInvBasicColoritzed32NonStackable(TextureItemBoxerShorts, (ushort)Items.BoxerShorts, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotUnderwear));
+					else InventoryClothes[InventoryClothesSlotUnderwear]=new ItemInvBasicColoritzed32NonStackable(TextureItemUnderpants, (ushort)Items.Underpants, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotUnderwear));
 
 					// Shoes
-					if (random.Bool()) InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemSneakers, (ushort)Items.Sneakers, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
-					else InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemFormalShoes, (ushort)Items.FormalShoes, Rabcr.random.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
+					if (FastRandom.Bool()) InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemSneakers, (ushort)Items.Sneakers, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
+					else InventoryClothes[InventoryClothesSlotShoes]=new ItemInvBasicColoritzed32NonStackable(TextureItemFormalShoes, (ushort)Items.FormalShoes, FastRandom.ColorMonogame(), InventoryGetPosClothesVector2(InventoryClothesSlotShoes));
 
 					InventoryClothes[InventoryClothesSlotCap]=itemBlank;
 					InventoryClothes[InventoryClothesSlotBra]=itemBlank;
@@ -3168,25 +3314,82 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 			}
 
-			
-			BiomePlayer=GetBiomeByPos((int)(PlayerX/16));
+
+			BiomePlayer=GetBiomeByPos((int)(PlayerXInt*divider_16));
 			BiomeCurrent=BiomePlayer.Name;
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			dontDoGame=false;
+			
+			//Debug.WriteLine("Sampling def: "+Rabcr.Game.GraphicsDevice.Adapter.CurrentDisplayMode..GraphicsAdapter.CheckDeviceMultiSampleType);
+
+			// Graphics.RasterizerState.MultiSampleAntiAlias=true;
+			rasterizerState=new RasterizerState{ 
+				MultiSampleAntiAlias=Setting.Multisapling>1,
+			};
+			Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
+			//GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+			//void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+			//	{
+			//	e.GraphicsDeviceInformation.GraphicsProfile = GraphicsProfile.HiDef;
+			//	Debug.WriteLine(e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
+			//	}
+			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+		//	Graphics.RasterizerState.MultiSampleAntiAlias=Setting.Multisapling>1;
+			 Graphics.PresentationParameters.MultiSampleCount = Setting.Multisapling;
+			GraphicsManager.ApplyChanges();
+			SetSuperSampling();
+			//ZoomMatrix = Matrix.CreateScale(Setting.Zoom*SuperSamplingActing, Setting.Zoom*SuperSamplingActing, 0);
+			//ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
+			
+			//if (SuperSamplingActing!=1f) MatrixUpScaling = Matrix.CreateScale(SuperSamplingActing, SuperSamplingActing, 0);
+			//	Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
+			//	Global.WindowWidthHalf*SuperSamplingActing, 
+			//	Global.WindowHeightHalf*SuperSamplingActing, 
+			//0));
+
+			//TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
+			//	Global.WindowWidthHalf, 
+			//	Global.WindowHeightHalf, 
+			//0));
+			
+			//Debug.WriteLine("GraphicsProfile: "+Graphics.GraphicsProfile);
+
+		//	if ((int)Setting.AnimationsGame==(int)Setting.GameAnimations.NormalQuality) {
+		//		//GraphicsManager.
+		//		//GraphicsManager.GraphicsDevice.Adapter..GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 2;
+		//		 Graphics.PresentationParameters.MultiSampleCount = 4;
+		//		GraphicsManager.PreferMultiSampling = true;
+		//			GraphicsManager.ApplyChanges();
+		//	}
+		//	if ((int)Setting.AnimationsGame==(int)Setting.GameAnimations.BestQuality) {
+		//		GraphicsManager.PreferMultiSampling = true;
+		//		//GraphicsManager.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+		//		 Graphics.PresentationParameters.MultiSampleCount = 8;
+		////		Graphics.RasterizerState.MultiSampleAntiAlias=true;
+		//	//	Graphics.PresentationParameters.
+		//		GraphicsManager.ApplyChanges();
+				
+		//	}
+
+			weatherWindowWidth=(int)(Global.WindowWidth*SuperSamplingActing)+5;
+			weatherWindowHeight=(int)(Global.WindowHeight*SuperSamplingActing)+3;
 		}
 
 		public override void Shutdown() {
 			if (dontDoGame) return;
 			dontDoGame=true;
-		   
+
 			if (MediaPlayer.State==MediaState.Playing) MediaPlayer.Stop();
 
 			if (SoundWind.State==SoundState.Playing) SoundWind.Stop();
 			if (SoundRain.State==SoundState.Playing)  SoundRain.Stop();
 
 			#region Save data
+			//#if DEBUG
+			//CheckTerrain("Shutdown");
+			//#endif
 			Save();
 
 			SaveSettings();
@@ -3218,7 +3421,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			SaveInventory("Inventory",InventoryNormal);
 
 			{
-				List<byte> bytes=new List<byte>();
+				List<byte> bytes=new();
 				ushort count=(ushort)DroppedItems.Count;
 				bytes.Add((byte)count);
 				bytes.Add((byte)(count<<8));
@@ -3227,7 +3430,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					bytes.AddRange(BitConverter.GetBytes(x.X));
 					bytes.AddRange(BitConverter.GetBytes(x.Y));
 				}
-				File.WriteAllBytes(pathToWorld+@"\"+world+"DroppedItems.bin",bytes.ToArray());
+				File.WriteAllBytes(pathToWorld+@"\"+world+"DroppedItems.bin", bytes.ToArray());
 			}
 			#endregion
 
@@ -3237,13 +3440,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			cpuUsage?.Dispose();
 
 			modificatedLightTarget.Dispose();
-			sunLightTarget.Dispose(); 
+			targetGame?.Dispose();
+			targetGame2?.Dispose();
+			//targetGame4?.Dispose();
+			sunLightTarget.Dispose();
 			TextureSunGradient?.Dispose();
+			Debug.WriteLine("EndOf Saving");
+
+			
 		}
 
 		public override unsafe void Update(GameTime gameTime) {
 			if (dontDoGame) return;
-
 			if (died) {
 				timerStayDied-=0.5f;
 				if (timerStayDied<=0)died=false;
@@ -3259,11 +3467,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				mouseRightRelease=false;
 
 				if (newMouseState.LeftButton==ButtonState.Pressed) {
-				  MousePos.mouseLeftDown=  mouseLeftDown=true;
+					MousePos.mouseLeftDown = mouseLeftDown=true;
 					if (oldMouseState.LeftButton==ButtonState.Released) mouseLeftPress=true;
 				} else {
 					 MousePos.mouseLeftDown= mouseLeftDown=false;
-					if (oldMouseState.LeftButton==ButtonState.Pressed)  MousePos.mouseLeftRelease=mouseLeftRelease=true;
+					if (oldMouseState.LeftButton==ButtonState.Pressed) MousePos.mouseLeftRelease=mouseLeftRelease=true;
 				}
 
 				if (newMouseState.RightButton==ButtonState.Pressed) {
@@ -3273,14 +3481,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					mouseRightDown=false;
 					if (oldMouseState.RightButton==ButtonState.Pressed) mouseRightRelease=true;
 				}
-
-				if (newMouseState.X==oldMouseState.X) {
-					if (newMouseState.Y==oldMouseState.Y) {
-						mousePosChanged=false;
+				if (changePosition) { 
+					mousePosChanged=true;
+				} else {
+					if (newMouseState.X==oldMouseState.X) {
+						if (newMouseState.Y==oldMouseState.Y) {
+							mousePosChanged=false;
+						} else mousePosChanged=true;
 					} else mousePosChanged=true;
-				} else mousePosChanged=true;
+				}
 
-				if (mousePosChanged) {
+				if (mousePosChanged || changePosition) {
 					SetMousePos();
 					mousePosDiv16.X=(int)mousePos.X/16;
 					mousePosDiv16.Y=(int)mousePos.Y/16;
@@ -3288,15 +3499,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					mousePosRoundX=mousePosDiv16.X*16;
 					mousePosRoundY=mousePosDiv16.Y*16;
 
-				   MousePos.mouseRealPosX= mouseRealPosX=newMouseState.X;
-				   MousePos.mouseRealPosY= mouseRealPosY=newMouseState.Y;
-				}else if (changePosition) {
-					SetMousePos();
-					mousePosDiv16.X=(int)mousePos.X/16;
-					mousePosDiv16.Y=(int)mousePos.Y/16;
+				    MousePos.mouseRealPosX = mouseRealPosX=newMouseState.X;
+				    MousePos.mouseRealPosY = mouseRealPosY=newMouseState.Y;
 
-					mousePosRoundX=mousePosDiv16.X*16;
-					mousePosRoundY=mousePosDiv16.Y*16;
+					mousePosRoundVector.X=mousePosRoundX;
+					mousePosRoundVector.Y=mousePosRoundY;
 				}
 				#endregion
 
@@ -3369,8 +3576,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								debug = true;
 							} catch {
+								#if Debug
 								System.Windows.Forms.MessageBox.Show("Chyba při inicializaci PerformanceCounter, Informace pro vývojáře budou skryty","ERROR");
-								debug=false;
+                                #endif
+                                debug = false;
 							}
 						}
 					}
@@ -3378,46 +3587,48 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				if (oldKeyboardState.IsKeyDown(Keys.F2)) {
 					if (newKeyboardState.IsKeyUp(Keys.F2)) {
-						if (showInventory) showInventory=false; else showInventory=true;
+						showInventory = !showInventory;
+						//if (showInventory) showInventory=false; else showInventory=true;
 					}
 				}
 
 				if (oldKeyboardState.IsKeyDown(Keys.F3)) {
 					if (newKeyboardState.IsKeyUp(Keys.F3)) {
-						if (showPlayer) showPlayer=false; else showPlayer=true;
+						showPlayer = !showPlayer;
+			//			if (showPlayer) showPlayer=false; else showPlayer=true;
 					}
 				}
 
 				if (newKeyboardState.IsKeyDown(Setting.KeyExit)) {
 					if (oldKeyboardState.IsKeyUp(Setting.KeyExit)) {
-						if (inventory==InventoryType.Normal){ 
+						if (inventory==InventoryType.Normal) {
 							inventory=InventoryType.GameMenu;
-							
+
 							if (Constants.AnimationsControls) animationInvBack=0;
 							else animationInvBack=100;
 
 							{
-								int xx = Global.WindowWidthHalf-300+10+200+10+4;
+								float xx = Global.WindowWidthHalf-300+10+200+10+4;
 								// Continue game
-								buttonContinue.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60-2+50);
+								buttonContinue.Position=new Vector2(xx, Global.WindowHeightHalf-232+1+30+60-2+50);
 
 								// Exit game
-								buttonExit.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60+60-2+50);
-						
+								buttonExit.Position=new Vector2(xx, Global.WindowHeightHalf-232+1+30+60+60-2+50);
+
 								// Acheavements
-								buttonAcheavements.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60+60+60-2+50);
-							
+								buttonAcheavements.Position=new Vector2(xx, Global.WindowHeightHalf-232+1+30+60+60+60-2+50);
+
 								// Use a gift code
-								buttonUseGiftCode.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60+60+60+60-2+50);
+								buttonUseGiftCode.Position=new Vector2(xx, Global.WindowHeightHalf-232+1+30+60+60+60+60-2+50);
 
 								buttonClose.Position.X=Global.WindowWidthHalf+150-32;
 								buttonClose.Position.Y=Global.WindowHeightHalf-232+1+50;
 							}
-							textOpenInventory=new Text(Lang.Texts[114], Global.WindowWidthHalf-300-2+10+100+50, Global.WindowHeightHalf-234+10-3+50,BitmapFont.bitmapFont18);
-						} else { 
+							textOpenInventory=new Text(Lang.Texts[114], Global.WindowWidthHalf-300-2+10+100+50, Global.WindowHeightHalf-234+10-3+50, BitmapFont.bitmapFont18);
+						} else {
 							// Double Ecs press
-							if (inventory==InventoryType.GameMenu) { 
-								Shutdown();
+							if (inventory==InventoryType.GameMenu) {
+								//Shutdown();
 								Rabcr.GoTo(new Menu(new MenuSingleplayer()));
 							} else inventory=InventoryType.Normal;
 						}
@@ -3447,54 +3658,121 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				#endregion
+
 				if (precipitation) {
-					float bef=Temperature; 
+					float bef=Temperature;
 					Temperature=GetTemperature(BiomePlayer.Name);
 
-					if (Temperature<0 && bef>=0) { 
+					if (Temperature<0 && bef>=0) {
 						StopRaining();
 						StartSnowing();
 					}
-					if (Temperature>0 && bef<=0) { 
+					if (Temperature>0 && bef<=0) {
 						StartRaining();
 						StopSnowing();
 					}
 				}
 
+				if (EarthShakeTime>0) { 
+				//	EarthShakeActualSize=EarthShakeSize*(float)Math.Sin(EarthShakeTime/10f);
+					EarthShakeActualSize=EarthShakeSize;
+				
+					
+					if (EarthShakeTime%EarthShakeTimeInnerPer==0) { 
+						EarthShakeP2=EarthShakeP1;
+						EarthShakeP1=new Vector2((FastRandom.Float()-0.5f)*EarthShakeActualSize, (FastRandom.Float()-0.5f)*EarthShakeActualSize);
+						//if (EarthShakeP2==Vector2.Zero)EarthShakeP2=EarthShakeP1;
+						EarthShakeTimeInnerPer=5+FastRandom.Int(10);
+					}//
+					EarthShakeTime--;
+					float divider=(EarthShakeTime%EarthShakeTimeInnerPer);
+					if (divider!=0) divider=1/divider; else divider=0;
+					float deltaX=(EarthShakeP2.X-EarthShakeP1.X) * divider;
+					float deltaY=(EarthShakeP2.Y-EarthShakeP1.Y) * divider;
+					if (float.IsInfinity(deltaX)) deltaX=0;
+					if (float.IsInfinity(deltaY)) deltaY=0;
+					EarthShakePA.X=(EarthShakeP1.X+deltaX)*(EarthShakeTime/100f);
+					EarthShakePA.Y=(EarthShakeP1.Y+deltaY)*(EarthShakeTime/100f);
+					//EarthShakeP2=new DInt(FastRandom.Float()*EarthShakeActualSize, FastRandom.Float()*EarthShakeActualSize);
+				}
+
+				UpdateFallingBlocks();
+
 				#region Movement
 				if (inventory==InventoryType.Normal) {
 					if (newMouseState.ScrollWheelValue != previousScrollValue) {
 						if (newMouseState.ScrollWheelValue < previousScrollValue) {
-							if (boxSelected<4) boxSelected++;
+							//if (boxSelected<4) {
+								if (Setting.Touchpad) {
+									if (newMouseState.ScrollWheelValue - previousScrollValue<-30 || scrollBuffer<-30) { 
+										if (Setting.InvertedMouse) {
+											if (boxSelected!=0) boxSelected--; 
+										} else if (boxSelected<4) boxSelected++; 
+										scrollBuffer=0; 
+									} else scrollBuffer += newMouseState.ScrollWheelValue - previousScrollValue;
+								} else { 
+									if (newMouseState.ScrollWheelValue - previousScrollValue<0) {
+										if (Setting.InvertedMouse) {
+											if (boxSelected!=0) boxSelected--;
+										} else {
+											if (boxSelected<4) 
+											boxSelected++;
+										}; 
+									}
+								}
+							//}
 						} else if (newMouseState.ScrollWheelValue > previousScrollValue) {
-							if (boxSelected!=0) boxSelected--;
+							//if (boxSelected!=0) {
+								if (Setting.Touchpad) {
+									if (newMouseState.ScrollWheelValue - previousScrollValue>30 || scrollBuffer>30) { 
+										if (Setting.InvertedMouse) { 
+											if (boxSelected<4) boxSelected++; 
+										} else if (boxSelected!=0) boxSelected--; 
+										scrollBuffer=0; 
+									} else scrollBuffer += newMouseState.ScrollWheelValue - previousScrollValue;
+								} else { 
+									if (newMouseState.ScrollWheelValue - previousScrollValue>0) {
+										if (Setting.InvertedMouse) {
+											if (boxSelected<4) boxSelected++; 
+										} else {
+											if (boxSelected!=0) 
+											boxSelected--;
+										}
+									}
+								}
+						//	}
 						}
 					}
 
 					if (rocket) {
-						if (rocketDown) PlayerY+=8;
-						else PlayerY-=10;
+						if (rocketDown) PlayerYInt+=8;
+						else PlayerYInt-=10;
+						PlayerY=PlayerYInt;
 					} else if (fly) {
 						if (newKeyboardState.IsKeyDown(Keys.Up)) {
-							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerY -=10;
-							else PlayerY -=3;
+							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerYInt-=10;
+							else PlayerYInt-=3;
+							PlayerY=PlayerYInt;
 						}
 
 						if (newKeyboardState.IsKeyDown(Keys.Down)) {
-							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerY +=10;
-							else PlayerY +=3;
+							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerYInt+=10;
+							else PlayerYInt+=3;
+							PlayerY=PlayerYInt;
 						}
 
 						if (newKeyboardState.IsKeyDown(Keys.Right)) {
-							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift))PlayerX +=10;
-							else PlayerX +=3;
-							BiomePlayer=GetBiomeByPos((int)(PlayerX/16));
+							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerXInt+=10;
+							else PlayerXInt+=3;
+							PlayerY=PlayerYInt;
+							BiomePlayer=GetBiomeByPos(PlayerXInt/16);
 						}
 
 						if (newKeyboardState.IsKeyDown(Keys.Left)) {
-							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift))PlayerX -=10;
-							else PlayerX -=3;
-							BiomePlayer=GetBiomeByPos((int)(PlayerX/16));
+							if (newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift)) PlayerXInt-=10;
+							else PlayerXInt -=3;
+							PlayerY=PlayerYInt;
+							BiomePlayer=GetBiomeByPos(PlayerXInt/16);
 						}
 					} else {
 						if (changePosition) {
@@ -3502,39 +3780,35 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							canbreatheDuringSwimming=!CheckWaterUp();
 							waterDown=CheckWaterDown();
 							DetectLava=CheckLava();
-							BiomePlayer=GetBiomeByPos((int)(PlayerX/16));
+							BiomePlayer=GetBiomeByPos(PlayerXInt/16);
 							changePosition=false;
 
-							
-							//swimmingTicks+=0.016f;
-							//if (swimmingTicks>1)swimmingTicks-=1;
-
-							if (Constants.AnimationsGame)FindPlants();
+							if (Setting.WavingElements) FindPlants();
 						}
 						bool swmove=false;
-					 //   bool swim;
-						if (canbreatheDuringSwimming) {
-							barOxygen--;
-							if (barOxygen<0)barOxygen=0;
+
+						if (canbreatheDuringSwimming && !swimming) {
+							barOxygen.Value--;
+							if (barOxygen.Value<0f) barOxygen.Value=0f;
 						} else {
-						   
-							if (barOxygen>32) {
-								barHeart+=.08f;
-								if (barHeart>32) Die(Lang.Texts[161]);
-							}else  barOxygen+=0.05f;
+							if (barOxygen.Value>32f) {
+								barHeart.Value+=.08f;
+								if (barHeart.Value>32f) Die(Lang.Texts[161]);
+							} else barOxygen.Value+=0.05f;
 						}
 
 						if (newKeyboardState.IsKeyDown(Setting.KeyJump)) {
 							if (CheckLadder()) {
 								PlayerY--;
-
-								barEnergy+=0.01f;
-								barWater+=0.01f;
+								PlayerYInt--;
+								barEnergy.Value+=0.01f;
+								barWater.Value+=0.01f;
 								gravitySpeed=-2f;
 							} else if (swimming) {
 								PlayerY--;
-								barEnergy+=0.01f;
-								barWater+=0.01f;
+								PlayerYInt--;
+								barEnergy.Value+=0.01f;
+								barWater.Value+=0.01f;
 								gravitySpeed=-1f;
 								swmove=true;
 							} else {
@@ -3542,8 +3816,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (gravitySpeed==0) {
 										gravitySpeed=-7;
 										PlayerY--;
-
-										barEnergy+=0.05f;
+										PlayerYInt--;
+										barEnergy.Value+=0.05f;
 									}
 								}
 							}
@@ -3561,7 +3835,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (keyLeft != keyRight) {
 							if (keyLeft) {
 								// move
-								if (barEnergy<31) {
+								if (barEnergy.Value<31f) {
 									if (newKeyboardState.IsKeyDown(Setting.KeyRun)) {
 										needSpeed=4;
 									  //  barEnergy-=0.02f;
@@ -3570,7 +3844,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								speedDir=-1;
 							} else {
 								// move
-								if (barEnergy<31) {
+								if (barEnergy.Value<31f) {
 									if (newKeyboardState.IsKeyDown(Setting.KeyRun)) {
 										needSpeed=4;
 									  //  barEnergy-=0.02f;
@@ -3582,13 +3856,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 							if (speed>needSpeed) {
 								speed=needSpeed;
-								PlayerX=(int)PlayerX;
+								// ??????????????????????
+							//	PlayerXInt=(int)PlayerXInt;
+							//	PlayerXInt=(int)PlayerX;
 							}
-						}else{
+						} else {
 							needSpeed=0;
 							if (speed>needSpeed) {
 								speed-=acceleration*1.8f;
-							}else {
+							} else {
 								speed=0;
 								playerState=0;
 							}
@@ -3596,15 +3872,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						if (speed>0) {
 							swmove=true;
-							if (barEnergy<36+0.02f*speed)barEnergy+=0.018f*speed;
+							if (barEnergy.Value<36+0.02f*speed) barEnergy.Value+=0.018f*speed;
 
 							//right
 							if (speedDir==1) {
-								float x=DetectSolidBlocksRight(PlayerX+speed,PlayerY);
+								float x=DetectSolidBlocksRight(PlayerXInt+speed, PlayerYInt);
 
 								// No limited blocks
 								if (x==int.MinValue) {
-									PlayerX+=speed;
+									PlayerXInt += (int)speed;
 									playerState=2;
 
 									if (walkingSoundDuration<0) {
@@ -3616,21 +3892,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								} else {
 									//Stop moving player
 								   // Console.WriteLine("b touch Playerx"+PlayerX);
-									PlayerX=(int)(PlayerX+speed-x-0.05f);
+									PlayerXInt=(int)(PlayerXInt+speed-x-0.05f);
+									
 									//Console.WriteLine("a touch Playerx"+PlayerX);
 									speed=0;
 									playerState=0;
-								} 
+								}
 								changePosition=true;
 
 
 							//left
 							} else {
-								float x=DetectSolidBlocksLeft(PlayerX-speed,PlayerY);
+								float x=DetectSolidBlocksLeft(PlayerXInt-speed, PlayerYInt);
 
 								// No limited blocks
 								if (x==int.MinValue) {
-									PlayerX-=speed;
+									PlayerXInt-=(int)speed;
 									playerState=1;
 									if (walkingSoundDuration<0) {
 										if (Global.HasSoundGraphics) {
@@ -3641,12 +3918,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								} else {
 
 									//Stop moving player
-									PlayerX=(int)(PlayerX-speed+x+0.5f+16);
+									PlayerXInt=(int)(PlayerXInt-speed+x+0.5f+16);
 
 
 									speed=0;
 									playerState=0;
-								} 
+								}
 								changePosition=true;
 							}
 
@@ -3661,7 +3938,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						 //  playerImg2+=(int)(speed*5);
 							//if (playerImg2>=420) playerImg2=0;
 						}
-						if (swmove){
+						if (swmove) {
 							if (waterDown){
 								swimmingTicks+=0.016f;
 								if (swimmingTicks>1)swimmingTicks-=1;
@@ -3843,10 +4120,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			   //             }
 					 //   }
 
-						if (barEnergy>32) barEnergy=32;
+						if (barEnergy.Value>32f) barEnergy.Value=32f;
 
 						PlayerGravity();
 					}
+				//	PlayerXInt=(int)PlayerX;
+				//	PlayerYInt=(int)PlayerY;
 					#endregion
 
 					if (diserpeard>0) diserpeard--;
@@ -3854,8 +4133,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Game - destruction + place blocks + drop item
 						bool notshot=true;
 						if (Rabcr.Game.IsActive) {
-							if (mouseRightDown) MouseRightAction(); 
-							if (mouseRightPress) ItemEat(); 
+							if (mouseRightDown) MouseRightAction();
+							if (mouseRightPress) ItemEat();
 
 							if (mouseLeftPress) {
 								if (InventoryNormal[boxSelected].Id==(ushort)Items.Gun) {
@@ -3865,7 +4144,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											notshot=false;
 											ammo.SetCount=ammo.GetCount-1;
 											if (ammo.GetCount==0) InventoryNormal[boxSelected]=itemBlank;
-											if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth,Global.WindowHeight)) {
+											if (In(mouseRealPosX, mouseRealPosY, Global.WindowWidth, Global.WindowHeight)) {
 												if (Game.IsActive) CreateShot();
 											}
 											break;
@@ -4039,44 +4318,51 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 													chunk.RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY);
 
-													if (destroingBlockType==(ushort)BlockId.Dirt
-													|| destroingBlockType==(ushort)BlockId.GrassBlockDesert
-													|| destroingBlockType==(ushort)BlockId.GrassBlockForest
-													|| destroingBlockType==(ushort)BlockId.GrassBlockHills
-													|| destroingBlockType==(ushort)BlockId.GrassBlockJungle
-													|| destroingBlockType==(ushort)BlockId.GrassBlockClay
-													|| destroingBlockType==(ushort)BlockId.GrassBlockCompost
-													|| destroingBlockType==(ushort)BlockId.Compost
-													|| destroingBlockType==(ushort)BlockId.GrassBlockPlains) {
-														DestroyGrassUp(destroyBlockX, destroyBlockY-1);
+                                                if (destroingBlockType == (ushort)BlockId.Dirt
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockDesert
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockForest
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockHills
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockJungle
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockClay
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockCompost
+                                                || destroingBlockType == (ushort)BlockId.Compost
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowClay
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowCompost
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowDesert
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowForest
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowHills
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowJungle
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockSnowPlains
+                                                || destroingBlockType == (ushort)BlockId.GrassBlockPlains) {
+                                                    DestroyGrassUp(destroyBlockX, destroyBlockY - 1);
 
-														if (Global.WorldDifficulty!=2) {
-														    chunk.Background[destroyBlockY]=new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
-													}
+                                                    //if (Global.WorldDifficulty != 2) {
+                                                    //    chunk.Background[destroyBlockY] = new NormalBlock(backgroundDirtTexture, (ushort)BlockId.BackDirt, new Vector2(destroyBlockX * 16, destroyBlockY * 16));
+                                                    //    chunk.IsBackground[destroyBlockY] = true;
+                                                    //}
+                                                }
 
-													if (destroingBlockType==(ushort)BlockId.Sand) DestroySandUp(destroyBlockX, destroyBlockY-1);
+                                                if (destroingBlockType==(ushort)BlockId.Sand) DestroySandUp(destroyBlockX, destroyBlockY-1);
 
-													if (GameMethods.IsFallingBlock(destroingBlockType))
+													if (destroyBlockY>0) CheckBlockFallling(destroyBlockX, destroyBlockY-1);
 
 													if (Global.WorldDifficulty!=2) {
 
 
-														if (destroingBlockType==(ushort)BlockId.OreAluminium) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.OreAluminium) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundAluminiumTexture, (ushort)BlockId.BackAluminium, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
-														if (destroingBlockType==(ushort)BlockId.BackDiorit) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.BackDiorit) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundDioritTexture, (ushort)BlockId.BackDiorit, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
-														if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
-															chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
-															chunk.IsBackground[destroyBlockY]=true;
-														}
+														//if (destroingBlockType==(ushort)BlockId.StoneGneiss) {
+														//	chunk.Background[destroyBlockY]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(destroyBlockX*16, destroyBlockY*16));
+														//	chunk.IsBackground[destroyBlockY]=true;
+														//}
 
 														GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
 														RemovePartTool();
@@ -4087,65 +4373,66 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										case BlockType.Top:
 											{
 												Terrain chunk=terrain[destroyBlockX];
+												if (chunk.IsTopBlocks[destroyBlockY]) {
+													switch (destroingBlockType) {
+														case (ushort)BlockId.Lamp:
+															lightsLamp.Remove((MashineBlockBasic)chunk.TopBlocks[destroyBlockY]);
+															break;
 
-												switch (destroingBlockType) {
-													case (ushort)BlockId.Lamp:
-														lightsLamp.Remove((MashineBlockBasic)chunk.TopBlocks[destroyBlockY]);
-														break;
+														case (ushort)BlockId.Windmill:
+															RemoveFromWintable(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.Windmill:
-														RemoveFromWintable(destroyBlockX,destroyBlockY);
-														break;
+														//case (ushort)BlockId.Barrel:
+														//    RemoveFromBarrels(destroyBlockX,destroyBlockY);
+														//    break;
 
-													//case (ushort)BlockId.Barrel:
-													//    RemoveFromBarrels(destroyBlockX,destroyBlockY);
-													//    break;
+														case (ushort)BlockId.Flag:
+															RemoveFromWintable(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.Flag:
-														RemoveFromWintable(destroyBlockX,destroyBlockY);
-														break;
+														case (ushort)BlockId.CactusBig:
+															DestroyCactusBig(destroyBlockX,destroyBlockY);
+															break;
 
-													case (ushort)BlockId.CactusBig:
-														DestroyCactusBig(destroyBlockX,destroyBlockY);
-														break;
+														case (ushort)BlockId.CactusSmall:
+															DestroyCactusSmall(destroyBlockX,destroyBlockY);
+															break;
+													}
 
-													case (ushort)BlockId.CactusSmall:
-														DestroyCactusSmall(destroyBlockX,destroyBlockY);
-														break;
-												}
-
-												if (GameMethods.IsLeave(destroingBlockType)) {
-													Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
-													if (tree!=null) {
-														List<UShortAndByte> leaves=tree.TitlesLeaves;
-														for (int i = 0; i<leaves.Count; i++) {
-															if (leaves[i].X==destroyBlockX){
-																if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+													if (GameMethods.IsLeave(destroingBlockType)) {
+														Tree tree=((LeavesBlock)chunk.TopBlocks[destroyBlockY]).tree;
+														if (tree!=null) {
+															List<UShortAndByte> leaves=tree.TitlesLeaves;
+															for (int i = 0; i<leaves.Count; i++) {
+																if (leaves[i].X==destroyBlockX){
+																	if (leaves[i].Y==destroyBlockY) leaves.RemoveAt(i);
+																}
 															}
 														}
 													}
-												}
 
-												chunk.TopBlocks[destroyBlockY]=null;
-												chunk.IsTopBlocks[destroyBlockY]=false;
+													chunk.TopBlocks[destroyBlockY]=null;
+													chunk.IsTopBlocks[destroyBlockY]=false;
 
-												chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY, id: destroingBlockType);
+													chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY, id: destroingBlockType);
 
-												if (destroingBlockType==(ushort)BlockId.Label
-												|| destroingBlockType==(ushort)BlockId.SolarPanel
-												|| destroingBlockType==(ushort)BlockId.Watermill
-												|| destroingBlockType==(ushort)BlockId.Windmill
-												|| destroingBlockType==(ushort)BlockId.FurnaceElectric
-												|| destroingBlockType==(ushort)BlockId.Macerator
-												|| destroingBlockType==(ushort)BlockId.Radio
-												|| destroingBlockType==(ushort)BlockId.Lamp
-												|| destroingBlockType==(ushort)BlockId.Miner) {
-													RefreshAroundLabels(destroyBlockX, destroyBlockY);
-												}
+													if (destroingBlockType==(ushort)BlockId.Label
+													|| destroingBlockType==(ushort)BlockId.SolarPanel
+													|| destroingBlockType==(ushort)BlockId.Watermill
+													|| destroingBlockType==(ushort)BlockId.Windmill
+													|| destroingBlockType==(ushort)BlockId.FurnaceElectric
+													|| destroingBlockType==(ushort)BlockId.Macerator
+													|| destroingBlockType==(ushort)BlockId.Radio
+													|| destroingBlockType==(ushort)BlockId.Lamp
+													|| destroingBlockType==(ushort)BlockId.Miner) {
+														RefreshAroundLabels(destroyBlockX, destroyBlockY);
+													}
 
-												if (Global.WorldDifficulty!=2) {
-													GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
-													RemovePartTool();
+													if (Global.WorldDifficulty!=2) {
+														GetItemsFromBlock(destroingBlockType, destroyBlockX, destroyBlockY);
+														RemovePartTool();
+													} 
 												}
 											}
 											break;
@@ -4157,7 +4444,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												foreach (Plant plant in chunk.Plants) {
 													if ((int)plant.Position.Y/16==destroyBlockY) {
 														chunk.Plants.Remove(plant);
-														RemovePlant(destroyBlockY);
+														RemovePlantChunk(destroyBlockY);
 
 														if (Global.WorldDifficulty!=2) {
 															GetItemsFromPlant(destroingBlockType, destroyBlockX, destroyBlockY, plant.Grow==255);
@@ -4198,7 +4485,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 									destroing=false;
 								}
-							} else destroing=false;
+							} else {destroing=false; }
 
 						} else {
 							if (notshot) {
@@ -4209,7 +4496,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 						}
-					} else destroing=false;
+					} else {destroing=false;}
 
 					if (newKeyboardState.IsKeyDown(Setting.KeyDropItem)) {
 						if (oldKeyboardState.IsKeyUp(Setting.KeyDropItem)) {
@@ -4223,21 +4510,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										case ItemInvBasic16 i1:
 											if (i1.GetCount>1) {
 												i1.SetCount=i1.GetCount-1;
-											} else { 
+											} else {
 												InventoryNormal[boxSelected]=itemBlank;
 											}
 											if (i1.GetCount>0){
-												if (PlayerX-mousePos.X>0) {
+												if (PlayerXInt-mousePos.X>0) {
 													DroppedItems.Add(new Item{
-														X = (int)PlayerX-11-16-1,
-														Y = (int)PlayerY-22,
+														X = PlayerXInt-11-16-1,
+														Y = PlayerYInt-22,
 														item=new ItemNonInvBasic(i1.Id,1/*i1.GetCount*/),
 														Texture=i1.Texture,
 													});
 												} else {
-														DroppedItems.Add(new Item {
-														X = (int)PlayerX+11+1,
-														Y = (int)PlayerY-22,
+													DroppedItems.Add(new Item {
+														X = PlayerXInt+11+1,
+														Y = PlayerYInt-22,
 														item=new ItemNonInvBasic(i1.Id,1/*i1.GetCount*/),
 														Texture=i1.Texture,
 													});
@@ -4248,17 +4535,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case ItemInvFood16 i1:
 										i1.SetCount=i1.GetCount-1;
 
-										if (PlayerX-mousePos.X>0) {
+										if (PlayerXInt-mousePos.X>0) {
 											DroppedItems.Add(new Item{
-												X = (int)PlayerX-11-16-1,
-												Y = (int)PlayerY-22,
+												X = PlayerXInt-11-16-1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvFood(i1.Id,i1.GetCount,i1.CountMaximum,i1.GetDescay,i1.DescayMaximum),
 												Texture=i1.Texture,
 											});
 										} else {
 											DroppedItems.Add(new Item{
-												X =(int)PlayerX+11+1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt+11+1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvFood(i1.Id,i1.GetCount,i1.CountMaximum,i1.GetDescay,i1.DescayMaximum),
 												Texture=i1.Texture,
 											});
@@ -4268,17 +4555,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										return;
 
 									case ItemInvBasicColoritzed32NonStackable i1:
-										if ((int)PlayerX-mousePos.X>0) {
+										if (PlayerXInt-mousePos.X>0) {
 											DroppedItems.Add(new Item{
-												X =(int)PlayerX-11-16-1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt-11-16-1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvBasicColoritzedNonStackable(i1.Id,i1.color),
 												Texture=i1.Texture,
 											});
 										} else {
 												DroppedItems.Add(new Item{
-												X =(int)PlayerX+11+1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt+11+1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvBasicColoritzedNonStackable(i1.Id,i1.color),
 												Texture=i1.Texture,
 											});
@@ -4288,17 +4575,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										return;
 
 									case ItemInvNonStackable16 i1:
-										if ((int)PlayerX-mousePos.X>0) {
+										if (PlayerXInt-mousePos.X>0) {
 											DroppedItems.Add(new Item{
-												X =(int)PlayerX-11-16-1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt-11-16-1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvNonStackable(i1.Id),
 												Texture=i1.Texture,
 											});
 										} else {
 												DroppedItems.Add(new Item{
-												X =(int)PlayerX+11+1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt+11+1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvNonStackable(i1.Id),
 												Texture=i1.Texture,
 											});
@@ -4308,17 +4595,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										return;
 
 									case ItemInvNonStackable32 i1:
-										if (PlayerX-mousePos.X>0) {
+										if (PlayerXInt-mousePos.X>0) {
 											DroppedItems.Add(new Item {
-												X =(int)PlayerX-11-16-1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt-11-16-1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvNonStackable(i1.Id),
 												Texture=i1.Texture,
 											});
 										} else {
 												DroppedItems.Add(new Item {
-												X =(int)PlayerX+11+1,
-												Y=(int)PlayerY-22,
+												X = PlayerXInt+11+1,
+												Y = PlayerYInt-22,
 												item=new ItemNonInvNonStackable(i1.Id),
 												Texture=i1.Texture,
 											});
@@ -4335,13 +4622,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Player pos in Window
-				if (PlayerX > TerrainLength*16-Global.WindowWidth) SetPlayerPos(Global.WindowWidth, PlayerY);
-				if (PlayerX < Global.WindowWidth) SetPlayerPos(TerrainLength*16-Global.WindowWidth, PlayerY);
+				if (PlayerXInt > TerrainLength*16-Global.WindowWidth) SetPlayerPos(Global.WindowWidth, PlayerYInt);
+				if (PlayerXInt < Global.WindowWidth) SetPlayerPos(TerrainLength*16-Global.WindowWidth, PlayerYInt);
 
 				float min=4;
-				if (PlayerX-WindowCenterX>min || PlayerY-WindowCenterY>min || PlayerX-WindowCenterX<-min || PlayerY-WindowCenterY<-min) {
-					float _WindowXPlayer=WindowXPlayer+(PlayerX-WindowCenterX)*divider_16;
-					float _WindowYPlayer=WindowYPlayer+(PlayerY-WindowCenterY)*divider_16;
+				if (PlayerXInt-WindowCenterX>min || PlayerYInt-WindowCenterY>min || PlayerXInt-WindowCenterX<-min || PlayerYInt-WindowCenterY<-min) {
+					float _WindowXPlayer=WindowXPlayer+(PlayerXInt-WindowCenterX)*divider_16;
+					float _WindowYPlayer=WindowYPlayer+(PlayerYInt-WindowCenterY)*divider_16;
 
 					if (_WindowXPlayer==WindowXPlayer) {
 						if (_WindowYPlayer==WindowYPlayer) {
@@ -4385,62 +4672,70 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				#endregion
 
-					if (Constants.AnimationsGame){
+					if (Setting.InteractionMess) {
 						if (Particles.Count>0) {
 							for (int i = 0; i<Particles.Count; ) {
 								ParticleMess p = Particles[i];
 								p.Disepeard--;
-								if (p.Disepeard<=0) { 
+								if (p.Disepeard<=0) {
 									Particles.RemoveAt(i);
 								} else i++;
-						
-								if (p.Position.Y!=p.LimitY) p.Update();
+
+								if (p.Position.Y<=p.LimitY) 
+									p.Update();
+							//	else {
+								//	i--;
+								//	Particles.RemoveAt(i);
+							//	}
 							}
 						}
-				
+					}
+					if (Setting.WavingElements) {
 						if (WavingPlants.Count>0) {
 							for (int i = 0; i<WavingPlants.Count; ) {
 								if (WavingPlants[i] is BasicWavingPlant p) {
 									//WavingPlant p = (BasicWavingPlant)WavingPlants[i];
-									if (p.ticks<100) { 
+									if (p.ticks<100) {
 										p.ticks++;
 										i++;
 									} else {
-										terrain[(int)(p.Position.X/16)].TopBlocks[(int)(p.Position.Y/16)]=(NormalBlock)p.TurnOff();
+										terrain[(int)(p.Position.X*divider_16)].TopBlocks[(int)(p.Position.Y*divider_16)]=p.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
 								} else if (WavingPlants[i] is FruitPlantWaving z) {
 								//	WavingPlant p = (GrowingPlant)WavingPlants[i];
-									if (z.ticks<100) { 
+									if (z.ticks<100) {
 										z.ticks++;
 										i++;
 									} else {
-										List<Plant> plants=terrain[(int)(z.Position.X/16)].Plants;
+										List<Plant> plants=terrain[(int)(z.Position.X*divider_16)].Plants;
 										plants[plants.IndexOf(z)]=z.TurnOff();
 										WavingPlants.RemoveAt(i);
 									}
 								}
 							}
 						}
+					}
+					if (Setting.FallingLeaves) {
 
-						if (wind) { 
-							int rch=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX);
+						if (wind) {
+							int rch=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX);
 							Terrain chunk=terrain[rch];
 
-							int rh=terrainStartIndexY+random.Int(terrainStartIndexH-terrainStartIndexY);
-							
+							int rh=terrainStartIndexY+FastRandom.Int(terrainStartIndexH-terrainStartIndexY);
+
 							if (chunk.IsTopBlocks[rh]) {
 								Block block=chunk.TopBlocks[rh];
 								if (block is LeavesBlock lb){
-									if (lb.Id==(ushort)BlockId.SpruceLeaves){ 
-										FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2+random.Int2(),1)){
+									if (lb.Id==(ushort)BlockId.SpruceLeaves || lb.Id==(ushort)BlockId.SpruceLeavesWithSnow) {
+										FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), windRirectionRight, precipitation, new Rectangle(0,0,2+FastRandom.Int2(),1)) {
 											texture=lb.Texture,
-											Color=lb.Color,
 										};
 										FallingLeaves.Add(fl);
 									}else{
 										if (lb.Id==(ushort)BlockId.OakLeaves
 										|| lb.Id==(ushort)BlockId.LindenLeaves
+										//|| lb.Id==(ushort)BlockId.SpruceLeavesWithSnow
 
 										|| lb.Id==(ushort)BlockId.AppleLeaves
 										|| lb.Id==(ushort)BlockId.AppleLeavesWithApples
@@ -4472,9 +4767,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										|| lb.Id==(ushort)BlockId.LemonLeavesWithLemons
 
 										|| lb.Id==(ushort)BlockId.MangroveLeaves
-										) { 
-											FallingLeave fl=new FallingLeave(rch*16+random.Int16(), rh*16+random.Int16(), random.Float(),windRirectionRight,precipitation, new Rectangle(0,0,2,2+random.Int2())){
-												texture=lb.Texture
+										|| lb.Id==(ushort)BlockId.AcaciaLeaves
+
+										) {
+											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), windRirectionRight, precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
+												texture=lb.Texture,
+												color=lb.Color,
 											};
 											FallingLeaves.Add(fl);
 										}
@@ -4486,11 +4784,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (FallingLeaves.Count>0) {
 							for (int i = 0; i<FallingLeaves.Count; ) {
 								FallingLeave l = FallingLeaves[i];
-								l.Update();
-								int ch=(int)l.Position.X/16;
-								if (terrain[ch].LightPosFull16<=l.Position.Y) { 
-									FallingLeaves.RemoveAt(i);
-								} else i++;
+								int ch=(int)(l.Position.X*divider_16);
+								if (terrain[ch].LightPosFull16 <= l.Position.Y+l.srcrec.Height) {
+									l.alpha-=0.005f;
+									if (l.alpha<0){ 
+										FallingLeaves.RemoveAt(i);
+									}else{ 
+										i++;
+									}
+								} else {
+									l.Update();
+									i++;
+								}
 							}
 						}
 					}
@@ -4509,8 +4814,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							text =TextEdit(text);
 							while (text.Length*13>750) text=text.Substring(0,text.Length-1);
 							if (newText!=text || textWriting==null) {
-								int xx=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
-								while (text.Length*13>750) text=text.Substring(0,text.Length-1);
+								int xx=Global.WindowWidthHalf+(PlayerXInt-(int)WindowCenterX);
+								while (text.Length*13>750) text=text.Substring(0, text.Length-1);
 
 								int m = BitmapFont.bitmapFont18.MeasureTextSingleLineX(text);
 								textWriting=new TextWithMeasure(text,xx-m/2+5,Global.WindowHeightHalf-55-50+5+5/*,BitmapFont.bitmapFont18*/);
@@ -4521,11 +4826,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									inventory=0;
 									diserpeard=255;
 
-								   // DInt m=;
-
 									int texts= BitmapFont.bitmapFont18.MeasureTextSingleLineX(text)/2;
-									int x=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
-									gedo=new GeDo(text,x-texts+20-10,Global.WindowHeightHalf-40-50-3);
+									int x=Global.WindowWidthHalf+(PlayerXInt-(int)WindowCenterX);
+									gedo=new GeDo(text, x-texts+20-10,Global.WindowHeightHalf-40-50-3);
 									textWriting=null;
 								}
 							}
@@ -4543,100 +4846,98 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								inventory=0;
 							}
 
-							if (buttonContinue.Update()) { 
+							if (buttonContinue.Update()) {
 								inventory=0;
 							}
 
 							// Exit game
 							if (buttonExit.Update()) {
-								Shutdown();
+								//Shutdown();
+							//	Save();
 								Rabcr.GoTo(new Menu(new MenuSingleplayer()));
 							}
-						
+
 							// Achievements
-							if (buttonAcheavements.Update()) { 
+							if (buttonAcheavements.Update()) {
 								if (Global.WorldDifficulty==0){
-									using (FormAch form=new FormAch(AchievementStoneAge, AchievementBronzeAge, AchievementIronAge, AchievementFutureAge)) {
-										form.ShowDialog();
-									}
-								} else { 
+                                    using FormAch form = new(AchievementStoneAge, AchievementBronzeAge, AchievementIronAge, AchievementFutureAge);
+                                    form.ShowDialog();
+                                } else {
 									System.Windows.Forms.MessageBox.Show(Lang.Texts[1501]);
 								}
 							}
 
 							// Use a gift code
-							if (buttonUseGiftCode.Update()) { 
-								using (FormGiftCode form = new FormGiftCode()) {
-									form.ShowDialog();
-									if (form.DropGift) { 
-										string rawItems=form.giftData;
-										
-										byte[] bytes = Convert.FromBase64String(rawItems);
-										fixed (byte* pointer=&bytes[0]) { 
-											byte* current=pointer;
-											byte len=*current++;
+							if (buttonUseGiftCode.Update()) {
+                                using FormGiftCode form = new();
+                                form.ShowDialog();
+                                if (form.DropGift) {
+                                    string rawItems = form.giftData;
 
-											for (int i=0; i<len; i++) {
-												ushort id = (ushort)(*current++ | (*current++ << 8));
-																						
-												if (id!=0) {
-													if (GameMethods.IsItemInvBasic16(id)) {
-														AddItemToPlayer(new ItemNonInvBasic(id, *current++ | (*current++ << 8)));
-														continue;
-													}
+                                    byte[] bytes = Convert.FromBase64String(rawItems);
+                                    fixed (byte* pointer = &bytes[0]) {
+                                        byte* current = pointer;
+                                        byte len = *current++;
 
-													if (GameMethods.IsItemInvBasic32(id)) {
-														AddItemToPlayer(new ItemNonInvBasic(id, *current++ | (*current++ << 8)));
-														continue;
-													}
+                                        for (int i = 0; i < len; i++) {
+                                            ushort id = (ushort)(*current++ | (*current++ << 8));
 
-													if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-														AddItemToPlayer(new ItemNonInvBasicColoritzedNonStackable(id, new Color(*current++, *current++, *current++, (byte)255)));
-														continue;
-													}
+                                            if (id != 0) {
+                                                if (GameMethods.IsItemInvBasic16(id)) {
+                                                    AddItemToPlayer(new ItemNonInvBasic(id, *current++ | (*current++ << 8)));
+                                                    continue;
+                                                }
 
-													if (GameMethods.IsItemInvFood16(id)) {
-														AddItemToPlayer(new ItemNonInvFood(id, *current++ | (*current++ << 8), GetFloat()));
-														continue;
-													}
+                                                if (GameMethods.IsItemInvBasic32(id)) {
+                                                    AddItemToPlayer(new ItemNonInvBasic(id, *current++ | (*current++ << 8)));
+                                                    continue;
+                                                }
 
-													if (GameMethods.IsItemInvFood32(id)) {
-														AddItemToPlayer(new ItemNonInvFood(id, *current++ | (*current++ << 8), GetFloat()));
-														continue;
-													}
+                                                if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
+                                                    AddItemToPlayer(new ItemNonInvBasicColoritzedNonStackable(id, new Color(*current++, *current++, *current++, (byte)255)));
+                                                    continue;
+                                                }
 
-													if (GameMethods.IsItemInvNonStackable32(id)) {
-														AddItemToPlayer(new ItemNonInvNonStackable(id));
-														continue;
-													}
+                                                if (GameMethods.IsItemInvFood16(id)) {
+                                                    AddItemToPlayer(new ItemNonInvFood(id, *current++ | (*current++ << 8), GetFloat()));
+                                                    continue;
+                                                }
 
-													if (GameMethods.IsItemInvTool32(id)) {
-														AddItemToPlayer(new ItemNonInvTool(id, (ushort)(*current++ | (*current++ << 8))));
-														continue;
-													}
+                                                if (GameMethods.IsItemInvFood32(id)) {
+                                                    AddItemToPlayer(new ItemNonInvFood(id, *current++ | (*current++ << 8), GetFloat()));
+                                                    continue;
+                                                }
 
-													if (GameMethods.IsItemInvTool16(id)) {
-														AddItemToPlayer(new ItemNonInvTool(id, (ushort)(*current++ | (*current++ << 8))));
-														continue;
-													}
-													
-													#if DEBUG
-													throw new Exception("Missing category for item "+(Items)id+".\r\nWhy?\r\nUp missing code IsItemInv... or item is not in categories");
-													#else
+                                                if (GameMethods.IsItemInvNonStackable32(id)) {
+                                                    AddItemToPlayer(new ItemNonInvNonStackable(id));
+                                                    continue;
+                                                }
+
+                                                if (GameMethods.IsItemInvTool32(id)) {
+                                                    AddItemToPlayer(new ItemNonInvTool(id, (ushort)(*current++ | (*current++ << 8))));
+                                                    continue;
+                                                }
+
+                                                if (GameMethods.IsItemInvTool16(id)) {
+                                                    AddItemToPlayer(new ItemNonInvTool(id, (ushort)(*current++ | (*current++ << 8))));
+                                                    continue;
+                                                }
+
+#if DEBUG
+                                                throw new Exception("Missing category for item " + (Items)id + ".\r\nWhy?\r\nUp missing code IsItemInv... or item is not in categories");
+#else
 													InventoryNormal[i]=itemBlank;
-													#endif
-												}
-											}
+#endif
+                                            }
+                                        }
 
-											float GetFloat() {
-												int n=*current++ | (*current++ << 8) | (*current++ << 16) | (*current++ << 24);
-												return *(float*)&n;
-											}
-										}
-									}
-									
-								}
-							}
+                                        float GetFloat() {
+                                            int n = *current++ | (*current++ << 8) | (*current++ << 16) | (*current++ << 24);
+                                            return *(float*)&n;
+                                        }
+                                    }
+                                }
+                            }
 							break;
                         #endregion
 
@@ -4655,7 +4956,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 								if (previousScrollValue!=newMouseState.ScrollWheelValue) {
 									if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 										inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 									}
 
@@ -4710,7 +5011,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}else{
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}
 								//if (inventoryScrollbarValueCraftingMax>6*4) {
@@ -4776,7 +5077,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							} else {
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}
 
@@ -4812,18 +5113,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								ItemInv[] inv=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 								float energy=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy;
 
-								//for (int i=0; i<3; i++){ 
-								//	if (inv[i].Id!=0) { 
-								//		float ammout=GameMethods.FurnaceStoneBurnWood(inv[i].Id); 
-									
+								//for (int i=0; i<3; i++){
+								//	if (inv[i].Id!=0) {
+								//		float ammout=GameMethods.FurnaceStoneBurnWood(inv[i].Id);
+
 								//		if (energy+ammout<1f) {
 								//			((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy+=ammout;
 								//			break;
 								//		}
-								//	}	
+								//	}
 								//}
 
-								if (energy/*((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy*/>0.05f) 
+								if (energy/*((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy*/>0.05f)
 									CraftingEventsCraft();
 								if (buttonClose.Update()) inventory=0;
 							}
@@ -4843,7 +5144,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}else{
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 
 								} else if (inventoryScrollbarValueCraftingMax>6*4) {
@@ -4893,7 +5194,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								} else if (inventoryScrollbarValueCraftingMax>6*4) {
 											if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
@@ -4943,7 +5244,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 								} else {
 									if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+										inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 										inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 									}
 
@@ -4998,7 +5299,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										CreativeGetItems();
 
 										if (In(Global.WindowWidthHalf-300+4+200+4-100-100+60-14,Global.WindowHeightHalf-200+2+200+16+40-8,Global.WindowWidthHalf+300,Global.WindowHeightHalf+200+16)) {
-											creativeScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+											creativeScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 											scrollBarCreative=(int)(inventoryScrollbar.scale*(inventoryScrollbarValueCraftingMax-45));
 										}
 
@@ -5090,8 +5391,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Save();
 								rocket=true;
 								rocketDown=false;
-								PlayerX=selectedMashine.X;
-								PlayerY=selectedMashine.Y;
+								/*PlayerX = */PlayerXInt = selectedMashine.X;
+								/*PlayerY = */PlayerYInt = selectedMashine.Y;
 								inventory=0;
 								File.WriteAllText(pathToWorld+"UseRocket.txt","");
 								Terrain chunk=terrain[selectedMashine.X];
@@ -5197,7 +5498,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							} else {
 								if (In(Global.WindowWidthHalf-300+4+200+4,Global.WindowHeightHalf-200+2,Global.WindowWidthHalf+300,Global.WindowHeightHalf)) {
-									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2);
+									inventoryScrollbar.Scroll((previousScrollValue-newMouseState.ScrollWheelValue)/2*invertedMouseValue);
 									inventoryScrollbarValue=(int)(inventoryScrollbar.scale*(maxInvCount-45));
 								}else if (inventoryScrollbarValueCraftingMax>6*4) {
 											if (In(Global.WindowWidthHalf-300+4+40+4, Global.WindowHeightHalf-200+2+4+200+8,Global.WindowWidthHalf-300+4+40+4+40*6+10, Global.WindowHeightHalf-200+2+4+200+8+40*4+10)) {
@@ -5295,17 +5596,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region  bars
-				if (barEnergy<=32) {
-					if (barEnergy>0) {
-						if (barEat>=0) {
-							if (barWater>=0) {
-								barEat+=0.0006f;
-								barWater+=0.0008f;
-								barEnergy-=0.04f;
+				if (barEnergy.Value<=32f) {
+					if (barEnergy.Value>0f) {
+						if (barEat.Value>=0f) {
+							if (barWater.Value>=0f) {
+								barEat.Value+=0.0006f;
+								barWater.Value+=0.0008f;
+								barEnergy.Value-=0.04f;
 
-								if (barEat<0) barEat=0;
-								if (barWater>32) barWater=32;
-								if (barEnergy<0) barEnergy=0;
+								if (barEat.Value<0f) barEat.Value=0f;
+								if (barWater.Value>32f) barWater.Value=32f;
+								if (barEnergy.Value<0f) barEnergy.Value=0f;
 							}
 						}
 					}
@@ -5314,25 +5615,54 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				#region Wheather
 				if (actualRainForce>0f) {
-					if (Temperature<0) { 
+					if (Temperature<0) {
 						if (wind) {
-							for (int i=0; i<(weatherWindowWidth+600)/300; i++){ 
-								int addSide=Global.WindowHeight/2;
+							for (int i=0; i<(weatherWindowWidth+600)/300; i++){
 								if (windRirectionRight) {
-									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
-										snowDots.Add(
-											new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
-												Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide), Y=-10 },
-												HSpeed=windForce*0.5f 
-										});
+									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+										if (Setting.BetterSnowAndRain) {
+											if (FastRandom.Bool())
+												snowDotsSmall.Add(
+													new ParticleSnowSmall(gravity+0.2f) {
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
+														HSpeed=windForce*0.5f
+												});
+											else 
+												snowDots2.Add(
+													new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
+														HSpeed=windForce*0.5f
+												});
+										} else { 
+											if (FastRandom.Bool()) snowDots2.Add(
+												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
+													HSpeed=windForce*0.5f
+											});
+										}
 									}
-								} else { 
-									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
-										snowDots.Add(
-										new ParticleSnow(random.Float()*0.8f+0.2f, gravity+0.2f) { 
-											Position=new Vector2 { X=random.Int(weatherWindowWidth+addSide)-addSide, Y=-10 },
-											HSpeed=windForce*0.5f 
-										});
+								} else {
+									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+										if (Setting.BetterSnowAndRain) {
+											if (FastRandom.Bool())
+												snowDotsSmall.Add(
+													new ParticleSnowSmall(gravity+0.2f) {
+														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
+														HSpeed=-windForce*0.5f
+												});
+											else snowDots2.Add(
+												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
+													HSpeed=-windForce*0.5f
+												});
+										} else { 
+											if (FastRandom.Bool()) snowDots2.Add(
+												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
+													HSpeed=-windForce*0.5f
+												});
+										}
+										
 									}
 								}
 							}
@@ -5341,24 +5671,41 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								SoundWind.IsLooped=true;
 							}
 						} else {
-							for (int i=0; i<(weatherWindowWidth+10)/300; i++){ 
-								if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
-									snowDots.Add(new ParticleSnow( random.Float()*0.8f+0.2f, gravity+0.2f) { 
-										Position=new Vector2 {X=random.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
-										HSpeed=windForce*0.5f 
-									}); 
+							for (int i=0; i<(weatherWindowWidth+10)/300; i++){
+								if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+									if (Setting.BetterSnowAndRain) {
+										if (FastRandom.Bool()) 
+											snowDotsSmall.Add(new ParticleSnowSmall(gravity+0.2f) {
+												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
+												HSpeed=windForce*0.5f
+											});
+										else 
+											snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
+												HSpeed=windForce*0.5f
+											});
+									} else { 
+										snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
+												HSpeed=windForce*0.5f
+											});
+									}
 								}
-							} 
+							}
 						}
-					
-					} else { 
-						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < random.Float()) {
-							for (int i=0; i<(Global.WindowWidth+10)/300; i++){ 
-								rainDots.Add(new ParticleRain(random.Float()*0.8f+0.2f, gravity*20f+0.2f) { Position=new Vector2{X=random.Int(/*848*/weatherWindowWidth+20)-10, Y=-10 },HSpeed=windForce });
+
+					} else {
+						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+							for (int i=0; i<(Global.WindowWidth+10)/300; i++) {
+								if (Setting.BetterSnowAndRain) 
+									rainDots.Add(new ParticleRain(FastRandom.Float()*0.8f+0.2f, gravity*20f+0.2f) { 
+										Position=new Vector2{X=FastRandom.Int(weatherWindowWidth+20)-10, Y=-10 },
+										HSpeed=windForce 
+									});
 							}
 						}
 						if (Global.HasSoundGraphics) {
-							if (wind) { 
+							if (wind) {
 								SoundWind.Play();
 								SoundWind.IsLooped=true;
 							}
@@ -5378,32 +5725,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					lightsHalf.Clear();
 
 					int w=(int)WindowY-8, w2=(int)WindowY/*+*/-8;
-					
-					for (int x=(terrainStartIndexX>2 ? terrainStartIndexX-2 : terrainStartIndexX); x<terrainStartIndexW+2 && x<TerrainLength; x++) {
+
+					for (int x=terrainStartIndexX>2 ? terrainStartIndexX-2 : terrainStartIndexX; x<terrainStartIndexW+2 && x<TerrainLength; x++) {
 						Terrain chunk=terrain[x];
 						int f=chunk.LightPosFull16;
 
-						//if (chunk.Half) { 
-							if (w<f) { 
+						//if (chunk.Half) {
+							if (w<f) {
 								int h=chunk.LightPosHalf16-8;
-							
-							//	if (w<h) { 
-									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, h-w2));
-									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, chunk.LightPosFull16-w2));
+
+							//	if (w<h) {
+									lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY-(int)EarthShakePA.Y-1, 16+40+40, h-w2+(int)EarthShakePA.Y+1));
+									lightsFull.Add(new Rectangle(x*16-40, (int)WindowY-(int)EarthShakePA.Y-1, 16+40+40, chunk.LightPosFull16-w2+(int)EarthShakePA.Y+1));
 								//original:	lightsHalf.Add(new Rectangle(x*16-40,h/* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
 								//	lightsHalf.Add(new Rectangle(x*16-40,(int)WindowY /*h*//* /*(int)WindowY+(f-h)*/, 16+40+40, f-h+8));
-							//	}else{ 
+							//	}else{
 								//	lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY+h, 16+40+40, f-h-w2));
 								//}
-							} 
-						//} else { 
+							}
+						//} else {
 						//	if (w<f) lightsFull.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, f-w2));
 						//	lightsHalf.Add(new Rectangle(x*16-40, (int)WindowY, 16+40+40, f-w2));
-							
+
 						//}
 					}
 				}
-				
+
 				// Update Shot
 				for (int i=0; i<GunShots.Count; i++) {
 					GunShot gs = GunShots[i];
@@ -5436,36 +5783,75 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				if (timer5==2) {
 					UpdateLiquid((ushort)BlockId.WaterBlock);
-					if (wind){if (Global.WindowWidth>1000) WaveGrassDuringWind(); }
+					//UpdateLiquid((ushort)BlockId.Oil);
+					if (wind){
+						if (Global.WindowWidth>1000) WaveGrassDuringWind(); 
+					}
 				}
-
+				////
 				if (timer5==4) {
 					UpdateLiquid((ushort)BlockId.WaterSalt);
 					if (wind) WaveGrassDuringWind();
 					if (wind) WaveGrassDuringWind();
-				}	
-				
+				}
+
 				if (actualRainForce>0f) {
-					for (int i = 0; i<rainDots.Count; ) {
-						ParticleRain r = rainDots[i];
-							
-						if (/*Global.WindowHeight*/weatherWindowHeight<r.Position.Y) {
-							rainDots.RemoveAt(i);
+					if (Setting.BetterSnowAndRain) {
+						for (int i = 0; i<rainDots.Count; ) {
+							ParticleRain r = rainDots[i];
+
+							if (weatherWindowHeight<r.Position.Y) {
+								rainDots.RemoveAt(i);
+							} else {
+								r.Update();
+								i++;
+							}
+						}
+						//for (int i = 0; i<snowDots.Count; ) {
+						//	ParticleSnow r = snowDots[i];
+						//	if (weatherWindowHeight<r.Position.Y) {
+						//		snowDots.RemoveAt(i);
+						//	} else {
+						//		r.Update(windRirectionRight);
+						//		i++;
+						//	}
+						//}
+						for (int i = 0; i<snowDotsSmall.Count; ) {
+							ParticleSnowSmall r = snowDotsSmall[i];
+							if (weatherWindowHeight<r.Position.Y) {
+								snowDotsSmall.RemoveAt(i);
+							} else {
+								r.Update(windRirectionRight);
+								i++;
+							}
+						}
+					}
+					
+					for (int i = 0; i<rainDots2.Count; ) {
+						ParticleRain r = rainDots2[i];
+
+						if (weatherWindowHeight<r.Position.Y) {
+							rainDots2.RemoveAt(i);
 						} else {
 							r.Update();
 							i++;
 						}
 					}
-					for (int i = 0; i<snowDots.Count; ) {
-						ParticleSnow r = snowDots[i];
-						if (/*Global.WindowHeight*/weatherWindowHeight<r.Position.Y) {
-							snowDots.RemoveAt(i);
-						} else { 
-							r.Update();
+					for (int i = 0; i<snowDots2.Count; ) {
+						ParticleSnow r = snowDots2[i];
+						if (weatherWindowHeight<r.Position.Y) {
+							snowDots2.RemoveAt(i);
+						} else {
+							r.Update(windRirectionRight);
 							i++;
 						}
 					}
+					
+					
 				}
+
+				//text
+				Temperature=GetTemperature(BiomePlayer.Name);
 
 				if (timer5<-0.1f) {
 					if (wind) WaveGrassDuringWind();
@@ -5473,22 +5859,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				//	Console.WriteLine(rainWaveForce);
 					//if (rainWaveForce<0.5f)rainWaveForce+=0.05f;
 					//else if (rainWaveForce>1f)rainWaveForce-=0.05f;
-					//else if (random.Bool()) rainWaveForce+=0.05f;
+					//else if (FastRandom.Bool()) rainWaveForce+=0.05f;
 					//else rainWaveForce-=0.05f;
 
-					if (precipitation || changeRain<5f) { 
+					if (precipitation || changeRain<5f) {
 						if (actualRainForce<1f)actualRainForce+=0.05f;
 					} else if (actualRainForce>0f)actualRainForce-=0.05f;
 
 					// Create ice
 					if (Temperature<0) {
 						{
-							int rid=random.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
+							int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
 							if (rid<TerrainLength){
 								Terrain chunk=terrain[rid];
-								int ry=random.Int(125-chunk.StartSomething)+chunk.StartSomething;
-								if (chunk.IsTopBlocks[ry]) { 
-									if (chunk.TopBlocks[ry].Id==(ushort)BlockId.WaterBlock) { 
+								int ry=FastRandom.Int(125-chunk.StartSomething)+chunk.StartSomething;
+								if (chunk.IsTopBlocks[ry]) {
+									if (chunk.TopBlocks[ry].Id==(ushort)BlockId.WaterBlock) {
 										if (((Water)chunk.TopBlocks[ry]).GetMass==255) {
 											// Remove water
 											chunk.IsTopBlocks[ry]=false;
@@ -5496,30 +5882,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 											// set ice
 											chunk.IsSolidBlocks[ry]=true;
-											chunk.SolidBlocks[ry]=new NormalBlock { 
+											chunk.SolidBlocks[ry]=new NormalBlock {
 												Id=(ushort)BlockId.Ice,
 												Position=new Vector2(rid*16,ry*16),
 												Texture=iceTexture
 											};
-										} 
+										}
 									}
 								}
 							}
 						}
 
-						if (precipitation) { 
-							int rid=random.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
+						if (precipitation) {
+							int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
 							if (rid<TerrainLength){
 								Terrain chunk=terrain[rid];
 								if (chunk.StartSomething>0) {
-									if (chunk.IsSolidBlocks[chunk.LightPosFull]) { 
+									if (chunk.IsSolidBlocks[chunk.LightPosFull]) {
 										switch (chunk.SolidBlocks[chunk.LightPosFull].Id) {
 											case (ushort)BlockId.GrassBlockClay:
 												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowClay, new Vector2(rid*16, chunk.LightPosFull*16));
 												break;
 
-											case (ushort)BlockId.GrassBlockCompost: 
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowCompost, new Vector2(rid*16, chunk.LightPosFull*16));
+											case (ushort)BlockId.GrassBlockCompost:
+												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnowCompost, (ushort)BlockId.GrassBlockSnowCompost, new Vector2(rid*16, chunk.LightPosFull*16));
 												break;
 
 											case (ushort)BlockId.GrassBlockPlains:
@@ -5541,43 +5927,95 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											case (ushort)BlockId.GrassBlockJungle:
 												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowJungle, new Vector2(rid*16, chunk.LightPosFull*16));
 												break;
-										} 
-									}
-
-									if (chunk.IsTopBlocks[chunk.StartSomething]) { 
-										if (chunk.TopBlocks[chunk.StartSomething].Id!=(ushort)BlockId.SnowTop) {
-											if (GameMethods.IsLeave(chunk.TopBlocks[chunk.StartSomething].Id)) {
-												chunk.StartSomething--; 
-												chunk.IsTopBlocks[chunk.StartSomething]=true;
-												chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
-											} 
-
-										
 										}
 									}
-									if (chunk.IsSolidBlocks[chunk.StartSomething]) { 
-										chunk.StartSomething--; 
-										chunk.IsTopBlocks[chunk.StartSomething]=true;
-										chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
+
+									for (int u=0; u<2; u++){
+										int rH=FastRandom.Int(125);
+										if (rH>=chunk.StartSomething) { 
+											if (chunk.IsTopBlocks[rH]) {
+												ushort id =chunk.TopBlocks[rH].Id;
+												if (GameMethods.IsLeave(id)) {
+													switch (id) { 
+														case (ushort)BlockId.SpruceLeaves:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=spruceLeavesWithSnowTexture;
+																lb.Id=(ushort)BlockId.SpruceLeavesWithSnow;
+															}
+															break;
+														case (ushort)BlockId.AppleBranches:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=TextureBranchesSnow;
+																lb.Id=(ushort)BlockId.AppleBranchesSnow;
+															}
+															break;
+
+														case (ushort)BlockId.CherryBranches:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=TextureBranchesSnow;
+																lb.Id=(ushort)BlockId.CherryBranchesSnow;
+															}
+															break;
+
+														case (ushort)BlockId.OakBranches:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=TextureBranchesSnow;
+																lb.Id=(ushort)BlockId.OakBranchesSnow;
+															}
+															break;
+
+														case (ushort)BlockId.LindenBranches:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=TextureBranchesSnow;
+																lb.Id=(ushort)BlockId.LindenBranchesSnow;
+															}
+															break;
+													
+														case (ushort)BlockId.WillowBranches:
+															{
+																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+																lb.Texture=TextureBranchesSnow;
+																lb.Id=(ushort)BlockId.WillowBranchesSnow;
+															}
+															break;
+
+													}
+												//	chunk.StartSomething--;
+													//chunk.IsTopBlocks[chunk.StartSomething]=true;
+													//chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
+												}
+											}
+										}
+									
+										if (chunk.IsSolidBlocks[chunk.StartSomething]) {
+											chunk.StartSomething--;
+											chunk.IsTopBlocks[chunk.StartSomething]=true;
+											chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
+										}
 									}
-								}
+								} 
 							}
 						}
 					}
 
 					// Remove ice and snow
 					if (Temperature>0.01f) {
-						int rid=random.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
+						int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
 						if (rid<TerrainLength) {
 							Terrain chunk=terrain[rid];
-							if (random.Float()<Temperature) {
-								if (chunk.IsSolidBlocks[chunk.LightPosFull]) { 
+							if (FastRandom.Float()<Temperature) {
+								if (chunk.IsSolidBlocks[chunk.LightPosFull]) {
 									switch (chunk.SolidBlocks[chunk.LightPosFull].Id) {
 										case (ushort)BlockId.GrassBlockSnowClay:
 											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockClay, (ushort)BlockId.GrassBlockClay, new Vector2(rid*16, chunk.LightPosFull*16));
 											break;
 
-										case (ushort)BlockId.GrassBlockSnowCompost: 
+										case (ushort)BlockId.GrassBlockSnowCompost:
 											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockCompost, (ushort)BlockId.GrassBlockCompost, new Vector2(rid*16, chunk.LightPosFull*16));
 											break;
 
@@ -5600,33 +6038,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										case (ushort)BlockId.GrassBlockSnowJungle:
 											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockJungle, (ushort)BlockId.GrassBlockJungle, new Vector2(rid*16, chunk.LightPosFull*16));
 											break;
-									} 
+									}
 								}
 							}
 
-							int ry=random.Int(125-chunk.StartSomething)+chunk.StartSomething-1;
-							if (chunk.IsSolidBlocks[ry]) { 
-								if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.Ice) { 
-								
+							int ry=FastRandom.Int(125-chunk.StartSomething)+chunk.StartSomething-1;
+							if (chunk.IsSolidBlocks[ry]) {
+								if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.Ice) {
+
 									// Remove ice
 									chunk.IsSolidBlocks[ry]=false;
 									chunk.SolidBlocks[ry]=null;
-								
+
 									// set water
 									chunk.IsTopBlocks[ry]=true;
 									chunk.TopBlocks[ry]=new Water(waterTexture,(ushort)BlockId.WaterBlock,new Vector2(rid*16, ry*16),255);
-								} else if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.Snow) { 
-								
+								} else if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.Snow) {
+
 									// Remove snow
 									chunk.IsSolidBlocks[ry]=false;
 									chunk.SolidBlocks[ry]=null;
-								} else if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.SnowTop
-									) { 
-								
+								} else if (chunk.SolidBlocks[ry].Id==(ushort)BlockId.SnowTop) {
+
 									// Remove snow
 									chunk.IsSolidBlocks[ry]=false;
 									chunk.SolidBlocks[ry]=null;
-								}
+								} 
 							}
 						}
 					}
@@ -5640,14 +6077,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					if (rocket)  {
 						if (rocketDown) {
-							if (PlayerY>0) {
+							if (PlayerYInt>0) {
 								rocket=false;
 								PlayerY=0;
+								PlayerYInt=0;
 								InventoryAddOne((ushort)Items.Rocket);
 								File.Delete(pathToWorld+"UseRocket.txt");
 							}
 						} else {
-							if (PlayerY<=-10000) {
+							if (PlayerYInt<=-10000) {
 								Save();
 
 									SaveSettings();
@@ -5666,7 +6104,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								//    changeRain+"\r\n"+
 								//    moonSpeed);
 
-								List<byte> bytes=new List<byte>();
+								List<byte> bytes=new();
 								foreach (ItemInv x in InventoryNormal) x.SaveBytes(bytes);
 								File.WriteAllBytes(pathToWorld+@"\Inventory.bin", bytes.ToArray());
 
@@ -5685,8 +6123,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										case (ushort)BlockId.SolarPanel:
 											if (chunk.LightPosHalf+2>y) {
 												if (dayAlpha>0.8f) NewEnergySolarPanel(x,y);
-												else if (random.Double()<dayAlpha) {
-													if (random.Bool_33_333Percent()) NewEnergySolarPanel(x,y);
+												else if (FastRandom.Double()<dayAlpha) {
+													if (FastRandom.Bool_33_333Percent()) NewEnergySolarPanel(x,y);
 												}
 											}
 											break;
@@ -5709,18 +6147,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							Song play/*=null*/;
 
 							if (notNeedScafander) {
-								switch (random.Int4()) {
-									case 0: play=Songs.Happend;break;
-									case 1: play = Songs.Medium; break;
-									case 2: play = Songs.Root; break;
-									default: play = Songs.Storm; break;
-								}
-							} else play = Songs.Spacelandia;
+                                play = FastRandom.Int4() switch {
+                                    0 => Songs.Happend,
+                                    1 => Songs.Medium,
+                                    2 => Songs.Root,
+                                    _ => Songs.Storm,
+                                };
+                            } else play = Songs.Spacelandia;
 
 							MediaPlayer.Play(play);
 						}
 					}
-				
+
 
 					#region Time
 					time++;//1hod=3000x zvýšení
@@ -5729,7 +6167,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 
 						if (day>daysInYear) {
-							day=0; 
+							day=0;
 							year++;
 						}
 
@@ -5765,17 +6203,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 
 				//	if (rain) {
-						//if (Temperature>0) { 
+						//if (Temperature>0) {
 						float xpler=0;
 						if (Temperature<10f)xpler=-(Temperature-10)/500f;
 
 							float otp=dayAlpha*(1-rainWaveForce*0.05f*actualRainForce)*(1f-actualRainForce*0.05f/**0.75f*/)*(1f-xpler);
 					//	Console.WriteLine("r "+otp);
 							colorAlpha=new Color(otp, otp, otp, otp);
-						//} else { 
+						//} else {
 						//	colorAlpha = new Color(otp, dayAlpha, dayAlpha, dayAlpha);
 						//}
-					//} else { 
+					//} else {
 					//	float otp=dayAlpha*(1f-actualRainForce*0.1f/**0.75f*/);
 					//		Console.WriteLine("n "+otp);
 					//	colorAlpha=new Color(otp, otp, otp, otp);
@@ -5797,11 +6235,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						if (block.Inv[0].Id!=0 || block.Inv[1].Id!=0 || block.Inv[2].Id!=0) {
 							if (block.Inv[3].Id==(ushort)Items.None) Do();
-							else if (block.Inv[3].Id==(ushort)Items.Ash) { 
+							else if (block.Inv[3].Id==(ushort)Items.Ash) {
 								if (((ItemInvBasic16)block.Inv[3]).GetCount<99) Do();
-							} 
+							}
 
-							void Do() { 
+							void Do() {
 								for (int i=0; i<3; i++) {
 									//0
 									float add = GameMethods.FurnaceStoneBurnWood(block.Inv[i].Id);
@@ -5820,7 +6258,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												AddAsh();
 												return;
 											}
-										
+
 											void AddAsh() {
 												if (block.Inv[3].Id==(ushort)Items.Ash) {
 													ItemInvBasic16 inv3 = (ItemInvBasic16)block.Inv[3];
@@ -5828,7 +6266,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												} else {
 													DInt pos=InventoryGetPosFurnaceStone(3);
 													block.Inv[3]=new ItemInvBasic16(ashTexture, (ushort)Items.Ash, 1, pos.X, pos.Y);
-												
+
 												}
 											}
 										}
@@ -5855,7 +6293,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (windForce>0) {
 							windForce-=.05f;
 							SetWintableSources();
-							if (random.Bool())windRirectionRight=!windRirectionRight;
+							if (FastRandom.Bool())windRirectionRight=!windRirectionRight;
 						}
 					}
 
@@ -5863,6 +6301,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Auto-destroy leaves
 						AutoDestroyLeaves((ushort)BlockId.OakWood, (ushort)BlockId.OakLeaves);
 						AutoDestroyLeaves((ushort)BlockId.SpruceWood, (ushort)BlockId.SpruceLeaves);
+						AutoDestroyLeaves((ushort)BlockId.SpruceWood, (ushort)BlockId.SpruceLeavesWithSnow);
 						AutoDestroyLeaves((ushort)BlockId.PineWood, (ushort)BlockId.PineLeaves);
 						AutoDestroyLeaves((ushort)BlockId.LindenWood, (ushort)BlockId.LindenLeaves);
 
@@ -5899,12 +6338,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						DescayInventory(InventoryNormal);
 						DescayInventory(InventoryClothes);
 
-						int totalammo=TotalItemsInInventoryItemBasic16((ushort)Items.Ammo);
+						int totalammo=TotalItemsInInventoryForAllTypes((ushort)Items.Ammo);
 						if (totalammo>99)totalammo=99;
 						if (totalammo==0) totalammo=1;
 						foreach (ItemInv d in InventoryNormal) {
 							if (d.Id==(ushort)Items.Gun) {
-								ItemInvBasic16 gun=(ItemInvBasic16)d;
+								ItemInvTool32 gun=(ItemInvTool32)d;
 								gun.SetCount=totalammo;
 							}
 						}
@@ -5921,7 +6360,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (d.Id==(ushort)Items.AirTank) {
 										ItemInvTool32 airt=(ItemInvTool32)d;
 										if (airt.GetCount>1) {
-											if (random.Bool_11_111Percent()) {
+											if (FastRandom.Bool_11_111Percent()) {
 												airt.SetCount=airt.GetCount-1;
 											}
 											airj=true;
@@ -5934,7 +6373,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										if (d.Id==(ushort)Items.AirTank2) {
 											ItemInvTool32 airt=(ItemInvTool32)d;
 											if (airt.GetCount>1) {
-												if (random.Bool_5_555Percent()/* Int(18)==1*/) {
+												if (FastRandom.Bool_5_555Percent()/* Int(18)==1*/) {
 													airt.SetCount=airt.GetCount-1;
 												}
 												airj=true;
@@ -5944,30 +6383,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 								}
 								if (!airj) {
-									barOxygen+=0.25f;
-									if (barOxygen>32) {
-										barOxygen=32;
-										barHeart+=0.3f;
-										if (barHeart>32) {
+									barOxygen.Value+=0.25f;
+									if (barOxygen.Value>32f) {
+										barOxygen.Value=32f;
+										barHeart.Value+=0.3f;
+										if (barHeart.Value>32f) {
 											Die(Lang.Texts[297]);
 										}
 									}
 								}
 							} else {
-								barHeart+=0.5f;
-								if (barHeart>32) {
+								barHeart.Value+=0.5f;
+								if (barHeart.Value>32f) {
 									Die(Lang.Texts[299]);
 								}
 							}
 						}
 					}
 
-					Temperature=GetTemperature(BiomePlayer.Name);
-									 
+					//Temperature=GetTemperature(BiomePlayer.Name);
+
 
 					for (int i=0; i<TerrainLength/100; i++) GrowTreeFood(i*100);
 
-					if (random.Bool_20Percent()/* Int(5)==1*/) {
+					if (FastRandom.Bool_20Percent()/* Int(5)==1*/) {
 						for (int i = 0; i<chunksWithPlants.Count; i++) {
 							foreach (Plant p in terrain[chunksWithPlants[i]].Plants) {
 								if (p.Growing) p.Update();
@@ -5981,13 +6420,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					if (random.Bool_2Percent() /*Int(50)==1*/) {
+					if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
 						foreach (ShortAndByte p in Composters) {
 							ShelfBlock block= (ShelfBlock)terrain[p.X].TopBlocks[p.Y];
-							int i=random.Int(9);
+							int i=FastRandom.Int(9);
 							if (block.Inv[i].Id!=0) {
 								if (GameMethods.IsCompostable(block.Inv[i].Id)) {
-								 //   if (random.Int(block.Inv[i].Id)<=1) {
+								 //   if (FastRandom.Int(block.Inv[i].Id)<=1) {
 										block.Inv[i].Id=(ushort)Items.Compost;
 								 //   }
 								}
@@ -5996,25 +6435,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 
 					#region Bars
-					if (barEat<5 && barWater<5) {
-						barHeart-=.06f;
-						if (barHeart<0) barHeart=0;
+					if (barEat.Value<5f && barWater.Value<5f) {
+						barHeart.Value-=.06f;
+						if (barHeart.Value<0f) barHeart.Value=0f;
 					}
 
-					if (barEat>25 && barWater>25) {
-						barHeart+=.06f;
-						if (barHeart>32) Die(Lang.Texts[162]);
+					if (barEat.Value>25 && barWater.Value>25f) {
+						barHeart.Value+=.06f;
+						if (barHeart.Value>32f) Die(Lang.Texts[162]);
 					}
 
 					if (DetectLava) {
-						barHeart+=.06f;
-						if (barHeart>32) Die(Lang.Texts[163]);
+						barHeart.Value+=.06f;
+						if (barHeart.Value>32f) Die(Lang.Texts[163]);
 					}
 
-					if (barEnergy>31) {
-						if (random.Bool_33_333Percent()/* Int(3)==1*/) {
-							barHeart+=.01f;
-							if (barHeart>32) Die(Lang.Texts[164]);
+					if (barEnergy.Value>31f) {
+						if (FastRandom.Bool_33_333Percent()/* Int(3)==1*/) {
+							barHeart.Value+=.01f;
+							if (barHeart.Value>32f) Die(Lang.Texts[164]);
 						}
 					}
 					#endregion
@@ -6030,9 +6469,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					#region Weather
 					if (changeRain<0) {
-						changeRain=100+random.Int(50);
+						changeRain=100+FastRandom.Int(50);
 						if (precipitation) {
-							precipitation=false; 
+							precipitation=false;
 							if (CurrentPrecipitation==Precipitation.Rain) StopRaining();
 							if (CurrentPrecipitation==Precipitation.Snowing) StopSnowing();
 							CurrentPrecipitation=Precipitation.None;
@@ -6050,17 +6489,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					} else changeRain--;
 
 					if (timeToChageWind <0) {
-						timeToChageWind = 2000 + random.Int(1000);
+						timeToChageWind = 2000 + FastRandom.Int(1000);
 						wind=!wind;
-						if (!wind){ 
+						if (!wind){
 							StopWavingTrees();
 							StopWind();
-						}else{ 
+						}else{
 							StartWind();
 						}
 					} else timeToChageWind--;
 
-					
+
 					#endregion
 
 					#region Optimalize
@@ -6102,11 +6541,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					autoSave--;
 					if (autoSave==0) {
+						//#if DEBUG
+						//CheckTerrain("before autosave");
+						//#endif
 						Save();
 
-							SaveSettings();
+						SaveSettings();
 
-						List<byte> bytes=new List<byte>();
+						List<byte> bytes=new();
 						foreach (ItemInv x in InventoryNormal) x.SaveBytes(bytes);
 						File.WriteAllBytes(pathToWorld+@"\Inventory.bin", bytes.ToArray());
 
@@ -6117,7 +6559,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						try {
 							if (Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData\\Default\\Songs\\Radio")) {
 								radioSongs=Directory.GetFiles(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData\\Default\\Songs\\Radio");
-								List<string> songs=new List<string>();
+								List<string> songs=new();
 								foreach (string s in radioSongs) {
 									if (s.EndsWith(".wma"))songs.Add(s);
 								}
@@ -6153,16 +6595,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				string m=Lang.Texts[28];
 				string respawntext=Lang.Texts[29]+" "+(int)((timerStayDied/(60/2)+1));
 				int meas=BitmapFont.bitmapFont18.MeasureTextSingleLineX(m);
-				textDie=new Text(m,Global.WindowWidthHalf-meas/2,Global.WindowHeightHalf-60,BitmapFont.bitmapFont18);
+				textDie=new Text(m, Global.WindowWidthHalf-meas/2, Global.WindowHeightHalf-60, BitmapFont.bitmapFont18);
 				textDie.Draw(spriteBatch);
 
 				int textDieInfom=BitmapFont.bitmapFont18.MeasureTextSingleLineX(diedInfo);
 				textDieInfo=new Text(diedInfo,Global.WindowWidthHalf-textDieInfom/2,Global.WindowHeightHalf,BitmapFont.bitmapFont18);
-				textDieInfo.Draw(spriteBatch, ColorWhite*a);
+				textDieInfo.Draw(spriteBatch, Color.White*a);
 
 				int respawntextm=BitmapFont.bitmapFont18.MeasureTextSingleLineX(respawntext);
 				textRespawnIn=new Text(respawntext,Global.WindowWidthHalf-respawntextm/2,Global.WindowHeightHalf+30,BitmapFont.bitmapFont18);
-				textRespawnIn.Draw(spriteBatch, ColorWhite*a);
+				textRespawnIn.Draw(spriteBatch, Color.White*a);
 
 				spriteBatch.End();
 			} else {
@@ -6170,60 +6612,44 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				#region Draw lighting
 
-				// Draw full lights
+				// Draw full lights = to terrain
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
 
-                foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
+                foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
                 for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
-                    Terrain chunk = terrain[x];
-                    spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightVec.Y), ColorWhite);
+                    spriteBatch.Draw(lightMaskTexture, terrain[x].LightVec, Color.White);
                 }
                 spriteBatch.End();
 
+				// Make more darkner
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-				spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth,Global.WindowHeight), new Color(0,0,0,50));
+				spriteBatch.Draw(pixel, Fullscreen, black50);
 				spriteBatch.End();
 
-				// Draw high light
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
-				
-				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
+				// Draw high light = draw to trees
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
 
-				for (int x= terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
-					Terrain chunk=terrain[x];
-					spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
+				foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
+				
+				{
+					Terrain chunk;
+					for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
+						chunk=terrain[x];
+						spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), Color.White);
+					}
 				}
 				spriteBatch.End();
 
-				// Draw with shadows
-
-				//Graphics.SetRenderTarget(sunLightTarget);
-				//Graphics.Clear(black);
-				//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
-				
-				//foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, ColorWhite);
-				//foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLine2Texture, r, ColorWhite*0.6f);
-
-				//for (int x= terrainStartIndexX; x<terrainStartIndexW; x++) {
-				//	Terrain chunk=terrain[x];
-				//	if (chunk.Half) {
-				//		spriteBatch.Draw(lightMask2Texture, new Vector2(chunk.LightVec.X,   chunk.LightVec.Y/*-8*/), ColorWhite*0.6f);
-				//		spriteBatch.Draw(/*pixel*/lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), ColorWhite);
-				//	} else spriteBatch.Draw(lightMaskTexture, chunk.LightVec, ColorWhite);
-				//}
-			
+				// Technic's lights
+				//Graphics.SetRenderTarget(modificatedLightTarget);
+				//spriteBatch.Begin();
+				//spriteBatch.Draw(sunLightTarget, Fullscreen, colorAlpha);
 				//spriteBatch.End();
 
-				// Modificate sunlight target with lamp's, lorch's or fireplace's lights
-				Graphics.SetRenderTarget(modificatedLightTarget);
-				spriteBatch.Begin();
-				spriteBatch.Draw(sunLightTarget, Vector2Zero, colorAlpha);
-				spriteBatch.End();
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, camera);
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, cameraNoOpMultisapling/*camera*/);
 
 				foreach (MashineBlockBasic m in lightsLamp) {
 					if (m.Position.X>=terrainStartIndexX*16) {
@@ -6241,44 +6667,64 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 
-				if (playerLight) spriteBatch.Draw(lightMaskRoundTexture, new Rectangle((int)PlayerX-48*2+8, (int)PlayerY-48*2+8, 96*2, 96*2), lampColorLight);
+				foreach (ShortAndByte mm in FurnaceStone) {
+					MashineBlockBasic m=(MashineBlockBasic)terrain[mm.X].TopBlocks[mm.Y];
+
+					if (m.Position.X>=terrainStartIndexX*16) {
+						if (m.Position.X<=terrainStartIndexW*16) {
+							if (m.Position.Y>=terrainStartIndexY*16) {
+								if (m.Position.Y<=terrainStartIndexH*16) {
+									if (m.Energy>0) {
+									//	m.Energy-=0.01f;
+										//if (m.Energy<0) m.Energy=0;
+										spriteBatch.Draw(lightMaskRoundTexture, new Rectangle((int)m.Position.X-48*2+8, (int)m.Position.Y-48*2+8, 96*2, 96*2), lampColorLight);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				if (playerLight) spriteBatch.Draw(lightMaskRoundTexture, new Rectangle(PlayerXInt-48*2+8, PlayerYInt-48*2+8, 96*2, 96*2), lampColorLight);
 				spriteBatch.End();
 				#endregion
 
 				#region Draw game
-		   
-				Graphics.SetRenderTarget(null);
-  
+				if (SuperSamplingActing==1f) {
+					Graphics.SetRenderTarget(null);
+					Graphics.Clear(Color.Transparent);
+				} else Graphics.SetRenderTarget(targetGame);
+
 				#region Draw background
 				if (changeRain<10) {
-					if (precipitation) { 
+					if (precipitation) {
 						Graphics.Clear(FastMath.Lerp(GetColorBackNoRain(), GetColorBackRain(), changeRain/10f));
 					} else {
 						Graphics.Clear(FastMath.Lerp(GetColorBackRain(), GetColorBackNoRain(), changeRain/10f));
 					}
-				} else { 
-					if (precipitation) { 
+				} else {
+					if (precipitation) {
 						Graphics.Clear(GetColorBackRain());
-					} else { 
+					} else {
 						Graphics.Clear(GetColorBackNoRain());
 					}
 				}
                 //// Day
                 //if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
-                //	Graphics.Clear(Color.LightSkyBlue); 
+                //	Graphics.Clear(Color.LightSkyBlue);
 
                 //// Night
                 //} else if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
                 //	Graphics.Clear(ColorNightColorBack);
 
                 // Sun rising (before sun)
-			if (Constants.AnimationsGame) {
+			if (Setting.BackgroundFancy){
            /* } else */if (time>=dayStart*hour&&time<=(dayStart+0.5f)*hour) {
              //   if (Constants.AnimationsGame) {
                     float a = -(dayStart*hour-time)/(hour);
                   //  Graphics.Clear(FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a));
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(TextureSunGradient, Fullscreen, ColorWhite*a);
+                    spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointWrap,null,RasterizerState.CullNone,null,MatrixUpScaling);
+                    spriteBatch.Draw(TextureSunGradient, Fullscreen, Color.White*a);
                     spriteBatch.End();
                // } else Graphics.Clear(FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, -(dayStart*hour-time)/(hour)));
 
@@ -6289,8 +6735,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
                     float a = 0.5f+((dayStart+0.5f)*hour-time)/hour;
                  //   Debug.WriteLine(a);
                    // Graphics.Clear(FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a));
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(TextureSunGradient, Fullscreen, ColorWhite*a);
+                    spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointWrap,null,RasterizerState.CullNone,null,MatrixUpScaling);
+                    spriteBatch.Draw(TextureSunGradient, Fullscreen, Color.White*a);
                     spriteBatch.End();
                 //} else Graphics.Clear(FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f+((dayStart+0.5f)*hour-time)/hour));
 
@@ -6300,8 +6746,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
               //  if (Constants.AnimationsGame) {
                     float a = 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
                  //   Graphics.Clear(FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a));
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(TextureSunGradient, Fullscreen, ColorWhite*a);
+                    spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointWrap,null,RasterizerState.CullNone,null,MatrixUpScaling);
+                    spriteBatch.Draw(TextureSunGradient, Fullscreen, Color.White*a);
                     spriteBatch.End();
               //  } else Graphics.Clear(FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2)));
 
@@ -6311,8 +6757,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
                // if (Constants.AnimationsGame) {
                    float a = ((dayEnd+1)*hour-time)/(hour*2);
                  //   Graphics.Clear(FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a));
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(TextureSunGradient, Fullscreen, ColorWhite*a);
+                    spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointWrap,null,RasterizerState.CullNone,null,MatrixUpScaling);
+                    spriteBatch.Draw(TextureSunGradient, Fullscreen, Color.White*a);
                     spriteBatch.End();
               //  } else Graphics.Clear(FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, ((dayEnd+1)*hour-time)/(hour*2)));
 
@@ -6321,7 +6767,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
             #endregion
 
 				#region Clouds
-				if (Constants.AnimationsGame) {
+				if (Setting.Clouds) {
 					int CloudsHeight=250;
 					float sc=0.4f;
 					float CloudsSourceScale=0.2f;
@@ -6331,7 +6777,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					float TextureCloudsSourcePosY=0;
 				  //  if (time<12) TextureCloudsSourcePosY=((float)time/(12*hour)/*WindowX/(TerrainLength*16f)*/)*(TextureClouds.Height-(int)(CloudsHeight*CloudsSourceScale));
 				   // else TextureCloudsSourcePosY=((float)(24*hour-time)/(12*hour)/*WindowX/(TerrainLength*16f)*/)*(TextureClouds.Height-(int)(CloudsHeight*CloudsSourceScale));
-					Color ColorColorize=ColorWhite;
+					Color ColorColorize=Color.White;
 
 					// Night
 					if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
@@ -6350,19 +6796,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								ColorColorize=FastMath.Lerp(ColorDayRain,ColorDay, changeRain/100f);
 							} else ColorColorize=ColorDayRain;
 						} else {
-							if (changeRain<100) { 
+							if (changeRain<100) {
 								ColorColorize=FastMath.Lerp(ColorDay, ColorDayRain, changeRain/100f);
 							} else ColorColorize=ColorDay;
 						}
 
 					// Sun rise
-					} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour){ 
+					} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour){
 						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, (time-dayStart*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, (time-dayStart*hour)/(hour*2));
 						}
-					} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour){ 
+					} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour){
 						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
 						} else {
@@ -6370,19 +6816,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 
 					// Sun setting
-					} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) { 
+					} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
 						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, (time-dayEnd*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, (time-dayEnd*hour)/(hour*2));
 						}
-					} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) { 
+					} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) {
 						if (precipitation) {
 							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
 						} else {
 							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
 						}
-					} 
+					}
 
 					float starty=(float)TextureCloudsSourcePosY/TextureClouds.Height/*CloudsHeight*/;
 					EffectClouds.Parameters["StartY"].SetValue(starty);
@@ -6412,9 +6858,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					EffectClouds.Parameters["SunAngle"].SetValue(new Vector2((float)Math.Cos(angle)*adder/TextureClouds.Width, (float)Math.Sin(angle)*adder/TextureClouds.Height));
 
-
-					//  Biome biome=GetBiomeByPos((int)(PlayerX/16));
-
 					if (BiomePlayer.Name!=BiomeCurrent || BiomePlayer.Name==Biome.None) {
 						ColorLastBiome=ColorBiome;
 						TicksPlayerChangedBiome=60;
@@ -6425,7 +6868,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						TicksPlayerChangedBiome--;
 						ColorBiome=FastMath.Lerp(BiomeColor(BiomePlayer.Name), ColorLastBiome, TicksPlayerChangedBiome/60f);
 					}
-					spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, EffectClouds);
+					spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, EffectClouds, MatrixUpScaling);
 					EffectClouds.Techniques[0].Passes[0].Apply();
 
 					spriteBatch.Draw(TextureClouds,
@@ -6440,7 +6883,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							(int)TextureCloudsSourcePosY,
 							(int)(Global.WindowWidth*CloudsSourceScale),
 							(int)(CloudsHeight*CloudsSourceScale)
-						), 
+						),
 						ColorBiome
 					);
 
@@ -6448,146 +6891,270 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				#endregion
 
-				#region Weather
-				if (/*rain*/actualRainForce>0f) {
-				//	int x, y;
-					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, null, CameraMatrixNoZoom(out int x, out int y));
+				#region Background weather 
+				if (Setting.SnowAndRain) {
+					if (actualRainForce>0f) {
 
-					Rabcr.spriteBatch=spriteBatch;
-					if (Temperature<0) {
-						foreach (ParticleSnow r in snowDots)  r.Draw(x, y,actualRainForce); 
-					} else {
-						foreach (ParticleRain r in rainDots) r.Draw(x, y,actualRainForce);
+					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, transformMatrix: MatrixUpScaling);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+						int cx=0;
+						int cy=0;
+						Rabcr.spriteBatch=spriteBatch;
+						if (Temperature<0) {
+							Color c=Color.White*actualRainForce;
+							foreach (ParticleSnowSmall r in snowDotsSmall)  r.Draw(cx, cy, c);
+						} else {
+							if (Setting.BetterSnowAndRain) 
+								foreach (ParticleRain r in rainDots) r.Draw(cx, cy, actualRainForce);
+							else foreach (ParticleRain r in rainDots) r.DrawBetterQuality(cx, cy, actualRainForce);
+						}
+						spriteBatch.End();
 					}
-					spriteBatch.End();
 				}
-				#endregion
+                #endregion
 
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, camera);
-				float sunAngle=0;
-				if (Constants.AnimationsGame) {
+                #region Sun & moon
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, rasterizerState, transformMatrix: camera);
+
+				if (Setting.SunAndMoon) {
 					if (time>6.5f*hour && time<18.5f*hour) {
-						/*float*/ sunAngle=((time-6.5f*hour)/(12*hour))*FastMath.PI+FastMath.PI; // 0 až 1
+						float sunAngle=((time-6.5f*hour)/(12*hour))*FastMath.PI+FastMath.PI; // 0 to 1
 						float c=(Global.WindowWidthHalf<Global.WindowHeightHalf ? Global.WindowWidthHalf : Global.WindowHeightHalf)*.5f;
 						byte colorch=(byte)((dayAlpha-0.75f)*4f*255);
 						spriteBatch.Draw(sunTexture, new Vector2(WindowCenterX-sunTexture.Width/2+(float)Math.Cos(sunAngle)*c, WindowCenterY-sunTexture.Height/2+FastMath.Sin(sunAngle)*c), new Color(colorch,colorch,colorch,colorch));
-					}else if (time<6.5f*hour) {
-						/*float*/ sunAngle=((time/(6f*hour))*FastMath.PI)*.5f+FastMath.PI1_5; // 0 až 1
+					} else if (time<6.5f*hour) {
+						float sunAngle=((time/(6f*hour))*FastMath.PI)*.5f+FastMath.PI1_5; // 0 to 1
 						byte colorch=(byte)(1-(dayAlpha-0.5f)*4f*255);
 						float c=(Global.WindowWidthHalf<Global.WindowHeightHalf ? Global.WindowWidthHalf : Global.WindowHeightHalf)*.5f;
 						spriteBatch.Draw(TextureMoon, new Vector2(WindowCenterX-23+(float)Math.Cos(sunAngle)*c, WindowCenterY-23+FastMath.Sin(sunAngle)*c),new Rectangle(((int)moonSpeed/46)*46,0,46,46), new Color(colorch,colorch,colorch,colorch));
-					}else if (time>18.5f*hour) {
-						/*float*/ sunAngle=((time-18.5f)/(6f*hour)*FastMath.PI)+FastMath.PI; // 0 až 1
+					} else if (time>18.5f*hour) {
+						float sunAngle=((time-18.5f)/(6f*hour)*FastMath.PI)+FastMath.PI; // 0 to 1
 						byte colorch=(byte)(1-(dayAlpha-0.5f)*4f*255);
 						float c=(Global.WindowWidthHalf<Global.WindowHeightHalf ? Global.WindowWidthHalf : Global.WindowHeightHalf)*.5f;
 						spriteBatch.Draw(TextureMoon, new Vector2(WindowCenterX-23+(float)Math.Cos(sunAngle)*c, WindowCenterY-23+FastMath.Sin(sunAngle)*c),new Rectangle((int)moonSpeed/46*46,0,46,46), new Color(colorch,colorch,colorch,colorch));
 					}
 				}
+                #endregion
 
-				if (wind) {
-					int x=0;
-					int ms=(int)gameTime.TotalGameTime.TotalMilliseconds;
-					foreach (LiveObject lo in LiveObjects) { 
-						if (lo.Root.X>terrainStartIndexX-10) {
-							if (lo.Root.X>terrainStartIndexW+10) break;
+                if (Setting.WavingElements) {
+					if (wind) {
+						int x=0;
+						int ms=(int)gameTime.TotalGameTime.TotalMilliseconds;
+						foreach (LiveObject lo in LiveObjects) {
+							if (lo.Root.X>terrainStartIndexX-10) {
+								if (lo.Root.X>terrainStartIndexW+10) break;
 
-							if (lo is Tree tree) {
-								x+=133;
+								if (lo is Tree tree) {
+									x+=133;
 
-								float a=((ms+x)/1000f)*2*FastMath.PI;
-								float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4))*0.5f-1.5f)*0.015f;
-							
-								if (windRirectionRight) tree.angle=val;
-								else tree.angle=-val;
-							} else if (lo is Cactus cactus) {
-								x+=133;
-								float a=((ms+x)/1000f)*2*FastMath.PI;
-								float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4))*0.5f-1.5f)*0.015f;
-							
-								if (windRirectionRight) cactus.angle=val;
-								else cactus.angle=-val;
+									float a=((ms+x)/1000f)*2*FastMath.PI;
+									float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4f))*0.5f-1.5f)*0.015f;
 
-								// if (cactus.Root.X<terrainStartIndexW+10) break;
-						  //  }
+									if (windRirectionRight) tree.angle=val;
+									else tree.angle=-val;
+								} else if (lo is Cactus cactus) {
+									x+=133;
+									float a=((ms+x)/1000f)*2*FastMath.PI;
+									float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4f))*0.5f-1.5f)*0.015f;
+
+									if (windRirectionRight) cactus.angle=val;
+									else cactus.angle=-val;
+
+									// if (cactus.Root.X<terrainStartIndexW+10) break;
+							  //  }
+								}
 							}
 						}
 					}
 				}
-
+				
 				#region Draw blocks
 				int[] starts=new int[terrainStartIndexW];
-			 
-				// Back and solid
-				for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
-					Terrain chunk=terrain[x];
-					Block[] blocks=chunk.SolidBlocks;
-					starts[x]=chunk.StartSomething>terrainStartIndexY? chunk.StartSomething: terrainStartIndexY;
 
-					for (int y = starts[x]/*chunk.StartSomething>terrainStartIndexY? chunk.StartSomething: terrainStartIndexY*/; y<terrainStartIndexH; y++) {
-						
-						//blocks[y].Draw(); 
-						if (chunk.IsBackground[y]) chunk.Background[y].Draw(); 
+				// Back and solid
+				{
+					Terrain chunk;
+					for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
+						chunk=terrain[x];
+						starts[x]=chunk.StartSomething>terrainStartIndexY ? chunk.StartSomething : terrainStartIndexY;
+
+						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+							if (chunk.IsBackground[y]) chunk.Background[y].Draw();
+						}
 					}
 				}
 
 				// top and mobs
-				for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
-					Terrain chunk=terrain[x];
-					Block[] blocks=chunk.TopBlocks;
-					for (int y = starts[x]/*chunk.StartSomething>terrainStartIndexY? chunk.StartSomething: terrainStartIndexY*/; y<terrainStartIndexH; y++) {
-						if (chunk.IsSolidBlocks[y]) chunk.SolidBlocks[y].Draw(); 
-						else if (chunk.IsTopBlocks[y]) blocks[y].Draw(); 
-					}
-				
-					for (int i=0; i<chunk.Plants.Count; i++) chunk.Plants[i].Draw();
-					for (int i=0; i<chunk.Mobs.Count; i++) chunk.Mobs[i].Draw();
-				}
+				{
+					Terrain chunk;
+					for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
+						chunk=terrain[x];
+						Block[] blocks=chunk.TopBlocks;
 
+						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+							if (!chunk.IsSolidBlocks[y]) {
+								if (chunk.IsTopBlocks[y]) blocks[y].Draw(); 
+							}
+						}
+
+						for (int i=0; i<chunk.Plants.Count; i++) chunk.Plants[i].Draw();
+						for (int i=0; i<chunk.Mobs.Count; i++) chunk.Mobs[i].Draw();
+					}
+				}
 				#endregion
 
-				foreach (FallingLeave fl in FallingLeaves) fl.Draw();
+				for (int i=0; i<FallingLeaves.Count; i++) FallingLeaves[i].Draw();
 
 				foreach (GunShot gs in GunShots) gs.Draw();
-			 
-				if (destroing) spriteBatch.Draw(destructionTexture, new Vector2(mousePosRoundX, mousePosRoundY), new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16),ColorWhite);
-
+								
 				// Draw items
 				foreach (Item i in DroppedItems) i.DrawItem();
 
-				#region Player
-				if (rocket) {
-					if (rocketDown) {
-						spriteBatch.Draw(solidFuelSmokeTexture, new Rectangle((int)WindowCenterX-10, (int)WindowCenterY-40+rocketTexture.Height-10,26,20+random.Int(10)), ColorWhite);
-						spriteBatch.Draw(rocketTexture, new Vector2(WindowCenterX-10, WindowCenterY-40), ColorWhite);
+                #region Fog
+                spriteBatch.End();
+                if (Setting.Fog==Setting.FogTypes.Fancy) {
+					
+					if (precipitation) { 
+						if (Temperature<0){
+							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
+							EffectFog.Parameters["Opacity"].SetValue(1f*actualRainForce);
+						} else {
+							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125),0.1f);
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*actualRainForce);
+						//	EffectFog.Parameters["Color"].SetValue(new Color(69,118,154).ToVector4());
+						}
+						if (wind) { 
+							if (windRirectionRight) EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*(1f+windForce)));
+							else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*(1f+windForce)));
+						} else { 
+							if (windRirectionRight) EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
+							else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
+						}
+					} else { 
+						if (Temperature<0) {
+							EffectFog.Parameters["Opacity"].SetValue(1f*actualRainForce);
+						//	EffectFog.Parameters["Color"].SetValue(new Vector4(1f,1f,1f,1f));
+							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
+						} else {
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*actualRainForce);
+							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
+							//EffectFog.Parameters["Color"].SetValue(new Color(69,118,154).ToVector4());
+						}
+					}
+
+					EffectFog.Parameters["Color"].SetValue(FogColor.ToVector4());
+
+					if (actualRainForce>0){
+						EffectFog.Parameters["PosX"].SetValue(WindowCenterX/(float)Global.WindowWidth*10);
+						EffectFog.Parameters["PosY"].SetValue(WindowCenterY/(float)Global.WindowHeight*10);
+					
+						//EffectFog.Parameters["Octaves"].SetValue(3);
+						
+						if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
+						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
+						EffectFog.Techniques[0].Passes[0].Apply();
+
+						spriteBatch.Draw(pixel, Fullscreen, Color.White);
+						spriteBatch.End();
+
+						//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, camera);
+					}
+                }else if (Setting.Fog==Setting.FogTypes.Plain) {
+					float oc=0;
+					if (precipitation) {
+						if (Temperature<0){
+							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
+							oc=1f*actualRainForce;
+						} else {
+							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125),0.1f);
+							oc=0.5f*actualRainForce;
+						}
+					} else { 
+						if (Temperature<0) {
+							oc=1f*actualRainForce;
+							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
+						} else {
+							oc=0.5f*actualRainForce;
+							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
+						}
+					}
+
+					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, transformMatrix: MatrixUpScaling);
+
+					spriteBatch.Draw(pixel, Fullscreen, FogColor*oc*0.2f);
+					spriteBatch.End();
+				}
+                #endregion
+
+                #region Weather Foreground
+				if (actualRainForce>0f) {
+					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: MatrixUpScaling);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+					Rabcr.spriteBatch=spriteBatch;
+
+					int x=0, y=0;
+
+                    if (Temperature<0f) {
+						Color c=Color.White*actualRainForce;
+						foreach (ParticleSnow r in snowDots2) r.Draw(x, y, c);
 					} else {
-						spriteBatch.Draw(solidFuelSmokeTexture, new Rectangle((int)WindowCenterX-10, (int)WindowCenterY-40+rocketTexture.Height-10,26,70+random.Int(15)), ColorWhite);
-						spriteBatch.Draw(rocketTexture, new Vector2(WindowCenterX-10, WindowCenterY-40), ColorWhite);
+						if (Setting.BetterSnowAndRain) foreach (ParticleRain r in rainDots2) r.DrawBetterQuality(x, y, actualRainForce);
+						else foreach (ParticleRain r in rainDots2) r.Draw(x, y, actualRainForce);
+					}
+					spriteBatch.End();
+				}
+				
+				#endregion
+			
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: camera);
+
+				#region SolidBlocks
+				{
+					Terrain chunk;
+					for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
+						chunk=terrain[x];
+						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+							if (chunk.IsSolidBlocks[y]) chunk.SolidBlocks[y].Draw();
+						}
+					}
+				}
+                #endregion
+
+                #region Player
+                if (rocket) {
+					if (rocketDown) {
+						spriteBatch.Draw(solidFuelSmokeTexture, new Rectangle((int)WindowCenterX-10, (int)WindowCenterY-40+rocketTexture.Height-10,26,20+FastRandom.Int(10)), Color.White);
+						spriteBatch.Draw(rocketTexture, new Vector2(WindowCenterX-10, WindowCenterY-40), Color.White);
+					} else {
+						spriteBatch.Draw(solidFuelSmokeTexture, new Rectangle((int)WindowCenterX-10, (int)WindowCenterY-40+rocketTexture.Height-10,26,70+FastRandom.Int(15)), Color.White);
+						spriteBatch.Draw(rocketTexture, new Vector2(WindowCenterX-10, WindowCenterY-40), Color.White);
 					}
 
 				} else if (showPlayer) {
 					if (swimming || waterDown) {
 						if (speedDir==-1) {
 							// <-
-							Rectangle curImg=new Rectangle(playerImg/22*39, 0, 39, 20);
-							Vector2 vector=new Vector2(PlayerX-11, PlayerY+8);
+							Rectangle curImg=new(playerImg/22*39, 0, 39, 20);
+							Vector2 vector=new(PlayerXInt-11, PlayerYInt+8);
 
-							Vector2 vectorHead=new Vector2(PlayerX-11+78/2, PlayerY+8);
-							Vector2 vectorChest=new Vector2(PlayerX-11+78/2-75/2-1, PlayerY+8+58/2-3-2);
+							Vector2 vectorHead=new(PlayerXInt-11+78/2, PlayerYInt+8);
+							Vector2 vectorChest=new(PlayerXInt-11+78/2-75/2-1, PlayerYInt+8+58/2-3-2);
 
-							Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2+7/*?*/, vector.Y-39/2+12-1+38/2);
+							Vector2 rameno=new(vector.X-11+2+1+27/2-2+7/*?*/, vector.Y-39/2+12-1+38/2);
 							handAngle=(1-swimmingTicks)*2*FastMath.PI;
 
 							Rectangle recHand, recCloth;
 							Vector2 vecOrigin;
 
-							if (ClothesChestTop is null) {
-								if (ClothesChest is null) DrawItemInHandBack(null, Color.White, 0);
+							if (ClothesChestTop == null) {
+								if (ClothesChest == null) DrawItemInHandBack(null, Color.White, 0);
 								else DrawItemInHandBack(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 							} else DrawItemInHandBack(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
 
 							//Feet
-							if (ClothesFeet!=null) spriteBatch.Draw(ClothesFeet.TextureSwimming, vector, curImg, ClothesFeet.Color, 0, Vector2Zero, 1,SpriteEffects.None, 1f);
-							else spriteBatch.Draw(TexturePlayerSwimmingFeet, vector, curImg, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.None, 0);
+							if (ClothesFeet!=null) spriteBatch.Draw(ClothesFeet.TextureSwimming, vector, curImg, ClothesFeet.Color, 0, Vector2Zero, 1, SpriteEffects.None, 1f);
+							else spriteBatch.Draw(TexturePlayerSwimmingFeet, vector, curImg, Color.White, 0, Vector2Zero, 1, SpriteEffects.None, 0);
 
 							// Legs
 							if (ClothesLegs!=null) {
@@ -6599,21 +7166,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.None, 0);
 									else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.None, 0);
 								} else {
-									if (Global.YoungPlayer) spriteBatch.Draw(TextureSwimmingDownCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.None, 0);
+									if (Global.YoungPlayer) spriteBatch.Draw(TextureSwimmingDownCensored, vector, null, Color.White, 0, Vector2Zero, 1, SpriteEffects.None, 0);
 								}
 							}
 
 							//Head
 							spriteBatch.Draw(TexturePlayerWalkingFace, vectorHead, null, Setting.ColorSkin, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
 							spriteBatch.Draw(TexturePlayerWalkingEyes, vectorHead, null, Setting.eyesColor, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
-							spriteBatch.Draw(TexturePlayerWalkingMouth, vectorHead, null, ColorWhite, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
+							spriteBatch.Draw(TexturePlayerWalkingMouth, vectorHead, null, Color.White, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
 							if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerWalkingMoustage, vectorHead, null, Setting.moustageColor, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
 							if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerWalkingHair, vectorHead, null, Setting.hairColor, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipVertically, 0);
 
 							if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureWalkingOrSwimming, new Vector2(vectorHead.X-78/2, vectorHead.Y+46/2), null, ClothesHead.Color, FastMath.PIHalf*3, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 
 							// Chest
-							if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
+							if (ClothesChestTop == null || ClothesChestTop?.ShowTShirt==true) {
 								if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, /*new Vector2(vectorChest.X,vectorChest.Y-2)*/ vectorChest, null, ClothesChest.Color, FastMath.PI1_5, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 								else {
 									spriteBatch.Draw(TexturePlayerWalkingChest, vectorChest, null, Setting.ColorSkin, FastMath.PI1_5, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
@@ -6621,25 +7188,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									else {
 										if (Setting.sex==Sex.Girl) {
 											if (Global.YoungPlayer) {
-												if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureSwimmingUpCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+												if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureSwimmingUpCensored, vector, null, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 											}
 										}
 									}
 								}
 							}
 							if (ClothesChestTop!=null) spriteBatch.Draw(ClothesChestTop.TextureWalking, vectorChest, null, ClothesChestTop.Color, FastMath.PI1_5, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-							if (ClothesChestTop is null) {
-								if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
+							if (ClothesChestTop == null) {
+								if (ClothesChest == null) DrawItemInHandTop(null, Color.White, 0);
 								else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 							} else DrawItemInHandTop(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
 
-							void DrawItemInHandTop(Texture2D texCloth, Color colorCloth, int size){
-								spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None,1f);
+							void DrawItemInHandTop(Texture2D texCloth, Color colorCloth, int size) {
+								spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None, 1f);
 								if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None,1f);
 
 								if (InventoryNormal[boxSelected]!=null){
 									if (InventoryNormal[boxSelected].Id!=0) {
-										Rectangle recItem=new Rectangle(
+										Rectangle recItem=new(
 											(int)(((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4),
 											(int)(((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4),
 											8,
@@ -6648,11 +7215,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										switch (InventoryNormal[boxSelected]) {
 											case ItemInvBasic16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvBasic32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvBasicColoritzed32NonStackable i:
@@ -6660,27 +7227,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												break;
 
 											case ItemInvFood16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvFood32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvNonStackable32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvNonStackable16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 												case ItemInvTool16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 												case ItemInvTool32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											#if DEBUG
@@ -6697,43 +7264,43 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								recCloth =new Rectangle(0,0,4,size);
 
 								spriteBatch.Draw(
-									TextureHand, 
-									rameno, 
-									recHand, 
+									TextureHand,
+									rameno,
+									recHand,
 									new Color(
-										(byte)(Setting.ColorSkin.R*0.75f), 
-										(byte)(Setting.ColorSkin.G*0.75f), 
+										(byte)(Setting.ColorSkin.R*0.75f),
+										(byte)(Setting.ColorSkin.G*0.75f),
 										(byte)(Setting.ColorSkin.B*0.75f),
 										(byte)255
-									), 
-									handAngle-FastMath.PI, 
-									vecOrigin, 
-									1f, 
+									),
+									handAngle-FastMath.PI,
+									vecOrigin,
+									1f,
 									SpriteEffects.None,
 									1f);
 								if (texCloth!=null) spriteBatch.Draw(texCloth, rameno, recCloth, new Color((byte)(colorCloth.R*0.75f),(byte)(colorCloth.G*0.75f),(byte)(colorCloth.B*0.75f),(byte)255), handAngle-FastMath.PI, Vector2_2, 1, SpriteEffects.None,1f);
 							}
 						} else {
 							//->
-							Rectangle curImg=new Rectangle(playerImg/22*39, 0, 39, 20);
-							Vector2 vector=new Vector2(PlayerX-11-15-3, PlayerY+8);
-							Vector2 vectorHead=new Vector2(PlayerX-11+46/2, PlayerY+8);
-							Vector2 vectorChest=new Vector2(PlayerX-11-22+44, PlayerY+8+2-3+2);
+							Rectangle curImg=new(playerImg/22*39, 0, 39, 20);
+							Vector2 vector=new(PlayerXInt-11-15-3, PlayerYInt+8);
+							Vector2 vectorHead=new(PlayerXInt-11+46/2, PlayerYInt+8);
+							Vector2 vectorChest=new(PlayerXInt-11-22+44, PlayerYInt+8+2-3+2);
 
-							Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2+7+20, vector.Y-39/2+12-1+38/2);
+							Vector2 rameno=new(vector.X-11+2+1+27/2-2+7+20, vector.Y-39/2+12-1+38/2);
 							handAngle=swimmingTicks*2*FastMath.PI;
 
 							Rectangle recHand, recCloth;
 							Vector2 vecOrigin;
 
-							if (ClothesChestTop is null) {
-								if (ClothesChest is null) DrawItemInHandBack(null, Color.White, 0);
+							if (ClothesChestTop == null) {
+								if (ClothesChest == null) DrawItemInHandBack(null, Color.White, 0);
 								else DrawItemInHandBack(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 							} else DrawItemInHandBack(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
-							
+
 							//feet
 							if (ClothesFeet!=null) spriteBatch.Draw(ClothesFeet.TextureSwimming, vector, curImg, ClothesFeet.Color, 0, Vector2Zero, 1,SpriteEffects.FlipHorizontally, 1f);
-							else spriteBatch.Draw(TexturePlayerSwimmingFeet, vector, curImg, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+							else spriteBatch.Draw(TexturePlayerSwimmingFeet, vector, curImg, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 
 							// legs
 							if (ClothesLegs!=null) {
@@ -6742,24 +7309,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 								spriteBatch.Draw(TexturePlayerSwimmingLegs, vector, curImg, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 								if (ClothesUnderwearDown!=null) {
-									if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-									else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureSwimming, vector, curImg, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 								} else {
-									if (Global.YoungPlayer) spriteBatch.Draw(TextureSwimmingDownCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									if (Global.YoungPlayer) spriteBatch.Draw(TextureSwimmingDownCensored, vector, null, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 								}
 							}
 
 							// Head
 							spriteBatch.Draw(TexturePlayerWalkingFace, vectorHead, null, Setting.ColorSkin,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
 							if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerWalkingMoustage, vectorHead, null, Setting.moustageColor,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
-							spriteBatch.Draw(TexturePlayerWalkingMouth, vectorHead, null, ColorWhite,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
+							spriteBatch.Draw(TexturePlayerWalkingMouth, vectorHead, null, Color.White,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
 							if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerWalkingHair, vectorHead, null, Setting.hairColor,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
 							spriteBatch.Draw(TexturePlayerWalkingEyes, vectorHead, null, Setting.eyesColor,FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
 
 							if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureStatic, vectorHead, null, ClothesHead.Color, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
 
 							//Chest
-							if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
+							if (ClothesChestTop == null || ClothesChestTop?.ShowTShirt==true) {
 								if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, /*vectorChest*/new Vector2(vectorChest.X, vectorChest.Y-2), null, ClothesChest.Color, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 								else {
 									spriteBatch.Draw(TexturePlayerWalkingChest, vectorChest, null, Setting.ColorSkin, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
@@ -6774,8 +7341,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 							if (ClothesChestTop!=null) spriteBatch.Draw(ClothesChestTop.TextureWalking, vectorChest, null, ClothesChestTop.Color, FastMath.PIHalf, Vector2Zero, 1, SpriteEffects.None, 0);
-							if (ClothesChestTop is null) {
-								if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
+							if (ClothesChestTop == null) {
+								if (ClothesChest == null) DrawItemInHandTop(null, Color.White, 0);
 								else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 							} else DrawItemInHandTop(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
 
@@ -6785,7 +7352,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								if (InventoryNormal[boxSelected]!=null){
 									if (InventoryNormal[boxSelected].Id!=0) {
-										Rectangle recItem=new Rectangle(
+										Rectangle recItem=new(
 											(int)(((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4),
 											(int)(((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4),
 											8,
@@ -6794,11 +7361,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										switch (InventoryNormal[boxSelected]) {
 											case ItemInvBasic16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvBasic32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvBasicColoritzed32NonStackable i:
@@ -6806,27 +7373,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												break;
 
 											case ItemInvFood16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvFood32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvNonStackable32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											case ItemInvNonStackable16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 												case ItemInvTool16 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 												case ItemInvTool32 i:
-												spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+												spriteBatch.Draw(i.Texture, recItem, Color.White);
 												break;
 
 											#if DEBUG
@@ -6850,17 +7417,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						switch (playerState) {
 							default:
 								{
-									Vector2 vector=new Vector2((int)PlayerX-11, (int)PlayerY-(int)(39*0.5f));
+									Vector2 vector=new(PlayerXInt-11, PlayerYInt-(int)(39*0.5f));
 
-									Vector2 pointing=new Vector2(mouseRealPosX-Global.WindowWidthHalf, mouseRealPosY-Global.WindowHeightHalf);
-									Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2, vector.Y-39/2+12-1+38/2);
+									Vector2 pointing=new(mouseRealPosX-Global.WindowWidthHalf, mouseRealPosY-Global.WindowHeightHalf);
+									Vector2 rameno=new(vector.X-11+2+1+27/2-2, vector.Y-39/2+12-1+38/2);
 									Vector2 hand=Vector2.Normalize(pointing)*HandSize;
 									hand.X+=rameno.X;
 									hand.Y+=rameno.Y;
 									Vector2 center=(hand+rameno)/2;
 
 									handAngle=(float)Math.Atan2(rameno.Y-hand.Y, rameno.X-hand.X)+FastMath.PIHalf;
+									{
+										int id=InventoryNormal[boxSelected].Id;
+										//if (id!=(int)Items.Gun) {
+											if (destroing){ 
+												destroyingTime+=0.1f;
+											}else{ 
+												if (destroyingTime<(int)(destroyingTime+0.5f)) { 
+													destroyingTime+=0.1f;
+												}else destroyingTime=0;
+											}
 
+											handAngle+=(float)Math.Sin(destroyingTime*FastMath.PI);
+										//}
+									}
 									// Legs
 									if (ClothesLegs!=null) {
 										if (ClothesLegs.ShowBodyLegs) spriteBatch.Draw(TexturePlayerStaticLegs, vector, Setting.ColorSkin);
@@ -6871,12 +7451,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (ClothesChest==null)spriteBatch.Draw(ClothesUnderwearDown.TextureStatic, vector, ClothesUnderwearDown.Color);
 											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureStatic, vector, ClothesUnderwearDown.Color);
 										} else {
-											if (Global.YoungPlayer) spriteBatch.Draw(TextureStaticDownCensored, vector, ColorWhite);
+											if (Global.YoungPlayer) spriteBatch.Draw(TextureStaticDownCensored, vector, Color.White);
 										}
 									}
 
 									// Chest
-									if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
+									if (ClothesChestTop == null || ClothesChestTop?.ShowTShirt==true) {
 										if (ClothesChest!=null) {
 											spriteBatch.Draw(ClothesChest.TextureStatic, vector, ClothesChest.Color);
 										} else {
@@ -6885,7 +7465,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											else {
 												if (Setting.sex==Sex.Girl) {
 													if (Global.YoungPlayer) {
-														if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureStaticUpCensored, vector, ColorWhite);
+														if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureStaticUpCensored, vector, Color.White);
 													}
 												}
 											}
@@ -6901,93 +7481,186 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									// Head
 									spriteBatch.Draw(TexturePlayerStaticFace, vector, Setting.ColorSkin);
 									if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerStaticMoustage, vector, Setting.moustageColor);
-									spriteBatch.Draw(TexturePlayerStaticMouth, vector, ColorWhite);
+									spriteBatch.Draw(TexturePlayerStaticMouth, vector, Color.White);
 									if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerStaticHair, vector, Setting.hairColor);
 									spriteBatch.Draw(TexturePlayerStaticEyes, vector, Setting.eyesColor);
 
 									if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureStatic, vector, ClothesHead.Color);
 
-									if (ClothesChestTop is null) {
-										if (ClothesChest is null)DrawItemInHand(null, Color.White, 0);
+									if (ClothesChestTop == null) {
+										if (ClothesChest == null) DrawItemInHand(null, Color.White, 0);
 										else DrawItemInHand(ClothesChest?.Texture2DClothHand, ClothesChest.Color, (int)ClothesChest?.handSize);
 									} else DrawItemInHand(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color, (int)ClothesChestTop.handSize);
-									
-									void DrawItemInHand(Texture2D texCloth, Color colorCloth, int size) {
-										Rectangle recHand= new Rectangle(0,0,4,HandSize-size), recCloth=new Rectangle(0,0,4,size);
-										Vector2 vecOrigin=new Vector2(2,2-size);
-										
-										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None,1f);
-										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None,1f);
 
-										// Right
-										rameno.X+=17;
-										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, 0, vecOrigin, 1, SpriteEffects.None,1f);
-										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, 0, Vector2_2, 1, SpriteEffects.None,1f);
-										rameno.X-=17;
+                                void DrawItemInHand(Texture2D texCloth, Color colorCloth, int size) {
+                                    Rectangle
+                                        recHand= new(0, 0, 4, HandSize-size),
+                                            recCloth=new(0,0,4,size);
+                                    Vector2 vecOrigin=new(2,2-size);
+   // Right
+   rameno.X += 17;
+    spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, 0, vecOrigin, 1, SpriteEffects.None, 1f);
+                                    if (texCloth != null) spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, 0, Vector2_2, 1, SpriteEffects.None, 1f);
+rameno.X -= 17;
+                                    spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None, 1f);
+                                    if (texCloth != null) spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None, 1f);
 
-										if (InventoryNormal[boxSelected]!=null){
-											if (InventoryNormal[boxSelected].Id!=0) {
-												Rectangle recItem=new Rectangle(
-													(int)(((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4),
-													(int)(((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4),
-													8,
-													8
-												);
+                                 
+                                 
+                                
+                                    
 
-												switch (InventoryNormal[boxSelected]) {
-													case ItemInvBasic16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													case ItemInvBasic32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													case ItemInvBasicColoritzed32NonStackable i:
-														spriteBatch.Draw(i.Texture, recItem, i.color);
-														break;
-
-													case ItemInvFood16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													case ItemInvFood32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													case ItemInvNonStackable32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													case ItemInvNonStackable16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													 case ItemInvTool16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													 case ItemInvTool32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
-														break;
-
-													#if DEBUG
-													default: throw new Exception("Unknown category");
-													#endif
-												}
+                                    if (InventoryNormal[boxSelected] != null) {
+                                        if (InventoryNormal[boxSelected].Id != 0) {
+                                            Vector2 recItem=new(
+                                                    ((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4,
+                                                    ((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4
+                                                );
+											if (SuperSamplingActing==1f){
+												recItem.X=(int)(recItem.X+0.5f);
+												recItem.Y=(int)(recItem.Y+0.5f);
 											}
-										}
+                                            switch (InventoryNormal[boxSelected]) {
+                                                case ItemInvBasic16 i:
+                                                    spriteBatch.Draw(
+                                                        texture: i.Texture,
+                                                        position: recItem,
+                                                        sourceRectangle: null,
+                                                        color: Color.White,
+                                                        rotation: 0f,
+                                                        scale: 0.5f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f
+                                                    );
+                                                    break;
 
-									}
-								}
+                                                case ItemInvBasic32 i:
+                                                    spriteBatch.Draw(
+                                                        texture: i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.25f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvBasicColoritzed32NonStackable i:
+                                                    spriteBatch.Draw(
+                                                        texture: i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        i.color,
+                                                        scale: 0.25f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvFood16 i:
+                                                    spriteBatch.Draw(
+                                                        i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.5f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvFood32 i:
+                                                    spriteBatch.Draw(
+                                                        i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.25f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvNonStackable32 i:
+                                                    spriteBatch.Draw(
+                                                        i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.25f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvNonStackable16 i:
+                                                    spriteBatch.Draw(
+                                                        i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.5f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvTool16 i:
+                                                    spriteBatch.Draw(
+                                                        i.Texture,
+                                                        recItem,
+                                                        sourceRectangle: null,
+                                                        Color.White,
+                                                        scale: 0.5f,
+                                                        rotation: 0f,
+                                                        origin: Vector2.Zero,
+                                                        effects: SpriteEffects.None,
+                                                        layerDepth: 0f);
+                                                    break;
+
+                                                case ItemInvTool32 i:
+													{
+														Vector2 editpos=GameMethods.EditMouseItemPos(InventoryNormal[boxSelected].Id);
+														float scale=GameMethods.EditMouseItemScale(InventoryNormal[boxSelected].Id);
+														spriteBatch.Draw(
+															texture: i.Texture,
+															new Vector2((handAngle>FastMath.PI || handAngle<=0) ? (recItem.X-(32*scale-editpos.X)+16*scale) : (recItem.X-editpos.X), recItem.Y-editpos.Y),
+															sourceRectangle: null,
+															Color.White,
+															scale: scale,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: (handAngle>FastMath.PI || handAngle<=0) != GameMethods.EditMouseItemFlip(InventoryNormal[boxSelected].Id) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+															layerDepth: 0f);
+													//Debug.WriteLine(handAngle);
+													}
+                                                    break;
+
+												#if DEBUG
+                                                default: throw new Exception("Unknown category");
+												#endif
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
 								break;
 
 							case 2://->
 								{
-									Rectangle curImg=new Rectangle((playerImg/20)*20, 0, 20, 39);
-									Vector2 vector=new Vector2(PlayerX-11, PlayerY-39/2);
+									Rectangle curImg=new((playerImg/20)*20, 0, 20, 39);
+									Vector2 vector=new(PlayerXInt-11, PlayerYInt-39/2);
 
-									Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2+7, vector.Y-39/2+12-1+38/2+1);
+									Vector2 rameno=new(vector.X-11+2+1+27/2-2+7, vector.Y-39/2+12-1+38/2+1);
 									int ticks=gameTime.TotalGameTime.Milliseconds;
 
 									Rectangle recHand, recCloth;
@@ -6997,8 +7670,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									else if (ticks<750) handAngle=((ticks-250)/250f)*WalkingHandMaxAngle-WalkingHandMaxAngle;
 									else handAngle=WalkingHandMaxAngle-((ticks-750)/250f)*WalkingHandMaxAngle;
 
-									if (ClothesChestTop is null) {
-										if (ClothesChest is null) DrawItemInHandBack(null, Color.White, 0);
+									if (ClothesChestTop == null) {
+										if (ClothesChest == null) DrawItemInHandBack(null, Color.White, 0);
 										else DrawItemInHandBack(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 									} else DrawItemInHandBack(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
 
@@ -7011,7 +7684,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									// Head
 									spriteBatch.Draw(TexturePlayerWalkingFace, new Vector2(vector.X-1, vector.Y), Setting.ColorSkin);
 									spriteBatch.Draw(TexturePlayerWalkingEyes, new Vector2(vector.X-1, vector.Y), Setting.eyesColor);
-									spriteBatch.Draw(TexturePlayerWalkingMouth, new Vector2(vector.X-1, vector.Y), ColorWhite);
+									spriteBatch.Draw(TexturePlayerWalkingMouth, new Vector2(vector.X-1, vector.Y), Color.White);
 									if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerWalkingMoustage, new Vector2(vector.X-1, vector.Y), Setting.moustageColor);
 									if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerWalkingHair, new Vector2(vector.X-1, vector.Y), Setting.hairColor);
 
@@ -7025,11 +7698,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
 											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color);
 										} else {
-											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite);
+											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, Color.White);
 										}
 									}
 									// Chest
-									if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
+									if (ClothesChestTop == null || ClothesChestTop?.ShowTShirt==true) {
 										if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, vector, null, ClothesChest.Color);
 										else {
 											spriteBatch.Draw(TexturePlayerWalkingChest, vector, null, Setting.ColorSkin);
@@ -7048,8 +7721,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (ClothesHead!=null) spriteBatch.Draw(ClothesHead.TextureWalkingOrSwimming, new Vector2(vector.X-1, vector.Y), ClothesHead.Color);
 
 
-									if (ClothesChestTop is null) {
-										if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
+									if (ClothesChestTop == null) {
+										if (ClothesChest == null) DrawItemInHandTop(null, Color.White, 0);
 										else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color, (int)ClothesChest.handSize);
 									} else DrawItemInHandTop(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color, (int)ClothesChestTop.handSize);
 
@@ -7059,48 +7732,128 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										if (InventoryNormal[boxSelected]!=null){
 											if (InventoryNormal[boxSelected].Id!=0) {
-												Rectangle recItem=new Rectangle(
-													(int)(((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4),
-													(int)(((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4),
-													8,
-													8
+												Vector2 recItem=new(
+													((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4,
+													((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4
 												);
 
 												switch (InventoryNormal[boxSelected]) {
 													case ItemInvBasic16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															texture: i.Texture, 
+															position: recItem,
+															sourceRectangle: null,
+															color: Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.5f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f
+														);
 														break;
 
 													case ItemInvBasic32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.25f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvBasicColoritzed32NonStackable i:
-														spriteBatch.Draw(i.Texture, recItem, i.color);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem,
+															sourceRectangle: null,
+															i.color,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.25f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvFood16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.5f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvFood32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.25f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvNonStackable32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.25f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvNonStackable16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.5f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													 case ItemInvTool16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.5f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													 case ItemInvTool32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null,
+															Color.White,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															scale: 0.25f,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													#if DEBUG
@@ -7116,23 +7869,22 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										vecOrigin=new Vector2(2,2-size);
 
 										spriteBatch.Draw(TextureHand, rameno, recHand, new Color((byte)(Setting.ColorSkin.R*0.75f), (byte)(Setting.ColorSkin.G*0.75f), (byte)(Setting.ColorSkin.B*0.75f),(byte)255), -handAngle, vecOrigin, 1, SpriteEffects.None,1f);
-										
-											recCloth=new Rectangle(0,0,4,size);
+
+										recCloth=new Rectangle(0,0,4,size);
 										if (texCloth!=null) {
 											spriteBatch.Draw(texCloth, rameno, recCloth, new Color((byte)(colorCloth.R*0.75f),(byte)(colorCloth.G*0.75f),(byte)(colorCloth.B*0.75f),(byte)255), -handAngle, Vector2_2, 1, SpriteEffects.None,1f);
-										} 
+										}
 									}
 								}
 								break;
 
 							case 1://<-
 								{
-									Rectangle curImg=new Rectangle((playerImg/20)*20, 0, 20, 39);
-								//	Rectangle curImg2=new Rectangle((playerImg2/20)*20, 0, 20, 39);
-						
-									Vector2 vector=new Vector2(PlayerX-11, PlayerY-39/2);
+									Rectangle curImg=new((playerImg/20)*20, 0, 20, 39);
 
-									Vector2 rameno=new Vector2(vector.X-11+2+1+27/2-2+7, vector.Y-39/2+12-1+38/2+1);
+									Vector2 vector=new(PlayerXInt-11, PlayerYInt-39/2);
+
+									Vector2 rameno=new(vector.X-11+2+1+27/2-2+7, vector.Y-39/2+12-1+38/2+1);
 									int ticks=gameTime.TotalGameTime.Milliseconds;
 
 									Rectangle recHand, recCloth;
@@ -7142,8 +7894,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									else if (ticks<750) handAngle=((ticks-250)/250f)*WalkingHandMaxAngle-WalkingHandMaxAngle;
 									else handAngle=WalkingHandMaxAngle-((ticks-750)/250f)*WalkingHandMaxAngle;
 
-									if (ClothesChestTop is null) {
-										if (ClothesChest is null) DrawItemInHandBack(null, Color.White, 0);
+									if (ClothesChestTop == null) {
+										if (ClothesChest == null) DrawItemInHandBack(null, Color.White, 0);
 										else DrawItemInHandBack(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
 									} else DrawItemInHandBack(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
 
@@ -7156,7 +7908,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									spriteBatch.Draw(TexturePlayerWalkingFace, new Vector2(vector.X-1,vector.Y), null, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 									spriteBatch.Draw(TexturePlayerWalkingEyes, new Vector2(vector.X-1,vector.Y), null, Setting.eyesColor, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-									spriteBatch.Draw(TexturePlayerWalkingMouth,new Vector2(vector.X-1,vector.Y), null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+									spriteBatch.Draw(TexturePlayerWalkingMouth,new Vector2(vector.X-1,vector.Y), null, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 									if (Setting.moustageType!=0)spriteBatch.Draw(TexturePlayerWalkingMoustage, new Vector2(vector.X-1,vector.Y), null, Setting.moustageColor, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 									if (Setting.hairType!=0)spriteBatch.Draw(TexturePlayerWalkingHair, new Vector2(vector.X-1,vector.Y), null, Setting.hairColor, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 
@@ -7172,11 +7924,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (ClothesChest==null) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 											else if (!ClothesChest.IsDress) spriteBatch.Draw(ClothesUnderwearDown.TextureWalking, vector, curImg, ClothesUnderwearDown.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 										} else {
-											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+											if (Global.YoungPlayer) spriteBatch.Draw(TextureWalkingDownCensored, vector, null, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 										}
 									}
 									// Chest
-									if (ClothesChestTop is null || ClothesChestTop?.ShowTShirt==true) {
+									if (ClothesChestTop == null || ClothesChestTop?.ShowTShirt==true) {
 										if (ClothesChest!=null) spriteBatch.Draw(ClothesChest.TextureWalking, new Vector2(vector.X-2, vector.Y) , null, ClothesChest.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 										else {
 											spriteBatch.Draw(TexturePlayerWalkingChest,new Vector2(vector.X-2, vector.Y)/*vector*//*vector*/, null, Setting.ColorSkin, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
@@ -7184,68 +7936,148 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											else {
 												if (Setting.sex==Sex.Girl) {
 													if (Global.YoungPlayer) {
-														if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureWalkingUpCensored, vector, null, ColorWhite, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
+														if (Setting.MaturePlayer>0) spriteBatch.Draw(TextureWalkingUpCensored, vector, null, Color.White, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
 													}
 												}
 											}
 										}
 									}
 									if (ClothesChestTop!=null) spriteBatch.Draw(ClothesChestTop.TextureWalking, vector, null, ClothesChestTop.Color, 0, Vector2Zero, 1, SpriteEffects.FlipHorizontally, 0);
-									
 
-									if (ClothesChestTop is null) {
-										if (ClothesChest is null) DrawItemInHandTop(null, Color.White, 0);
-										else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color,(int)ClothesChest.handSize);
-									} else DrawItemInHandTop(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color,(int)ClothesChestTop.handSize);
+
+									if (ClothesChestTop == null) {
+										if (ClothesChest == null) DrawItemInHandTop(null, Color.White, 0);
+										else DrawItemInHandTop(ClothesChest.Texture2DClothHand, ClothesChest.Color, (int)ClothesChest.handSize);
+									} else DrawItemInHandTop(ClothesChestTop.Texture2DClothHand, ClothesChestTop.Color, (int)ClothesChestTop.handSize);
 
 									void DrawItemInHandTop(Texture2D texCloth, Color colorCloth, int size){
 										spriteBatch.Draw(TextureHand, rameno, recHand, Setting.ColorSkin, handAngle, vecOrigin, 1, SpriteEffects.None,1f);
-										if (texCloth!=null)spriteBatch.Draw(texCloth, rameno, recCloth/*new Rectangle(0,0,4,size)*/, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None,1f);
+										if (texCloth!=null) spriteBatch.Draw(texCloth, rameno, recCloth, colorCloth, handAngle, Vector2_2, 1, SpriteEffects.None,1f);
 
-										if (InventoryNormal[boxSelected]!=null){
+										if (InventoryNormal[boxSelected]!=null) {
 											if (InventoryNormal[boxSelected].Id!=0) {
-												Rectangle recItem=new Rectangle(
-													(int)(((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4),
-													(int)(((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4),
-													8,
-													8
+												Vector2 recItem=new(
+													((float)Math.Cos(handAngle+FastMath.PIHalf)*(HandSize-4))+rameno.X-4,
+													((float)Math.Sin(handAngle+FastMath.PIHalf))*(HandSize-4)+rameno.Y-4
 												);
 
 												switch (InventoryNormal[boxSelected]) {
 													case ItemInvBasic16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem, 
+															sourceRectangle: null, 
+															Color.White, 
+															scale: 0.5f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f
+														);
 														break;
 
 													case ItemInvBasic32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem,
+															sourceRectangle: null, 
+															Color.White, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvBasicColoritzed32NonStackable i:
-														spriteBatch.Draw(i.Texture, recItem, i.color);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem,
+															sourceRectangle: null,  
+															i.color, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvFood16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem,
+															sourceRectangle: null,  
+															Color.White, 
+															scale: 0.5f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvFood32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem,
+															sourceRectangle: null, 
+															Color.White, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvNonStackable32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem,
+															sourceRectangle: null,
+															Color.White, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													case ItemInvNonStackable16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem, 
+															sourceRectangle: null,  
+															Color.White, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													 case ItemInvTool16 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture,
+															recItem,
+															sourceRectangle: null, 
+															Color.White, 
+															scale: 0.5f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													 case ItemInvTool32 i:
-														spriteBatch.Draw(i.Texture, recItem, ColorWhite);
+														spriteBatch.Draw(
+															i.Texture, 
+															recItem,
+															sourceRectangle: null,  
+															Color.White, 
+															scale: 0.25f,
+															rotation: 0f,
+															origin: Vector2.Zero,
+															effects: SpriteEffects.None,
+															layerDepth: 0f);
 														break;
 
 													#if DEBUG
@@ -7264,7 +8096,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											recCloth = new Rectangle(0,0,4,size);
 										if (texCloth!=null) {
 											spriteBatch.Draw(texCloth, rameno, new Rectangle(0,0,4,size), new Color((byte)(colorCloth.R*0.75f),(byte)(colorCloth.G*0.75f),(byte)(colorCloth.B*0.75f), (byte)255), -handAngle, Vector2_2, 1, SpriteEffects.None,1f);
-										} 
+										}
 									}
 								}
 							break;
@@ -7272,6 +8104,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				#endregion
+
+				if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16), Color.White);
 
 				if (debug) {
 					foreach (Energy r in energy) r.Draw();
@@ -7282,38 +8116,69 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				spriteBatch.End();
 
-				// Draw lighting on game
-				spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply);
-				spriteBatch.Draw(texture: modificatedLightTarget, position: Vector2Zero, color: ColorWhite);
-				spriteBatch.End();
-				#endregion
+				if (SuperSamplingActing<1f) { 
+					Graphics.SetRenderTarget(null);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointWrap);
+					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
+					spriteBatch.End();
+				} else if (SuperSamplingActing==2f) { 
+					Graphics.SetRenderTarget(null);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
+					spriteBatch.End();
+				} else if (SuperSamplingActing == 4f) {
+					Graphics.SetRenderTarget(targetGame2);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Draw(targetGame, new Rectangle(0,0, Global.WindowWidth*2, Global.WindowHeight*2), color: Color.White);
+					spriteBatch.End();
 
-				#region Draw inv
-				if (showInventory) {
-					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap/*,DepthStencilState.Default,RasterizerState.CullNone,null,null*/);
+					Graphics.SetRenderTarget(null);
+                    spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+                    spriteBatch.Draw(targetGame2, Fullscreen, color: Color.White);
+                    spriteBatch.End();
+                } 
+
+                // Draw lighting on game
+                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply, samplerState: SamplerState.PointWrap);
+                spriteBatch.Draw(texture: sunLightTarget, Fullscreen, color: Color.White);
+                spriteBatch.End();
+                #endregion
+
+                #region Vignetting
+                if (Setting.Vignetting) {
+					float WSize, HSize;
+					if (Global.WindowWidth>Global.WindowHeight) { 
+						WSize = ((Global.WindowHeight+Global.WindowWidth)/4f)/Global.WindowHeightHalf;
+						HSize = 1f;
+					} else {
+						WSize = 1f;
+						HSize = ((Global.WindowHeight+Global.WindowWidth)/4f) / Global.WindowWidthHalf;
+					}
+					EffectVignetting.Parameters["WSize"].SetValue(WSize);
+					EffectVignetting.Parameters["HSize"].SetValue(HSize);
+					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
+
+					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting);
+
+					EffectVignetting.Techniques[0].Passes[0].Apply();
+
+					spriteBatch.Draw(pixel, Fullscreen, Color.White);
+					spriteBatch.End();
+				}
+                #endregion
+				                
+                #region Draw inv
+                if (showInventory) {
+					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 					Rabcr.spriteBatch=spriteBatch;
 					#region Draw Bars
 					if (Global.WorldDifficulty!=2) {
-						int barE=(int)barEnergy, barO=(int)barOxygen, barW=(int)barWater, barEa=(int)barEat, barH=(int)barHeart;
-						// Energy bar
-						spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36,8),new Rectangle(0,0,32,barE),ColorGray);
-						spriteBatch.Draw(barEnergyTexture,new Vector2(Global.WindowWidth-150-36,8+barE),new Rectangle(0,barE,32,32-barE),ColorWhite);
-
-						// Oxygen bar
-						spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8),new Rectangle(0,0,32,barO),ColorGray);
-						spriteBatch.Draw(barOxygenTexture,new Vector2(Global.WindowWidth-150,8+barO),new Rectangle(0,barO,32,32-barO),ColorWhite);
-
-						// Water bar
-						spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8),new Rectangle(0,0,32,barW),ColorGray);
-						spriteBatch.Draw(barWaterTexture,new Vector2(Global.WindowWidth-114,8+barW),new Rectangle(0,barW,32,32-barW),ColorWhite);
-
-						// Eat bar
-						spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8),new Rectangle(0,0,32,barEa),ColorGray);
-						spriteBatch.Draw(barEatTexture,new Vector2(Global.WindowWidth-78,8+barEa),new Rectangle(0,barEa,32,32-barEa),ColorWhite);
-
-						// Heart bar
-						spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8), new Rectangle(0,0,32,barH),ColorGray);
-						spriteBatch.Draw(barHeartTexture,new Vector2(Global.WindowWidth-40,8+barH), new Rectangle(0,barH,32,32-barH),ColorWhite);
+						barEat.Draw();
+						barOxygen.Draw();
+						barEnergy.Draw();
+						barHeart.Draw();
+						barWater.Draw();
 					}
 					#endregion
 
@@ -7326,47 +8191,48 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								if (gedo!=null) {
 #if DEBUG
 									if (text.StartsWith("*")){
-										if (Command()){ 
+										if (Command()){
 											///text="";diserpeard=0;
-										}else{ 
-											text="Unknown command";diserpeard=255;
+										}else{
+											text="Unknown command";
+											diserpeard=255;
 										}
 									}
 									//if (text.StartsWith("*time-set ")) {
 									//	if (int.TryParse(text.Substring("*time-set ".Length), out int num)){
-									//		time=num*hour; 
+									//		time=num*hour;
 									//	} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)){
-									//		time=(int)(num2*hour); 
+									//		time=(int)(num2*hour);
 									//	}
 									//	text="";
 									//	diserpeard=0;
-									//} 
+									//}
 									//if (text.StartsWith("*day-set ")){
 									//	if (int.TryParse(text.Substring("*day-set ".Length), out int num)){
-									//		day=num; 
+									//		day=num;
 									//		ChangeLeavesForceEverything();
 									//	}
 									//	text="";
 									//	diserpeard=0;
-									//} 
+									//}
 									//if (text=="*give-mobile") {
 									//	InventoryAddOne((ushort)Items.Mobile);
 									//	text="";
 									//	diserpeard=0;text="";diserpeard=0;
-									//} 
+									//}
 									//if (text=="*wd0") {
 									//	Global.WorldDifficulty=0;text="";diserpeard=0;
-									//} 
+									//}
 									//if (text=="*wd1") {
 									//	Global.WorldDifficulty=1;text="";diserpeard=0;
-									//} 
+									//}
 									//if (text=="*wd2") {
 									//	Global.WorldDifficulty=2;text="";diserpeard=0;
-									//} 
+									//}
 									//if (text=="*rain-change") {
 									//	changeRain=1;
 									//	text="";diserpeard=0;
-									//} 
+									//}
 									//if (text=="*wind-change") {
 									//	timeToChageWind=1;
 									//	text="";diserpeard=0;
@@ -7377,17 +8243,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     }
                                     int meas=BitmapFont.bitmapFont18.MeasureTextSingleLineX(gedo.Text);
 									int texts=meas/2;
-									int x=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
+									int x=Global.WindowWidthHalf+(PlayerXInt-(int)WindowCenterX);
 									gedo.SetPos(x-texts+20-10-5,Global.WindowHeightHalf-40-50-4);
 									if (diserpeard>100) {
-										spriteBatch.Draw(messageLeft,new Vector2(x-texts-10,Global.WindowHeightHalf-55-50), ColorWhite);
-										spriteBatch.Draw(messageCenter,new Rectangle(x-texts+19-10,Global.WindowHeightHalf-55-50,texts*2,57), ColorWhite);
-										spriteBatch.Draw(messageRight,new Vector2(x+texts+19-10,Global.WindowHeightHalf-55-50), ColorWhite);
+										spriteBatch.Draw(messageLeft,new Vector2(x-texts-10,Global.WindowHeightHalf-55-50), Color.White);
+										spriteBatch.Draw(messageCenter,new Rectangle(x-texts+19-10,Global.WindowHeightHalf-55-50,texts*2,57), Color.White);
+										spriteBatch.Draw(messageRight,new Vector2(x+texts+19-10,Global.WindowHeightHalf-55-50), Color.White);
 
 										gedo.DrawGedo(1f,spriteBatch);
 									} else {
 										float alphaC =diserpeard/100f;
-										Color alphaCC=new Color(alphaC,alphaC,alphaC,alphaC);
+										Color alphaCC=new(alphaC,alphaC,alphaC,alphaC);
 
 										spriteBatch.Draw(messageLeft,new Vector2(x-texts-10,Global.WindowHeightHalf-55-50), alphaCC);
 										spriteBatch.Draw(messageCenter,new Rectangle(x-texts+19-10,Global.WindowHeightHalf-55-50,texts*2,57), alphaCC);
@@ -7402,8 +8268,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							{
 								int w=Global.WindowWidth-40, h=Global.WindowHeightHalf-80;
 								for (int i = 0; i<5; i++) {
-									if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(w, h+i*40), ColorLightBlue);
-									else spriteBatch.Draw(inventorySlotTexture, new Vector2(w, h+i*40), ColorWhite);
+									if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(w, h+i*40), Color.LightBlue);
+									else spriteBatch.Draw(inventorySlotTexture, new Vector2(w, h+i*40), Color.White);
 								}
 							}
 
@@ -7416,12 +8282,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Writing message
 						case InventoryType.Typing:
 							{
-								int xx=Global.WindowWidthHalf+((int)PlayerX-(int)WindowCenterX);
+								int xx=Global.WindowWidthHalf+(PlayerXInt-(int)WindowCenterX);
 
-								int half=textWriting.X/2;
-								spriteBatch.Draw(messageLeft,new Vector2(xx-half-10,Global.WindowHeightHalf-55-50), ColorWhite);
-								spriteBatch.Draw(messageCenter,new Rectangle(xx-half+19-10,Global.WindowHeightHalf-55-50,textWriting.X,57), ColorWhite);
-								spriteBatch.Draw(messageRight,new Vector2(xx+half+19-10,Global.WindowHeightHalf-55-50), ColorWhite);
+								int half=textWriting.MeasureX/2;
+								spriteBatch.Draw(messageLeft,new Vector2(xx-half-10,Global.WindowHeightHalf-55-50), Color.White);
+								spriteBatch.Draw(messageCenter,new Rectangle(xx-half+19-10,Global.WindowHeightHalf-55-50,textWriting.MeasureX,57), Color.White);
+								spriteBatch.Draw(messageRight,new Vector2(xx+half+19-10,Global.WindowHeightHalf-55-50), Color.White);
 
 								textWriting.Draw(spriteBatch);
 
@@ -7434,16 +8300,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Basic inventory - clothes, inventory and basic crafting
 						case InventoryType.BasicInv:
-							spriteBatch.Draw(pixel, new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(TextureInventoryClothes,new Vector2(Global.WindowWidthHalf-300+4+60, Global.WindowHeightHalf-200+2+4), ColorWhite);
+							spriteBatch.Draw(TextureInventoryClothes,new Vector2(Global.WindowWidthHalf-300+4+60, Global.WindowHeightHalf-200+2+4), Color.White);
 							textOpenInventory.Draw(spriteBatch);
 
 							DrawInventoryWithMoving();
@@ -7456,12 +8322,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									int pos2=(int)(  (inventoryScrollbarValueCrafting*5/40f) / (inventoryScrollbarValueCraftingMax-6*3)*(160-size2) )*8;
 									if (size2>20) {
-										spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarBetweenTexture,new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8,20,size2-20), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarBetweenTexture,new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8,20,size2-20), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 									} else {
-										spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 									}
 								}
 
@@ -7476,7 +8342,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r200_g200_b200);
 									} else {
 										if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 									}
 
 									InventoryCrafting[i].DrawCreative();
@@ -7492,7 +8358,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 							#endregion
 
-							DrawNeedNew();
+							DrawNeed();
 
 							buttonInvTabBlocks.ButtonDraw();
 							buttonInvTabMashines.ButtonDraw();
@@ -7510,16 +8376,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Desk
 						case InventoryType.Desk:
-							spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(deskTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+							spriteBatch.Draw(deskTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 							textOpenInventory.Draw(spriteBatch);
 
 							DrawInventoryNormal();
@@ -7531,12 +8397,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									int pos2 = (int)(((float)(inventoryScrollbarValueCrafting*5/40f)/(inventoryScrollbarValueCraftingMax-3*6))*(160-size2));
 									if (size2>20) {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 									} else {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 									}
 								}
 
@@ -7559,7 +8425,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8),color_r200_g200_b200);
 									} else {
 										if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+										else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 									}
 									InventoryCrafting[i].DrawCreative();
 									//Texture2D tex=ItemIdToTexture(InventoryCrafting[i].X);
@@ -7574,7 +8440,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 							#endregion
 
-							DrawNeedNew();
+							DrawNeed();
 
 							buttonInvTabBlocks.ButtonDraw();
 							buttonInvTabMashines.ButtonDraw();
@@ -7593,23 +8459,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Furnace stone
 						case InventoryType.FurnaceStone:
 							{
-								spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((byte)0,(byte)0,(byte)0,(byte)animationInvBack));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((byte)0,(byte)0,(byte)0,(byte)animationInvBack));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
 								ItemInv[] inv=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 								float energy=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Energy;
 
-								spriteBatch.Draw(furnaceStoneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200),new Rectangle(energy>0 ?0 :16,0,16,16), ColorWhite);
+								spriteBatch.Draw(furnaceStoneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200),new Rectangle(energy>0 ?0 :16,0,16,16), Color.White);
 
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-2, Global.WindowHeightHalf-200+2+4-6,202+2,5),black);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1, Global.WindowHeightHalf-200+2+4-5,(int)(energy*2.02*100),3),Color.Green);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1+(int)(energy*2.02*100),Global.WindowHeightHalf-200+2+4-5,202-(int)(energy*2.02*100),3),Color.Red);
+								int Ebar=(int)(energy*2.02*100);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1, Global.WindowHeightHalf-200+2+4-5, Ebar,3), Color.Green);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300+4-1+Ebar, Global.WindowHeightHalf-200+2+4-5, 202-Ebar, 3), Color.Red);
 								textOpenInventory.Draw(spriteBatch);
 
 								DrawInventoryWithMoving();
@@ -7620,12 +8487,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										int size2 = (int)((1f/((((int)(inventoryScrollbarValueCraftingMax/5f)+1)*40)/160f))*160);
 										int pos2 = (int)(((inventoryScrollbarValueCrafting*5/40f)/inventoryScrollbarValueCraftingMax)*(160-size2))*8;
 										if (size2>20) {
-											spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-											spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), ColorWhite);
-											spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+											spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+											spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), Color.White);
+											spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 										} else {
-											spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-											spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+											spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+											spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 										}
 									}
 
@@ -7647,7 +8514,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r200_g200_b200);
 										} else {
 											if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-											else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+											else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 										}
 										InventoryCrafting[i].Draw();
 										//Texture2D tex = ItemIdToTexture(InventoryCrafting[i].X);
@@ -7662,13 +8529,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 								#endregion
 
-								DrawNeedNew();
+								DrawNeed();
 								#region burn wood
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40, Global.WindowHeightHalf-200+2+4+60), ColorWhite*0.5f);
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40+40, Global.WindowHeightHalf-200+2+4+60), ColorWhite*0.5f);
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40*2+40, Global.WindowHeightHalf-200+2+4+60), ColorWhite*0.5f);
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40+40, Global.WindowHeightHalf-200+2+4+60+40+8), ColorWhite*0.5f);
-								spriteBatch.Draw(ashTexture, new Rectangle(Global.WindowWidthHalf-300+4+1+40+40+4, Global.WindowHeightHalf-200+2+4+60+40+8+4,32,32), ColorWhite*0.25f);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40, Global.WindowHeightHalf-200+2+4+60), Color.White*0.5f);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40+40, Global.WindowHeightHalf-200+2+4+60), Color.White*0.5f);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40*2+40, Global.WindowHeightHalf-200+2+4+60), Color.White*0.5f);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+1+40+40, Global.WindowHeightHalf-200+2+4+60+40+8), Color.White*0.5f);
+								spriteBatch.Draw(ashTexture, new Rectangle(Global.WindowWidthHalf-300+4+1+40+40+4, Global.WindowHeightHalf-200+2+4+60+40+8+4,32,32), Color.White*0.25f);
 
 								inv[0].Draw();
 								inv[1].Draw();
@@ -7694,16 +8561,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Furnace electric
 						case InventoryType.FurnaceElectric:
-							spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(furnaceElectricOneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+							spriteBatch.Draw(furnaceElectricOneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 							textOpenInventory.Draw(spriteBatch);
 							DrawInventoryNormal();
 
@@ -7713,12 +8580,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int size2 = (int)((1f/((((int)(inventoryScrollbarValueCraftingMax/5f)+1)*40)/160f))*160);
 									int pos2 = (int)((((inventoryScrollbarValueCrafting*5)/40f)/inventoryScrollbarValueCraftingMax)*(160-size2))*8;
 									if (size2>20) {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 									} else {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 									}
 								}
 
@@ -7734,7 +8601,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r200_g200_b200);
 									} else {
 										if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 									}
 									InventoryCrafting[i].Draw();
 								   // Texture2D tex = ItemIdToTexture(InventoryCrafting[i].X);
@@ -7749,7 +8616,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 							#endregion
 
-							DrawNeedNew();
+							DrawNeed();
 
 							buttonInvTabMaterials.ButtonDraw();
 							buttonInvTabGlass.ButtonDraw();
@@ -7766,16 +8633,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Macerator
 						case InventoryType.Macerator:
-							spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255 );
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(maceratorOneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+							spriteBatch.Draw(maceratorOneTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 							textOpenInventory.Draw(spriteBatch);
 
 							DrawInventoryNormal();
@@ -7786,12 +8653,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int size2 = (int)((1f/((((int)(inventoryScrollbarValueCraftingMax/5f)+1)*40)/160f))*160);
 									int pos2 = (int)(((inventoryScrollbarValueCrafting*5)/40f)/inventoryScrollbarValueCraftingMax*(160-size2))*8;
 									if (size2>20) {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 									} else {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 									}
 								}
 
@@ -7806,7 +8673,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r200_g200_b200);
 									} else {
 										if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 									}
 									InventoryCrafting[i].Draw();
 									//Texture2D tex = ItemIdToTexture(InventoryCrafting[i].X);
@@ -7821,7 +8688,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 							#endregion
 
-							DrawNeedNew();
+							DrawNeed();
 
 							buttonInvTabMaterials.ButtonDraw();
 							buttonInvTabPlants.ButtonDraw();
@@ -7838,16 +8705,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Creative
 						case InventoryType.Creative:
-							spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2+30,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434+30,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2+30), ColorLightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2+30), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(TextureInventoryClothes, new Vector2(Global.WindowWidthHalf-300+4+60, Global.WindowHeightHalf-200+2+4), ColorWhite);
+							spriteBatch.Draw(TextureInventoryClothes, new Vector2(Global.WindowWidthHalf-300+4+60, Global.WindowHeightHalf-200+2+4), Color.White);
 
 							textOpenInventory.Draw(spriteBatch);
 
@@ -7862,12 +8729,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										int size2 =(int)( (1f/((( (int)(inventoryScrollbarValueCraftingMax/5f)+1  )*40)/160f))*160 );
 										int pos2=(int)(  (inventoryScrollbarValueCrafting*5/40f) / (inventoryScrollbarValueCraftingMax-6*3)*(160-size2) )*8+50-15;
 										if (size2>20) {
-											spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-											spriteBatch.Draw(scrollbarBetweenTexture,new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8,20,size2-20), ColorWhite);
-											spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+											spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+											spriteBatch.Draw(scrollbarBetweenTexture,new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8,20,size2-20), Color.White);
+											spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 										} else {
-											spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-											spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+											spriteBatch.Draw(scrollbarUpTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+											spriteBatch.Draw(scrollbarDownTexture,new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 										}
 									}
 
@@ -7882,7 +8749,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH), color_r200_g200_b200);
 										} else {
 											if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH), color_r150_g150_b150);
-											else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH), ColorWhite);
+											else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH), Color.White);
 										}
 									 //   InventoryCrafting[i].SetPos(xx,yh);
 										InventoryCrafting[i].DrawCreative();
@@ -7927,16 +8794,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Shelf
 						case InventoryType.Shelf:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(shelfTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(shelfTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invShelf=((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
@@ -7949,7 +8816,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								  //  int i=0;
 									for (int y = 0; y<3*40; y+=40) {
 										for (int x = 0; x<3*40; x+=40) {
-											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+x+20+5+1+2, Global.WindowHeightHalf+20-2+y+20+3+2), ColorWhite);
+											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+x+20+5+1+2, Global.WindowHeightHalf+20-2+y+20+3+2), Color.White);
 
 										  //  if (!invMove||(invMove && invStartInventory[invStartId]!=invShelf[i])) {
 
@@ -7983,16 +8850,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Wooden box
 						case InventoryType.BoxWooden:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(boxWoodenTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(boxWoodenTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invBoxWooden=((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
 
@@ -8005,7 +8872,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int i=0;
 									for (int y = 0; y<2*40; y+=40) {
 										for (int x = 0; x<12*40; x+=40) {
-											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+x+59, Global.WindowHeightHalf+59+y), ColorWhite);
+											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+x+59, Global.WindowHeightHalf+59+y), Color.White);
 
 										  //  if (!invMove||(invMove&&invStartInventory[invStartId]!=invBoxWooden[i])) {
 											invBoxWooden[i].Draw();
@@ -8027,16 +8894,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Adv box
 						case InventoryType.BoxAdv:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(boxAdvTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(boxAdvTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 
 								textOpenInventory.Draw(spriteBatch);
 								ItemInv[] invAdvBox=((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
@@ -8050,7 +8917,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int i=0;
 									for (int y = 0; y<4*40; y+=40) {
 										for (int x = 0; x<12*40; x+=40) {
-											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+20+x, Global.WindowHeightHalf+23+y), ColorWhite);
+											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+20+x, Global.WindowHeightHalf+23+y), Color.White);
 
 										  //  if (!invMove||(invMove&&invStartInventory[invStartId]!=invAdvBox[i])) {
 											invAdvBox[i].Draw();
@@ -8071,7 +8938,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Phone
 						case InventoryType.Mobile:
-							spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-234,304,464+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-233,302,464,1, color_r0_g0_b0_a200);
@@ -8087,17 +8954,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Rocket
 						case InventoryType.Rocket:
-							spriteBatch.Draw(pixel, new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-234,304,464+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-233,302,464,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-232,300,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198,300,430), ColorLightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198,300,430), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
 							textOpenInventory.Draw(spriteBatch);
-							spriteBatch.Draw(rocketTexture,new Rectangle(Global.WindowWidthHalf-62, Global.WindowHeightHalf-190,123,380), ColorWhite);
+							spriteBatch.Draw(rocketTexture,new Rectangle(Global.WindowWidthHalf-62, Global.WindowHeightHalf-190,123,380), Color.White);
 
 							buttonRocket.ButtonDraw();
 							break;
@@ -8106,16 +8973,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Charger
 						case InventoryType.Charger:
 							{
-								spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(chargerTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+								spriteBatch.Draw(chargerTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 
 								ItemInv[] invCharger=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
@@ -8123,7 +8990,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								DrawInventoryWithMoving();
 
 								#region Place for charging
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), ColorWhite);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), Color.White);
 
 							   // if (!invMove||(invMove&&invStartInventory[invStartId]!=invCharger[0])) {
 									invCharger[0].Draw();
@@ -8143,16 +9010,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Miner
 						case InventoryType.Miner:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(minerTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(minerTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 
 								ItemInv[] invMiner=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
@@ -8166,7 +9033,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int i=0;
 									for (int y = 0; y<2*40; y+=40) {
 										for (int x = 0; x<12*40; x+=40) {
-											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+x+59, Global.WindowHeightHalf+59+y), ColorWhite);
+											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+x+59, Global.WindowHeightHalf+59+y), Color.White);
 
 										//    if (!invMove||(invMove&&invStartInventory[invStartId]!=invMiner[i])) {
 												invMiner[i].Draw();
@@ -8188,16 +9055,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Radio
 						case InventoryType.Radio:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(radioTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200),new Rectangle(16*(int)(15*_secondTimer/60f),0,16,16), ColorWhite);
+								spriteBatch.Draw(radioTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200),new Rectangle(16*(int)(15*_secondTimer/60f),0,16,16), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 
 
@@ -8209,7 +9076,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								if (radioplaying) {
 									spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2+400-50,600,50), ColorGray);
-									spriteBatch.Draw(RadioButtonPause,new Vector2(Global.WindowWidthHalf-24, Global.WindowHeightHalf-200+2+400-50), ColorWhite);
+									spriteBatch.Draw(RadioButtonPause,new Vector2(Global.WindowWidthHalf-24, Global.WindowHeightHalf-200+2+400-50), Color.White);
 								}
 							}
 							break;
@@ -8218,16 +9085,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Composter
 						case InventoryType.Composter:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(ComposterFullTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(ComposterFullTexture,new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 
 								ItemInv[] invComposter=((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
@@ -8241,7 +9108,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int i=0;
 									for (int y = 0; y<3*40; y+=40) {
 										for (int x = 0; x<3*40; x+=40) {
-											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+x+20+5+1+2, Global.WindowHeightHalf+20-2+y+20+3+2), ColorWhite);
+											spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+x+20+5+1+2, Global.WindowHeightHalf+20-2+y+20+3+2), Color.White);
 
 										  //  if (!invMove||(invMove&&invStartInventory[invStartId]!=invComposter[i])) {
 												invComposter[i].Draw();
@@ -8262,16 +9129,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region SewingMachine
 						case InventoryType.SewingMachine:
-							spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 							buttonClose.ButtonDraw();
 
-							spriteBatch.Draw(sewingMachineTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+							spriteBatch.Draw(sewingMachineTexture, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 							textOpenInventory.Draw(spriteBatch);
 
 							DrawInventoryNormal();
@@ -8282,12 +9149,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									int size2 = (int)((1f/((((int)(inventoryScrollbarValueCraftingMax/5f)+1)*40)/160f))*160);
 									int pos2 = (int)((((inventoryScrollbarValueCrafting*5)/40f)/inventoryScrollbarValueCraftingMax)*(160-size2))*8;
 									if (size2>20) {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarBetweenTexture, new Rectangle(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+10-1+8, 20, size2-20), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11+size2-20-2+8), Color.White);
 									} else {
-										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), ColorWhite);
-										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), ColorWhite);
+										spriteBatch.Draw(scrollbarUpTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+8), Color.White);
+										spriteBatch.Draw(scrollbarDownTexture, new Vector2(Global.WindowWidthHalf, Global.WindowHeightHalf-200+2+4+200+8+pos2+11-2+8), Color.White);
 									}
 								}
 
@@ -8303,7 +9170,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r200_g200_b200);
 									} else {
 										if (selectedCraftingItem==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), color_r150_g150_b150);
-										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), ColorWhite);
+										else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+40+4+xx, Global.WindowHeightHalf-200+2+4+200+8+yh+8), Color.White);
 									}
 									InventoryCrafting[i].Draw();
 									//Texture2D tex = ItemIdToTexture(InventoryCrafting[i].X);
@@ -8319,7 +9186,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							#endregion
 
 
-							DrawNeedNew();
+							DrawNeed();
 
 							buttonInvHead.ButtonDraw();
 							buttonInvChest.ButtonDraw();
@@ -8337,16 +9204,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region OxygenMachine
 						case InventoryType.OxygenMachine:
 							{
-								spriteBatch.Draw(pixel, new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(TextureOxygenMachine, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), ColorWhite);
+								spriteBatch.Draw(TextureOxygenMachine, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4, 200, 200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 
 								ItemInv[] invOxygenMachine=((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv;
@@ -8354,7 +9221,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								DrawInventoryWithMoving();
 
 								#region Place for charging
-								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), ColorWhite);
+								spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+10+40+20+5+1+2, Global.WindowHeightHalf+20-2+40+20+3+2), Color.White);
 
 							   // if (!invMove||(invMove&&invStartInventory[invStartId]!=invOxygenMachine[0])) {
 									invOxygenMachine[0].Draw();
@@ -8372,16 +9239,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						#region Barrel
 						case InventoryType.Barrel:
 							{
-								spriteBatch.Draw(pixel,new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
+								spriteBatch.Draw(pixel,Fullscreen, new Color((uint)(animationInvBack << 24)));
 
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), ColorLightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
 
 								buttonClose.ButtonDraw();
 
-								spriteBatch.Draw(TextureBarrel, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), ColorWhite);
+								spriteBatch.Draw(TextureBarrel, new Rectangle(Global.WindowWidthHalf-300+4, Global.WindowHeightHalf-200+2+4,200,200), Color.White);
 								textOpenInventory.Draw(spriteBatch);
 								Barrel barrel=(Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
 								ItemInv[] invBarrel=barrel.Inv;
@@ -8391,136 +9258,136 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								DrawSideInventory();
 
 								#region Barel inventory
-								Vector2 vec=new Vector2(Global.WindowWidthHalf-300+119, Global.WindowHeightHalf-198+250);
+								Vector2 vec=new(Global.WindowWidthHalf-300+119, Global.WindowHeightHalf-198+250);
 								// In
-								spriteBatch.Draw(inventorySlotInTexture, vec, ColorWhite);
+								spriteBatch.Draw(inventorySlotInTexture, vec, Color.White);
 								invBarrel[0].Draw();
 
 								// Out
 								vec.Y+=64;
-								spriteBatch.Draw(inventorySlotOutTexture, vec, ColorWhite);
+								spriteBatch.Draw(inventorySlotOutTexture, vec, Color.White);
 								invBarrel[1].Draw();
 
 								//bar
-								spriteBatch.Draw(TextureBarBarrel, new Vector2(Global.WindowWidthHalf-300+4+42, Global.WindowHeightHalf-200+2+4+217), ColorWhite);
+								spriteBatch.Draw(TextureBarBarrel, new Vector2(Global.WindowWidthHalf-300+4+42, Global.WindowHeightHalf-200+2+4+217), Color.White);
 
-								int a=(int)(barrel.LiquidAmount/255f*146);
+								int a=(int)(barrel.LiquidAmount*divider255*146);
 
 								switch (barrel.LiquidId) {
 									case (byte)LiquidId.Water:
-										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorWhite);
+										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.WaterSalt:
-										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorWhite);
+										spriteBatch.Draw(waterTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a),new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.Lava:
-										spriteBatch.Draw(lavaTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorWhite);
+										spriteBatch.Draw(lavaTexture, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.DyeArmy:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorArmy/* new Color((byte)34,(byte)48,(byte)17,(byte)255)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorArmy/* new Color((byte)34,(byte)48,(byte)17,(byte)255)*/);
 										break;
 
 									case (byte)LiquidId.DyeBlack:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Black);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Black);
 										break;
 
 									case (byte)LiquidId.DyeBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Blue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Blue);
 										break;
 
 									case (byte)LiquidId.DyeBrown:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Brown);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Brown);
 										break;
 
 									case (byte)LiquidId.DyeGray:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Gray);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Gray);
 										break;
 
 									case (byte)LiquidId.DyeWhite:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.White);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 									case (byte)LiquidId.DyeYellow:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Yellow);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Yellow);
 										break;
 
 									case (byte)LiquidId.DyeViolet:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Violet);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Violet);
 										break;
 
 									case (byte)LiquidId.DyeTeal:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Teal);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Teal);
 										break;
 
 									case (byte)LiquidId.DyeSpringGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorSpringGreen/* new Color(143, 225, 44)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorSpringGreen/* new Color(143, 225, 44)*/);
 										break;
 
 									case (byte)LiquidId.DyeRoseQuartz:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorRoseQuartz/*new Color(170, 152, 169)*/);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), ColorRoseQuartz/*new Color(170, 152, 169)*/);
 										break;
 
 									case (byte)LiquidId.DyeRed:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Red);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Red);
 										break;
 
 									case (byte)LiquidId.DyeDarkRed:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkRed);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkRed);
 										break;
 
 									case (byte)LiquidId.DyePurple:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Purple);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Purple);
 										break;
 
 									case (byte)LiquidId.DyePink:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Pink);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Pink);
 										break;
 
 									case (byte)LiquidId.DyeOrange:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Orange);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Orange);
 										break;
 
 									case (byte)LiquidId.DyeOlive:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Olive);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Olive);
 										break;
 
 									case (byte)LiquidId.DyeMagenta:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Magenta);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Magenta);
 										break;
 
 									case (byte)LiquidId.DyeLightGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightGreen);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightGreen);
 										break;
 
 									case (byte)LiquidId.DyeLightGray:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightGray);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightGray);
 										break;
 
 									case (byte)LiquidId.DyeLightBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.LightBlue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.LightBlue);
 										break;
 
 									case (byte)LiquidId.DyeGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Green);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Green);
 										break;
 
 									case (byte)LiquidId.DyeDarkGreen:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkGreen);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkGreen);
 										break;
 
 									case (byte)LiquidId.DyeGold:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.Gold);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.Gold);
 										break;
 
 									case (byte)LiquidId.DyeDarkBlue:
-										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), Color.DarkBlue);
+										spriteBatch.Draw(TextureWaterGraystyle, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.DarkBlue);
 										break;
 
 									default:
-										spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount/255f*16)), ColorWhite);
+										spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+42+5, Global.WindowHeightHalf-200+2+4+217+5+146-a, 25, a), new Rectangle(0,0,25,(int)(barrel.LiquidAmount*divider255*16)), Color.White);
 										break;
 
 								}
@@ -8534,23 +9401,23 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						#region Game menu
 						case InventoryType.GameMenu:
-							spriteBatch.Draw(pixel, new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), new Color((uint)(animationInvBack << 24)));
-							
+							spriteBatch.Draw(pixel, Fullscreen, new Color((uint)(animationInvBack << 24)));
+
 							DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-234+50, 304, 464+2-100,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-233+50, 302, 464-100,  1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-232+50,300,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198+50,300,430-100), ColorLightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198+50,300,430-100), Color.LightBlue);
 							textOpenInventory.Draw(spriteBatch);
 
 							// Exit button [X]
 							buttonClose.ButtonDraw();
-													
+
 							// Continue game
 							buttonContinue.ButtonDraw();
 
 							// Exit game
 							buttonExit.ButtonDraw();
-						
+
 							// Acheavements
 							buttonAcheavements.ButtonDraw();
 
@@ -8572,6 +9439,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 							fpss=0;
 						}
+						float hours=(int)((float)time/hour);
+						float minutes=(time-hours*hour)/(float)hour*60f/*/60f*/;
 						if (gameTime.ElapsedGameTime.TotalMilliseconds!=0) {
 							GameDraw.DrawTextShadowMin(5, 5,"< Information for developers > (F1 hide)" + Environment.NewLine +
 							//"[Player] X: " + (int)PlayerX + ", Y: " +  (int)PlayerY + Environment.NewLine +
@@ -8582,12 +9451,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							"[Temperature]: "+Math.Round(Temperature,1)+ Environment.NewLine +
 							"[Gravity]: "+Math.Round(gravity*20f,2)+Environment.NewLine+
 							//"[Rain]: "+rain+ Environment.NewLine +
-							"[Date]: Y: "+year+", Day: "+day+", Time: " +time/hour+":" + ((int)((time- (time/hour*hour))*(60f/hour))).ToString("00")+Environment.NewLine +
+							"[Date]: Y: "+year+", Day: "+day+", Time: " +hours.ToString("00")+":" + (minutes).ToString("00")+Environment.NewLine +
 						//	Environment.NewLine +
 							"[Drawing surface size] "+((terrainStartIndexW-terrainStartIndexX)*(terrainStartIndexH-terrainStartIndexY))+Environment.NewLine +
 							//Environment.NewLine +
 							"[Items count]: "+DroppedItems.Count +Environment.NewLine+
-							"[Particles count]: "+(energy.Count+snowDots.Count+rainDots.Count+FallingLeaves.Count)+Environment.NewLine+
+							"[Particles count]: E "+energy.Count+/*", S "+snowDots.Count+*/", R "+rainDots.Count+", S2 "+snowDots2.Count+", R2 "+rainDots2.Count+", F "+FallingLeaves.Count+Environment.NewLine+
 						//	"[Light]: " +dayAlpha+Environment.NewLine +
 						//	"[Moon]: " +(moonSpeed/46)+Environment.NewLine +
 						//	"[Wind]: "+wind+ Environment.NewLine +
@@ -8595,7 +9464,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							"[Fps]:  "+/*1f / (float)gameTime.ElapsedGameTime.TotalSeconds*/(int)Math.Round(fps, 3)+Environment.NewLine+
 							"[Fps f]:  "+1f/(float)gameTime.ElapsedGameTime.TotalSeconds+Environment.NewLine+
 							"[CPU] Proces: "+(usageCpuProcess/Environment.ProcessorCount).ToString("0.00")+"%, Volné cpu: "+(100-usageCpu).ToString("0.00")+"%"+Environment.NewLine+
-							"[RAM] Proces: "+(usageRamProcess/1048576).ToString("0.00")+"MB, Volná ram: "+usageRam.ToString("0.00")+"MB"+Environment.NewLine, new Color(dayAlpha*2, dayAlpha*2, dayAlpha*2)); ;
+							"[RAM] Proces: "+(usageRamProcess/1048576).ToString("0.00")+"MB, Volná ram: "+usageRam.ToString("0.00")+"MB"+Environment.NewLine, new Color(dayAlpha*2, dayAlpha*2, dayAlpha*2));
 
 						}
 					} else if (Setting.Fps) {
@@ -8622,16 +9491,41 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (dontDoGame) return;
 
 			SetCaptionInventory();
-			Translation=ZoomMatrix*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+			SetSuperSampling();
+			Translation= ZoomMatrix*Matrix.CreateTranslation(new Vector3(
+				Global.WindowWidthHalf*SuperSamplingActing /*+ Global.WindowWidth * (float)opurtinicMultisapling*/, 
+				Global.WindowHeightHalf*SuperSamplingActing /*+ Global.WindowHeight * (float)opurtinicMultisapling*/, 
+			0));
+
+			if (SuperSamplingActing!=1){
+				TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+			}
+
+			if (Global.WorldDifficulty==0) {
+				barEat.Resize();
+				barWater.Resize();
+				barHeart.Resize();
+				barEnergy.Resize();
+				barOxygen.Resize();
+			}
 
 			Fullscreen=new Rectangle(0, 0, Global.WindowWidth, Global.WindowHeight);
 			CreateGradientTexture();
 			sunLightTarget?.Dispose();
-			sunLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
+			sunLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 
 			modificatedLightTarget?.Dispose();
-			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
+			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//if (SuperSamplingActing!=1f) {
+			//	targetGame?.Dispose();
+			//	targetGame=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*SuperSamplingActing), (int)(Global.WindowHeight*SuperSamplingActing), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 
+			//	if (SuperSamplingActing==4f) {
+			//		targetGame2?.Dispose();
+			//		targetGame2=new RenderTarget2D(Graphics, (int)(Global.WindowWidth*2), (int)(Global.WindowHeight*2), false, SurfaceFormat.Color, DepthFormat.Depth16, Setting.Multisapling, RenderTargetUsage.PlatformContents/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
+			//	} 
+			//}
+			
 			if (Global.WorldDifficulty==2) {
 				if (inventory==InventoryType.Creative) {
 
@@ -8674,7 +9568,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						// Exit game
 						buttonExit.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60+60-2+50);
-						
+
 						// Acheavements
 						buttonAcheavements.Position=new Vector2(xx,Global.WindowHeightHalf-232+1+30+60+60+60-2+50);
 
@@ -8689,7 +9583,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 					break;
 
-				case InventoryType.BasicInv: 
+				case InventoryType.BasicInv:
 					{
 						buttonClose.Position.X=Global.WindowWidthHalf+300-32;
 						buttonClose.Position.Y=Global.WindowHeightHalf-232+1;
@@ -8807,7 +9701,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					buttonInvTabTools.Position.X=xx;
 					buttonInvTabTools.Position.Y=Global.WindowHeightHalf+20+32+64+32+8-2;
 
-					for (int i=0; i<4; i++) { 
+					for (int i=0; i<4; i++) {
 						((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
 					}
 				}
@@ -8944,7 +9838,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void MouseRightAction() {
-			int x = mousePosDiv16.X, 
+			int x = mousePosDiv16.X,
 				y = mousePosDiv16.Y;
 
 			if (y<0) return;
@@ -9016,90 +9910,39 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				#region Get food
 				if (chunk.IsTopBlocks[y]) {
-					if (Global.WorldDifficulty!=1 || FastMath.DistanceInt(mousePosDiv16.X,mousePosDiv16.Y,PlayerX,PlayerY) < 8*16){
+					if (Global.WorldDifficulty!=1 || FastMath.DistanceInt(mousePosDiv16.X, mousePosDiv16.Y, PlayerXInt, PlayerYInt) < 8*16) {
 						switch (chunk.TopBlocks[y].Id) {
 							case (ushort)BlockId.BucketWithLatex:
 								DropItemFromLeaves((ushort)BlockId.BucketForRubber, (ushort)Items.Resin,TextureBucketForRubber);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Resin,1), mousePosRoundX, mousePosRoundY);
-
-								//if (chunk.IsBackground[y]){
-								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
-								//} else {
-								//    chunk.SolidBlocks[y]=new AirSolidBlock{
-								//        Top=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY))
-								//    };
-								//}
-								//chunk.IsTopBlocks[y]=true;
-
-							  //  ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.BucketForRubber, new Vector2(mousePosRoundX, mousePosRoundY));
 								bucketRubber.Add(new ShortAndByte(x, y));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.PlumLeavesWithPlums:
 								DropFoodFromLeaves((ushort)BlockId.PlumLeaves, (ushort)Items.Plum,TexturePlumLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Plum,1), mousePosRoundX, mousePosRoundY);
-								////((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-
-								//if (chunk.IsBackground[y]){
-								//    ((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//} else {
-								//    chunk.SolidBlocks[y]=new AirSolidBlock{
-								//        Top=TopBlockFromId((ushort)BlockId.PlumLeaves, new Vector2(mousePosRoundX, mousePosRoundY))
-								//    };
-								//}
-
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.CherryLeavesWithCherries:
 								DropFoodFromLeaves((ushort)BlockId.CherryLeaves, (ushort)Items.Cherry,TextureCherryLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Cherry,1), mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.CherryLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.AppleLeavesWithApples:
 								DropFoodFromLeaves((ushort)BlockId.AppleLeaves, (ushort)Items.Apple,TextureAppleLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Apple,1), mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.AppleLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.LemonLeavesWithLemons:
 								DropFoodFromLeaves((ushort)BlockId.LemonLeaves, (ushort)Items.Lemon,TextureLemonLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.LemonLeaves, new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.OrangeLeavesWithOranges:
 								DropFoodFromLeaves((ushort)BlockId.OrangeLeaves, (ushort)Items.Orange,TextureOrangeLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Orange,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OrangeLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.OliveLeavesWithOlives:
 								DropFoodFromLeaves((ushort)BlockId.OliveLeaves, (ushort)Items.Olive,TextureOliveLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.OliveLeaves,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 
 							case (ushort)BlockId.KapokLeacesFibre:
 								DropItemFromLeaves((ushort)BlockId.KapokLeaves, (ushort)Items.KapokFibre, TextureKapokLeaves);
-								//DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre,1),mousePosRoundX, mousePosRoundY);
-								//((AirSolidBlock)chunk.SolidBlocks[y]).Top=chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.KapokLeaces,new Vector2(mousePosRoundX, mousePosRoundY));
-								//barEnergy+=0.02f;
-								//if (barEnergy>32) barEnergy=32;
 								return;
 						}
 
@@ -9110,8 +9953,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							leaves.Id=newLeavesId;
 							leaves.Texture=leavesTexture;
 
-							barEnergy+=0.02f;
-							if (barEnergy>32) barEnergy=32;
+							barEnergy.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
 						}
 						void DropItemFromLeaves(ushort newLeavesId, ushort itemId, Texture2D leavesTexture) {
 							DropItemToPos(new ItemNonInvBasic(itemId), mousePosRoundX, mousePosRoundY);
@@ -9120,8 +9963,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							leaves.Id=newLeavesId;
 							leaves.Texture=leavesTexture;
 
-							barEnergy+=0.02f;
-							if (barEnergy>32) barEnergy=32;
+							barEnergy.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
 						}
 					}
 				}
@@ -9136,17 +9979,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 
 								case (ushort)BlockId.Strawberry:
-									DropItemToPos(new ItemNonInvFood((ushort)Items.Strawberry,1,GameMethods.FoodMaxCount((ushort)Items.Strawberry),0,GameMethods.FoodMaxDescay((ushort)Items.Strawberry)), mousePosRoundX, mousePosRoundY);
+									DropItemToPos(new ItemNonInvFood((ushort)Items.Strawberry,1,GameMethods.FoodMaxCount((ushort)Items.Strawberry),GameMethods.FoodMaxDescay((ushort)Items.Strawberry),GameMethods.FoodMaxDescay((ushort)Items.Strawberry)), mousePosRoundX, mousePosRoundY);
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 
 								case (ushort)BlockId.Rashberry:
@@ -9154,8 +9997,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									m.Grow=125;
 									m.Growing=true;
 									m.Update();
-									barEnergy+=0.02f;
-									if (barEnergy>32) barEnergy=32;
+									barEnergy.Value+=0.02f;
+									if (barEnergy.Value>32f) barEnergy.Value=32f;
 									return;
 							}
 						}
@@ -9166,8 +10009,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#region Drink Water
 				if (chunk.IsTopBlocks[y]) {
 					if (chunk.TopBlocks[y].Id==(ushort)BlockId.WaterBlock) {
-						barWater--;
-						if (barWater<0)barWater=0;
+						barWater.Value--;
+						if (barWater.Value<0f)barWater.Value=0f;
 						return;
 					}
 				}
@@ -9185,27 +10028,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockHills
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockJungle
 						|| chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockPlains) {
-							chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Dirt, new Vector2(mousePosRoundX, mousePosRoundY));
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Dirt, mousePosRoundVector);
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockClay) {
-							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Clay, new Vector2(mousePosRoundX, mousePosRoundY));
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Clay, mousePosRoundVector);
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						} else if (chunk.SolidBlocks[y].Id == (ushort)BlockId.GrassBlockCompost) {
-							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Compost, new Vector2(mousePosRoundX, mousePosRoundY));
-							barEnergy+=0.02f;
-							barWater+=0.02f;
-							if (barEnergy>32) barEnergy=32;
-							if (barWater>32) barWater=32;
+							 chunk.SolidBlocks[y]=SolidBlockFromId((ushort)BlockId.Compost, mousePosRoundVector);
+							barEnergy.Value+=0.02f;
+							barWater.Value+=0.02f;
+							if (barEnergy.Value>32f) barEnergy.Value=32f;
+							if (barWater.Value>32f) barWater.Value=32f;
 							RemovePartTool();
 							return;
 						}
@@ -9255,15 +10098,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 							}
 							break;
-					} 
+					}
 
 					void ChangeLeaves(ushort newLeavesId, Texture2D newLeavesTexture) {
 						LeavesBlock leaves=(LeavesBlock)chunk.TopBlocks[y];
 						leaves.Id=newLeavesId;
 						leaves.Texture=newLeavesTexture;
 
-						barEnergy+=0.02f;
-						if (barEnergy>32) barEnergy=32;
+						barEnergy.Value+=0.02f;
+						if (barEnergy.Value>32f) barEnergy.Value=32f;
 						InventoryRemoveSelectedItem();
 					}
 				 }
@@ -9277,7 +10120,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 				}
 
-				if (FastMath.Distance(mousePosRoundX, mousePosRoundY, PlayerX, PlayerY) < 5*16) {
+				if (FastMath.Distance(mousePosRoundX, mousePosRoundY, PlayerXInt, PlayerYInt) < 5*16) {
 					if (chunk.IsTopBlocks[y]) {
 						switch (chunk.TopBlocks[y].Id) {
 							case (ushort)BlockId.Desk:
@@ -9292,14 +10135,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						   case (ushort)BlockId.Shelf:
 								inventory=InventoryType.Shelf;
 								SetCaptionInventory();
-								selectedMashine=mousePosDiv16.Clone();;
+								selectedMashine=mousePosDiv16.Clone();
 								if (lastMashineType!=inventory) SetUpInvToNew();
 								return;
 
 							case (ushort)BlockId.Barrel:
 								inventory=InventoryType.Barrel;
 								SetCaptionInventory();
-								selectedMashine=mousePosDiv16.Clone();;
+								selectedMashine=mousePosDiv16.Clone();
 								if (lastMashineType!=inventory) SetUpInvToNew();
 								return;
 
@@ -9313,7 +10156,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							case (ushort)BlockId.BoxWooden:
 								inventory=InventoryType.BoxWooden;
 								SetCaptionInventory();
-								selectedMashine=mousePosDiv16.Clone();;
+								selectedMashine=mousePosDiv16.Clone();
 								if (lastMashineType!=inventory) SetUpInvToNew();
 								return;
 
@@ -9417,23 +10260,26 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Place block
-				if (FastMath.DistanceInt(mousePosRoundX,mousePosRoundY,(int)PlayerX, (int)PlayerY)<DistanceBlockEdit) {
+				if (FastMath.DistanceInt(mousePosRoundX, mousePosRoundY, PlayerXInt, PlayerYInt)<DistanceBlockEdit) {
 					ushort id =InventoryNormal[boxSelected].Id;
 					if (id!=0) {
 
 						if (!chunk.IsSolidBlocks[y])  {
 							ushort blockId=GameMethods.SolidBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block = SolidBlockFromId(blockId, new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block = SolidBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (chunk.StartSomething>y)chunk.StartSomething=y;
 									chunk.SolidBlocks[y]=block;
 									chunk.IsSolidBlocks[y]=true;
 
+
 									chunk.RefreshLightingAddSolid(x, y);
 
 									InventoryRemoveSelectedItem();
+
+									CheckBlockFallling(x,y);
 									return;
 								}
 							}
@@ -9454,19 +10300,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											if (isNotPlant) {
 												switch (id) {
 													case (ushort)Items.Seeds:
-														switch (random.Int(10)) {
-															default: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Dandelion,new Vector2(mousePosRoundX,mousePosRoundY)); break;
-															case 1: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Orchid, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 2: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Rose, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 3: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Heather, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 4: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.Violet, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 5: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassDesert, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 6: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassForest, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 7: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassHills, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 8: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassJungle, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-															case 9: chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.GrassPlains, new Vector2(mousePosRoundX, mousePosRoundY)); break;
-														}
-														chunk.IsTopBlocks[y]=true;
+                                                            chunk.TopBlocks[y] = FastRandom.Int(10) switch {
+                                                                1 => TopBlockFromId((ushort)BlockId.Orchid, mousePosRoundVector),
+                                                                2 => TopBlockFromId((ushort)BlockId.Rose, mousePosRoundVector),
+                                                                3 => TopBlockFromId((ushort)BlockId.Heather, mousePosRoundVector),
+                                                                4 => TopBlockFromId((ushort)BlockId.Violet, mousePosRoundVector),
+                                                                5 => TopBlockFromId((ushort)BlockId.GrassDesert, mousePosRoundVector),
+                                                                6 => TopBlockFromId((ushort)BlockId.GrassForest, mousePosRoundVector),
+                                                                7 => TopBlockFromId((ushort)BlockId.GrassHills, mousePosRoundVector),
+                                                                8 => TopBlockFromId((ushort)BlockId.GrassJungle, mousePosRoundVector),
+                                                                9 => TopBlockFromId((ushort)BlockId.GrassPlains, mousePosRoundVector),
+                                                                _ => TopBlockFromId((ushort)BlockId.Dandelion, mousePosRoundVector),
+                                                            };
+                                                            chunk.IsTopBlocks[y]=true;
 														if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
 														InventoryRemoveSelectedItem();
 														return;
@@ -9545,19 +10391,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										if (NotExists) {
 											switch (mobId) {
 												case (ushort)BlockId.Fish:
-													chunk.Mobs.Add(new Fish(/*mobId,*/ y, x,random.Bool(), fishTexture0, fishTexture1));
+													chunk.Mobs.Add(new Fish(/*mobId,*/ y, x,FastRandom.Bool(), fishTexture0, fishTexture1));
 													break;
 
 												case (ushort)BlockId.Chicken:
-													chunk.Mobs.Add(new Chicken(y, x, random.Bool(), chickenWalkTexture, chickenEatTexture));
+													chunk.Mobs.Add(new Chicken(y, x, FastRandom.Bool(), chickenWalkTexture, chickenEatTexture));
 													break;
 
 												case (ushort)BlockId.Rabbit:
-													chunk.Mobs.Add(new Rabbit(y, x, random.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
+													chunk.Mobs.Add(new Rabbit(y, x, FastRandom.Bool(), rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
 													break;
-														
+
 												case (ushort)BlockId.MobParrot:
-													chunk.Mobs.Add(new Parrot(y, x, random.Bool(), false, TextureParrotStill, TextureParrotFly));
+													chunk.Mobs.Add(new Parrot(y, x, FastRandom.Bool(), false, TextureParrotStill, TextureParrotFly));
 													break;
 											}
 											InventoryRemoveSelectedItem();
@@ -9571,7 +10417,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (!chunk.IsBackground[y]) {
 							ushort blockId=GameMethods.BackBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block=BackBlockFromId(blockId,new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block=BackBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (chunk.StartSomething>y)chunk.StartSomething=/*(byte)*/y;
@@ -9591,7 +10437,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (!chunk.IsTopBlocks[y]) {
 							ushort blockId=GameMethods.TopBlockFromItem(id);
 							if (blockId!=(ushort)BlockId.None) {
-								Block block=TopBlockFromId(blockId, new Vector2(mousePosRoundX, mousePosRoundY));
+								Block block=TopBlockFromId(blockId, mousePosRoundVector);
 
 								if (block!=null) {
 									if (GameMethods.IsDirtPlaceable(blockId)) {
@@ -9604,43 +10450,53 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 												chunk.TopBlocks[y]=block;
 												chunk.IsTopBlocks[y]=true;
-										
+
 
 												if (chunk.StartSomething>y) chunk.StartSomething=/*(byte)*/y;
-												
+
 												chunk.RefreshLightingAddTop(y,blockId);
 
 												InventoryRemoveSelectedItem();
 												return;
 											} else return;
-										} else return; 
+										} else return;
 									} else {
 										if (id==(ushort)Items.BucketForRubber) {
 											if (!chunk.IsBackground[y])return;
 											if (chunk.Background[y].Id!=(ushort)BlockId.RubberTreeWood) return;
 										}
 
-										if (id==(ushort)Items.ChristmasStar) { 
+										if (id==(ushort)Items.ChristmasStar) {
 											if (chunk.IsTopBlocks[y+1]) {
 												if (chunk.TopBlocks[y+1].Id==(ushort)BlockId.SpruceLeaves) {
 													LeavesBlock leavesBlock=(LeavesBlock)block;
 													(leavesBlock.tree=((LeavesBlock)chunk.TopBlocks[y+1]).tree).TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
 													leavesBlock.SetOrigin();
-											
+
+													chunk.TopBlocks[y]=block;
+													chunk.IsTopBlocks[y]=true;
+												//	chunk.RefreshLightingAddTop(y,(ushort)BlockId.SpruceLeaves);
+													if (chunk.StartSomething>y) chunk.StartSomething=y;
+												} else if (chunk.TopBlocks[y+1].Id==(ushort)BlockId.SpruceLeavesWithSnow) {
+													LeavesBlock leavesBlock=(LeavesBlock)block;
+													(leavesBlock.tree=((LeavesBlock)chunk.TopBlocks[y+1]).tree).TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
+													leavesBlock.SetOrigin();
+
 													chunk.TopBlocks[y]=block;
 													chunk.IsTopBlocks[y]=true;
 												//	chunk.RefreshLightingAddTop(y,(ushort)BlockId.SpruceLeaves);
 													if (chunk.StartSomething>y) chunk.StartSomething=y;
 												}
 											}
-											
+
 											return;
 										}
 
 										chunk.TopBlocks[y]=block;
 										chunk.IsTopBlocks[y]=true;
 										if (chunk.StartSomething>y) chunk.StartSomething=y;
-										terrain[x].RefreshLightingAddTop(y,id: blockId);
+										terrain[x].RefreshLightingAddTop(y, id: blockId);
+
 										if (blockId<(ushort)BlockId._MoreInLoad) {
 											switch (blockId) {
 												case (ushort)BlockId.FurnaceStone:
@@ -9769,11 +10625,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				timerStayDied=255;
 				died=true;
 
-				barHeart=0;
-				barOxygen=0;
-				barWater=0;
-				barEnergy=0;
-				barEat=0;
+				barHeart.Value=0f;
+				barOxygen.Value=0f;
+				barWater.Value=0f;
+				barEnergy.Value=0f;
+				barEat.Value=0f;
 			}
 		}
 
@@ -9781,7 +10637,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
             for (int i=0; i<InventoryClothes.Length; i++) {
 				if (InventoryClothes[i]==null) InventoryClothes[i]=itemBlank;
             }
-            
+
 			switch (InventoryClothes[InventoryClothesSlotCap].Id) {
 				case (ushort)Items.Cap:
 					ClothesHead=ClothesCap;
@@ -9944,11 +10800,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					ClothesUnderwearDown=null;
 					break;
 			}
-		
+
 			switch (InventoryClothes[InventoryClothesSlotShoes].Id) {
 				case (ushort)Items.FormalShoes:
 					ClothesFeet=ClothesFormalShoes;
-					ClothesFeet.Color=ColorWhite;
+					ClothesFeet.Color=Color.White;
 					break;
 
 				case (ushort)Items.Pumps:
@@ -9963,14 +10819,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)Items.SpaceBoots:
 					ClothesFeet=ClothesSpaceBoots;
-					ClothesFeet.Color=ColorWhite;
+					ClothesFeet.Color=Color.White;
 					break;
 
 				default:
 					ClothesFeet=null;
 					break;
 			}
-			
+
 			if (InventoryClothes[InventoryClothesSlotBackpack].Id==(ushort)Items.Backpack) {
 				maxInvCount=45+49;
 			} else {
@@ -9985,8 +10841,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											new Item {
 												item=remain,
 												Texture=ItemIdToTexture(remain.Id),
-												X=(int)PlayerX,
-												Y=(int)PlayerY
+												X=PlayerXInt,
+												Y=PlayerYInt
 											}
 										);
 									}
@@ -9999,8 +10855,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											new Item {
 												item=remain,
 												Texture=ItemIdToTexture(remain.Id),
-												X=(int)PlayerX,
-												Y=(int)PlayerY
+												X=PlayerXInt,
+												Y=PlayerYInt
 											}
 										);
 									}
@@ -10013,8 +10869,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											new Item {
 												item=remain,
 												Texture=ItemIdToTexture(remain.Id),
-												X=(int)PlayerX,
-												Y=(int)PlayerY
+												X=PlayerXInt,
+												Y=PlayerYInt
 											}
 										);
 									}
@@ -10027,8 +10883,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											new Item {
 												item=remain,
 												Texture=ItemIdToTexture(remain.Id),
-												X=(int)PlayerX,
-												Y=(int)PlayerY
+												X=PlayerXInt,
+												Y=PlayerYInt
 											}
 										);
 									}
@@ -10041,8 +10897,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											new Item {
 												item=remain,
 												Texture=ItemIdToTexture(remain.Id),
-												X=(int)PlayerX,
-												Y=(int)PlayerY
+												X=PlayerXInt,
+												Y=PlayerYInt
 											}
 										);
 									}
@@ -10057,16 +10913,36 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
+		bool NoAround(int x, int y) {
+			if (x<TerrainLength) if (terrain[x+1].IsSolidBlocks[y]) 
+					return false;
+			if (x>0) if (terrain[x-1].IsSolidBlocks[y]) 
+					return false;
+			if (y<125) if (terrain[x].IsSolidBlocks[y+1]) 
+					return false;
+			if (y>0) if (terrain[x].IsSolidBlocks[y-1]) 
+					return false;
+			return true;
+		}
+
 		#region Destruction
 		void GetItemsFromBlock(int type, int X, int Y) {
 			int X16=X*16, Y16=Y*16;
 
 			switch (type) {
+				case (ushort)BlockId.Coral:
+					DropItemToPos(new ItemNonInvBasic((ushort)Items.Coral, 1), X16, Y16);
+					return;
+
+				case (ushort)BlockId.Seaweed:
+					DropItemToPos(new ItemNonInvFood((ushort)Items.Seaweed, 1), X16, Y16);
+					return;
+
 				case (ushort)BlockId.AngelHair:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.AngelHair, 1), X16, Y16);
 					RefreshAroundLabels(X, Y);
 					return;
-					
+
 				case (ushort)BlockId.ChristmasBall:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.ChristmasBallGray, 1), X16, Y16);
 					RefreshAroundLabels(X, Y);
@@ -10096,7 +10972,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.ChristmasBallPurple, 1), X16, Y16);
 					RefreshAroundLabels(X, Y);
 					return;
-					
+
 				case (ushort)BlockId.ChristmasBallLightGreen:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.ChristmasBallLightGreen, 1), X16, Y16);
 					RefreshAroundLabels(X, Y);
@@ -10180,14 +11056,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.AppleLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 									return;
@@ -10205,7 +11081,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10214,14 +11090,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.EucalyptusLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 									return;
@@ -10239,7 +11115,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.EucalyptusSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10248,14 +11124,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.AcaciaLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 									return;
@@ -10273,7 +11149,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10282,14 +11158,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.WillowLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10307,7 +11183,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WillowSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10316,14 +11192,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.OliveLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10341,7 +11217,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10350,14 +11226,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.RubberTreeLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10375,7 +11251,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.RubberTreeSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10384,14 +11260,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.KapokLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10409,7 +11285,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10418,14 +11294,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.KapokLeacesFlowering:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeacesFlowering, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeacesFlowering, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeacesFlowering, 1), X16, Y16);
 									return;
@@ -10443,7 +11319,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10452,21 +11328,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.KapokLeacesFibre:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16); 
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeavesFibre, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokLeavesFibre, 1), X16, Y16);
 						else {
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16); 
+							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
+							DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16);
 						}
 					} else {
-						DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16); 
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokFibre, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 									return;
@@ -10478,13 +11354,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								case 3:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 									return;
-									
+
 								case 4:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Leave, 1), X16, Y16);
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.KapokSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10493,10 +11369,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.OliveLeavesWithOlives:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveLeaves, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive, 1), X16, Y16);
@@ -10504,8 +11380,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					} else {
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.Olive, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10523,7 +11399,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 5:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OliveSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10532,21 +11408,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.LemonLeavesWithLemons:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AcaciaSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
 						 DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonLeavesWithLemons, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonLeavesWithLemons, 1), X16, Y16);
 						else {
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
+							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon, 1), X16, Y16);
 						}
 					} else {
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.Lemon, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10560,7 +11436,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10569,14 +11445,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.LindenLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10590,7 +11466,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LindenSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10599,14 +11475,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.OakLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10620,7 +11496,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OakSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10629,16 +11505,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.OrangeLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10652,7 +11528,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10661,27 +11537,42 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.SpruceLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick, 1), X16, Y16);
 					} else {
-						if (random.Bool()) {
-							if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
-							else if (random.Bool_20Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
+							else if (FastRandom.Bool_20Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
+						}
+					}
+					return;
+					
+				case (ushort)BlockId.SpruceLeavesWithSnow:
+					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
+						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick, 1), X16, Y16);
+					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceLeavesWithSnow, 1), X16, Y16);
+						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick, 1), X16, Y16);
+					} else {
+						if (FastRandom.Bool()) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
+							else if (FastRandom.Bool_20Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SpruceSapling, 1), X16, Y16);
 						}
 					}
 					return;
 
 				case (ushort)BlockId.PlumLeavesWithPlums:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumLeavesWithPlums, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumLeavesWithPlums, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
@@ -10689,8 +11580,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					} else {
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Plum, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10704,7 +11595,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10713,14 +11604,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.PlumLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10734,7 +11625,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PlumSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10743,14 +11634,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.PineLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PineSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PineSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PineLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.PineLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10764,7 +11655,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.PineSapling,1),X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.PineSapling,1),X16, Y16);
 									else DropItemToPos(new ItemNonInvBasic((ushort)Items.Banana, 1), X16, Y16);
 									return;
 							}
@@ -10774,12 +11665,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.OrangeLeavesWithOranges:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeavesWithOranges, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeLeavesWithOranges, 1), X16, Y16);
 						else {
 							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
@@ -10787,8 +11678,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					} else {
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Orange, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(6)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(6)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10802,7 +11693,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.OrangeSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10811,21 +11702,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.AppleLeavesWithApples:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleLeavesWithApples, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleLeavesWithApples, 1), X16, Y16);
 						else {
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
+							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 						}
 					} else {
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Apple, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10839,7 +11730,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.AppleSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10848,14 +11739,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.CherryLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherryLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherryLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10869,7 +11760,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10878,21 +11769,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.CherryLeavesWithCherries:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherryLeavesWithCherries, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CherryLeavesWithCherries, 1), X16, Y16);
 						else {
-							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16); 
+							DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 						}
 					} else {
 						DropItemToPos(new ItemNonInvFood((ushort)Items.Cherry, 1), X16, Y16);
 
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10906,7 +11797,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.CherrySapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10915,14 +11806,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.LemonLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonLeaves, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonLeaves, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10936,7 +11827,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
+									if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.LemonSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -10945,14 +11836,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case (ushort)BlockId.MangroveLeaves:
 					if (GameMethods.IsSelectedKnife(InventoryNormal[boxSelected].Id)) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
 						else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 					} else if (GameMethods.IsSelectedShears(InventoryNormal[boxSelected].Id)) {
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks, 1), X16, Y16);
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.Leave,1), X16, Y16);
 					} else {
-						if (random.Bool_20Percent()) {
-							switch (random.Int(5)) {
+						if (FastRandom.Bool_20Percent()) {
+							switch (FastRandom.Int(5)) {
 								case 1:
 									DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 									return;
@@ -10966,7 +11857,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									return;
 
 								case 4:
-									if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
+									if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.MangroveSapling, 1), X16, Y16);
 									return;
 							}
 						}
@@ -11034,32 +11925,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.GrassDesert:
-					if (random.Int(6)==1)DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_33_333Percent()/* Int(3)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
+					if (FastRandom.Int(6)==1)DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_33_333Percent()/* Int(3)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.GrassForest:
-					if (random.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
-					else if (random.Bool_10Percent()/* Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					if (FastRandom.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
+					else if (FastRandom.Bool_10Percent()/* Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.GrassHills:
-					if (random.Int(7)==1)DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_20Percent() /*Int(5)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
-					else if (random.Bool_10Percent() /*Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					if (FastRandom.Int(7)==1)DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_20Percent() /*Int(5)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
+					else if (FastRandom.Bool_10Percent() /*Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.GrassJungle:
-					if (random.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_20Percent()/* Int(5)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
-					else if (random.Bool_5_555Percent() /*Int(20)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					if (FastRandom.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_20Percent()/* Int(5)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
+					else if (FastRandom.Bool_5_555Percent() /*Int(20)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.GrassPlains:
-					if (random.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_33_333Percent() /*Int(3)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
-					else if (random.Bool_10Percent() /*Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					if (FastRandom.Bool_20Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_33_333Percent() /*Int(3)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay,1), X16, Y16);
+					else if (FastRandom.Bool_10Percent() /*Int(10)==1*/)DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
 					return;
 
 
@@ -11067,7 +11958,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)BlockId.Glass:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Glass, 1), X16, Y16);
 					return;
-					
+
 				case (ushort)BlockId.ChristmasStar:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.ChristmasStar, 1), X16, Y16);
 					return;
@@ -11094,12 +11985,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.BranchALittle1:
-					if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
+					if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
 					else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.BranchALittle2:
-					if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
+					if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.Stick,1), X16, Y16);
 					else DropItemToPos(new ItemNonInvBasic((ushort)Items.Sticks,1), X16, Y16);
 					return;
 
@@ -11141,8 +12032,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 			case (ushort)BlockId.Rocks:
-					AchievementStoneAge=true;
-				switch (random.Int(100)) {
+				AchievementStoneAge=true;
+				switch (FastRandom.Int(200)) {
 					case 0: DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16); return;
 					case 1: DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16); return;
 					case 2: DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16); return;
@@ -11165,35 +12056,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case 19: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
 					case 20: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
 					case 21: DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneHead,1), X16, Y16); return;
-					case 22: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 23: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 24: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 25: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 26: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 27: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 28: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 29: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 30: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 31: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 32: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 33: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 34: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 35: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 36: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 37: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
-					case 38: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 39: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 40: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 41: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 42: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 43: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 44: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 45: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
-					case 46: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
 					case 47: DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16); return;
 					case 48: DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16); return;
-					default: DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16); return;
+					default: 
+						switch (FastRandom.Int(3)) {
+							case 0: DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16); return;
+							case 1: DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16); return;
+							case 2: DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16); return;
+						}
+						break;
 				}
+				break;
 
 				case (ushort)BlockId.Compost:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Compost, 1), X16, Y16);
@@ -11221,25 +12094,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneBasalt:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneBasalt), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11249,25 +12125,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneDiorit:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneDiorit), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11277,25 +12156,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneDolomite:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.BackDolomite), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11305,25 +12187,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneGabbro:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneGabbro), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11333,53 +12218,59 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneGneiss:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneGneiss), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
-						chunk.Background[Y]=new NormalBlock(backgroundGneissTexture, (ushort)BlockId.BackGneiss, new Vector2(X16, Y16));
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackGneiss, new Vector2(X16, Y16));
 					}
 					return;
 
 				case (ushort)BlockId.StoneLimestone:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneLimestone), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11389,25 +12280,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneRhyolite:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneRhyolite), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11417,25 +12311,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneSandstone:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneSandstone), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11445,25 +12342,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.StoneSchist:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-					else if (random.Bool_2Percent() /*Int(50)==1*/) {
-						if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-						else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.StoneSchist), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+						else if (FastRandom.Bool_2Percent() /*Int(50)==1*/) {
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Smaragd, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Ruby, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saphirite, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+							else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Diamond, 1), X16, Y16);
+						}
 					}
 					{
 						Terrain chunk=terrain[X];
@@ -11473,15 +12373,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreCoal:
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalWood, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreCoal), X16, Y16);
+					else {
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCoal,1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CoalWood, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11490,12 +12393,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreAluminium:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.Aluminium, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreAluminium), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.Aluminium, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11504,13 +12410,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreCopper:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CopperDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreCopper), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemCopper, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.CopperDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11519,13 +12428,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreGold:
-					if (random.Bool_75Percent()/* Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.GoldDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreGold), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent()/* Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemGold, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.GoldDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11534,13 +12446,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreIron:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.IronDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreIron), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemIron, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.IronDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11549,14 +12464,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreSilver:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SilverDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreSilver), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemSilver, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SilverDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Silicium, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11565,13 +12483,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreTin:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.TinDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreTin), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.ItemTin, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.TinDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11580,12 +12501,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreSaltpeter:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saltpeter, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreSaltpeter), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.Saltpeter, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11594,12 +12518,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.OreSulfur:
-					if (random.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.SulfurDust, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.OreSulfur), X16, Y16);
+					else {
+						if (FastRandom.Bool_75Percent() /*Int4()!=1*/) DropItemToPos(new ItemNonInvBasic((ushort)Items.SulfurDust, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11608,12 +12535,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return;
 
 				case (ushort)BlockId.Cobblestone:
-					DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
-					else if (random.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					if (NoAround(X, Y)) DropItemToPos(new ItemNonInvBasic((ushort)Items.BackCobblestone), X16, Y16);
+					else {
+						DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.MediumStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.SmallStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Gravel, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.BigStone, 1), X16, Y16);
+						else if (FastRandom.Bool()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Sand, 1), X16, Y16);
+					}
 					{
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
@@ -11648,6 +12578,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						Terrain chunk=terrain[X];
 						chunk.IsBackground[Y]=true;
 						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+						if (chunk.StartSomething>Y) chunk.StartSomething=Y;
 					}
 					return;
 
@@ -11665,6 +12596,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Dirt, 1), X16, Y16);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockHills:
@@ -11672,13 +12608,23 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
-					
+
 				case (ushort)BlockId.GrassBlockSnowPlains:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Dirt, 1), X16, Y16);
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowDesert:
@@ -11686,6 +12632,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowJungle:
@@ -11693,6 +12644,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowHills:
@@ -11700,6 +12656,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowForest:
@@ -11707,6 +12668,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowClay:
@@ -11714,6 +12680,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockSnowCompost:
@@ -11721,6 +12692,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockJungle:
@@ -11728,6 +12704,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockCompost:
@@ -11735,13 +12716,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
 					terrain[X].IsBackground[Y]=true;
 					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.GrassBlockPlains:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.Dirt, 1), X16, Y16);
 					DestroyGrassUp(destroyBlockX,destroyBlockY-1);
-					terrain[X].IsBackground[Y]=true;
-					terrain[X].Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					{
+						Terrain chunk=terrain[X];
+						chunk.IsBackground[Y]=true;
+						chunk.Background[Y]=BackBlockFromId((ushort)BlockId.BackDirt,new Vector2(X16, Y16));
+					}
 					return;
 
 				case (ushort)BlockId.Planks:
@@ -11843,382 +12832,336 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		float GetBackBlockDestroingSpeed(ushort type) {
-			switch (type) {
-				case (ushort)BlockId.AdvancedSpaceBack: return 400*DestroyPickaxe();
-
-				case (ushort)BlockId.AppleWood: return 300*DestroyAxe();
-				case (ushort)BlockId.CherryWood: return 300*DestroyAxe();
-				case (ushort)BlockId.LemonWood: return 300*DestroyAxe();
-				case (ushort)BlockId.LindenWood: return 320*DestroyAxe();
-				case (ushort)BlockId.OakWood: return 320*DestroyAxe();
-				case (ushort)BlockId.OrangeWood: return 300*DestroyAxe();
-				case (ushort)BlockId.PineWood: return 300*DestroyAxe();
-				case (ushort)BlockId.PlumWood: return 300*DestroyAxe();
-				case (ushort)BlockId.SpruceWood: return 280*DestroyAxe();
-
-				case (ushort)BlockId.KapokWood: return 280*DestroyAxe();
-
-				case (ushort)BlockId.OliveWood: return 280*DestroyAxe();
-
-				case (ushort)BlockId.MangroveWood: return 280*DestroyAxe();
-				case (ushort)BlockId.WillowWood: return 280*DestroyAxe();
-				case (ushort)BlockId.RubberTreeWood: return 280*DestroyAxe();
-				case (ushort)BlockId.EucalyptusWood: return 280*DestroyAxe();
-				case (ushort)BlockId.AcaciaWood: return 280*DestroyAxe();
-
-
-				case (ushort)BlockId.BackCobblestone: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackGravel: return 300*DestroyShovel();
-				case (ushort)BlockId.BackDirt: return 300*DestroyShovel();
-				case (ushort)BlockId.BackRedSand: return 300*DestroyShovel();
-				case (ushort)BlockId.BackRegolite: return 300*DestroyShovel();
-				case (ushort)BlockId.BackSand: return 300*DestroyShovel();
-
-				case (ushort)BlockId.BackCoal: return 290*DestroyPickaxe();
-				case (ushort)BlockId.BackCopper: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackTin: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackIron: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackAluminium: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackSilver: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackGold: return 300*DestroyPickaxe();
-
-				case (ushort)BlockId.BackSulfur: return 250*DestroyPickaxe();
-				case (ushort)BlockId.BackSaltpeter: return 250*DestroyPickaxe();
-
-				case (ushort)BlockId.BackAnorthosite: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackBasalt: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackClay: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackDiorit: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackDolomite: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackFlint: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackGabbro: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackGneiss: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackLimestone: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackMudstone: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackRhyolite: return 300*DestroyPickaxe();
-				case (ushort)BlockId.BackSandstone: return 300*DestroyPickaxe();
-			}
-
-			return 0;
-		}
+            return type switch {
+                (ushort)BlockId.AdvancedSpaceBack => 400 * DestroyPickaxe(),
+                (ushort)BlockId.AppleWood => 300 * DestroyAxe(),
+                (ushort)BlockId.CherryWood => 300 * DestroyAxe(),
+                (ushort)BlockId.LemonWood => 300 * DestroyAxe(),
+                (ushort)BlockId.LindenWood => 320 * DestroyAxe(),
+                (ushort)BlockId.OakWood => 320 * DestroyAxe(),
+                (ushort)BlockId.OrangeWood => 300 * DestroyAxe(),
+                (ushort)BlockId.PineWood => 300 * DestroyAxe(),
+                (ushort)BlockId.PlumWood => 300 * DestroyAxe(),
+                (ushort)BlockId.SpruceWood => 280 * DestroyAxe(),
+                (ushort)BlockId.KapokWood => 280 * DestroyAxe(),
+                (ushort)BlockId.OliveWood => 280 * DestroyAxe(),
+                (ushort)BlockId.MangroveWood => 280 * DestroyAxe(),
+                (ushort)BlockId.WillowWood => 280 * DestroyAxe(),
+                (ushort)BlockId.RubberTreeWood => 280 * DestroyAxe(),
+                (ushort)BlockId.EucalyptusWood => 280 * DestroyAxe(),
+                (ushort)BlockId.AcaciaWood => 280 * DestroyAxe(),
+                (ushort)BlockId.BackCobblestone => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackGravel => 300 * DestroyShovel(),
+                (ushort)BlockId.BackDirt => 300 * DestroyShovel(),
+                (ushort)BlockId.BackRedSand => 300 * DestroyShovel(),
+                (ushort)BlockId.BackRegolite => 300 * DestroyShovel(),
+                (ushort)BlockId.BackSand => 300 * DestroyShovel(),
+                (ushort)BlockId.BackCoal => 290 * DestroyPickaxe(),
+                (ushort)BlockId.BackCopper => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackTin => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackIron => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackAluminium => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackSilver => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackGold => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackSulfur => 250 * DestroyPickaxe(),
+                (ushort)BlockId.BackSaltpeter => 250 * DestroyPickaxe(),
+                (ushort)BlockId.BackAnorthosite => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackBasalt => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackClay => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackDiorit => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackDolomite => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackFlint => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackGabbro => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackGneiss => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackLimestone => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackMudstone => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackRhyolite => 300 * DestroyPickaxe(),
+                (ushort)BlockId.BackSandstone => 300 * DestroyPickaxe(),
+                _ => 0,
+            };
+        }
 
 		float GetSolidBlockDestroingSpeed(ushort type) {
-			switch (type) {
-				case (ushort)BlockId.Windmill: return 45;
-				case (ushort)BlockId.FurnaceStone: return 45;
-				case (ushort)BlockId.FurnaceElectric: return 45;
-				case (ushort)BlockId.Macerator: return 45;
-				case (ushort)BlockId.Miner: return 45;
-				case (ushort)BlockId.SolarPanel: return 45;
-
-				case (ushort)BlockId.Clay: return 110*DestroyShovel();
-				case (ushort)BlockId.GrassBlockClay: return 120*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowPlains: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowDesert: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowForest: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowHills: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowJungle: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowCompost: return 250*DestroyShovel();
-				case (ushort)BlockId.GrassBlockSnowClay: return 250*DestroyShovel();
-
-				case (ushort)BlockId.GrassBlockDesert: return 100*DestroyShovel();
-				case (ushort)BlockId.GrassBlockForest: return 100*DestroyShovel();
-				case (ushort)BlockId.GrassBlockHills: return 105*DestroyShovel();
-				case (ushort)BlockId.GrassBlockJungle: return 105*DestroyShovel();
-				case (ushort)BlockId.GrassBlockPlains: return 95*DestroyShovel();
-				case (ushort)BlockId.GrassBlockCompost: return 100*DestroyShovel();
-				case (ushort)BlockId.Dirt: return 90*DestroyShovel();
-				case (ushort)BlockId.Gravel: return 120*DestroyShovel();
-
-				case (ushort)BlockId.Sand: return 60*DestroyShovel();
-				case (ushort)BlockId.Compost: return 70*DestroyShovel();
-				case (ushort)BlockId.Cobblestone: return 280*DestroyPickaxe();
-
-				case (ushort)BlockId.Roof1: return 120*DestroyPickaxe();
-				case (ushort)BlockId.Roof2: return 120*DestroyPickaxe();
-				case (ushort)BlockId.DoorClose: return 280*DestroyPickaxe();
-
-				case (ushort)BlockId.StoneBasalt: return 320*DestroyPickaxe();
-				case (ushort)BlockId.StoneDiorit: return 300*DestroyPickaxe();
-				case (ushort)BlockId.StoneDolomite: return 280*DestroyPickaxe();
-				case (ushort)BlockId.StoneGabbro: return 320*DestroyPickaxe();
-				case (ushort)BlockId.StoneGneiss: return 320*DestroyPickaxe();
-				case (ushort)BlockId.StoneLimestone: return 280*DestroyPickaxe();
-				case (ushort)BlockId.StoneRhyolite: return 300*DestroyPickaxe();
-				case (ushort)BlockId.StoneSandstone: return 260*DestroyPickaxe();
-				case (ushort)BlockId.StoneSchist: return 300*DestroyPickaxe();
-
-				case (ushort)BlockId.OreCoal: return 260*DestroyPickaxe();
-				case (ushort)BlockId.OreAluminium: return 320*DestroyPickaxe();
-				case (ushort)BlockId.OreCopper: return 320*DestroyPickaxe();
-				case (ushort)BlockId.OreGold: return 300*DestroyPickaxe();
-				case (ushort)BlockId.OreIron: return 320*DestroyPickaxe();
-
-				case (ushort)BlockId.OreSilver: return 300*DestroyPickaxe();
-
-				case (ushort)BlockId.OreTin: return 300*DestroyPickaxe();
-
-				case (ushort)BlockId.OreSaltpeter: return 250*DestroyPickaxe();
-				case (ushort)BlockId.OreSulfur: return 250*DestroyPickaxe();
-
-				case (ushort)BlockId.Ice: return 120*DestroyAxe();
-
-				case (ushort)BlockId.AdvancedSpaceBlock: return 100*DestroyPickaxe();
-				case (ushort)BlockId.AdvancedSpaceFloor: return 100*DestroyPickaxe();
-				case (ushort)BlockId.AdvancedSpaceWindow: return 100*DestroyPickaxe();
-
-				case (ushort)BlockId.Planks: return 100*DestroyAxe();
-				case (ushort)BlockId.Bricks: return 160*DestroyPickaxe();
-
-				case (ushort)BlockId.AdvancedSpacePart1: return 90*DestroyPickaxe();
-				case (ushort)BlockId.AdvancedSpacePart2: return 90*DestroyPickaxe();
-				case (ushort)BlockId.AdvancedSpacePart3: return 90*DestroyPickaxe();
-				case (ushort)BlockId.AdvancedSpacePart4: return 90*DestroyPickaxe();
-			}
-
-			return 0;
-		}
+            return type switch {
+                (ushort)BlockId.Windmill => 45,
+                (ushort)BlockId.FurnaceStone => 45,
+                (ushort)BlockId.FurnaceElectric => 45,
+                (ushort)BlockId.Macerator => 45,
+                (ushort)BlockId.Miner => 45,
+                (ushort)BlockId.SolarPanel => 45,
+                (ushort)BlockId.Clay => 110 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockClay => 120 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowPlains => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowDesert => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowForest => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowHills => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowJungle => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowCompost => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockSnowClay => 250 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockDesert => 100 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockForest => 100 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockHills => 105 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockJungle => 105 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockPlains => 95 * DestroyShovel(),
+                (ushort)BlockId.GrassBlockCompost => 100 * DestroyShovel(),
+                (ushort)BlockId.Dirt => 90 * DestroyShovel(),
+                (ushort)BlockId.Gravel => 120 * DestroyShovel(),
+                (ushort)BlockId.Sand => 60 * DestroyShovel(),
+                (ushort)BlockId.Compost => 70 * DestroyShovel(),
+                (ushort)BlockId.Cobblestone => 280 * DestroyPickaxe(),
+                (ushort)BlockId.Roof1 => 120 * DestroyPickaxe(),
+                (ushort)BlockId.Roof2 => 120 * DestroyPickaxe(),
+                (ushort)BlockId.DoorClose => 280 * DestroyPickaxe(),
+                (ushort)BlockId.StoneBasalt => 320 * DestroyPickaxe(),
+                (ushort)BlockId.StoneDiorit => 300 * DestroyPickaxe(),
+                (ushort)BlockId.StoneDolomite => 280 * DestroyPickaxe(),
+                (ushort)BlockId.StoneGabbro => 320 * DestroyPickaxe(),
+                (ushort)BlockId.StoneGneiss => 320 * DestroyPickaxe(),
+                (ushort)BlockId.StoneLimestone => 280 * DestroyPickaxe(),
+                (ushort)BlockId.StoneRhyolite => 300 * DestroyPickaxe(),
+                (ushort)BlockId.StoneSandstone => 260 * DestroyPickaxe(),
+                (ushort)BlockId.StoneSchist => 300 * DestroyPickaxe(),
+                (ushort)BlockId.OreCoal => 260 * DestroyPickaxe(),
+                (ushort)BlockId.OreAluminium => 320 * DestroyPickaxe(),
+                (ushort)BlockId.OreCopper => 320 * DestroyPickaxe(),
+                (ushort)BlockId.OreGold => 300 * DestroyPickaxe(),
+                (ushort)BlockId.OreIron => 320 * DestroyPickaxe(),
+                (ushort)BlockId.OreSilver => 300 * DestroyPickaxe(),
+                (ushort)BlockId.OreTin => 300 * DestroyPickaxe(),
+                (ushort)BlockId.OreSaltpeter => 250 * DestroyPickaxe(),
+                (ushort)BlockId.OreSulfur => 250 * DestroyPickaxe(),
+                (ushort)BlockId.Ice => 120 * DestroyAxe(),
+                (ushort)BlockId.AdvancedSpaceBlock => 100 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpaceFloor => 100 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpaceWindow => 100 * DestroyPickaxe(),
+                (ushort)BlockId.Planks => 100 * DestroyAxe(),
+                (ushort)BlockId.Bricks => 160 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpacePart1 => 90 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpacePart2 => 90 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpacePart3 => 90 * DestroyPickaxe(),
+                (ushort)BlockId.AdvancedSpacePart4 => 90 * DestroyPickaxe(),
+                _ => 0,
+            };
+        }
 
 		float GetTopBlockDestroingSpeed(ushort type) {
-			switch (type) {
-				case (ushort)BlockId.Desk: return 45;
-				case (ushort)BlockId.Rocket: return 45;
-
-				case (ushort)BlockId.EggDrop: return 20;
-
-				case (ushort)BlockId.Ladder: return 90*DestroyAxe();
-				case (ushort)BlockId.Lamp: return 45;
-
-				case (ushort)BlockId.Watermill: return 45;
-				case (ushort)BlockId.Flag: return 45;
-
-				case (ushort)BlockId.Label: return 30;
-
-				case (ushort)BlockId.Snow: return 100*DestroyShovel();
-
-				case (ushort)BlockId.AppleLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.LemonLeavesWithLemons: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.LindenLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.OakLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.OrangeLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.SpruceLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.PlumLeavesWithPlums: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.PlumLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.PineLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.OrangeLeavesWithOranges: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.AppleLeavesWithApples: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.CherryLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.CherryLeavesWithCherries: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.LemonLeaves: return 15*DestroyKnife()*DestroyShears();
-
-				case (ushort)BlockId.AcaciaLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.EucalyptusLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.KapokLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.KapokLeacesFibre: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.KapokLeacesFlowering: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.MangroveLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.OliveLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.OliveLeavesWithOlives: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.RubberTreeLeaves: return 15*DestroyKnife()*DestroyShears();
-				case (ushort)BlockId.WillowLeaves: return 15*DestroyKnife()*DestroyShears();
-
-				case (ushort)BlockId.Violet: return 30*DestroyKnife()*DestroyShears()*DestroyShovel();
-				case (ushort)BlockId.Dandelion: return 30*DestroyKnife()*DestroyShears()*DestroyShovel();
-				case (ushort)BlockId.Heather: return 30*DestroyKnife()*DestroyShears()*DestroyShovel();
-				case (ushort)BlockId.Alore: return 30*DestroyKnife()*DestroyShears()*DestroyShovel();
-				case (ushort)BlockId.CactusBig: return 60;
-				case (ushort)BlockId.CactusSmall: return 60;
-
-				case (ushort)BlockId.AppleSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.CherrySapling: return 30*DestroyKnife();
-				case (ushort)BlockId.LemonSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.LindenSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.OakSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.OrangeSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.PineSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.PlumSapling: return 30*DestroyKnife();
-				case (ushort)BlockId.SpruceSapling: return 30*DestroyKnife();
-
-				case (ushort)BlockId.GrassDesert: return 30*DestroyKnife();
-				case (ushort)BlockId.GrassForest: return 30*DestroyKnife();
-				case (ushort)BlockId.GrassHills: return 30*DestroyKnife();
-				case (ushort)BlockId.GrassJungle: return 30*DestroyKnife();
-				case (ushort)BlockId.GrassPlains: return 30*DestroyKnife();
-
-			   // case (ushort)BlockId.Liana: return 30*DestroyAxe();
-
-				case (ushort)BlockId.Wheat: return 30*DestroyKnife();
-				case (ushort)BlockId.Onion: return 30*DestroyShovel();
-				case (ushort)BlockId.Flax: return 30*DestroyKnife();
-				case (ushort)BlockId.Glass: return 30;
-				case (ushort)BlockId.ChristmasStar: return 30;
-				case (ushort)BlockId.Orchid: return 30*DestroyShovel();
-				case (ushort)BlockId.Radio: return 45;
-				case (ushort)BlockId.Rose: return 30*DestroyShovel();
-				case (ushort)BlockId.Seaweed: return 30*DestroyKnife();
-				case (ushort)BlockId.SugarCane: return 30*DestroyKnife();
-				case (ushort)BlockId.Toadstool: return 30*DestroyKnife();
-				case (ushort)BlockId.Strawberry: return 30*DestroyShovel();
-				case (ushort)BlockId.Rashberry: return 30*DestroyShovel();
-				case (ushort)BlockId.Blueberry: return 30*DestroyShovel();
-				case (ushort)BlockId.Boletus: return 30*DestroyKnife();
-				case (ushort)BlockId.SnowTop: return 45*DestroyShovel();
-				case (ushort)BlockId.Roof1: return 90;
-				case (ushort)BlockId.Coral: return 60*DestroyKnife();
-				case (ushort)BlockId.BranchALittle1: return 30;
-				case (ushort)BlockId.BranchALittle2: return 30;
-				case (ushort)BlockId.BranchFull: return 30;
-				case (ushort)BlockId.BranchWithout: return 30;
-				case (ushort)BlockId.Champignon: return 30*DestroyKnife();
-				case (ushort)BlockId.DoorOpen: return 45;
-			}
-
-			return 0;
-		}
+            return type switch {
+                (ushort)BlockId.Desk => 45,
+                (ushort)BlockId.Rocket => 45,
+                (ushort)BlockId.EggDrop => 20,
+                (ushort)BlockId.Ladder => 90 * DestroyAxe(),
+                (ushort)BlockId.Lamp => 45,
+                (ushort)BlockId.Watermill => 45,
+                (ushort)BlockId.Flag => 45,
+                (ushort)BlockId.Label => 30,
+                (ushort)BlockId.Snow => 100 * DestroyShovel(),
+                (ushort)BlockId.AppleLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.LemonLeavesWithLemons => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.LindenLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.OakLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.OrangeLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.SpruceLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.SpruceLeavesWithSnow => 20 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.PlumLeavesWithPlums => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.PlumLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.PineLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.OrangeLeavesWithOranges => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.AppleLeavesWithApples => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.CherryLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.CherryLeavesWithCherries => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.LemonLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.AcaciaLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.EucalyptusLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.KapokLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.KapokLeacesFibre => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.KapokLeacesFlowering => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.MangroveLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.OliveLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.OliveLeavesWithOlives => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.RubberTreeLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.WillowLeaves => 15 * DestroyKnife() * DestroyShears(),
+                (ushort)BlockId.Violet => 30 * DestroyKnife() * DestroyShears() * DestroyShovel(),
+                (ushort)BlockId.Dandelion => 30 * DestroyKnife() * DestroyShears() * DestroyShovel(),
+                (ushort)BlockId.Heather => 30 * DestroyKnife() * DestroyShears() * DestroyShovel(),
+                (ushort)BlockId.Alore => 30 * DestroyKnife() * DestroyShears() * DestroyShovel(),
+                (ushort)BlockId.CactusBig => 60,
+                (ushort)BlockId.CactusSmall => 60,
+                (ushort)BlockId.AppleSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.CherrySapling => 30 * DestroyKnife(),
+                (ushort)BlockId.LemonSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.LindenSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.OakSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.OrangeSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.PineSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.PlumSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.SpruceSapling => 30 * DestroyKnife(),
+                (ushort)BlockId.GrassDesert => 30 * DestroyKnife(),
+                (ushort)BlockId.GrassForest => 30 * DestroyKnife(),
+                (ushort)BlockId.GrassHills => 30 * DestroyKnife(),
+                (ushort)BlockId.GrassJungle => 30 * DestroyKnife(),
+                (ushort)BlockId.GrassPlains => 30 * DestroyKnife(),
+                // case (ushort)BlockId.Liana: return 30*DestroyAxe();
+                (ushort)BlockId.Wheat => 30 * DestroyKnife(),
+                (ushort)BlockId.Onion => 30 * DestroyShovel(),
+                (ushort)BlockId.Flax => 30 * DestroyKnife(),
+                (ushort)BlockId.Glass => 30,
+                (ushort)BlockId.ChristmasStar => 30,
+                (ushort)BlockId.Orchid => 30 * DestroyShovel(),
+                (ushort)BlockId.Radio => 45,
+                (ushort)BlockId.Rose => 30 * DestroyShovel(),
+                (ushort)BlockId.Seaweed => 30 * DestroyKnife(),
+                (ushort)BlockId.SugarCane => 30 * DestroyKnife(),
+                (ushort)BlockId.Toadstool => 30 * DestroyKnife(),
+                (ushort)BlockId.Strawberry => 30 * DestroyShovel(),
+                (ushort)BlockId.Rashberry => 30 * DestroyShovel(),
+                (ushort)BlockId.Blueberry => 30 * DestroyShovel(),
+                (ushort)BlockId.Boletus => 30 * DestroyKnife(),
+                (ushort)BlockId.SnowTop => 45 * DestroyShovel(),
+                (ushort)BlockId.Roof1 => 90,
+                (ushort)BlockId.Coral => 60 * DestroyKnife(),
+                (ushort)BlockId.BranchALittle1 => 30,
+                (ushort)BlockId.BranchALittle2 => 30,
+                (ushort)BlockId.BranchFull => 30,
+                (ushort)BlockId.BranchWithout => 30,
+                (ushort)BlockId.Champignon => 30 * DestroyKnife(),
+                (ushort)BlockId.DoorOpen => 45,
+                _ => 0,
+            };
+        }
 
 		float GetPlantDestroingSpeed(ushort type) {
-			switch (type) {
-				case (ushort)BlockId.Wheat: return 30;
-				case (ushort)BlockId.Onion: return 30;
-				case (ushort)BlockId.Carrot: return 30;
-				case (ushort)BlockId.Peas: return 30;
-				case (ushort)BlockId.Flax: return 30;
-
-				case (ushort)BlockId.Strawberry: return 30;
-				case (ushort)BlockId.Rashberry: return 30;
-				case (ushort)BlockId.Blueberry: return 30;
-			}
-
-			return 0;
-		}
+            return type switch {
+                (ushort)BlockId.Wheat => 30,
+                (ushort)BlockId.Onion => 30,
+                (ushort)BlockId.Carrot => 30,
+                (ushort)BlockId.Peas => 30,
+                (ushort)BlockId.Flax => 30,
+                (ushort)BlockId.Strawberry => 30,
+                (ushort)BlockId.Rashberry => 30,
+                (ushort)BlockId.Blueberry => 30,
+                _ => 0,
+            };
+        }
 
 		float GetMobDestroingSpeed(ushort type) {
-			switch (type) {
-				case (ushort)BlockId.Rabbit: return 30*DestroyKnife();
-				case (ushort)BlockId.Chicken: return 30*DestroyKnife();
-				case (ushort)BlockId.Fish: return 30*DestroyKnife();
-				case (ushort)BlockId.MobParrot: return 30*DestroyKnife();
-			}
-
-			return 0;
-		}
+            return type switch {
+                (ushort)BlockId.Rabbit => 30 * DestroyKnife(),
+                (ushort)BlockId.Chicken => 30 * DestroyKnife(),
+                (ushort)BlockId.Fish => 30 * DestroyKnife(),
+                (ushort)BlockId.MobParrot => 30 * DestroyKnife(),
+                _ => 0,
+            };
+        }
 
 		float DestroyPickaxe() {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.PickaxeStone: return 0.4f;
-				case (ushort)Items.PickaxeGold: return 0.5f;
-				case (ushort)Items.PickaxeCopper: return 0.3f;
-				case (ushort)Items.PickaxeBronze: return 0.25f;
-				case (ushort)Items.PickaxeAluminium: return 0.45f;
-				case (ushort)Items.PickaxeIron: return 0.2f;
-				case (ushort)Items.PickaxeSteel: return 0.19f;
-
-				case (ushort)Items.ElectricDrill: return 0.1f;
-				case (ushort)Items.MediumStone: return 0.93f;
-				case (ushort)Items.SmallStone: return 0.96f;
-				case (ushort)Items.BigStone: return 0.90f;
-				case (ushort)Items.PickaxeHeadIron: return 0.80f;
-				case (ushort)Items.StoneHead: return 0.80f;
-			}
-
-			return 1;
-		}
+            return InventoryNormal[boxSelected].Id switch {
+                (ushort)Items.PickaxeStone => 0.4f,
+                (ushort)Items.PickaxeGold => 0.5f,
+                (ushort)Items.PickaxeCopper => 0.3f,
+                (ushort)Items.PickaxeBronze => 0.25f,
+                (ushort)Items.PickaxeAluminium => 0.45f,
+                (ushort)Items.PickaxeIron => 0.2f,
+                (ushort)Items.PickaxeSteel => 0.19f,
+                (ushort)Items.ElectricDrill => 0.1f,
+                (ushort)Items.MediumStone => 0.93f,
+                (ushort)Items.SmallStone => 0.96f,
+                (ushort)Items.BigStone => 0.90f,
+                (ushort)Items.PickaxeHeadIron => 0.80f,
+                (ushort)Items.StoneHead => 0.80f,
+                _ => 1,
+            };
+        }
 
 		float DestroyAxe() {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.AxeStone: return 0.4f;
-				case (ushort)Items.AxeIron: return 0.2f;
-				case (ushort)Items.AxeGold: return 0.5f;
-				case (ushort)Items.AxeCopper: return 0.3f;
-				case (ushort)Items.AxeBronze: return 0.25f;
-				case (ushort)Items.AxeAluminium: return 0.35f;
-				case (ushort)Items.AxeSteel: return 0.19f;
-
-				case (ushort)Items.ElectricSaw: return 0.1f;
-				case (ushort)Items.AxeHeadIron: return 0.87f;
-				case (ushort)Items.SawCopper: return 0.4f;
-				case (ushort)Items.SawBronze: return 0.15f;
-				case (ushort)Items.SawIron: return 0.08f;
-				case (ushort)Items.BigStone: return 0.90f;
-				case (ushort)Items.StoneHead: return 0.80f;
-				case (ushort)Items.MediumStone: return 0.93f;
-				case (ushort)Items.SmallStone: return 0.96f;
-			}
-
-			return 1;
-		}
+            return InventoryNormal[boxSelected].Id switch {
+                (ushort)Items.AxeStone => 0.4f,
+                (ushort)Items.AxeIron => 0.2f,
+                (ushort)Items.AxeGold => 0.5f,
+                (ushort)Items.AxeCopper => 0.3f,
+                (ushort)Items.AxeBronze => 0.25f,
+                (ushort)Items.AxeAluminium => 0.35f,
+                (ushort)Items.AxeSteel => 0.19f,
+                (ushort)Items.ElectricSaw => 0.1f,
+                (ushort)Items.AxeHeadIron => 0.87f,
+                (ushort)Items.SawCopper => 0.4f,
+                (ushort)Items.SawBronze => 0.15f,
+                (ushort)Items.SawIron => 0.08f,
+                (ushort)Items.BigStone => 0.90f,
+                (ushort)Items.StoneHead => 0.80f,
+                (ushort)Items.MediumStone => 0.93f,
+                (ushort)Items.SmallStone => 0.96f,
+                _ => 1,
+            };
+        }
 
 		float DestroyKnife() {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.KnifeCopper: return 0.35f;
-				case (ushort)Items.KnifeBronze: return 0.3f;
-				case (ushort)Items.KnifeGold: return 0.5f;
-				case (ushort)Items.KnifeIron: return 0.25f;
-				case (ushort)Items.KnifeSteel: return 0.2f;
-				case (ushort)Items.KnifeAluminium: return 0.3f;
-			}
-			return 1;
-		}
+            return InventoryNormal[boxSelected].Id switch {
+                (ushort)Items.KnifeCopper => 0.35f,
+                (ushort)Items.KnifeBronze => 0.3f,
+                (ushort)Items.KnifeGold => 0.5f,
+                (ushort)Items.KnifeIron => 0.25f,
+                (ushort)Items.KnifeSteel => 0.2f,
+                (ushort)Items.KnifeAluminium => 0.3f,
+                _ => 1f,
+            };
+        }
 
 		float DestroyShears() {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.ShearsCopper: return 0.35f;
-				case (ushort)Items.ShearsBronze: return 0.3f;
-				case (ushort)Items.ShearsGold: return 0.5f;
-				case (ushort)Items.ShearsIron: return 0.25f;
-				case (ushort)Items.ShearsSteel: return 0.2f;
-				case (ushort)Items.ShearsAluminium: return 0.3f;
-			}
-			return 1;
-		}
+            return InventoryNormal[boxSelected].Id switch {
+                (ushort)Items.ShearsCopper => 0.35f,
+                (ushort)Items.ShearsBronze => 0.3f,
+                (ushort)Items.ShearsGold => 0.5f,
+                (ushort)Items.ShearsIron => 0.25f,
+                (ushort)Items.ShearsSteel => 0.2f,
+                (ushort)Items.ShearsAluminium => 0.3f,
+                _ => 1f,
+            };
+        }
 
 		float DestroyShovel() {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.ShovelStone: return 0.4f;
-				case (ushort)Items.ShovelGold: return 0.3f;
-				case (ushort)Items.ShovelCopper: return 0.25f;
-				case (ushort)Items.ShovelBronze: return 0.25f;
-				case (ushort)Items.ShovelIron: return 0.2f;
-
-				case (ushort)Items.ShovelAluminium: return 0.19f;
-				case (ushort)Items.ShovelSteel: return 0.2f;
-
-				case (ushort)Items.ElectricDrill: return 0.1f;
-				case (ushort)Items.ShovelHeadIron: return 0.87f;
-				case (ushort)Items.StoneHead: return 0.80f;
-				case (ushort)Items.MediumStone: return 0.86f;
-				case (ushort)Items.SmallStone: return 0.88f;
-				case (ushort)Items.BigStone: return 0.84f;
-			}
-
-			return 1;
-		}
+            return InventoryNormal[boxSelected].Id switch {
+                (ushort)Items.ShovelStone => 0.4f,
+                (ushort)Items.ShovelGold => 0.3f,
+                (ushort)Items.ShovelCopper => 0.25f,
+                (ushort)Items.ShovelBronze => 0.25f,
+                (ushort)Items.ShovelIron => 0.2f,
+                (ushort)Items.ShovelAluminium => 0.19f,
+                (ushort)Items.ShovelSteel => 0.2f,
+                (ushort)Items.ElectricDrill => 0.1f,
+                (ushort)Items.ShovelHeadIron => 0.87f,
+                (ushort)Items.StoneHead => 0.80f,
+                (ushort)Items.MediumStone => 0.86f,
+                (ushort)Items.SmallStone => 0.88f,
+                (ushort)Items.BigStone => 0.84f,
+                _ => 1,
+            };
+        }
 
 		void GetItemsFromPlant(int type, int x, int y, bool grow) {
-			DInt pos =new DInt{X=x*16, Y=y*16 };
+			DInt pos =new() { X=x*16, Y=y*16 };
 			if (grow) {
 				 switch (type) {
 					  case (ushort)BlockId.Wheat:
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw,1), pos);
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds,1), pos);
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds,1), pos);
 						return;
 
 					case (ushort)BlockId.Onion:
 						{
 							float des=GameMethods.FoodMaxDescay((ushort)Items.Onion);
-							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
-							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
-							if (random.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
+							if (FastRandom.Bool()) DropItemToPos(new ItemNonInvFood((ushort)Items.Onion, 1, des), pos);
 						}
 						return;
 
 					case (ushort)BlockId.Carrot:
 						{
 							float des=GameMethods.FoodMaxDescay((ushort)Items.Carrot);
-							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
-							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
-							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+							if (FastRandom.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+							if (FastRandom.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
+							if (FastRandom.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Carrot,1,des), pos);
 						}
 						return;
 
@@ -12227,7 +13170,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							float des=GameMethods.FoodMaxDescay((ushort)Items.Peas);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
 							DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
-							if (random.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
+							if (FastRandom.Bool())DropItemToPos(new ItemNonInvFood((ushort)Items.Peas,1,des), pos);
 						}
 						return;
 
@@ -12235,28 +13178,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.Flax,1), pos);
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
-						if (random.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
+						if (FastRandom.Bool())DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
 						return;
 
 					case (ushort)BlockId.Strawberry:
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantStrawberry,1), pos);
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantStrawberry,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantStrawberry,1), pos);
 						return;
 
 					case (ushort)BlockId.Rashberry:
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantRashberry,1), pos);
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantRashberry,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantRashberry,1), pos);
 						return;
 
 					case (ushort)BlockId.Blueberry:
 						DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantBlueberry,1), pos);
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantBlueberry,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.PlantBlueberry,1), pos);
 						return;
 				}
 			} else {
 				switch (type) {
 					case (ushort)BlockId.Wheat:
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds,1), pos);
 						return;
 
 					case (ushort)BlockId.Onion:
@@ -12271,7 +13214,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						return;
 
 					case (ushort)BlockId.Flax:
-						if (random.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
+						if (FastRandom.Bool_12_5Percent())DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds,1), pos);
 						return;
 
 					case (ushort)BlockId.Strawberry:
@@ -12289,40 +13232,40 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void GetItemsFromMob(int type, int X, int Y) {
+		void GetItemsFromMob(ushort type, int X, int Y) {
 			int X16=X*16,Y16=Y*16;
 
 			switch (type) {
 				 case (ushort)BlockId.Chicken:
-					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
+					if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.RabbitMeat, 1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.Rabbit:
-					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
+					if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.RabbitMeat, 1), X16, Y16);
 					return;
-					
+
 				case (ushort)BlockId.MobParrot:
-					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
-					else if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
+					if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatStraw, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.WheatSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.FlaxSeeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Seeds, 1), X16, Y16);
+					else if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.Hay, 1), X16, Y16);
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.RabbitMeat, 1), X16, Y16);
 					return;
 
 				case (ushort)BlockId.Fish:
 					DropItemToPos(new ItemNonInvBasic((ushort)Items.AnimalFish, 1), X16, Y16);
-					if (random.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AnimalFish, 1), X16, Y16);
+					if (FastRandom.Bool_12_5Percent()) DropItemToPos(new ItemNonInvBasic((ushort)Items.AnimalFish, 1), X16, Y16);
 					return;
 			}
 		}
@@ -12330,7 +13273,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void Destroy(int x, int y) {
 			float destrustionSlow;
 			{
-				float distance=FastMath.DistanceInt(mousePosRoundX, mousePosRoundY, PlayerX, PlayerY);
+				float distance=FastMath.DistanceInt(mousePosRoundX, mousePosRoundY, PlayerXInt, PlayerYInt);
 
 				if (distance>DistanceBlockEdit) destrustionSlow=-1;
 				else if (distance<DistanceBlockEdit/2) {
@@ -12521,10 +13464,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		unsafe void Save() {
 			isDisposed=true;
 
-			List<byte> bytes=new List<byte>();
-			List<byte> tmpBytes=new List<byte>();
+			List<byte> bytes=new();
+			List<byte> tmpBytes=new();
 
-			List<byte> bytesLiveObjects = new List<byte> {
+			List<byte> bytesLiveObjects = new() {
                 (byte)LiveObjects.Length,
                 (byte)(LiveObjects.Length >> 8),
                 (byte)(LiveObjects.Length >> 16)
@@ -12569,7 +13512,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								lastTypeCount=1;
 
 								#if DEBUG
-								if (SolidBlockFromId(newSolidBlockId, Vector2Zero)==null) { 
+								if (SolidBlockFromId(newSolidBlockId, Vector2Zero)==null) {
 									throw new Exception("Nějaký blok je zaregistrován jako statický, ale není jako statický definován");
 								}
 								#endif
@@ -12578,8 +13521,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								break;
 						}
 					} else {
-						if (chunk.IsTopBlocks[y]) {
-							if (chunk.IsBackground[y]) {
+						if (chunk.IsTopBlocks[y] && chunk.TopBlocks[y]!=null) {
+							if (chunk.IsBackground[y] && chunk.Background[y]!=null) {
 
 								// back and top
 								ushort newBackBlockId=chunk.Background[y].Id,
@@ -12628,10 +13571,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										lastTypeCount=1;
 
 										#if DEBUG
-										if (TopBlockFromId(newTopBlockId, Vector2Zero)==null) { 
+										if (TopBlockFromId(newTopBlockId, Vector2Zero)==null) {
 											throw new Exception("Nějaký blok je zaregistrován jako top, ale není jako top definován");
 										}
-										if (BackBlockFromId(newBackBlockId, Vector2Zero)==null) { 
+										if (BackBlockFromId(newBackBlockId, Vector2Zero)==null) {
 											throw new Exception("Nějaký blok je zaregistrován jako top, ale není jako top definován");
 										}
 										#endif
@@ -12722,7 +13665,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									lastTypeCount=1;
 
 									#if DEBUG
-									if (BackBlockFromId(newBackBlockId, Vector2Zero)==null) { 
+									if (BackBlockFromId(newBackBlockId, Vector2Zero)==null) {
 										throw new Exception("Nějaký blok je zaregistrován jako top, ale není jako top definován");
 									}
 									#endif
@@ -13306,7 +14249,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			File.WriteAllBytes(pathToWorld + @"\"+world+"LiveObjects.bin", bytesLiveObjects.ToArray());
 
 			void SaveLiveObject(LiveObject lo) {
-                switch (lo) { 
+                switch (lo) {
                     case Tree tree:
                         // Basic info
                         bytesLiveObjects.Add((byte)LiveObjectType.Tree);
@@ -13319,7 +14262,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                         int countWood=tree.TitlesWood.Count;
                         bytesLiveObjects.Add((byte)countWood);
 
-                        for (int i=0; i<countWood; i++) { 
+                        for (int i=0; i<countWood; i++) {
                             UShortAndByte sab=tree.TitlesWood[i];
 
                             bytesLiveObjects.Add((byte)sab.X);
@@ -13331,7 +14274,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                         int countLeaves=tree.TitlesLeaves.Count;
                         bytesLiveObjects.Add((byte)countLeaves);
 
-                        for (int i=0; i<countLeaves; i++) { 
+                        for (int i=0; i<countLeaves; i++) {
                             UShortAndByte sab=tree.TitlesLeaves[i];
 
                             bytesLiveObjects.Add((byte)sab.X);
@@ -13352,7 +14295,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
                         int count=cactus.Titles.Count;
                         bytesLiveObjects.Add((byte)count);
 
-                        for (int i=0; i<count; i++) { 
+                        for (int i=0; i<count; i++) {
                             UShortAndByte sab=cactus.Titles[i];
 
                             bytesLiveObjects.Add((byte)sab.X);
@@ -13361,13 +14304,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
                         }
                         break;
                 }
-                    
+
             }
 
 		}
 
 		unsafe void Load() {
-			List<DInt> labels=new List<DInt>();
+			List<DInt> labels=new();
 			string path =pathToWorld+ world+".ter";
 
 			if (File.Exists(path)) {
@@ -13418,46 +14361,44 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								// 1× solid block
 								case (byte)SaveType.SolidBlock:
+									#if DEBUG
 									{
-									 //   ushort id=(ushort)(*current++ | (*current++ << 8));
-
-										chunk.SolidBlocks[length]=SolidBlockFromId(/*id*/(ushort)(*current++ | (*current++ << 8)), new Vector2(pos16, length*16))
-											#if DEBUG
-											??throw new Exception("Solid block is null")
-											#endif
-										;
-
-										chunk.IsSolidBlocks[length]=true;
-
-										if (startingSomething) {
-											startingSomething=false;
-											StartSomething=length;
-										}
-
-										length++;
+										ushort id=(ushort)(*current++ | (*current++ << 8));
+										chunk.SolidBlocks[length]=SolidBlockFromId(id, new Vector2(pos16, length*16)) ?? throw new Exception("Solid block is null");
 									}
+									#else
+									chunk.SolidBlocks[length]=SolidBlockFromId(/*id*/(ushort)(*current++ | (*current++ << 8)), new Vector2(pos16, length*16));
+									#endif
+
+									chunk.IsSolidBlocks[length]=true;
+
+									if (startingSomething) {
+										startingSomething=false;
+										StartSomething=length;
+									}
+
+									length++;
 									break;
 
 								// 1× solid block
 								case (byte)SaveType.SolidBlockWithLowId:
+									#if DEBUG
 									{
-									   // ushort id=*current++;
-
-										chunk.SolidBlocks[length]=SolidBlockFromId(/*id*/(ushort)*current++, new Vector2(pos16, length*16))
-											#if DEBUG
-											??throw new Exception("Solid block is null")
-											#endif
-											;
-
-										chunk.IsSolidBlocks[length]=true;
-
-										if (startingSomething) {
-											startingSomething=false;
-											StartSomething=length;
-										}
-
-										length++;
+										ushort id=*current++;
+										chunk.SolidBlocks[length]=SolidBlockFromId(id, new Vector2(pos16, length*16)) ?? throw new Exception("Solid block is null");
 									}
+									#else
+									chunk.SolidBlocks[length]=SolidBlockFromId(/*id*/(ushort)*current++, new Vector2(pos16, length*16));
+									#endif
+
+									chunk.IsSolidBlocks[length]=true;
+
+									if (startingSomething) {
+										startingSomething=false;
+										StartSomething=length;
+									}
+
+									length++;
 									break;
 
 								// ?× solid block
@@ -13478,7 +14419,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											#if DEBUG
 											??throw new Exception("Solid block is null")
 											#endif
-											;
+										;
 
 										chunk.IsSolidBlocks[length]=true;
 										length++;
@@ -13522,46 +14463,42 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								// 1× back block
 								case (byte)SaveType.BackBlock:
+									#if DEBUG
 									{
-									  //  ushort id=(ushort)(*current++ | (*current++ << 8));
-
-									  //  chunk.SolidBlocks[length]=new AirSolidBlock {
-										   /* Back=*/chunk.Background[length]=BackBlockFromId(/*id*/(ushort)(*current++ | (*current++ << 8)), new Vector2(pos16, length*16))
-												#if DEBUG
-												??throw new Exception("Back block is null")
-												#endif
-											  //  ,
-										//}
-										;
-										chunk.IsBackground[length]=true;
-
-										if (startingSomething) {
-											startingSomething=false;
-											StartSomething=length;
-										}
-										length++;
+										ushort id=(ushort)(*current++ | (*current++ << 8));
+										chunk.Background[length]=BackBlockFromId(id, new Vector2(pos16, length*16)) ?? throw new Exception("Back block is null");
 									}
+									#else
+										chunk.Background[length]=BackBlockFromId((ushort)(*current++ | (*current++ << 8)), new Vector2(pos16, length*16));
+									#endif
+
+									chunk.IsBackground[length]=true;
+
+									if (startingSomething) {
+										startingSomething=false;
+										StartSomething=length;
+									}
+									length++;
 									break;
 
 								// 1× back block
 								case (byte)SaveType.BackBlockWithLowId:
+									#if DEBUG
 									{
-									   // ushort id=*current++;
-
-										chunk.Background[length]=BackBlockFromId((ushort)*current++, new Vector2(pos16, length*16))
-											#if DEBUG
-											??throw new Exception("Back block is null")
-											#endif
-										;
-
-										chunk.IsBackground[length]=true;
-
-										if (startingSomething) {
-											startingSomething=false;
-											StartSomething=length;
-										}
-										length++;
+										ushort id=*current++;
+										chunk.Background[length]=BackBlockFromId(id, new Vector2(pos16, length*16)) ?? throw new Exception("Back block '"+id+"' is null");
 									}
+									#else
+									chunk.Background[length]=BackBlockFromId((ushort)*current++, new Vector2(pos16, length*16));
+									#endif
+
+									chunk.IsBackground[length]=true;
+
+									if (startingSomething) {
+										startingSomething=false;
+										StartSomething=length;
+									}
+									length++;
 									break;
 
 								// ?× back block
@@ -13577,24 +14514,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										Block block=BackBlockFromId(id, new Vector2(pos16, length*16));
 
-
-
-									// chunk.SolidBlocks[length]=new AirSolidBlock {
-									/*Back=*/
-									chunk.Background[length]=block
-										#if DEBUG
-										??throw new Exception("Back block is null, možná špatně naprogramováno načítání terénu, nebo v BackBlockFromId není zaregistrován block")//,
-										#endif
-									;
-									//};
+										chunk.Background[length]=block
+											#if DEBUG
+											??throw new Exception("Back block is null, možná špatně naprogramováno načítání terénu, nebo v BackBlockFromId není zaregistrován block")//,
+											#endif
+										;
 										chunk.IsBackground[length]=true;
 
 										length++;
 
 										for (; length<to; length++) {
-											// chunk.SolidBlocks[length]=new AirSolidBlock {
-												/*Back=*/chunk.Background[length]=block=block.CloneDown();/*,*/
-											//};
+											chunk.Background[length]=block=block.CloneDown();
 											chunk.IsBackground[length]=true;
 										}
 									}
@@ -13613,22 +14543,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 										Block block=BackBlockFromId(id, new Vector2(pos16, length*16));
 
-									  //  chunk.SolidBlocks[length]=new AirSolidBlock {
-											/*Back=*/chunk.Background[length]=block
+										chunk.Background[length]=block
 												#if DEBUG
-												??throw new Exception("Back block is null, možná špatně naprogramováno načítání terénu, nebo v BackBlockFromId není zaregistrován block")
+												??throw new Exception("Back block "+id+"is null, možná špatně naprogramováno načítání terénu, nebo v BackBlockFromId není zaregistrován block")
 												#endif
 												;
-											//,
-									   // };
+
 										chunk.IsBackground[length]=true;
 
 										length++;
 
 										for (; length<to; length++) {
-										  //  chunk.SolidBlocks[length]=new AirSolidBlock {
-												/*Back=*/chunk.Background[length]=block=block.CloneDown()/*,*/;
-										   // };
+											chunk.Background[length]=block=block.CloneDown();
 											chunk.IsBackground[length]=true;
 										}
 									}
@@ -13746,9 +14672,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=(ushort)(*current++ | (*current++ << 8)),
 											   idTop=(ushort)(*current++ | (*current++ << 8));
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
-										chunk.Background[length]=BackBlockFromId(idBack, vec) 
+										chunk.Background[length]=BackBlockFromId(idBack, vec)
 											#if DEBUG
 											??throw new Exception("Back block is null")
 											#endif
@@ -13758,7 +14684,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											??throw new Exception("Top block with id "+(BlockId)idTop+" is null")
 											#endif
 										;
-									   
+
 										chunk.IsBackground[length]=true;
 										chunk.IsTopBlocks[length]=true;
 
@@ -13777,7 +14703,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=*current++,
 											   idTop=(ushort)(*current++ | (*current++ << 8));
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 										chunk.Background[length]=BackBlockFromId(idBack, vec)
 											#if DEBUG
@@ -13789,7 +14715,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											?? throw new Exception("Top block with id "+(BlockId)idTop+" is null");
 											#endif
 										;
-									  
+
 										chunk.IsBackground[length]=true;
 										chunk.IsTopBlocks[length]=true;
 
@@ -13808,7 +14734,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=(ushort)(*current++ | (*current++ << 8)),
 											   idTop=*current++;
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 										chunk.Background[length]=BackBlockFromId(idBack, vec)
 											#if DEBUG
@@ -13820,7 +14746,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											??throw new Exception("Top block with id "+(BlockId)idTop+" is null")
 											#endif
 										;
-									  
+
 										chunk.IsBackground[length]=true;
 										chunk.IsTopBlocks[length]=true;
 
@@ -13839,8 +14765,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=*current++,
 											   idTop=*current++;
 
-										Vector2 vec=new Vector2(pos16, length*16);
-									  
+										Vector2 vec=new(pos16, length*16);
+
 										chunk.Background[length]=BackBlockFromId(idBack, vec)
 											#if DEBUG
 											?? throw new Exception("Back block is null")
@@ -13878,7 +14804,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											StartSomething=length;
 										}
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 										Block blockBack = BackBlockFromId(idBack, vec)
 											#if DEBUG
@@ -13890,7 +14816,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											?? throw new Exception("Top block is null")
 											#endif
 										;
-									
+
 										chunk.Background[length]=blockBack;
 										chunk.TopBlocks[length]=blockTop;
 
@@ -13926,7 +14852,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										for (; length<to; length++) {
-											Vector2 vec=new Vector2(pos16, length*16);
+											Vector2 vec=new(pos16, length*16);
 
 											chunk.Background[length]=BackBlockFromId(idBack, vec)
 												#if DEBUG
@@ -13959,8 +14885,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										for (; length<to; length++) {
-											Vector2 vec=new Vector2(pos16, length*16);
-									   
+											Vector2 vec=new(pos16, length*16);
+
 											chunk.TopBlocks[length]=TopBlockFromId(idTop, vec)
 												#if DEBUG
 												?? throw new Exception("Top block is null")
@@ -13992,7 +14918,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											StartSomething=length;
 										}
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 
 										Block blockBack=BackBlockFromId(idBack, vec)
@@ -14155,7 +15081,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=(ushort)(*current++ | (*current++ << 8)),
 											idTop=*current++;
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 										Block blockBack=BackBlockFromId(idBack, vec)
 											#if DEBUG
@@ -14192,7 +15118,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									{
 										ushort idTop=(ushort)(*current++ | (*current++ << 8));
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 										Block blockTop=TopBlockFromId(idTop, vec)
 											#if DEBUG
 											?? throw new Exception("Top block is null")
@@ -14229,7 +15155,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=*current++,
 											idTop=(ushort)(*current++ | (*current++ << 8));
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 										Block blockTop=TopBlockFromId(idTop, vec);
 									  //  Block blockBack=;
 
@@ -14266,7 +15192,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										ushort idBack=*current++,
 											idTop=*current++;
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 										chunk.Background[length]=/*Block blockBack=*/BackBlockFromId(idBack, vec)
 											#if DEBUG
 											?? throw new Exception("Back block is null");
@@ -14311,7 +15237,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										for (; length<to; length++) {
-											Vector2 vec=new Vector2(pos16, length*16);
+											Vector2 vec=new(pos16, length*16);
 
 											Block blockTop=TopBlockFromId(idTop, vec)
 												#if DEBUG
@@ -14319,7 +15245,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 												#endif
 											;
 											LoadMashine(idTop, blockTop);
-										
+
 											chunk.TopBlocks[length]=blockTop;
 
 											chunk.Background[length] = BackBlockFromId(idBack, vec)
@@ -14349,7 +15275,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										for (; length<to; length++) {
-											Vector2 vec=new Vector2(pos16, length*16);
+											Vector2 vec=new(pos16, length*16);
 
 											Block blockTop=TopBlockFromId(idTop, vec)
 												#if DEBUG
@@ -14387,7 +15313,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 
 										for (; length<to; length++) {
-											Vector2 vec=new Vector2(pos16, length*16);
+											Vector2 vec=new(pos16, length*16);
 
 											Block blockTop=TopBlockFromId(idTop, vec);
 										   // Block blockBack=BackBlockFromId(idBack, vec);
@@ -14406,7 +15332,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											 #if DEBUG
 											?? throw new Exception("Back block is null")
 											#endif
-											
+
 											;
 										  //  };
 											chunk.IsTopBlocks[length]=true;
@@ -14428,7 +15354,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											StartSomething=length;
 										}
 
-										Vector2 vec=new Vector2(pos16, length*16);
+										Vector2 vec=new(pos16, length*16);
 
 										Block blockBack=BackBlockFromId(idBack, vec)
 											#if DEBUG
@@ -14542,10 +15468,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										{
 											MashineBlockBasic fs = (MashineBlockBasic)block;
 
-											fs.Energy=*current++/255f;
+											fs.Energy=*current++*divider255;
 
 											LoadInventoryMashine(fs.Inv,InvMaxFurnaceStone);
-											
+
 											FurnaceStone.Add(new ShortAndByte(pos, length));
 										}
 									break;
@@ -14557,7 +15483,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									case (ushort)BlockId.OxygenMachine:
 										LoadInventoryMashine(((MashineBlockBasic)block).Inv=new ItemInv[1],1);
-										((MashineBlockBasic)block).Energy=*current++/255f;
+										((MashineBlockBasic)block).Energy=*current++*divider255;
 										OxygenMachines.Add(new ShortAndByte(pos, length));
 										break;
 
@@ -14735,9 +15661,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.Rabbit:
 										chunk.Mobs.Add(new Rabbit(/*id,*/*current++, pos, *current++==1, rabbitWalkTexture, rabbitEatTexture, rabbitJumpTexture));
 										break;
-									
+
 									case (ushort)BlockId.MobParrot:
-										{ 
+										{
 										//	bool fly=;
 											if (*current++==1) chunk.Mobs.Add(new Parrot(*current++, pos, *current++==1, new Vector2( ((*current++<<8) | *current++)*16, (*current++)*16),TextureParrotStill, TextureParrotFly));
 											else chunk.Mobs.Add(new Parrot(*current++, pos, *current++==1, TextureParrotStill, TextureParrotFly));
@@ -14770,8 +15696,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			foreach (DInt l in labels) {
 				SetIndexLabel(l.X,l.Y);
 				if (l.Y!=0 && l.Y!=125) RefreshAroundLabels(l.X,l.Y);
-			}    
-			
+			}
+
 			byte[] arrayLO=File.ReadAllBytes(pathToWorld+ world+"LiveObjects.bin");
 			fixed (byte* pointer = &arrayLO[0]) {
 				byte* current=pointer;
@@ -14779,14 +15705,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				int totalLO=(*current++) | (*current++<<8) | (*current++<<16);
 				LiveObjects=new LiveObject[totalLO];
 
-				for (int i=0; i<totalLO; i++) { 
-					switch (*current++) { 
+				for (int i=0; i<totalLO; i++) {
+					switch (*current++) {
 						case (byte)LiveObjectType.Tree:
 							{
-								Tree tree=new Tree(
-								
+								Tree tree=new(
+
 									// Root
-									*current++ | (*current++<<8),
+									(ushort)(*current++ | (*current++<<8)),
 									*current++
 								);
 								LiveObjects[i]=tree;
@@ -14798,10 +15724,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								for (int i2=0; i2<countWood; i2++) {
 									ushort x=(ushort)(*current++ | (*current++<<8));
 									byte y=*current++;
-									if (terrain[x].IsBackground[y]) {                          
-										((WoodBlock)terrain[x].Background[y]).tree=tree;
+									if (terrain[x].IsBackground[y]) {
+										if (terrain[x].Background[y] is WoodBlock w) {
+											w.tree=tree;
 
-										tree.TitlesWood.Add(new UShortAndByte(x, y));
+											tree.TitlesWood.Add(new UShortAndByte(x, y));
+										} 
+										#if DEBUG
+										else { 
+											throw new Exception("ERROR while loading, it may case wrong generated world");
+										}
+										#endif
+
 									}
 								}
 
@@ -14809,14 +15743,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								int countLeaves=*current++;
 
 								// Add leaves
-								for (int i2=0; i2<countLeaves; i2++) { 
+								for (int i2=0; i2<countLeaves; i2++) {
 									ushort x=(ushort)(*current++ | (*current++<<8));
 									byte y=*current++;
 
 									if (terrain[x].TopBlocks[y] is LeavesBlock block) {
 										block.tree=tree;
 										block.SetOrigin();
-										
+
 										tree.TitlesLeaves.Add(new UShortAndByte(x, y));
 									}
 								}
@@ -14825,8 +15759,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						case (byte)LiveObjectType.Cactus:
 							{
-								Cactus cactus=new Cactus(
-								
+								Cactus cactus=new(
+
 									// Root
 									*current++ | (*current++<<8),
 									*current++
@@ -14837,7 +15771,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								int count=*current++;
 
 								// Add
-								for (int i2=0; i2<count; i2++) { 
+								for (int i2=0; i2<count; i2++) {
 									ushort x=(ushort)(*current++ | (*current++<<8));
 									byte y=*current++;
 									if (terrain[x].TopBlocks[y] is CactusBlock c){
@@ -14845,8 +15779,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										c.SetOrigin();
 
 										cactus.Titles.Add(new UShortAndByte(x, y));
-									
-									}                              
+
+									}
 								}
 							}
 							break;
@@ -14869,32 +15803,44 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Name=(Biome)(*current++),
 								Start=*current++ | (*current++<<8),
 								End=*current++ | (*current++<<8),
-							}; 
+							};
 						}
 					}
-			
-				} else { 
+
+				} else {
 					System.Windows.Forms.MessageBox.Show("Biomes file not found","Error");
 					throw new Exception("Biomes file not found");
 				}
-			}else{ 
-				switch (world){ 
-					case "Moon":	
+			}else{
+				switch (world){
+					case "Moon":
 						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Moon, Start=0, End=TerrainLength } };
 						break;
 
-					case "Mars":	
+					case "Mars":
 						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Mars, Start=0, End=TerrainLength} };
 						break;
 
-					case "SpaceStation":	
+					case "SpaceStation":
 						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Mars, Start=0, End=TerrainLength} };
 						break;
 				}
-		
+
 			}
 		}
 
+
+		//void CheckTerrain(string method) { 
+		//	for (int x=0; x<TerrainLength; x++) { 
+		//		Terrain chunk=terrain[x];
+
+		//		for (int y=0; y<125; y++) { 
+		//			if ((chunk.Background[y]!=null) != chunk.IsBackground[y]) throw new Exception(method+", Background at x: "+x+", y: "+y+" is wrong");
+		//			if ((chunk.SolidBlocks[y]!=null) != chunk.IsSolidBlocks[y]) throw new Exception(method+", SolidBlock at x: "+x+", y: "+y+" is wrong");
+		//			if ((chunk.TopBlocks[y]!=null) != chunk.IsTopBlocks[y]) throw new Exception(method+", TopBlock at x: "+x+", y: "+y+" is wrong");
+		//		}
+		//	}	
+		//}
 		//void RefreshLightingRemoveSolid(int pos, int y) {
 		//	Terrain chunk=terrain[pos];
 
@@ -14906,9 +15852,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//		}
 
 		//	//	chunk.Half=false;
-				
+
 		//		if (chunk.LightPosFull!=LightPos) {
-					
+
 		//			int StartSomething;
 		//			for (StartSomething=0; StartSomething<125; StartSomething++) {
 		//				if (chunk.IsTopBlocks[StartSomething]) break;
@@ -14917,17 +15863,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//			}
 
 		//			chunk.StartSomething=StartSomething;
-										
+
 		//			for (int i=StartSomething; i<125; i++) {
-		//				if (chunk.IsTopBlocks[i]) { 
-		//					if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[i].Id)) { 
+		//				if (chunk.IsTopBlocks[i]) {
+		//					if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[i].Id)) {
 		//					//	chunk.Half=true;
 		//						chunk.LightPosHalf=i;
 		//						chunk.LightPosHalf16=i*16;
 		//						break;
 		//					}
 		//				}
-					
+
 		//			}
 		//		}
 
@@ -14938,8 +15884,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	}
 		//}
 
-		//bool IsHalfShadowBlock(ushort id) { 
-		//	switch (id) { 
+		//bool IsHalfShadowBlock(ushort id) {
+		//	switch (id) {
 		//		case (ushort)BlockId.AcaciaLeaves: return true;
 		//		case (ushort)BlockId.AppleLeaves: return true;
 		//		case (ushort)BlockId.AppleLeavesWithApples: return true;
@@ -14978,17 +15924,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	//	chunk.LightPos16=y*16;
 		//	//	if (y<chunk.StartSomething)  chunk.StartSomething=y;
 		//	//}
-			
+
 		//	if (y<chunk.LightPosFull) {
 		//		if (y<chunk.StartSomething) chunk.StartSomething=y;
 
-		//		//if (chunk.Half) { 
+		//		//if (chunk.Half) {
 		//			if (y<chunk.LightPosHalf) {
 		//			//	chunk.Half=false;
 		//				chunk.LightPosFull=y;
 		//				chunk.LightPosFull16=y*16;
 		//				chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-		//			} else { 
+		//			} else {
 		//				chunk.LightPosFull=y;
 		//				chunk.LightPosFull16=y*16;
 		//				chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
@@ -14997,13 +15943,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//			chunk.LightPosFull=y;
 		//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
 		//			chunk.LightPosFull16=y*16;
-		//		//} else { 
+		//		//} else {
 		//		//	chunk.LightPosFull=y;
 		//		//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
 		//		//	chunk.LightPosFull16=y*16;
 		//		//}
-				
-				
+
+
 		//	}
 
 
@@ -15031,9 +15977,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//void RefreshLightingAddTop(int pos, int y) {
 		//	Terrain chunk=terrain[pos];
 
-		//	if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[y].Id)) { 
+		//	if (GameMethods.IsHalfShadowBlock(chunk.TopBlocks[y].Id)) {
 		//		if (y<chunk.LightPosFull) {
-		//			if (y<chunk.LightPosHalf) { 
+		//			if (y<chunk.LightPosHalf) {
 		//				chunk.LightPosHalf=y;
 		//				chunk.LightPosHalf16=y*16;
 		//			}
@@ -15046,17 +15992,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	//	chunk.LightPos16=y*16;
 		//	//	if (y<chunk.StartSomething)  chunk.StartSomething=y;
 		//	//}
-			
+
 		//	//if (y<chunk.LightPosFull) {
 		//	//	if (y<chunk.StartSomething) chunk.StartSomething=y;
 
-		//	//	//if (chunk.Half) { 
+		//	//	//if (chunk.Half) {
 		//	//		if (y<chunk.LightPosHalf) {
 		//	//		//	chunk.Half=false;
 		//	//			chunk.LightPosFull=y;
 		//	//			chunk.LightPosFull16=y*16;
 		//	//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
-		//	//		} else { 
+		//	//		} else {
 		//	//			chunk.LightPosFull=y;
 		//	//			chunk.LightPosFull16=y*16;
 		//	//			chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
@@ -15065,13 +16011,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	//		chunk.LightPosFull=y;
 		//	//		chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
 		//	//		chunk.LightPosFull16=y*16;
-		//	//	//} else { 
+		//	//	//} else {
 		//	//	//	chunk.LightPosFull=y;
 		//	//	//	chunk.LightVec=new Vector2(pos*16-48+8, y*16-48+8+48);
 		//	//	//	chunk.LightPosFull16=y*16;
 		//	//	//}
-				
-				
+
+
 		//	//}
 
 
@@ -15099,147 +16045,128 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		#region New blocks
 		Block BackBlockFromId(ushort type, Vector2 position) {
-			switch (type) {
-				// Backs
-				case (ushort)BlockId.BackDirt: return new NormalBlock(backgroundDirtTexture,type, position);
-				case (ushort)BlockId.BackSand: return new NormalBlock(backgroundSandTexture,type, position);
-				case (ushort)BlockId.BackCobblestone: return new NormalBlock(backgroundCobblestoneTexture,type, position);
-				case (ushort)BlockId.BackClay: return new NormalBlock(backgroundClayTexture, type, position);
-
-				case (ushort)BlockId.BackRedSand: return new NormalBlock(backgroundRedSandTexture, type, position);
-
-				case (ushort)BlockId.BackRegolite: return new NormalBlock(backgroundRegoliteTexture, type, position);
-				case (ushort)BlockId.BackGravel: return new NormalBlock(backgroundGravelTexture, type, position);
-
-				case (ushort)BlockId.BackAnorthosite: return new NormalBlock(backgroundAnorthositeTexture, type, position);
-				case (ushort)BlockId.BackBasalt: return new NormalBlock(backgroundBasaltTexture, type, position);
-				case (ushort)BlockId.BackDiorit: return new NormalBlock(backgroundDioritTexture, type, position);
-				case (ushort)BlockId.BackDolomite: return new NormalBlock(backgroundDolomiteTexture, type, position);
-				case (ushort)BlockId.BackFlint: return new NormalBlock(backgroundFlintTexture, type, position);
-				case (ushort)BlockId.BackGabbro: return new NormalBlock(backgroundGabbroTexture, type, position);
-				case (ushort)BlockId.BackGneiss: return new NormalBlock(backgroundGneissTexture, type, position);
-				case (ushort)BlockId.BackLimestone: return new NormalBlock(backgroundLimestoneTexture, type, position);
-				case (ushort)BlockId.BackMudstone: return new NormalBlock(backgroundMudstoneTexture, type, position);
-				case (ushort)BlockId.BackRhyolite: return new NormalBlock(backgroundRhyoliteTexture, type, position);
-				case (ushort)BlockId.BackSandstone: return new NormalBlock(backgroundSandstoneTexture, type, position);
-				case (ushort)BlockId.BackSchist: return new NormalBlock(backgroundSchistTexture, type, position);
-
-				case (ushort)BlockId.BackCoal: return new NormalBlock(backgroundCoalTexture, type, position);
-				case (ushort)BlockId.BackCopper: return new NormalBlock(backgroundCopperTexture, type, position);
-				case (ushort)BlockId.BackTin: return new NormalBlock(backgroundTinTexture, type, position);
-				case (ushort)BlockId.BackIron: return new NormalBlock(backgroundIronTexture, type, position);
-				case (ushort)BlockId.BackAluminium: return new NormalBlock(backgroundAluminiumTexture, type, position);
-				case (ushort)BlockId.BackSilver: return new NormalBlock(backgroundSilverTexture, type, position);
-				case (ushort)BlockId.BackGold: return new NormalBlock(backgroundGoldTexture, type, position);
-
-				case (ushort)BlockId.BackSulfur: return new NormalBlock(TextureBackSulfurOre, type, position);
-				case (ushort)BlockId.BackSaltpeter: return new NormalBlock(TextureBackSaltpeterOre, type, position);
-
-				// Wood
-				case (ushort)BlockId.AppleWood: return new WoodBlock{Texture=TextureAppleWood, Id=type, Position=position};
-				case (ushort)BlockId.CherryWood: return new WoodBlock{Texture=cherryWoodTexture, Id=type, Position=position};
-				case (ushort)BlockId.LemonWood: return new WoodBlock{Texture=TextureLemonWood,Id=type, Position=position};
-				case (ushort)BlockId.LindenWood: return new WoodBlock{Texture=TextureLindenWood, Id=type, Position=position};
-				case (ushort)BlockId.OakWood: return new WoodBlock{Texture=TextureOakWood, Id=type, Position=position};
-				case (ushort)BlockId.OrangeWood: return new WoodBlock{Texture=TextureOrangeWood, Id=type, Position=position};
-				case (ushort)BlockId.PineWood: return new WoodBlock{Texture=pineWoodTexture, Id=type, Position=position};
-				case (ushort)BlockId.PlumWood: return new WoodBlock{Texture=TexturePlumWood, Id=type, Position=position};
-				case (ushort)BlockId.SpruceWood: return new WoodBlock{Texture=spruceWoodTexture, Id=type, Position=position};
-				case (ushort)BlockId.WillowWood: return new WoodBlock{Texture=TextureWillowWood, Id=type, Position=position};
-				case (ushort)BlockId.MangroveWood: return new WoodBlock{Texture=TextureMangroveWood, Id=type, Position=position};
-				case (ushort)BlockId.EucalyptusWood: return new WoodBlock{Texture=TextureEucalyptusWood, Id=type, Position=position};
-				case (ushort)BlockId.OliveWood: return new WoodBlock{Texture=TextureOliveWood, Id=type, Position=position};
-				case (ushort)BlockId.RubberTreeWood: return new WoodBlock{Texture=TextureRubberTreeWood, Id=type, Position=position};
-				case (ushort)BlockId.AcaciaWood: return new WoodBlock{Texture=TextureAcaciaWood, Id=type, Position=position};
-				case (ushort)BlockId.KapokWood: return new WoodBlock{Texture=TextureKapokWood, Id=type, Position=position};
-
-				// Artifical
-				case (ushort)BlockId.AdvancedSpaceBack: return new NormalBlock(advancedSpaceBackTexture,type, position);
-				case (ushort)BlockId.AdvancedSpaceWindow: return new NormalBlock(advancedSpaceWindowTexture, type, position);
-				case (ushort)BlockId.Glass: return new NormalBlock(glassTexture, type, position);
-				
-				case (ushort)BlockId.Coral: return new NormalBlock(coralTexture,type, position);
-				case (ushort)BlockId.Seaweed: return new NormalBlock(seaweedTexture,type, position);
-
-				default: return null;
-			}
-		}
+            return type switch {
+                // Backs
+                (ushort)BlockId.BackDirt => new NormalBlock(backgroundDirtTexture, type, position),
+                (ushort)BlockId.BackSand => new NormalBlock(backgroundSandTexture, type, position),
+                (ushort)BlockId.BackCobblestone => new NormalBlock(backgroundCobblestoneTexture, type, position),
+                (ushort)BlockId.BackClay => new NormalBlock(backgroundClayTexture, type, position),
+                (ushort)BlockId.BackRedSand => new NormalBlock(backgroundRedSandTexture, type, position),
+                (ushort)BlockId.BackRegolite => new NormalBlock(backgroundRegoliteTexture, type, position),
+                (ushort)BlockId.BackGravel => new NormalBlock(backgroundGravelTexture, type, position),
+                (ushort)BlockId.BackAnorthosite => new NormalBlock(backgroundAnorthositeTexture, type, position),
+                (ushort)BlockId.BackBasalt => new NormalBlock(backgroundBasaltTexture, type, position),
+                (ushort)BlockId.BackDiorit => new NormalBlock(backgroundDioritTexture, type, position),
+                (ushort)BlockId.BackDolomite => new NormalBlock(backgroundDolomiteTexture, type, position),
+                (ushort)BlockId.BackFlint => new NormalBlock(backgroundFlintTexture, type, position),
+                (ushort)BlockId.BackGabbro => new NormalBlock(backgroundGabbroTexture, type, position),
+                (ushort)BlockId.BackGneiss => new NormalBlock(backgroundGneissTexture, type, position),
+                (ushort)BlockId.BackLimestone => new NormalBlock(backgroundLimestoneTexture, type, position),
+                (ushort)BlockId.BackMudstone => new NormalBlock(backgroundMudstoneTexture, type, position),
+                (ushort)BlockId.BackRhyolite => new NormalBlock(backgroundRhyoliteTexture, type, position),
+                (ushort)BlockId.BackSandstone => new NormalBlock(backgroundSandstoneTexture, type, position),
+                (ushort)BlockId.BackSchist => new NormalBlock(backgroundSchistTexture, type, position),
+                (ushort)BlockId.BackCoal => new NormalBlock(backgroundCoalTexture, type, position),
+                (ushort)BlockId.BackCopper => new NormalBlock(backgroundCopperTexture, type, position),
+                (ushort)BlockId.BackTin => new NormalBlock(backgroundTinTexture, type, position),
+                (ushort)BlockId.BackIron => new NormalBlock(backgroundIronTexture, type, position),
+                (ushort)BlockId.BackAluminium => new NormalBlock(backgroundAluminiumTexture, type, position),
+                (ushort)BlockId.BackSilver => new NormalBlock(backgroundSilverTexture, type, position),
+                (ushort)BlockId.BackGold => new NormalBlock(backgroundGoldTexture, type, position),
+                (ushort)BlockId.BackSulfur => new NormalBlock(TextureBackSulfurOre, type, position),
+                (ushort)BlockId.BackSaltpeter => new NormalBlock(TextureBackSaltpeterOre, type, position),
+                // Wood
+                (ushort)BlockId.AppleWood => new WoodBlock { Texture = TextureAppleWood, Id = type, Position = position },
+                (ushort)BlockId.CherryWood => new WoodBlock { Texture = cherryWoodTexture, Id = type, Position = position },
+                (ushort)BlockId.LemonWood => new WoodBlock { Texture = TextureLemonWood, Id = type, Position = position },
+                (ushort)BlockId.LindenWood => new WoodBlock { Texture = TextureLindenWood, Id = type, Position = position },
+                (ushort)BlockId.OakWood => new WoodBlock { Texture = TextureOakWood, Id = type, Position = position },
+                (ushort)BlockId.OrangeWood => new WoodBlock { Texture = TextureOrangeWood, Id = type, Position = position },
+                (ushort)BlockId.PineWood => new WoodBlock { Texture = pineWoodTexture, Id = type, Position = position },
+                (ushort)BlockId.PlumWood => new WoodBlock { Texture = TexturePlumWood, Id = type, Position = position },
+                (ushort)BlockId.SpruceWood => new WoodBlock { Texture = spruceWoodTexture, Id = type, Position = position },
+                (ushort)BlockId.WillowWood => new WoodBlock { Texture = TextureWillowWood, Id = type, Position = position },
+                (ushort)BlockId.MangroveWood => new WoodBlock { Texture = TextureMangroveWood, Id = type, Position = position },
+                (ushort)BlockId.EucalyptusWood => new WoodBlock { Texture = TextureEucalyptusWood, Id = type, Position = position },
+                (ushort)BlockId.OliveWood => new WoodBlock { Texture = TextureOliveWood, Id = type, Position = position },
+                (ushort)BlockId.RubberTreeWood => new WoodBlock { Texture = TextureRubberTreeWood, Id = type, Position = position },
+                (ushort)BlockId.AcaciaWood => new WoodBlock { Texture = TextureAcaciaWood, Id = type, Position = position },
+                (ushort)BlockId.KapokWood => new WoodBlock { Texture = TextureKapokWood, Id = type, Position = position },
+                // Artifical
+                (ushort)BlockId.AdvancedSpaceBack => new NormalBlock(advancedSpaceBackTexture, type, position),
+                (ushort)BlockId.AdvancedSpaceWindow => new NormalBlock(advancedSpaceWindowTexture, type, position),
+                (ushort)BlockId.Glass => new NormalBlock(glassTexture, type, position),
+                (ushort)BlockId.Coral => new NormalBlock(coralTexture, type, position),
+                (ushort)BlockId.Seaweed => new NormalBlock(seaweedTexture, type, position),
+                _ => null,
+            };
+        }
 
 		Block SolidBlockFromId(ushort type, Vector2 position) {
-			switch (type) {
-				// Stone
-				case (ushort)BlockId.StoneBasalt: return new NormalBlock{Texture=basaltTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneDiorit: return new NormalBlock{Texture=dioritTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneDolomite: return new NormalBlock{Texture=dolomiteTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneGabbro: return new NormalBlock{Texture=gabbroTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneGneiss: return new NormalBlock{Texture=gneissTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneLimestone: return new NormalBlock{Texture=limestoneTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneRhyolite: return new NormalBlock{Texture=rhyoliteTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneSandstone: return new NormalBlock{Texture=sandstoneTexture, Id=type, Position=position};
-				case (ushort)BlockId.StoneSchist: return new NormalBlock{Texture=schistTexture, Id=type, Position=position};
-				case (ushort)BlockId.Anorthosite: return new NormalBlock{Texture=anorthositeTexture, Id=type, Position=position};
-				case (ushort)BlockId.MudStone: return new NormalBlock{Texture=mudstoneTexture, Id=type, Position=position};
-				case (ushort)BlockId.Regolite: return new NormalBlock{Texture=regoliteTexture, Id=type, Position=position};
-				case (ushort)BlockId.RedSand: return new NormalBlock{Texture=TextureRedSand, Id=type, Position=position};
-
-				case (ushort)BlockId.Compost: return new NormalBlock{Texture=CompostTexture, Id=type, Position=position};
-
-				// Ore
-				case (ushort)BlockId.OreAluminium: return new NormalBlock{Texture=TextureOreAluminium, Id=type, Position=position};
-				case (ushort)BlockId.OreCopper: return new NormalBlock{Texture=TextureOreCopper, Id=type, Position=position};
-				case (ushort)BlockId.OreGold: return new NormalBlock{Texture=TextureOreGold, Id=type, Position=position};
-				case (ushort)BlockId.OreIron: return new NormalBlock{Texture=TextureOreIron, Id=type, Position=position};
-				case (ushort)BlockId.OreSilver: return new NormalBlock{Texture=TextureOreSilver, Id=type, Position=position};
-				case (ushort)BlockId.OreTin: return new NormalBlock{Texture=TextureOreTin, Id=type, Position=position};
-				case (ushort)BlockId.OreCoal: return new NormalBlock{ Texture=TextureOreCoal, Id=type,Position=position};
-				case (ushort)BlockId.OreSulfur: return new NormalBlock{Texture=TextureOreSulfur, Id=type, Position=position};
-				case (ushort)BlockId.OreSaltpeter: return new NormalBlock{Texture=TextureOreSaltpeter, Id=type, Position=position};
-
-				// Blocks
-				case (ushort)BlockId.Cobblestone: return new NormalBlock{Texture=cobblestoneTexture, Id=type, Position=position};
-				case (ushort)BlockId.Gravel: return new NormalBlock{Texture=gravelTexture, Id=type, Position=position};
-				case (ushort)BlockId.Sand: return new NormalBlock{Texture=sandTexture, Id=type, Position=position};
-				case (ushort)BlockId.Dirt: return new NormalBlock{Texture=TextureDirt, Id=type, Position=position};
-				case (ushort)BlockId.Ice: return new NormalBlock{Texture=iceTexture, Id=type, Position=position};
-				case (ushort)BlockId.Clay: return new NormalBlock{Texture=clayTexture, Id=type, Position=position};
-
-				// Grass
-				case (ushort)BlockId.GrassBlockDesert: return new NormalBlock{Texture=TextureGrassBlockDesert, Id=type,Position=position};
-				case (ushort)BlockId.GrassBlockForest: return new NormalBlock{Texture=TextureGrassBlockForest, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockHills: return new NormalBlock{Texture=TextureGrassBlockHills, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockJungle: return new NormalBlock{Texture=TextureGrassBlockJungle, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockPlains: return new NormalBlock{Texture=TextureGrassBlockPlains, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockClay: return new NormalBlock{Texture=TextureGrassBlockClay, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockCompost: return new NormalBlock{Texture=TextureGrassBlockCompost, Id=type, Position=position};
-				
-				case (ushort)BlockId.GrassBlockSnowDesert: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowForest: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowHills: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowJungle: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowPlains: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowClay: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-				case (ushort)BlockId.GrassBlockSnowCompost: return new NormalBlock{Texture=TextureGrassBlockSnow, Id=type, Position=position};
-
-				// Artifical
-				case (ushort)BlockId.Roof1: return new NormalBlock{Texture=roof1Texture,Id=type, Position=position};
-				case (ushort)BlockId.Roof2: return new NormalBlock{Texture=roof2Texture,Id=type, Position=position};
-				case (ushort)BlockId.Bricks: return new NormalBlock{Texture=bricksTexture,Id=type, Position=position};
-
-				case (ushort)BlockId.DoorClose: return new NormalBlock{Texture=doorCloseTexture,Id=type, Position=position};
-				case (ushort)BlockId.Planks: return new NormalBlock{Texture=planksTexture,Id=type, Position=position};
-
-				case (ushort)BlockId.AdvancedSpaceBlock: return new NormalBlock{Texture=advancedSpaceBlockTexture, Id=type, Position=position};
-				case (ushort)BlockId.AdvancedSpaceFloor: return new NormalBlock{Texture=advancedSpaceFloorTexture, Id=type, Position=position};
-				case (ushort)BlockId.AdvancedSpacePart1: return new NormalBlock{Texture=advancedSpacePart1Texture, Id=type, Position=position};
-				case (ushort)BlockId.AdvancedSpacePart2: return new NormalBlock{Texture=advancedSpacePart2Texture, Id=type, Position=position};
-				case (ushort)BlockId.AdvancedSpacePart3: return new NormalBlock{Texture=advancedSpacePart3Texture, Id=type, Position=position};
-				case (ushort)BlockId.AdvancedSpacePart4: return new NormalBlock{Texture=advancedSpacePart4Texture, Id=type, Position=position};
-
-				case (ushort)BlockId.Snow: return new NormalBlock{Texture=snowTexture, Id=type, Position=position};
-
-				default: return null;
-			}
-		}
+            return type switch {
+                // Stone
+                (ushort)BlockId.StoneBasalt => new NormalBlock { Texture = basaltTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneDiorit => new NormalBlock { Texture = dioritTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneDolomite => new NormalBlock { Texture = dolomiteTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneGabbro => new NormalBlock { Texture = gabbroTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneGneiss => new NormalBlock { Texture = gneissTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneLimestone => new NormalBlock { Texture = limestoneTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneRhyolite => new NormalBlock { Texture = rhyoliteTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneSandstone => new NormalBlock { Texture = sandstoneTexture, Id = type, Position = position },
+                (ushort)BlockId.StoneSchist => new NormalBlock { Texture = schistTexture, Id = type, Position = position },
+                (ushort)BlockId.Anorthosite => new NormalBlock { Texture = anorthositeTexture, Id = type, Position = position },
+                (ushort)BlockId.MudStone => new NormalBlock { Texture = mudstoneTexture, Id = type, Position = position },
+                (ushort)BlockId.Regolite => new NormalBlock { Texture = regoliteTexture, Id = type, Position = position },
+                (ushort)BlockId.RedSand => new NormalBlock { Texture = TextureRedSand, Id = type, Position = position },
+                (ushort)BlockId.Compost => new NormalBlock { Texture = CompostTexture, Id = type, Position = position },
+                // Ore
+                (ushort)BlockId.OreAluminium => new NormalBlock { Texture = TextureOreAluminium, Id = type, Position = position },
+                (ushort)BlockId.OreCopper => new NormalBlock { Texture = TextureOreCopper, Id = type, Position = position },
+                (ushort)BlockId.OreGold => new NormalBlock { Texture = TextureOreGold, Id = type, Position = position },
+                (ushort)BlockId.OreIron => new NormalBlock { Texture = TextureOreIron, Id = type, Position = position },
+                (ushort)BlockId.OreSilver => new NormalBlock { Texture = TextureOreSilver, Id = type, Position = position },
+                (ushort)BlockId.OreTin => new NormalBlock { Texture = TextureOreTin, Id = type, Position = position },
+                (ushort)BlockId.OreCoal => new NormalBlock { Texture = TextureOreCoal, Id = type, Position = position },
+                (ushort)BlockId.OreSulfur => new NormalBlock { Texture = TextureOreSulfur, Id = type, Position = position },
+                (ushort)BlockId.OreSaltpeter => new NormalBlock { Texture = TextureOreSaltpeter, Id = type, Position = position },
+                // Blocks
+                (ushort)BlockId.Cobblestone => new NormalBlock { Texture = cobblestoneTexture, Id = type, Position = position },
+                (ushort)BlockId.Gravel => new NormalBlock { Texture = gravelTexture, Id = type, Position = position },
+                (ushort)BlockId.Sand => new NormalBlock { Texture = sandTexture, Id = type, Position = position },
+                (ushort)BlockId.Dirt => new NormalBlock { Texture = TextureDirt, Id = type, Position = position },
+                (ushort)BlockId.Ice => new NormalBlock { Texture = iceTexture, Id = type, Position = position },
+                (ushort)BlockId.Clay => new NormalBlock { Texture = clayTexture, Id = type, Position = position },
+                // Grass
+                (ushort)BlockId.GrassBlockDesert => new NormalBlock { Texture = TextureGrassBlockDesert, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockForest => new NormalBlock { Texture = TextureGrassBlockForest, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockHills => new NormalBlock { Texture = TextureGrassBlockHills, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockJungle => new NormalBlock { Texture = TextureGrassBlockJungle, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockPlains => new NormalBlock { Texture = TextureGrassBlockPlains, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockClay => new NormalBlock { Texture = TextureGrassBlockClay, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockCompost => new NormalBlock { Texture = TextureGrassBlockCompost, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowDesert => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowForest => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowHills => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowJungle => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowPlains => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowClay => new NormalBlock { Texture = TextureGrassBlockSnow, Id = type, Position = position },
+                (ushort)BlockId.GrassBlockSnowCompost => new NormalBlock { Texture = TextureGrassBlockSnowCompost, Id = type, Position = position },
+                // Artifical
+                (ushort)BlockId.Roof1 => new NormalBlock { Texture = roof1Texture, Id = type, Position = position },
+                (ushort)BlockId.Roof2 => new NormalBlock { Texture = roof2Texture, Id = type, Position = position },
+                (ushort)BlockId.Bricks => new NormalBlock { Texture = bricksTexture, Id = type, Position = position },
+                (ushort)BlockId.DoorClose => new NormalBlock { Texture = doorCloseTexture, Id = type, Position = position },
+                (ushort)BlockId.Planks => new NormalBlock { Texture = planksTexture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpaceBlock => new NormalBlock { Texture = advancedSpaceBlockTexture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpaceFloor => new NormalBlock { Texture = advancedSpaceFloorTexture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpacePart1 => new NormalBlock { Texture = advancedSpacePart1Texture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpacePart2 => new NormalBlock { Texture = advancedSpacePart2Texture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpacePart3 => new NormalBlock { Texture = advancedSpacePart3Texture, Id = type, Position = position },
+                (ushort)BlockId.AdvancedSpacePart4 => new NormalBlock { Texture = advancedSpacePart4Texture, Id = type, Position = position },
+                (ushort)BlockId.Snow => new NormalBlock { Texture = snowTexture, Id = type, Position = position },
+                _ => null,
+            };
+        }
 
 		Block TopBlockFromId(ushort type, Vector2 position) {
 			switch (type) {
@@ -15252,25 +16179,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)BlockId.AppleLeaves: return new LeavesBlock(TextureAppleLeaves,type, position);
 				case (ushort)BlockId.AppleLeavesWithApples: return new LeavesBlock(TextureAppleLeavesWithApples,type, position);
 				case (ushort)BlockId.AppleBranches: return new LeavesBlock(TextureBranches,type, position);
+				case (ushort)BlockId.AppleBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
 				case (ushort)BlockId.AppleLeavesBlossom: return new LeavesBlock(TextureBranches,type, position);
-				
+
 				case (ushort)BlockId.CherryLeaves: return new LeavesBlock(TextureCherryLeaves,type, position);
 				case (ushort)BlockId.CherryLeavesWithCherries: return new LeavesBlock(TextureCherryLeavesWithCherries,type, position);
 				case (ushort)BlockId.CherryBranches: return new LeavesBlock(TextureBranches,type, position);
+				case (ushort)BlockId.CherryBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
 				case (ushort)BlockId.WillowBranches: return new LeavesBlock(TextureBranches,type, position);
+				case (ushort)BlockId.WillowBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
 				case (ushort)BlockId.CherryLeavesBlossom: return new LeavesBlock(TextureBranches,type, position);
-				
+
 				case (ushort)BlockId.PlumLeaves: return new LeavesBlock(TexturePlumLeaves,type, position);
 				case (ushort)BlockId.PlumLeavesBlossom: return new LeavesBlock(TextureBranches,type, position);
 				case (ushort)BlockId.PlumBranches: return new LeavesBlock(TextureBranches,type, position);
-				
+				case (ushort)BlockId.PlumBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
+
 				case (ushort)BlockId.OakBranches: return new LeavesBlock(TextureBranches,type, position);
+				case (ushort)BlockId.OakBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
 				case (ushort)BlockId.LindenBranches: return new LeavesBlock(TextureBranches,type, position);
+				case (ushort)BlockId.LindenBranchesSnow: return new LeavesBlock(TextureBranchesSnow,type, position);
 				case (ushort)BlockId.LemonLeavesWithLemons: return new LeavesBlock(lemonLeavesWithLemonsTexture,type, position);
 				case (ushort)BlockId.LindenLeaves: return new LeavesBlock(TextureLindenLeaves,type, position);
 				case (ushort)BlockId.OakLeaves: return new LeavesBlock(TextureOakLeaves, type, position);
 				case (ushort)BlockId.OrangeLeaves: return new LeavesBlock(TextureOrangeLeaves,type, position);
 				case (ushort)BlockId.SpruceLeaves: return new LeavesBlock(spruceLeavesTexture,type, position);
+				case (ushort)BlockId.SpruceLeavesWithSnow: return new LeavesBlock(spruceLeavesWithSnowTexture,type, position);
 				case (ushort)BlockId.PlumLeavesWithPlums: return new LeavesBlock(TexturePlumLeavesWithPlums,type, position);
 				case (ushort)BlockId.PineLeaves: return new LeavesBlock(pineLeavesTexture,type, position);
 				case (ushort)BlockId.OrangeLeavesWithOranges: return new LeavesBlock(TextureOrangeLeavesWithOranges,type, position);
@@ -15287,7 +16221,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)BlockId.KapokLeaves: return new LeavesBlock(TextureKapokLeaves,type, position);
 
 				case (ushort)BlockId.EggDrop:
-					if (easter) return new NormalBlock{Texture=TextureEggDropE[random.Int4()], Id=type, Position=position};
+					if (easter) return new NormalBlock{Texture=TextureEggDropE[FastRandom.Int4()], Id=type, Position=position};
 					else return new NormalBlock{Texture=TextureEggDrop, Id=type, Position=position};
 
 				case (ushort)BlockId.WillowSapling: return new NormalBlock{Texture=TextureWillowSapling, Id=type, Position=position};
@@ -15305,7 +16239,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case (ushort)BlockId.Oil: return new NormalBlock{Texture=oilTexture, Id=type, Position=position };
 				case (ushort)BlockId.WaterBlock: return new Water(waterTexture,type, position);
 				case (ushort)BlockId.WaterSalt: return new Water(waterTexture,type, position);
-				case (ushort)BlockId.Rocks: return new NormalBlock{Texture=TextureRocks[random.Int4()], Id=type, Position=position };
+				case (ushort)BlockId.Rocks: return new NormalBlock{Texture=TextureRocks[FastRandom.Int4()], Id=type, Position=position };
 
 				// Saplings
 				case (ushort)BlockId.AppleSapling: return new NormalBlock{Texture=TextureAppleSapling, Id=type, Position=position };
@@ -15364,7 +16298,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				// Electric mashines
 				case (ushort)BlockId.Lamp:
-					MashineBlockBasic m=new MashineBlockBasic(lampTexture,type, position,0);
+					MashineBlockBasic m=new(lampTexture,type, position,0);
 					lightsLamp.Add(m);
 					return m;
 
@@ -15399,19 +16333,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		Plant GetPlantFromId(ushort input, byte height, byte grow, short x) {
-			switch (input) {
-				case (ushort)BlockId.Wheat: return new Plant(input,height,grow, x, wheatTexture);
-				case (ushort)BlockId.Onion: return new Plant(input,height,grow, x, plantOnionTexture);
-				case (ushort)BlockId.Peas: return new Plant(input, height, grow, x, plantPeasTexture);
-				case (ushort)BlockId.Carrot: return new Plant(input, height, grow, x, plantCarrotTexture);
-				case (ushort)BlockId.Flax: return new Plant(input, height, grow, x, flaxTexture);
-				case (ushort)BlockId.Strawberry: return new Plant(input,height,grow, x, strawberryPlantTexture);
-				case (ushort)BlockId.Rashberry: return new Plant(input,height,grow, x, rashberryPlantTexture);
-				case (ushort)BlockId.Blueberry: return new Plant(input,height,grow, x, blueberryPlantTexture);
-
-				default: return null;
-			}
-		}
+            return input switch {
+                (ushort)BlockId.Wheat => new Plant(input, height, grow, x, wheatTexture),
+                (ushort)BlockId.Onion => new Plant(input, height, grow, x, plantOnionTexture),
+                (ushort)BlockId.Peas => new Plant(input, height, grow, x, plantPeasTexture),
+                (ushort)BlockId.Carrot => new Plant(input, height, grow, x, plantCarrotTexture),
+                (ushort)BlockId.Flax => new Plant(input, height, grow, x, flaxTexture),
+                (ushort)BlockId.Strawberry => new Plant(input, height, grow, x, strawberryPlantTexture),
+                (ushort)BlockId.Rashberry => new Plant(input, height, grow, x, rashberryPlantTexture),
+                (ushort)BlockId.Blueberry => new Plant(input, height, grow, x, blueberryPlantTexture),
+                _ => null,
+            };
+        }
 
 		//Mob GetMobFromId(ushort id, byte height, bool dir, int x) {
 		//     switch (id) {
@@ -15456,7 +16389,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		#endregion
 
 		#region Plants
-		void RemovePlant(int x) {
+		void RemovePlantChunk(int x) {
 			if (terrain[x].Plants.Count==0) chunksWithPlants.Remove(x);
 		}
 
@@ -15474,7 +16407,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void GrowTreeFood(int reg) {
-			int id=random.Int(100-1)+1+reg, i=random.Int(124)+1;
+			int id=FastRandom.Int(100-1)+1+reg, i=FastRandom.Int(124)+1;
 			Terrain chunk=terrain[id];
 
 			if (chunk.IsTopBlocks[i]) {
@@ -15606,7 +16539,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (i-10<0)return;
 						blocks[i]=null;
 						chunk.IsTopBlocks[i]=false;
-						if (random.Bool())TreeSpruceLittle(id,i+1);
+						if (FastRandom.Bool())TreeSpruceLittle(id,i+1);
 						else TreeSpruceBig(id,i+1);
 						return;
 
@@ -15663,14 +16596,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (i-9<0)return;
 						blocks[i]=null;
 						chunk.IsTopBlocks[i]=false;
-						if (random.Bool()) {
+						if (FastRandom.Bool()) {
 							TreeOakLittle(id,i+1);
 						} else {
 							TreeOakMedium(id,i+1);
 						}
 						return;
 				}
-			} else if (random.Int(10000)==1) {
+			} else if (FastRandom.Int(10000)==1) {
 			//	Terrain chunk=terrain[id];
 				if (chunk.IsSolidBlocks[i]) {
 					switch (chunk.SolidBlocks[i].Id) {
@@ -15681,7 +16614,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						case (ushort)BlockId.Dirt:
 							if (!chunk.IsSolidBlocks[i-1]) {
-								int r=random.Bool() ? 1 : -1;
+								int r=FastRandom.Bool() ? 1 : -1;
 								if (terrain[id+r].IsSolidBlocks[i]) {
 									switch (terrain[id+r].SolidBlocks[i].Id) {
 										case (ushort)BlockId.GrassBlockDesert:
@@ -15715,7 +16648,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						case (ushort)BlockId.Clay:
 							if (!chunk.IsSolidBlocks[i-1]) {
-								int r=random.Bool() ? 1 : -1;
+								int r=FastRandom.Bool() ? 1 : -1;
 								if (terrain[id+r].IsSolidBlocks[i]) {
 									if (terrain[id+r].SolidBlocks[i].Id==(ushort)BlockId.GrassBlockClay) {
 										chunk.SolidBlocks[i].Id=(ushort)BlockId.GrassBlockClay;
@@ -15734,10 +16667,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		#region Player
 		bool CheckLadder() {
-			int yFrom=(int)PlayerY/16,
-				yTo=((int)PlayerY+39/2+16)/16,
-				xFrom=((int)PlayerX-16)/16,
-				xTo=((int)PlayerX+22)/16;
+			int yFrom=PlayerYInt/16,
+				yTo=(PlayerYInt+39/2+16)/16,
+				xFrom=(PlayerXInt-16)/16,
+				xTo=(PlayerXInt+22)/16;
 
 			if (yFrom<0)yFrom=0;
 			if (yTo>124)yTo=124;
@@ -15758,17 +16691,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		bool CheckWater() {
-			for (int x=((int)PlayerX-16)/16; x<((int)PlayerX+22)/16; x++) {
+			for (int x=(PlayerXInt-16)/16; x<(PlayerXInt+22)/16; x++) {
 				Terrain chunk=terrain[x];
 
-				for (int y=((int)PlayerY)/16; y<((int)PlayerY+39/2+16)/16; y++) {
+				for (int y=(PlayerYInt)/16; y<(PlayerYInt+39/2+16)/16; y++) {
 					if (y>0 && y<125 && x>0 && x<TerrainLength) {
 						if (chunk.IsTopBlocks[y]) {
 							if (chunk.TopBlocks[y].Id==(ushort)BlockId.WaterBlock) {
-								if (((Water)chunk.TopBlocks[y]).GetMass>1) return true;
+								if (((Water)chunk.TopBlocks[y]).GetMass>15) return true;
 							}
 							if (chunk.TopBlocks[y].Id==(ushort)BlockId.WaterSalt) {
-								if (((Water)chunk.TopBlocks[y]).GetMass>1) return true;
+								if (((Water)chunk.TopBlocks[y]).GetMass>15) return true;
 							}
 						}
 					}
@@ -15778,10 +16711,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		bool CheckWaterDown() {//!!! walking on waves
-			for (int x=((int)PlayerX-16)/16; x<((int)PlayerX+22)/16; x++) {
+			for (int x=(PlayerXInt-16)/16; x<(PlayerXInt+22)/16; x++) {
 				Terrain chunk=terrain[x];
 
-				for (int y=((int)PlayerY+39/2+16-1)/16; y<((int)PlayerY+39/2+16+16+1)/16; y++) {
+				for (int y=(PlayerYInt+39/2+16-1)/16; y<(PlayerYInt+39/2+16+16+1)/16; y++) {
 					if (y>0 && y<125 && x>0 && x<TerrainLength) {
 						if (chunk/*terrain[x]*/.IsTopBlocks[y]) {
 							if (chunk/*terrain[x]*/.TopBlocks[y].Id==(ushort)BlockId.WaterBlock) return true;
@@ -15794,9 +16727,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		bool CheckWaterUp() {// player is Swimming on waves
-			for (int x=((int)PlayerX-16)/16; x<((int)PlayerX+22)/16; x++) {
-				Terrain chunk=terrain[x];
-				for (int y=((int)PlayerY)/16; y<((int)PlayerY+39/2)/16; y++) {
+			Terrain chunk;
+			for (int x=(PlayerXInt-16)/16; x<(PlayerXInt+22)/16; x++) {
+				chunk=terrain[x];
+				for (int y=PlayerYInt/16; y<(PlayerYInt+39/2)/16; y++) {
 					if (y>0 && y<125 && x>0 && x<TerrainLength) {
 						if (/*terrain[x]*/chunk.IsTopBlocks[y]) {
 							if (/*terrain[x]*/chunk.TopBlocks[y].Id==(ushort)BlockId.WaterBlock) return true;
@@ -15809,10 +16743,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		bool CheckLava() {
-			int Yfrom=(int)PlayerY/16,
-				Yto=((int)PlayerY+39/2+16)/16,
-				Xfrom=((int)PlayerX-16)/16,
-				Xto=((int)PlayerX+22)/16;
+			int Yfrom=PlayerYInt/16,
+				Yto=(PlayerYInt+39/2+16)/16,
+				Xfrom=(PlayerXInt-16)/16,
+				Xto=(PlayerXInt+22)/16;
 
 			if (Yfrom<0)Yfrom=0;
 			if (Yto>124)Yto=124;
@@ -15833,14 +16767,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void PlayerGravity() {
-			List<DInt> blocks=new List<DInt>(); 
+			List<DInt> blocks=new();
 
 			distanceToGround=100000;
 
-			int Yfrom=((int)PlayerY+20-16)/16,
-				Yto=((int)PlayerY+20-16)/16+6,
-				Xfrom=((int)PlayerX-11)/16,
-				Xto=((int)PlayerX+11+16)/16;
+			int Yfrom=(PlayerYInt+20-16)/16,
+				Yto=(PlayerYInt+20-16)/16+6,
+				Xfrom=(PlayerXInt-11)/16,
+				Xto=(PlayerXInt+11+16)/16;
 
 			if (Yfrom<0)Yfrom=0;
 			if (Yto>124)Yto=124;
@@ -15850,14 +16784,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			  //  if (chunk!=null) {
 					for (int y = Yfrom; y<Yto; y++) {
 						if (chunk.IsSolidBlocks[y]) {
-							if (y*16-PlayerY-20<distanceToGround) {
-							distanceToGround=y*16-(int)PlayerY-20; 
+							if (y*16-PlayerYInt-20<distanceToGround) {
+							distanceToGround=y*16-PlayerYInt-20;
 							blocks.Add(new DInt(x,y));
-							
+
 							//Block block=chunk.SolidBlocks[y];
-							//    if (block is NormalBlock b) { 
+							//    if (block is NormalBlock b) {
 							//        Texture2D tex=b.Texture;
-							//        Particles.Add(new Particle{ 
+							//        Particles.Add(new Particle{
 							//            Disepeard=200,
 							//            Texture=tex,
 							//            Position=new Vector2(x*16,y*16-16),
@@ -15871,14 +16805,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			if (gravitySpeed<0) {
-				int yy = ((int)PlayerY-20-4)/16;
+				int yy = (PlayerYInt-20-4)/16;
 				if (yy>=0) {
-					for (int xx = ((int)PlayerX-11)/16; xx<(PlayerX+11/*+16*/)/16; xx++) {
+					for (int xx = (PlayerXInt-11)/16; xx<(PlayerXInt+11/*+16*/)/16; xx++) {
 						Terrain chunk=terrain[xx];
 						if (chunk!=null) {
 							if (chunk.IsSolidBlocks[yy]) {
 								gravitySpeed=0;
-								blocks.Add(new DInt(xx,yy));
+								blocks.Add(new DInt(xx, yy));
 								break;
 							}
 						}
@@ -15892,77 +16826,100 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			if (distanceToGround<=6 && gravitySpeed>0) {
+				PlayerYInt+=distanceToGround;
 				PlayerY+=distanceToGround;
+
+				PlayerYInt=(int)PlayerY;
 				changePosition=true;
 
 
 				gravitySpeed=0;
 
-				if (Constants.AnimationsGame) CreateJumpMess(blocks);
+				if (Setting.InteractionMess) CreateJumpMess(blocks);
 			} else {
 				if (swimming) {
 					gravitySpeed+=gravity/5f;
 					if (gravitySpeed>1)gravitySpeed=1;
 					PlayerY+=(int)gravitySpeed;
+					PlayerYInt=(int)PlayerY;
 					changePosition=true;
 				} else {
 					gravitySpeed+=gravity;
 					if (gravitySpeed>6)gravitySpeed=6;
 					PlayerY+=(int)gravitySpeed;
+					PlayerYInt=(int)PlayerY;
 					changePosition=true;
 				}
 			}
 		}
 
 		void CameraMatrix() {
-			if (Setting.Scale.Without==Setting.currentScale) {
-			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
 	
-				camera=Matrix.CreateTranslation(
+
+			//if (Setting.Scale.Without==Setting.currentScale) {
+			//	camera=Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom, -((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom, 0)) * Translation;
+			if (SuperSamplingActing!=1f) { 
+				cameraNoOpMultisapling=Matrix.CreateTranslation(
 					new Vector3(
-					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom),
-					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom),
+					-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.X,
+					-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.Y,
 					//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
 					//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
 						0
 					)
-				) * Translation;
-				return;
-			}
-
-			if (Setting.Scale.Proportions==Setting.currentScale) {
-				float
-					_screenScaleW = Global.WindowWidth/848f,
-					_screenScaleH = Global.WindowHeight/560f;
-
-				if (_screenScaleH > _screenScaleW) {
-					camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-						Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)* Translation;
-						return;
-				} else {
-					camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-						Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)* Translation;
-						return;
+				) * TranslationNoOpMultisapling;
 				}
-			}
+				
+				//	camera=cameraNoOpMultisapling;
+				//}else{
+					camera=Matrix.CreateTranslation(
+						new Vector3(
+						-(((int)(WindowCenterX*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.X,
+						-(((int)(WindowCenterY*Setting.Zoom+0.5f))/Setting.Zoom)+EarthShakePA.Y,
+						//	-/*(int)(*/WindowCenterX/*+0.5f)*//*+*/,
+						//	-/*(int)(*/WindowCenterY/*+0.5f)*//*+((int)((WindowCenterY-(int)WindowCenterY)*Setting.Zoom)/Setting.Zoom)*/,
+							0
+						)
+					) * Translation;
+			//	}
 
-			camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
-				Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))* Translation;
+			transformMatrixS=SuperSamplingActing==1f ? camera : cameraNoOpMultisapling;
+				return;
+			//}
+
+			//if (Setting.Scale.Proportions==Setting.currentScale) {
+			//	float
+			//		_screenScaleW = Global.WindowWidth/848f,
+			//		_screenScaleH = Global.WindowHeight/560f;
+
+			//	if (_screenScaleH > _screenScaleW) {
+			//		camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//			Matrix.CreateScale(_screenScaleW, _screenScaleW, 0)* Translation;
+			//			return;
+			//	} else {
+			//		camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//			Matrix.CreateScale(_screenScaleH, _screenScaleH, 0)* Translation;
+			//			return;
+			//	}
+			//}
+
+			//camera=Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0))*
+			//	Matrix.CreateScale(new Vector3(Global.WindowWidth/848f, Global.WindowHeight/560f, 0))* Translation;
 		}
 
 		Matrix CameraMatrixNoZoom(out int xx, out int yy) {
 		//	if (Setting.Scale.Without==Setting.currentScale) {
-			float z;
-			if (Setting.Zoom<2.5)z=1;
-			else z=2;
+			float z=SuperSamplingActing*Setting.Zoom;
+			//if (Setting.Zoom<2.5)z=1*upscalingMultisapling;
+			//else z=2;
 
-			xx=((int)(WindowCenterX+0.5f))-(int)(Global.WindowWidthHalf*z);
-			yy=((int)(WindowCenterY+0.5f))-(int)(Global.WindowHeightHalf*z);
+			xx=((int)(WindowCenterX+0.5f))-(int)(Global.WindowWidthHalf/z);
+			yy=((int)(WindowCenterY+0.5f))-(int)(Global.WindowHeightHalf/z);
 
-			weatherWindowWidth=(int)(Global.WindowWidth*z);
-			weatherWindowHeight=(int)(Global.WindowHeight*z);
+			weatherWindowWidth=(int)(Global.WindowWidth*z/**upscalingMultisapling*/)+5;
+			weatherWindowHeight=(int)(Global.WindowHeight*z/**upscalingMultisapling*/)+5;
 
-			return Matrix.CreateTranslation(new Vector3(-((int)(WindowCenterX+0.5f)), -((int)(WindowCenterY+0.5f)), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+			return Matrix.CreateTranslation(new Vector3(-(int)(WindowCenterX+0.5f), -(int)(WindowCenterY+0.5f), 0)) *  Matrix.CreateScale(z, z, 0)*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf * SuperSamplingActing, Global.WindowHeightHalf * SuperSamplingActing, 0));
 			//}
 
 			//if (Setting.Scale.Proportions==Setting.currentScale) {
@@ -15986,11 +16943,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void SetPlayerPos(float x, float y) {
+			PlayerXInt=(int)x;
+			PlayerYInt=(int)y;
+
 			PlayerX=x;
 			PlayerY=y;
 
-			WindowXPlayer = PlayerX-1;
-			WindowYPlayer =PlayerY-1;
+			WindowXPlayer = PlayerXInt-1f;
+			WindowYPlayer = PlayerYInt-1f;
 
 			WindowX=(int)x-Global.WindowWidthHalf;
 			WindowY=(int)y-Global.WindowHeightHalf;
@@ -16017,7 +16977,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					case InventoryType.FurnaceStone:
 						SetInvBakeIngots();
-						for (int i=0; i<4; i++) { 
+						for (int i=0; i<4; i++) {
 							((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
 						}
 						break;
@@ -16218,42 +17178,42 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		DInt GetPosOfItemInInventories(ItemInv[] inv, int i) {
 			if (IsSameArray(inv, InventoryNormal)) {
 				DInt p=InventoryGetPosNormal(i);
-				if (p!=null) return p;
+				if (p is not null) return p;
 			}
 			if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 				if (IsSameArray(inv, InventoryClothes)) {
 					DInt p=InventoryGetPosClothes(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.BoxWooden) {
 				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBoxWooden(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.FurnaceStone) {
 				if (IsSameArray(inv, ((MashineBlockBasic )terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosFurnaceStone(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.BoxAdv) {
 				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosAdvBox(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Miner) {
 				if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBoxWooden(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
 				if (IsSameArray(inv, ((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosShelf(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
@@ -16264,7 +17224,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (inventory==InventoryType.Barrel) {
 				if (IsSameArray(inv, ((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
 					DInt p=InventoryGetPosBarrel(i);
-					if (p!=null) return p;
+					if (p is not null) return p;
 				}
 			}
 			#if DEBUG
@@ -16279,7 +17239,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			showMouseItemWhileMooving=false;
 			mouseDrawItemTextInfo=true;
 			invMove=false;
-			//Console.WriteLine("dest: "+toI);
+			// Debug.WriteLine("dest: "+toI);
 			if (mouseItem.Id==toA[toI].Id) {
 				switch (mouseItem) {
 					case ItemInvBasic16 f:
@@ -16358,7 +17318,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					//        invStartInventory[invStartId]=t;
 					//    }
 					//    return;
-					
+
 					default:
 						{
 							ItemInv t=toA[toI];
@@ -16575,11 +17535,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		void InvDrop() {
 			if (mouseRealPosX<Global.WindowWidthHalf){
-				if (terrain[((int)PlayerX-30)/16].IsSolidBlocks[(int)PlayerY/16])AddItemToPlayer(mouseItem.ToNon());
-				else DropItemToPos(mouseItem.ToNon(),PlayerX-30,PlayerY);
+				if (terrain[(PlayerXInt-30)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
+				else DropItemToPos(mouseItem.ToNon(), PlayerXInt-30, PlayerYInt);
 			}else{
-				if (terrain[((int)PlayerX+20)/16].IsSolidBlocks[(int)PlayerY/16])AddItemToPlayer(mouseItem.ToNon());
-				else DropItemToPos(mouseItem.ToNon(),PlayerX+20,PlayerY);
+				if (terrain[(PlayerXInt+20)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
+				else DropItemToPos(mouseItem.ToNon(), PlayerXInt+20, PlayerYInt);
 			}
 			invMove=false;
 			mouseItem=itemBlank;
@@ -16890,7 +17850,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										remain-=99;
 									}
 								}
-							} 
+							}
 						}
 						return new ItemNonInvBasic(it.Id,remain);
 					}
@@ -16936,7 +17896,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						} }
 					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
-				} else { 
+				} else {
 				   int remain=item.Count;
 					//for (int i=0; i<maxInvCount; i++) {
 					//	if (InventoryNormal[i]!=null) {
@@ -16976,7 +17936,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							}
 						} }
 
-					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);    
+					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
 				}
 
 			case ItemNonInvTool item:
@@ -17071,7 +18031,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		int InvSideMoveId() {
 			// Basic right inventory
 			if (In(Global.WindowWidth-40, Global.WindowHeightHalf-80, Global.WindowWidth, Global.WindowHeightHalf-80+5*40)) {
-			  //  Console.WriteLine((newMouseState.Y-(Global.WindowHeightHalf-80))/40);
+			  //  Debug.WriteLine((newMouseState.Y-(Global.WindowHeightHalf-80))/40);
 				return (newMouseState.Y-(Global.WindowHeightHalf-80))/40;
 			}
 			return -1;
@@ -17082,7 +18042,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (In(Global.WindowWidthHalf-300+4+200+4+4, Global.WindowHeightHalf-200+2+4, Global.WindowWidthHalf-300+4+200+4+4+(9*40), Global.WindowHeightHalf-200+2+4+(5*40))) {
 				int row=(mouseRealPosY-(Global.WindowHeightHalf-200+2+4))/40;
 				int col=(mouseRealPosX-(Global.WindowWidthHalf-300+4+200+4+4))/40;
-			  //  Console.WriteLine(row*9+" "+col+" "+inventoryScrollbarValue+" "+4);
+				// Debug.WriteLine(row*9+" "+col+" "+inventoryScrollbarValue+" "+4);
 				return row*9+col+inventoryScrollbarValue+5;
 			}
 			return -1;
@@ -17098,6 +18058,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			return -1;
 		}
+		
 		int InvFurnaceStoneMoveId() {
 			if (In40(Global.WindowWidthHalf-300+4+1+40,      Global.WindowHeightHalf-200+2+4+60)) return 0;
 			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60)) return 1;
@@ -17106,6 +18067,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 			return -1;
 		}
+		
 		int InvWoodenBoxMoveId() {
 			// Wooden box
 			if (In(Global.WindowWidthHalf-300+59, Global.WindowHeightHalf+59, Global.WindowWidthHalf-300+59+(12*40), Global.WindowHeightHalf+59+40*2)) {
@@ -17131,9 +18093,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		int InvClothesMoveId() {
-		  //  if (ix<4) return new DInt(Global.WindowWidthHalf-300+4+60+4,Global.WindowHeightHalf-200+2+4+4+ix*40);
-		  //  else return new DInt(Global.WindowWidthHalf-300+4+60+4+40,Global.WindowHeightHalf-200+2+4+4+40*(ix-4));
-
 			if (mouseRealPosY>Global.WindowHeightHalf-200+2+4+4+(4*40)) return -1;
 			if (mouseRealPosY<Global.WindowHeightHalf-200+2+4+4) return -1;
 
@@ -17146,14 +18105,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40+4;
 				}
 			}
-			//if (In(Global.WindowWidthHalf-300+4+60+4, Global.WindowHeightHalf-200+2+4+4, Global.WindowWidthHalf-300+4+60+4+40, Global.WindowHeightHalf-200+2+4+4+(4*40))) {
-			//    return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40;
-			//}
-
-			//if (In(Global.WindowWidthHalf-300+4+60+4+40, Global.WindowHeightHalf-200+2+4+4, Global.WindowWidthHalf-300+4+60+4+40, Global.WindowHeightHalf-200+2+4+4+(4*40))) {
-			//    return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40;
-			//}
-
 			return -1;
 		}
 
@@ -17190,7 +18141,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								return;
 							}
 						}
-						
+
 						// FurnaceStone
 						if (inventory==InventoryType.FurnaceStone) {
 							if ((i=InvFurnaceStoneMoveId())>=0) {
@@ -17738,7 +18689,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Clothes
 							if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
 								if ((i=InvClothesMoveId())>=0) {
-									if (i<8) MouseItemNameEvent(InventoryClothes[i]/*.Id*/);
+									if (i<8) MouseItemNameEvent(InventoryClothes[i]);
 									return;
 								}
 							}
@@ -17746,7 +18697,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Shelf
 							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
 								if ((i=InvShelfMoveId())>=0) {
-									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
+									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
 									return;
 								}
 							}
@@ -17754,7 +18705,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// FurnaceStone
 							if (inventory==InventoryType.FurnaceStone) {
 								if ((i=InvFurnaceStoneMoveId())>=0) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*, i*/);
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
 									return;
 								}
 							}
@@ -17762,7 +18713,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// BoxWooden
 							if (inventory==InventoryType.BoxWooden) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
+									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
 									return;
 								}
 							}
@@ -17770,7 +18721,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Adv box
 							if (inventory==InventoryType.BoxAdv) {
 								if ((i=InvAdvBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
+									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
 									return;
 								}
 							}
@@ -17778,7 +18729,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Miner
 							if (inventory==InventoryType.Miner) {
 								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]/*.Id*/);
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
 									return;
 								}
 							}
@@ -17786,19 +18737,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							// Charger || OxygenMachine
 							if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
 								if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]/*.Id*/);
+									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
 									return;
 								}
 							}
 
 							if (inventory==InventoryType.Barrel) {
 								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]/*.Id*/);
+									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
 									return;
 								}
 
 								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1]/*.Id*/);
+									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1]);
 									return;
 								}
 							}
@@ -17807,7 +18758,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							if (inventory==InventoryType.Creative) {
 								if (!creativeTabCrafting){
 									if ((i=GetInventoryIdCreative())>=0) {
-										MouseItemNameEvent(InventoryCreative[i]/*.Id*/);
+										MouseItemNameEvent(InventoryCreative[i]);
 										return;
 									}
 								}
@@ -17822,7 +18773,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							 || inventory==InventoryType.FurnaceStone
 							 || inventory==InventoryType.FurnaceElectric) {
 								if ((i=GetCraftingInventoryId())>=0) {
-									MouseItemNameEvent(InventoryCrafting[i]/*.Id*/);
+									MouseItemNameEvent(InventoryCrafting[i]);
 									return;
 								}
 							}
@@ -18004,7 +18955,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				return inInv;
 			}
-			
+
 			if (GameMethods.IsItemInvFood16(id)) {
 				int inInv = 0;
 				foreach (ItemInv i in InventoryNormal) {
@@ -18055,11 +19006,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//    for (int i=0; i<5; i++) InventoryNormal[i].Draw();
 		//}
 
-		void DrawNeedNew() {
-			if (CurrentDeskCrafting==null)return;
-			if (selectedCraftingItem==-1)return;
-			if (SelectedCraftingRecipe==-1)return;
-			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8), ColorWhite);
+		void DrawNeed() {
+			if (CurrentDeskCrafting==null) return;
+			if (selectedCraftingItem==-1) return;
+			if (SelectedCraftingRecipe==-1) return;
+			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8), Color.White);
 			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
 
 			int i = 0;
@@ -18075,7 +19026,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
 
-						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), ColorWhite);
+						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
 					}else{
 					  //  ItemNonInv selectedSlot=item[slot.SelectedItem];
 
@@ -18093,7 +19044,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 								/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture, */item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
 							}
-							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), ColorWhite);
+							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
 						}
 					}
 
@@ -18130,7 +19081,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			if (CurrentDeskCrafting==null)return;
 			if (selectedCraftingItem==-1)return;
 			if (SelectedCraftingRecipe==-1)return;
-			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8+AddH), ColorWhite);
+			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8+AddH), Color.White);
 			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
 
 			int i = 0;
@@ -18147,7 +19098,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					   // GameDraw.DrawItemInInventory(ItemIdToTexture(item[slot.TmpSelected].Id), , Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
 
-						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), ColorWhite);
+						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
 					}else{
 					 //   ItemNonInv selectedSlot=item[slot.SelectedItem];
 
@@ -18164,7 +19115,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							} else {
 								/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
 							}
-							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), ColorWhite);
+							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
 						}
 					}
 
@@ -18236,23 +19187,23 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				ItemNonInv item=n.ItemSlot[n.SelectedItem];
 				switch (item) {
 					case ItemNonInvTool t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					case ItemNonInvNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
 						break;
 
 					case ItemNonInvBasicColoritzedNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
 						break;
 
 					case ItemNonInvFood t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					case ItemNonInvBasic t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c)  return false;
+						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
 						break;
 
 					default:
@@ -18537,10 +19488,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					foreach (CraftingOut d in CurrentDeskCrafting[SelectedCraftingRecipe].Output){//selectedCraftingItem
 						if (d.EveryTime) AddItemToPlayer(d.Item);
 						else{
-							if (random.Double()<d.ChanceToDrop) AddItemToPlayer(d.Item);
+							if (FastRandom.Double()<d.ChanceToDrop) AddItemToPlayer(d.Item);
 						}
 						//if (d.EveryTime) ItemDrop(d.Item.X,d.Item.Y, PlayerX-11, PlayerY-16);
-						//else ItemDrop(d.Item.X,random.RandomInt(d.ChanceMin,d.ChanceMax), PlayerX-11, PlayerY-16);
+						//else ItemDrop(d.Item.X,FastRandom.RandomInt(d.ChanceMin,d.ChanceMax), PlayerX-11, PlayerY-16);
 					}
 				}
 			}
@@ -18560,7 +19511,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					ItemNonInv[] item=slot.ItemSlot;
 
 					if (slot.SelectedItem==-1) {
-						 slot.TmpSelected=random.Int(item.Length);
+						 slot.TmpSelected=FastRandom.Int(item.Length);
 						 slot.Texture=ItemIdToTexture(item[slot.TmpSelected].Id);
 					}else{
 					   // ItemNonInv selectedSlot=item[slot.SelectedItem];
@@ -18614,7 +19565,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			//Slots
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
 			if (i>maxInvCount) break;
-				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), ColorWhite);
+				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
 
 				//if (InventoryNormal[i].X!=0) {
 				//    if (!invMove || (invMove && invStartInventory,invStartId!=i)) {
@@ -18655,7 +19606,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			int xx=0, yh=0;
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
 				if (i>maxInvCount) break;
-				spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), ColorWhite);
+				spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
 
 				xx+=40;
 
@@ -18696,8 +19647,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			|| inventory==InventoryType.Creative
 			|| inventory==InventoryType.Miner
 			|| inventory==InventoryType.Shelf) {
-				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5), ColorWhite);
-				spriteBatch.Draw(TextureBin,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40+4, Global.WindowHeightHalf-200+2+4+40*5+4), ColorWhite);
+				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5), Color.White);
+				spriteBatch.Draw(TextureBin,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40+4, Global.WindowHeightHalf-200+2+4+40*5+4), Color.White);
 			}
 		}
 
@@ -18706,7 +19657,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//    // Slots
 		//    for (int i = 0; i<5; i++) {
 		//        if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.LightBlue);
-		//        else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), ColorWhite);
+		//        else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.White);
 		//    }
 
 		//    // Items
@@ -18716,15 +19667,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//}
 
 		void DrawSideInventory() {
-			int x=Global.WindowWidth-40;
-			int y=Global.WindowHeightHalf-80;
-		   // Vector2 vec = new Vector2(x,y);
-
+			//int x=;
+			//int y=;
+		   Vector2 vec = new(Global.WindowWidth-40, Global.WindowHeightHalf-80);
 			//slots
 			for (int i = 0; i<5; i++) {
-				if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(x, y), ColorLightBlue);
-				else spriteBatch.Draw(inventorySlotTexture, new Vector2(x, y), ColorWhite);
-				y+=40;
+			//	Vector2 vec=new(x, y);
+
+				if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Color.LightBlue);
+				else spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Global.ColorWhite);
+				vec.Y+=40;
 			}
 
 			//items
@@ -18766,10 +19718,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		void UpdateItem(List<Item> list) {
 			foreach (Item i in list) {
-				if (i.X>PlayerX-11-16) {
-					if (i.X<PlayerX+11) {
-						if (i.Y>PlayerY-20) {
-							if (i.Y<PlayerY+20) {
+				if (i.X>PlayerXInt-11-16) {
+					if (i.X<PlayerXInt+11) {
+						if (i.Y>PlayerYInt-20) {
+							if (i.Y<PlayerYInt+20) {
 								AddItemToPlayer(i.item);
 								list.Remove(i);
 								return;
@@ -18796,18 +19748,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void ItemEat() {
-			if (barEat>1) {
+			if (barEat.Value>1f) {
 			switch (InventoryNormal[boxSelected].Id) {
 				case (ushort)Items.Banana:
-					barEat -=10;
-					barWater -=1;
+					barEat.Value -=10f;
+					barWater.Value -=1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Olive:
-					barEat -=2;
-					barWater -=0.1f;
+					barEat.Value -=2f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
@@ -18819,133 +19771,133 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					break;
 
 				case (ushort)Items.Boletus:
-					barEat -=1.5f;
-					barWater -=0.1f;
+					barEat.Value -=1.5f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Champignon:
-					barEat -=1.5f;
-					barWater -=0.1f;
+					barEat .Value-=1.5f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Lemon:
-					barEat -=5;
-					barWater -=3;
+					barEat.Value -=5f;
+					barWater.Value -=3f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Orange:
-					barEat -=9;
-					barWater -=3;
+					barEat.Value -=9f;
+					barWater.Value -=3f;
 					InventoryRemoveSelectedItem();
 				 if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Cherry:
-					barEat -=2;
-					barWater -=0.1f;
+					barEat.Value -=2f;
+					barWater.Value -=0.1f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BucketWater:
-					barEat -=0.01f;
-					barWater -=20;
-					DropItemToPos(new ItemNonInvBasic((ushort)Items.Bucket,1), PlayerX, PlayerY);
+					barEat.Value -=0.01f;
+					barWater.Value -=20f;
+					DropItemToPos(new ItemNonInvBasic((ushort)Items.Bucket,1), PlayerXInt, PlayerYInt);
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Dandelion:
-					barEat -=2;
-					barWater -=0.01f;
+					barEat.Value -=2f;
+					barWater.Value -=0.01f;
 					InventoryRemoveSelectedItem();
 				   if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Plum:
-					barEat -=5;
-					barWater -=0.05f;
+					barEat.Value -=5f;
+					barWater.Value -=0.05f;
 					InventoryRemoveSelectedItem();
 				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Rashberry:
-					barEat -=2;
-					barWater -=0.3f;
+					barEat.Value -=2f;
+					barWater.Value -=0.3f;
 					InventoryRemoveSelectedItem();
 				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Apple:
-					barEat -=12;
-					barWater--;
+					barEat.Value -=12f;
+					barWater.Value--;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics)SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.RabbitMeatCooked:
-					barEat -=30;
-					barWater -=2;
+					barEat.Value -=30f;
+					barWater.Value -=2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.RabbitMeat:
-					barEat -=10;
-					barWater -=1;
-					if (random.Bool_20Percent()) {
-						barHeart +=5;
-						if (barHeart>32)barHeart=32;
+					barEat.Value -=10;
+					barWater.Value -=1;
+					if (FastRandom.Bool_20Percent()) {
+						barHeart.Value +=5f;
+						if (barHeart.Value>32f)barHeart.Value=32f;
 					}
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Strawberry:
-					barEat -=3;
-					barWater -=0.5f;
+					barEat.Value -=3f;
+					barWater.Value -=0.5f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.WheatSeeds:
-					barEat--;
-					barWater -=0.002f;
+					barEat.Value--;
+					barWater.Value -=0.002f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.Blueberries:
-					barEat-=2;
-					barWater -=0.2f;
+					barEat.Value-=2f;
+					barWater.Value -=0.2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.boiledEgg:
-					barEat-=2;
-					barWater -=0.2f;
+					barEat.Value-=2f;
+					barWater.Value -=0.2f;
 					InventoryRemoveSelectedItem();
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BowlWithMushrooms:
-					barEat-=15;
-					barWater -=5f;
+					barEat.Value-=15f;
+					barWater.Value -=5f;
 					InventoryRemoveSelectedItem();
 					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
 					break;
 
 				case (ushort)Items.BowlWithVegetables:
-					barEat-=15;
-					barWater -=5f;
+					barEat.Value-=15;
+					barWater.Value -=5f;
 					InventoryRemoveSelectedItem();
 					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
 					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
@@ -18954,18 +19906,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			//drink
-			if (barWater>1) {
+			if (barWater.Value>1f) {
 				switch (InventoryNormal[boxSelected].Id) {
 					case (ushort)Items.BottleWater:
 						{
 							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater-bottle.GetCount/3f;
+							float d=barWater.Value-bottle.GetCount/3f;
 							if (d<0) {
-								barWater=0;
+								barWater.Value=0f;
 								InventoryNormal[boxSelected]=new ItemInvBasic32(bottleEmptyTexture,(ushort)Items.Bottle,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
 							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater*3);
-								barWater=d;
+								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+								barWater.Value=d;
 							}
 						}
 						break;
@@ -18973,23 +19925,23 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case (ushort)Items.BucketWater:
 						{
 							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater-bottle.GetCount/3f;
+							float d=barWater.Value-bottle.GetCount/3f;
 							if (d<0) {
-								barWater=0;
+								barWater.Value=0f;
 								InventoryNormal[boxSelected]=new ItemInvBasic32(ItemBucketTexture,(ushort)Items.Bucket,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
 							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater*3);
-								barWater=d;
+								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+								barWater.Value=d;
 							}
 						}
 						break;
 				}
 			}
 
-			if (barEat>32)barEat=32;
-			if (barWater>32)barWater=32;
-			if (barEat<0)barEat=0;
-			if (barWater<0)barWater=0;
+			if (barEat.Value>32)barEat.Value=32f;
+			if (barWater.Value>32)barWater.Value=32f;
+			if (barEat.Value<0)barEat.Value=0f;
+			if (barWater.Value<0)barWater.Value=0f;
 		}
 
 		// Crafting basic
@@ -19122,7 +20074,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				(ushort)Items.DyeDarkGreen,
 				(ushort)Items.DyeArmy,
 				(ushort)Items.DyeBrown,
-				  
+
 			};
 
 			inventoryScrollbarValueCraftingMax=items.Length-1;
@@ -19417,6 +20369,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				(ushort)Items.PineLeaves,
 				(ushort)Items.WoodPine,
 				(ushort)Items.SpruceLeaves,
+				(ushort)Items.SpruceLeavesWithSnow,
 				(ushort)Items.WoodSpruce,
 
 				(ushort)Items.AcaciaLeaves,
@@ -20004,7 +20957,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				(ushort)Items.BareLabel,
 				(ushort)Items.Rubber,
 				(ushort)Items.Plastic,
-				
+
 				(ushort)Items.ChristmasStar,
 				(ushort)Items.ChristmasBallGray,
 
@@ -20233,582 +21186,583 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		Texture2D ItemIdToTexture(ushort id) {
-			switch (id) {
-				 case (ushort)Items.ChristmasBallGray: return TextureChristmasBall;
-				 case (ushort)Items.ChristmasBallYellow: return TextureChristmasBallYellow;
-				 case (ushort)Items.ChristmasBallOrange: return TextureChristmasBallOrange;
-				 case (ushort)Items.ChristmasBallRed: return TextureChristmasBallRed;
-				 case (ushort)Items.ChristmasBallPurple: return TextureChristmasBallPurple;
-				 case (ushort)Items.ChristmasBallPink: return TextureChristmasBallPink;
-				 case (ushort)Items.ChristmasBallLightGreen: return TextureChristmasBallLightGreen;
-				 case (ushort)Items.ChristmasBallBlue: return TextureChristmasBallBlue;
-				 case (ushort)Items.ChristmasBallTeal: return TextureChristmasBallTeal;
-				 case (ushort)Items.AngelHair: return TextureAngelHair;
+            return id switch{
+				 (ushort)Items.ChristmasBallGray => TextureChristmasBall,
+				 (ushort)Items.ChristmasBallYellow => TextureChristmasBallYellow,
+				 (ushort)Items.ChristmasBallOrange => TextureChristmasBallOrange,
+				 (ushort)Items.ChristmasBallRed => TextureChristmasBallRed,
+				 (ushort)Items.ChristmasBallPurple => TextureChristmasBallPurple,
+				 (ushort)Items.ChristmasBallPink => TextureChristmasBallPink,
+				 (ushort)Items.ChristmasBallLightGreen => TextureChristmasBallLightGreen,
+				 (ushort)Items.ChristmasBallBlue => TextureChristmasBallBlue,
+				 (ushort)Items.ChristmasBallTeal => TextureChristmasBallTeal,
+				 (ushort)Items.AngelHair => TextureAngelHair,
 
-				case (ushort)Items.ChristmasStar:return TextureChristmasStar;
-				case (ushort)Items.AirTank:return TextureAirTank;
-				case (ushort)Items.AirTank2:return TextureAirTank2;
-				case (ushort)Items.OxygenMachine:return TextureOxygenMachine;
-				case (ushort)Items.BackSulfur:return TextureBackSulfurOre;
-				case (ushort)Items.BackSaltpeter:return TextureBackSaltpeterOre;
-				case (ushort)Items.Ammo:return TextureAmmo;
-				case (ushort)Items.Gun:return TextureGun;
-				case (ushort)Items.Saltpeter:return TextureSaltpeter;
-				case (ushort)Items.SulfurDust:return TextureSulfur;
-				case (ushort)Items.OreSaltpeter:return TextureOreSaltpeter;
-				case (ushort)Items.OreSulfur:return TextureOreSulfur;
-				case (ushort)Items.Gunpowder:return TextureGunpowder;
+				 (ushort)Items.ChristmasStar => TextureChristmasStar,
+				 (ushort)Items.AirTank => TextureAirTank,
+				 (ushort)Items.AirTank2 => TextureAirTank2,
+				 (ushort)Items.OxygenMachine => TextureOxygenMachine,
+				 (ushort)Items.BackSulfur => TextureBackSulfurOre,
+				 (ushort)Items.BackSaltpeter => TextureBackSaltpeterOre,
+				 (ushort)Items.Ammo => TextureAmmo,
+				 (ushort)Items.Gun => TextureGun,
+				 (ushort)Items.Saltpeter => TextureSaltpeter,
+				 (ushort)Items.SulfurDust => TextureSulfur,
+				 (ushort)Items.OreSaltpeter => TextureOreSaltpeter,
+				 (ushort)Items.OreSulfur => TextureOreSulfur,
+				 (ushort)Items.Gunpowder => TextureGunpowder,
 
-				case (ushort)Items.BucketForRubber:return TextureBucketForRubber;
-				case (ushort)Items.Resin:return  TextureResin;
-				case (ushort)Items.Aluminium:return ItemAluminiumTexture;
-				case (ushort)Items.TorchOFF:return TextureTorchOff;
-				//case (ushort)Items.BronzeHeadHoe:return TextureHoeHeadBronze;
-				//case (ushort)Items.CopperHeadHoe:return TextureHoeHeadCopper;
-				//case (ushort)Items.HoeHeadIron:return TextureHoeHeadIron;
-				case (ushort)Items.HoeCopper:return TextureHoeCopper;
+				 (ushort)Items.BucketForRubber => TextureBucketForRubber,
+				 (ushort)Items.Resin =>  TextureResin,
+				 (ushort)Items.Aluminium => ItemAluminiumTexture,
+				 (ushort)Items.TorchOFF => TextureTorchOff,
+				 //(ushort)Items.BronzeHeadHoe => TextureHoeHeadBronze,
+				 //(ushort)Items.CopperHeadHoe => TextureHoeHeadCopper,
+				 (ushort)Items.HoeHeadIron => TextureHoeHeadIron,
+				 (ushort)Items.HoeCopper => TextureHoeCopper,
 
-				case (ushort)Items.Mobile:return mobileTexture;
-				case (ushort)Items.SewingMachine:return sewingMachineTexture;
-				case (ushort)Items.BucketOil:return bucketOilTexture;
-				case (ushort)Items.TorchON:return torchInvTexture;
+				(ushort)Items.Mobile => mobileTexture,
+				(ushort)Items.SewingMachine => sewingMachineTexture,
+				(ushort)Items.BucketOil => bucketOilTexture,
+				(ushort)Items.TorchON => torchInvTexture,
 
-				case (ushort)Items.BottleOil:return bottleOilTexture;
-				case (ushort)Items.BoxAdv:return boxAdvTexture;
-				case (ushort)Items.BoxWooden:return boxWoodenTexture;
-				case (ushort)Items.Shelf:return shelfTexture;
-				case (ushort)Items.Heater:return heatherTexture;
-				case (ushort)Items.WoodDust:return ItemWoodDustTexture;
-				case (ushort)Items.AluminiumDust:return ItemAluminiumDustTexture;
-				case (ushort)Items.FlaxSeeds:return flaxSeedsTexture;
-				case (ushort)Items.MudIngot:return oneMudBrickTexture;
-				case (ushort)Items.AluminiumIngot:return ItemAluminiumIngotTexture;
-				case (ushort)Items.Nail:return nailTexture;
-				case (ushort)Items.Silicium:return siliciumTexture;
-				case (ushort)Items.StoneBasalt: return basaltTexture;
-				case (ushort)Items.StoneLimestone: return limestoneTexture;
-				case (ushort)Items.StoneRhyolite: return rhyoliteTexture;
-				case (ushort)Items.StoneGneiss: return gneissTexture;
-				case (ushort)Items.StoneSandstone: return sandstoneTexture;
-				case (ushort)Items.StoneSchist: return schistTexture;
-				case (ushort)Items.StoneGabbro: return gabbroTexture;
-				case (ushort)Items.StoneDiorit: return dioritTexture;
-				case (ushort)Items.StoneDolomite: return dolomiteTexture;
-				case (ushort)Items.Flax: return flaxInvTexture;
-				case (ushort)Items.Dirt: return TextureDirt;
-				case (ushort)Items.Sand: return sandTexture;
-				case (ushort)Items.Lava: return lavaTexture;
-				case (ushort)Items.Stonerubble: return cobblestoneTexture;
-				case (ushort)Items.Gravel: return gravelTexture;
+				(ushort)Items.BottleOil => bottleOilTexture,
+				(ushort)Items.BoxAdv => boxAdvTexture,
+				(ushort)Items.BoxWooden => boxWoodenTexture,
+				(ushort)Items.Shelf => shelfTexture,
+				(ushort)Items.Heater => heatherTexture,
+				(ushort)Items.WoodDust => ItemWoodDustTexture,
+				(ushort)Items.AluminiumDust => ItemAluminiumDustTexture,
+				(ushort)Items.FlaxSeeds => flaxSeedsTexture,
+				(ushort)Items.MudIngot => oneMudBrickTexture,
+				(ushort)Items.AluminiumIngot => ItemAluminiumIngotTexture,
+				(ushort)Items.Nail => nailTexture,
+				(ushort)Items.Silicium => siliciumTexture,
+				(ushort)Items.StoneBasalt => basaltTexture,
+				(ushort)Items.StoneLimestone => limestoneTexture,
+				(ushort)Items.StoneRhyolite => rhyoliteTexture,
+				(ushort)Items.StoneGneiss => gneissTexture,
+				(ushort)Items.StoneSandstone => sandstoneTexture,
+				(ushort)Items.StoneSchist => schistTexture,
+				(ushort)Items.StoneGabbro => gabbroTexture,
+				(ushort)Items.StoneDiorit => dioritTexture,
+				(ushort)Items.StoneDolomite => dolomiteTexture,
+				(ushort)Items.Flax => flaxInvTexture,
+				(ushort)Items.Dirt => TextureDirt,
+				(ushort)Items.Sand => sandTexture,
+				(ushort)Items.Lava => lavaTexture,
+				(ushort)Items.Stonerubble => cobblestoneTexture,
+				(ushort)Items.Gravel => gravelTexture,
 
-				case (ushort)Items.WoodOak: return TextureOakWood;
-				case (ushort)Items.WoodSpruce: return spruceWoodTexture;
-				case (ushort)Items.WoodLinden: return TextureLindenWood;
-				case (ushort)Items.WoodPine: return pineWoodTexture;
-				case (ushort)Items.WoodApple: return TextureAppleWood;
-				case (ushort)Items.WoodCherry: return cherryWoodTexture;
-				case (ushort)Items.WoodPlum: return TexturePlumWood;
-				case (ushort)Items.WoodLemon: return TextureLemonWood;
-				case (ushort)Items.WoodOrange: return TextureOrangeWood;
+				(ushort)Items.WoodOak => TextureOakWood,
+				(ushort)Items.WoodSpruce => spruceWoodTexture,
+				(ushort)Items.WoodLinden => TextureLindenWood,
+				(ushort)Items.WoodPine => pineWoodTexture,
+				(ushort)Items.WoodApple => TextureAppleWood,
+				(ushort)Items.WoodCherry => cherryWoodTexture,
+				(ushort)Items.WoodPlum => TexturePlumWood,
+				(ushort)Items.WoodLemon => TextureLemonWood,
+				(ushort)Items.WoodOrange => TextureOrangeWood,
 
-				case (ushort)Items.OakLeaves: return TextureOakLeaves;
+				(ushort)Items.OakLeaves => TextureOakLeaves,
 
-				case (ushort)Items.GrassBlockDesert: return TextureGrassBlockDesert;
-				case (ushort)Items.GrassBlockForest: return TextureGrassBlockForest;
-				case (ushort)Items.GrassBlockHills: return TextureGrassBlockHills;
-				case (ushort)Items.GrassBlockJungle: return TextureGrassBlockJungle;
-				case (ushort)Items.GrassBlockPlains: return TextureGrassBlockPlains;
-				case (ushort)Items.GrassBlockCompost: return TextureGrassBlockCompost;
+				(ushort)Items.GrassBlockDesert => TextureGrassBlockDesert,
+				(ushort)Items.GrassBlockForest => TextureGrassBlockForest,
+				(ushort)Items.GrassBlockHills => TextureGrassBlockHills,
+				(ushort)Items.GrassBlockJungle => TextureGrassBlockJungle,
+				(ushort)Items.GrassBlockPlains => TextureGrassBlockPlains,
+				(ushort)Items.GrassBlockCompost => TextureGrassBlockCompost,
 
 				//Crafted
-				case (ushort)Items.Glass: return glassTexture;
-				case (ushort)Items.Bricks: return bricksTexture;
+				(ushort)Items.Glass => glassTexture,
+				(ushort)Items.Bricks => bricksTexture,
 
-				case (ushort)Items.Planks: return planksTexture;
+				(ushort)Items.Planks => planksTexture,
 
-				case (ushort)Items.Desk: return deskTexture;
-				case (ushort)Items.Door: return ItemDoorTexture;
-				case (ushort)Items.Ladder: return ladderTexture;
-				case (ushort)Items.Flag: return ItemFlagTexture;
+				(ushort)Items.Desk => deskTexture,
+				(ushort)Items.Door => ItemDoorTexture,
+				(ushort)Items.Ladder => ladderTexture,
+				(ushort)Items.Flag => ItemFlagTexture,
 
-				case (ushort)Items.Rope: return ItemRopeTexture;
+				(ushort)Items.Rope => ItemRopeTexture,
 
-				case (ushort)Items.HayBlock: return hayBlockTexture;
+				(ushort)Items.HayBlock => hayBlockTexture,
 
-				case (ushort)Items.Roof1: return roof1Texture;
-				case (ushort)Items.Roof2: return roof2Texture;
+				(ushort)Items.Roof1 => roof1Texture,
+				(ushort)Items.Roof2 => roof2Texture,
 
 				//Mashines
-				case (ushort)Items.AdvancedSpaceBack: return advancedSpaceBackTexture;
-				case (ushort)Items.AdvancedSpaceWindow: return advancedSpaceWindowTexture;
-				case (ushort)Items.AdvancedSpaceBlock: return advancedSpaceBlockTexture;
-				case (ushort)Items.AdvancedSpaceFloor: return advancedSpaceFloorTexture;
-				case (ushort)Items.AdvancedSpacePart1: return advancedSpacePart1Texture;
-				case (ushort)Items.AdvancedSpacePart2: return advancedSpacePart2Texture;
-				case (ushort)Items.AdvancedSpacePart3: return advancedSpacePart3Texture;
-				case (ushort)Items.AdvancedSpacePart4: return advancedSpacePart4Texture;
+				(ushort)Items.AdvancedSpaceBack => advancedSpaceBackTexture,
+				(ushort)Items.AdvancedSpaceWindow => advancedSpaceWindowTexture,
+				(ushort)Items.AdvancedSpaceBlock => advancedSpaceBlockTexture,
+				(ushort)Items.AdvancedSpaceFloor => advancedSpaceFloorTexture,
+				(ushort)Items.AdvancedSpacePart1 => advancedSpacePart1Texture,
+				(ushort)Items.AdvancedSpacePart2 => advancedSpacePart2Texture,
+				(ushort)Items.AdvancedSpacePart3 => advancedSpacePart3Texture,
+				(ushort)Items.AdvancedSpacePart4 => advancedSpacePart4Texture,
 
-				case (ushort)Items.WindMill: return ItemWindMillTexture;
-				case (ushort)Items.WaterMill: return ItemWaterMillTexture;
-				case (ushort)Items.SolarPanel: return solarPanelTexture;
+				(ushort)Items.WindMill => ItemWindMillTexture,
+				(ushort)Items.WaterMill => ItemWaterMillTexture,
+				(ushort)Items.SolarPanel => solarPanelTexture,
 
-				case (ushort)Items.Miner: return minerTexture;
-				case (ushort)Items.Macerator: return maceratorOneTexture;
-				case (ushort)Items.Lamp: return lampTexture;
-				case (ushort)Items.Radio: return radioInvTexture;
-				case (ushort)Items.Label: return labelOneTexture;
-				case (ushort)Items.Rocket: return ItemRocketTexture;
-				case (ushort)Items.FurnaceElectric: return furnaceElectricOneTexture;
-				case (ushort)Items.FurnaceStone: return furnaceStoneOneTexture;
-				case (ushort)Items.Barrel: return TextureBarrel;
+				(ushort)Items.Miner => minerTexture,
+				(ushort)Items.Macerator => maceratorOneTexture,
+				(ushort)Items.Lamp => lampTexture,
+				(ushort)Items.Radio => radioInvTexture,
+				(ushort)Items.Label => labelOneTexture,
+				(ushort)Items.Rocket => ItemRocketTexture,
+				(ushort)Items.FurnaceElectric => furnaceElectricOneTexture,
+				(ushort)Items.FurnaceStone => furnaceStoneOneTexture,
+				(ushort)Items.Barrel => TextureBarrel,
 
 				//Food
-				case (ushort)Items.Banana: return ItemBananaTexture;
-				case (ushort)Items.Cherry: return ItemCherryTexture;
-				case (ushort)Items.Lemon: return ItemLemonTexture;
-				case (ushort)Items.Orange: return ItemOrangeTexture;
-				case (ushort)Items.Plum: return ItemPlumTexture;
-				case (ushort)Items.Apple: return ItemAppleTexture;
-				case (ushort)Items.Rashberry: return rashberryTexture;
-				case (ushort)Items.Strawberry: return strawberryTexture;
-				case (ushort)Items.Blueberries: return blueberryTexture;
+				(ushort)Items.Banana => ItemBananaTexture,
+				(ushort)Items.Cherry => ItemCherryTexture,
+				(ushort)Items.Lemon => ItemLemonTexture,
+				(ushort)Items.Orange => ItemOrangeTexture,
+				(ushort)Items.Plum => ItemPlumTexture,
+				(ushort)Items.Apple => ItemAppleTexture,
+				(ushort)Items.Rashberry => rashberryTexture,
+				(ushort)Items.Strawberry => strawberryTexture,
+				(ushort)Items.Blueberries => blueberryTexture,
 
-				case (ushort)Items.RabbitMeatCooked: return ItemRabbtCookedMeatTexture;
-				case (ushort)Items.RabbitMeat: return ItemRabbitMeatTexture;
+				(ushort)Items.RabbitMeatCooked => ItemRabbtCookedMeatTexture,
+				(ushort)Items.RabbitMeat => ItemRabbitMeatTexture,
 
-				case (ushort)Items.AnimalFish: return fishTexture0;
-				case (ushort)Items.FishMeatCooked: return fishCookedTexture;
+				(ushort)Items.AnimalFish => fishTexture0,
+				(ushort)Items.FishMeatCooked => fishCookedTexture,
 
-				case (ushort)Items.Egg: return TextureItemEgg;
-				case (ushort)Items.boiledEgg: return TextureItemBoiledEgg;
+				(ushort)Items.Egg => TextureItemEgg,
+				(ushort)Items.boiledEgg => TextureItemBoiledEgg,
 
 				//Clothes
-				case (ushort)Items.Backpack: return ItemBackpackTexture;
+				(ushort)Items.Backpack => ItemBackpackTexture,
 
 				//Items
-				case (ushort)Items.CoalDust: return ItemCoalDustTexture;
-				case (ushort)Items.BronzeDust: return ItemBronzeDustTexture;
-				case (ushort)Items.GoldDust: return ItemGoldDustTexture;
-				case (ushort)Items.IronDust: return ItemIronDustTexture;
-				case (ushort)Items.SilverDust: return ItemSilverDustTexture;
-				case (ushort)Items.CopperDust: return ItemCopperDustTexture;
-				case (ushort)Items.TinDust: return ItemTinDustTexture;
+				(ushort)Items.CoalDust => ItemCoalDustTexture,
+				(ushort)Items.BronzeDust => ItemBronzeDustTexture,
+				(ushort)Items.GoldDust => ItemGoldDustTexture,
+				(ushort)Items.IronDust => ItemIronDustTexture,
+				(ushort)Items.SilverDust => ItemSilverDustTexture,
+				(ushort)Items.CopperDust => ItemCopperDustTexture,
+				(ushort)Items.TinDust => ItemTinDustTexture,
 
-				case (ushort)Items.BronzeIngot: return ItemBronzeIngotTexture;
-				case (ushort)Items.SteelIngot: return TextureIngotSteel;
-				case (ushort)Items.GoldIngot: return ItemGoldIngotTexture;
-				case (ushort)Items.IronIngot: return ItemIronIngotTexture;
-				case (ushort)Items.TinIngot: return ItemTinIngotTexture;
-				case (ushort)Items.SilverIngot: return ItemSilverIngotTexture;
-				case (ushort)Items.CopperIngot: return ItemCopperIngotTexture;
+				(ushort)Items.BronzeIngot => ItemBronzeIngotTexture,
+				(ushort)Items.SteelIngot => TextureIngotSteel,
+				(ushort)Items.GoldIngot => ItemGoldIngotTexture,
+				(ushort)Items.IronIngot => ItemIronIngotTexture,
+				(ushort)Items.TinIngot => ItemTinIngotTexture,
+				(ushort)Items.SilverIngot => ItemSilverIngotTexture,
+				(ushort)Items.CopperIngot => ItemCopperIngotTexture,
 
-				case (ushort)Items.PlateIron: return plateIronTexture;
-				case (ushort)Items.PlateBronze: return plateBronzeTexture;
-				case (ushort)Items.plateAluminium: return plateAluminiumTexture;
-				case (ushort)Items.PlateCopper: return plateCopperTexture;
-				case (ushort)Items.PlateGold: return plateGoldTexture;
+				(ushort)Items.PlateIron => plateIronTexture,
+				(ushort)Items.PlateBronze => plateBronzeTexture,
+				(ushort)Items.plateAluminium => plateAluminiumTexture,
+				(ushort)Items.PlateCopper => plateCopperTexture,
+				(ushort)Items.PlateGold => plateGoldTexture,
 
-				case (ushort)Items.OreCoal: return TextureOreCoal;
-				case (ushort)Items.ItemCoal: return ItemCoalTexture;
-				case (ushort)Items.ItemGold: return ItemGoldTexture;
-				case (ushort)Items.ItemTin: return ItemTinTexture;
-				case (ushort)Items.ItemSilver: return ItemSilverTexture;
-				case (ushort)Items.ItemIron: return ItemIronTexture;
-				case (ushort)Items.ItemCopper: return ItemCopperTexture;
-				case (ushort)Items.Ash: return ashTexture;
-				case (ushort)Items.CoalWood: return coalWoodTexture;
+				(ushort)Items.OreCoal => TextureOreCoal,
+				(ushort)Items.ItemCoal => ItemCoalTexture,
+				(ushort)Items.ItemGold => ItemGoldTexture,
+				(ushort)Items.ItemTin => ItemTinTexture,
+				(ushort)Items.ItemSilver => ItemSilverTexture,
+				(ushort)Items.ItemIron => ItemIronTexture,
+				(ushort)Items.ItemCopper => ItemCopperTexture,
+				(ushort)Items.Ash => ashTexture,
+				(ushort)Items.CoalWood => coalWoodTexture,
 
-				case (ushort)Items.Saphirite: return ItemSaphiriteTexture;
-				case (ushort)Items.Diamond: return ItemDiamondTexture;
-				case (ushort)Items.Smaragd: return ItemSmaragdTexture;
-				case (ushort)Items.Ruby: return ItemRubyTexture;
-				case (ushort)Items.SmallStone: return ItemSmallStoneTexture;
-				case (ushort)Items.BigStone: return ItemBigStoneTexture;
-				case (ushort)Items.MediumStone: return ItemMediumStoneTexture;
+				(ushort)Items.Saphirite => ItemSaphiriteTexture,
+				(ushort)Items.Diamond => ItemDiamondTexture,
+				(ushort)Items.Smaragd => ItemSmaragdTexture,
+				(ushort)Items.Ruby => ItemRubyTexture,
+				(ushort)Items.SmallStone => ItemSmallStoneTexture,
+				(ushort)Items.BigStone => ItemBigStoneTexture,
+				(ushort)Items.MediumStone => ItemMediumStoneTexture,
 
-				case (ushort)Items.Bulb: return ItemBulbTexture;
-				case (ushort)Items.Circuit: return ItemCircuitTexture;
-				case (ushort)Items.ItemBattery: return ItemBatteryTexture;
-				case (ushort)Items.BigCircuit: return ItemBigCircuitTexture;
-				case (ushort)Items.OneBrick: return oneBrickTexture;
+				(ushort)Items.Bulb => ItemBulbTexture,
+				(ushort)Items.Circuit => ItemCircuitTexture,
+				(ushort)Items.ItemBattery => ItemBatteryTexture,
+				(ushort)Items.BigCircuit => ItemBigCircuitTexture,
+				(ushort)Items.OneBrick => oneBrickTexture,
 
-				case (ushort)Items.Cloth: return clothTexture;
-				case (ushort)Items.Yarn: return yarnTexture;
+				(ushort)Items.Cloth => clothTexture,
+				(ushort)Items.Yarn => yarnTexture,
 
-				case (ushort)Items.Condenser: return condenserTexture;
-				case (ushort)Items.Diode: return diodeTexture;
-				case (ushort)Items.Tranzistor: return tranzistorTexture;
-				case (ushort)Items.Rezistance: return resistanceTexture;
-				case (ushort)Items.Motor: return motorTexture;
-				case (ushort)Items.BareLabel: return bareLabelTexture;
+				(ushort)Items.Condenser => condenserTexture,
+				(ushort)Items.Diode => diodeTexture,
+				(ushort)Items.Tranzistor => tranzistorTexture,
+				(ushort)Items.Rezistance => resistanceTexture,
+				(ushort)Items.Motor => motorTexture,
+				(ushort)Items.BareLabel => bareLabelTexture,
 
 				//Plants
-				case (ushort)Items.OakSapling: return oakSaplingTexture;
-				case (ushort)Items.LindenSapling: return TextureLindenSapling;
-				case (ushort)Items.PineSapling: return pineSaplingTexture;
-				case (ushort)Items.AppleSapling: return TextureAppleSapling;
-				case (ushort)Items.LemonSapling: return lemonSaplingTexture;
-				case (ushort)Items.CherrySapling: return cherrySaplingTexture;
-				case (ushort)Items.PlumSapling: return plumSaplingTexture;
-				case (ushort)Items.SpruceSapling: return spruceSaplingTexture;
-				case (ushort)Items.OrangeSapling: return orangeSaplingTexture;
+				(ushort)Items.OakSapling => oakSaplingTexture,
+				(ushort)Items.LindenSapling => TextureLindenSapling,
+				(ushort)Items.PineSapling => pineSaplingTexture,
+				(ushort)Items.AppleSapling => TextureAppleSapling,
+				(ushort)Items.LemonSapling => lemonSaplingTexture,
+				(ushort)Items.CherrySapling => cherrySaplingTexture,
+				(ushort)Items.PlumSapling => plumSaplingTexture,
+				(ushort)Items.SpruceSapling => spruceSaplingTexture,
+				(ushort)Items.OrangeSapling => orangeSaplingTexture,
 
-				case (ushort)Items.Dandelion: return plantDandelionTexture;
-				case (ushort)Items.PlantRose: return plantRoseTexture;
-				case (ushort)Items.PlantOrchid: return plantOrchidTexture;
-				case (ushort)Items.PlantViolet: return plantVioletTexture;
+				(ushort)Items.Dandelion => plantDandelionTexture,
+				(ushort)Items.PlantRose => plantRoseTexture,
+				(ushort)Items.PlantOrchid => plantOrchidTexture,
+				(ushort)Items.PlantViolet => plantVioletTexture,
 
-				case (ushort)Items.PlantStrawberry: return invStrawberryTexture;
-				case (ushort)Items.PlantRashberry: return invRashberryTexture;
-				case (ushort)Items.PlantBlueberry: return invBlueberryTexture;
+				(ushort)Items.PlantStrawberry => invStrawberryTexture,
+				(ushort)Items.PlantRashberry => invRashberryTexture,
+				(ushort)Items.PlantBlueberry => invBlueberryTexture,
 
-				case (ushort)Items.CactusBig: return cactusBigTexture;
-				case (ushort)Items.CactusSmall: return cactusLittleTexture;
+				(ushort)Items.CactusBig => cactusBigTexture,
+				(ushort)Items.CactusSmall => cactusLittleTexture,
 
-				case (ushort)Items.SugarCane: return sugarCaneTexture;
-				case (ushort)Items.Onion: return ItemOnionTexture;
+				(ushort)Items.SugarCane => sugarCaneTexture,
+				(ushort)Items.Onion => ItemOnionTexture,
 
-				case (ushort)Items.Toadstool: return toadstoolTexture;
-				case (ushort)Items.Boletus: return boletusTexture;
-				case (ushort)Items.Champignon: return champignonTexture;
+				(ushort)Items.Toadstool => toadstoolTexture,
+				(ushort)Items.Boletus => boletusTexture,
+				(ushort)Items.Champignon => champignonTexture,
 
-				case (ushort)Items.Coral: return coralTexture;
-				case (ushort)Items.Seaweed: return seaweedTexture;
-				case (ushort)Items.PlantSeaweed: return seaweedTexture;
-				case (ushort)Items.PlantOnion: return plantOnionTexture;
+				(ushort)Items.Coral => coralTexture,
+				(ushort)Items.Seaweed => seaweedTexture,
+				(ushort)Items.PlantSeaweed => seaweedTexture,
+				(ushort)Items.PlantOnion => plantOnionTexture,
 
 				//Nature
-				case (ushort)Items.WheatSeeds: return ItemWheatSeedsTexture;
-				case (ushort)Items.Seeds: return ItemSeedsTexture;
+				(ushort)Items.WheatSeeds => ItemWheatSeedsTexture,
+				(ushort)Items.Seeds => ItemSeedsTexture,
 
-				case (ushort)Items.WheatStraw: return ItemWheatStrawTexture;
-				case (ushort)Items.Hay: return ItemHayTexture;
+				(ushort)Items.WheatStraw => ItemWheatStrawTexture,
+				(ushort)Items.Hay => ItemHayTexture,
 
-				case (ushort)Items.Leave: return ItemLeaveTexture;
-				case (ushort)Items.Stick: return ItemStickTexture;
-				case (ushort)Items.Sticks: return ItemSticksTexture;
-				case (ushort)Items.Rubber: return ItemRubberTexture;
+				(ushort)Items.Leave => ItemLeaveTexture,
+				(ushort)Items.Stick => ItemStickTexture,
+				(ushort)Items.Sticks => ItemSticksTexture,
+				(ushort)Items.Rubber => ItemRubberTexture,
 
 				//Tools
-				case (ushort)Items.Bucket: return ItemBucketTexture;
-				case (ushort)Items.BucketWater: return ItemBucketWaterTexture;
+				(ushort)Items.Bucket => ItemBucketTexture,
+				(ushort)Items.BucketWater => ItemBucketWaterTexture,
 
-				case (ushort)Items.StoneHead: return stoneHeadTexture;
+				(ushort)Items.StoneHead => stoneHeadTexture,
 
-				//case (ushort)Items.AxeHeadIron: return TextureHeadAxeIron;
-				//case (ushort)Items.ShovelHeadIron: return TextureHeadShovelIron;
-				//case (ushort)Items.PickaxeHeadIron: return TextureHeadPickaxeIron;
+				//(ushort)Items.AxeHeadIron => TextureHeadAxeIron,
+				//(ushort)Items.ShovelHeadIron => TextureHeadShovelIron,
+				//(ushort)Items.PickaxeHeadIron => TextureHeadPickaxeIron,
 
 				//Shovel
-				case (ushort)Items.ShovelStone: return TextureShovelStone;
-				case (ushort)Items.ShovelCopper: return TextureShovelCopper;
-				case (ushort)Items.ShovelBronze: return TextureShovelBronze;
-				case (ushort)Items.ShovelGold: return TextureShovelGold;
-				case (ushort)Items.ShovelIron: return TextureShovelIron;
-				case (ushort)Items.ShovelSteel: return TextureShovelSteel;
-				case (ushort)Items.ShovelAluminium: return TextureShovelAluminium;
+				(ushort)Items.ShovelStone => TextureShovelStone,
+				(ushort)Items.ShovelCopper => TextureShovelCopper,
+				(ushort)Items.ShovelBronze => TextureShovelBronze,
+				(ushort)Items.ShovelGold => TextureShovelGold,
+				(ushort)Items.ShovelIron => TextureShovelIron,
+				(ushort)Items.ShovelSteel => TextureShovelSteel,
+				(ushort)Items.ShovelAluminium => TextureShovelAluminium,
 
 				// Pickaxe
-				case (ushort)Items.PickaxeStone: return TexturePickaxeStone;
-				case (ushort)Items.PickaxeCopper: return TexturePickaxeCopper;
-				case (ushort)Items.PickaxeBronze: return TexturePickaxeBronze;
-				case (ushort)Items.PickaxeGold: return TexturePickaxeGold;
-				case (ushort)Items.PickaxeIron: return TexturePickaxeIron;
-				case (ushort)Items.PickaxeSteel: return TexturePickaxeSteel;
-				case (ushort)Items.PickaxeAluminium: return TexturePickaxeAluminium;
+				(ushort)Items.PickaxeStone => TexturePickaxeStone,
+				(ushort)Items.PickaxeCopper => TexturePickaxeCopper,
+				(ushort)Items.PickaxeBronze => TexturePickaxeBronze,
+				(ushort)Items.PickaxeGold => TexturePickaxeGold,
+				(ushort)Items.PickaxeIron => TexturePickaxeIron,
+				(ushort)Items.PickaxeSteel => TexturePickaxeSteel,
+				(ushort)Items.PickaxeAluminium => TexturePickaxeAluminium,
 
 				// Axe
-				case (ushort)Items.AxeStone: return TextureAxeStone;
-				case (ushort)Items.AxeCopper: return TextureAxeCopper;
-				case (ushort)Items.AxeBronze: return TextureAxeBronze;
-				case (ushort)Items.AxeGold: return TextureAxeGold;
-				case (ushort)Items.AxeIron: return TextureAxeIron;
-				case (ushort)Items.AxeSteel: return TextureAxeSteel;
-				case (ushort)Items.AxeAluminium: return TextureAxeAluminium;
+				(ushort)Items.AxeStone => TextureAxeStone,
+				(ushort)Items.AxeCopper => TextureAxeCopper,
+				(ushort)Items.AxeBronze => TextureAxeBronze,
+				(ushort)Items.AxeGold => TextureAxeGold,
+				(ushort)Items.AxeIron => TextureAxeIron,
+				(ushort)Items.AxeSteel => TextureAxeSteel,
+				(ushort)Items.AxeAluminium => TextureAxeAluminium,
 
 				// Hammers
-				case (ushort)Items.HammerCopper: return TextureHammerCopper;
-				case (ushort)Items.HammerBronze: return TextureHammerBronze;
-				case (ushort)Items.HammerIron: return TextureHammerIron;
-				case (ushort)Items.HammerGold: return TextureHammerGold;
-				case (ushort)Items.HammerSteel: return TextureHammerSteel;
-				case (ushort)Items.HammerAluminium: return TextureHammerAluminium;
+				(ushort)Items.HammerCopper => TextureHammerCopper,
+				(ushort)Items.HammerBronze => TextureHammerBronze,
+				(ushort)Items.HammerIron => TextureHammerIron,
+				(ushort)Items.HammerGold => TextureHammerGold,
+				(ushort)Items.HammerSteel => TextureHammerSteel,
+				(ushort)Items.HammerAluminium => TextureHammerAluminium,
 
 				// Shears
-				case (ushort)Items.ShearsCopper: return TextureShearsCopper;
-				case (ushort)Items.ShearsBronze: return TextureShearsBronze;
-				case (ushort)Items.ShearsGold: return TextureShearsGold;
-				case (ushort)Items.ShearsIron: return TextureShearsIron;
-				case (ushort)Items.ShearsSteel: return TextureShearsSteel;
-				case (ushort)Items.ShearsAluminium: return TextureShearsAluminium;
+				(ushort)Items.ShearsCopper => TextureShearsCopper,
+				(ushort)Items.ShearsBronze => TextureShearsBronze,
+				(ushort)Items.ShearsGold => TextureShearsGold,
+				(ushort)Items.ShearsIron => TextureShearsIron,
+				(ushort)Items.ShearsSteel => TextureShearsSteel,
+				(ushort)Items.ShearsAluminium => TextureShearsAluminium,
 
 				// Saw
-				case (ushort)Items.SawCopper: return TextureSawCopper;
-				case (ushort)Items.SawBronze: return TextureSawBronze;
-				case (ushort)Items.SawGold: return TextureSawGold;
-				case (ushort)Items.SawIron: return TextureSawIron;
-				case (ushort)Items.SawSteel: return TextureSawSteel;
-				case (ushort)Items.SawAluminium: return TextureSawAluminium;
+				(ushort)Items.SawCopper => TextureSawCopper,
+				(ushort)Items.SawBronze => TextureSawBronze,
+				(ushort)Items.SawGold => TextureSawGold,
+				(ushort)Items.SawIron => TextureSawIron,
+				(ushort)Items.SawSteel => TextureSawSteel,
+				(ushort)Items.SawAluminium => TextureSawAluminium,
 
-				case (ushort)Items.ElectricDrill: return TextureDrillElectric;
-				case (ushort)Items.ElectricSaw: return electricSawTexture;
+				(ushort)Items.ElectricDrill => TextureDrillElectric,
+				(ushort)Items.ElectricSaw => electricSawTexture,
 
-				case (ushort)Items.OreAluminium: return TextureOreAluminium;
-				case (ushort)Items.OreCopper: return TextureOreCopper;
-				case (ushort)Items.OreGold: return TextureOreGold;
-				case (ushort)Items.OreIron: return TextureOreIron;
-				case (ushort)Items.OreSilver: return TextureOreSilver;
-				case (ushort)Items.OreTin: return TextureOreTin;
+				(ushort)Items.OreAluminium => TextureOreAluminium,
+				(ushort)Items.OreCopper => TextureOreCopper,
+				(ushort)Items.OreGold => TextureOreGold,
+				(ushort)Items.OreIron => TextureOreIron,
+				(ushort)Items.OreSilver => TextureOreSilver,
+				(ushort)Items.OreTin => TextureOreTin,
 
-				case (ushort)Items.AppleLeaves: return TextureAppleLeaves;
-				case (ushort)Items.AppleLeavesWithApples: return TextureAppleLeavesWithApples;
-				case (ushort)Items.OrangeLeaves: return TextureOrangeLeaves;
-				case (ushort)Items.OrangeLeavesWithOranges: return TextureOrangeLeavesWithOranges;
-				case (ushort)Items.PlumLeaves: return TexturePlumLeaves;
-				case (ushort)Items.PlumLeavesWithPlums: return TexturePlumLeavesWithPlums;
-				case (ushort)Items.CherryLeaves: return TextureCherryLeaves;
-				case (ushort)Items.CherryLeavesWithCherries: return TextureCherryLeavesWithCherries;
-				case (ushort)Items.LemonLeaves: return TextureLemonLeaves;
-				case (ushort)Items.LemonLeavesWithLemons: return lemonLeavesWithLemonsTexture;
-				case (ushort)Items.LindenLeaves: return TextureLindenLeaves;
-				case (ushort)Items.SpruceLeaves: return spruceLeavesTexture;
-				case (ushort)Items.PineLeaves: return pineLeavesTexture;
+				(ushort)Items.AppleLeaves => TextureAppleLeaves,
+				(ushort)Items.AppleLeavesWithApples => TextureAppleLeavesWithApples,
+				(ushort)Items.OrangeLeaves => TextureOrangeLeaves,
+				(ushort)Items.OrangeLeavesWithOranges => TextureOrangeLeavesWithOranges,
+				(ushort)Items.PlumLeaves => TexturePlumLeaves,
+				(ushort)Items.PlumLeavesWithPlums => TexturePlumLeavesWithPlums,
+				(ushort)Items.CherryLeaves => TextureCherryLeaves,
+				(ushort)Items.CherryLeavesWithCherries => TextureCherryLeavesWithCherries,
+				(ushort)Items.LemonLeaves => TextureLemonLeaves,
+				(ushort)Items.LemonLeavesWithLemons => lemonLeavesWithLemonsTexture,
+				(ushort)Items.LindenLeaves => TextureLindenLeaves,
+				(ushort)Items.SpruceLeaves => spruceLeavesTexture,
+				(ushort)Items.SpruceLeavesWithSnow => spruceLeavesWithSnowTexture,
+				(ushort)Items.PineLeaves => pineLeavesTexture,
 
-				case (ushort)Items.Snow: return snowTexture;
-				case (ushort)Items.SnowTop: return snowTopTexture;
-				case (ushort)Items.Ice: return iceTexture;
+				(ushort)Items.Snow => snowTexture,
+				(ushort)Items.SnowTop => snowTopTexture,
+				(ushort)Items.Ice => iceTexture,
 
-				case (ushort)Items.GrassDesert: return grassDesertTexture;
-				case (ushort)Items.GrassForest: return grassForestTexture;
-				case (ushort)Items.GrassHills: return grassHillsTexture;
-				case (ushort)Items.GrassJungle: return grassJungleTexture;
-				case (ushort)Items.GrassPlains: return grassPlainsTexture;
+				(ushort)Items.GrassDesert => grassDesertTexture,
+				(ushort)Items.GrassForest => grassForestTexture,
+				(ushort)Items.GrassHills => grassHillsTexture,
+				(ushort)Items.GrassJungle => grassJungleTexture,
+				(ushort)Items.GrassPlains => grassPlainsTexture,
 
-				case (ushort)Items.Alore: return plantAloreTexture;
-				case (ushort)Items.Plastic: return ItemPlasticTexture;
+				(ushort)Items.Alore => plantAloreTexture,
+				(ushort)Items.Plastic => ItemPlasticTexture,
 
-				case (ushort)Items.Carrot: return ItemCarrotTexture;
-				case (ushort)Items.PlantCarrot: return plantCarrotTexture;
-				case (ushort)Items.Peas: return ItemPeasTexture;
-				case (ushort)Items.PlantPeas: return plantPeasTexture;
+				(ushort)Items.Carrot => ItemCarrotTexture,
+				(ushort)Items.PlantCarrot => plantCarrotTexture,
+				(ushort)Items.Peas => ItemPeasTexture,
+				(ushort)Items.PlantPeas => plantPeasTexture,
 
-				case (ushort)Items.Battery: return ItemBatteryTexture;
+				(ushort)Items.Battery => ItemBatteryTexture,
 
-				case (ushort)Items.BottleWater: return bottleWaterTexture;
-				case (ushort)Items.Bottle: return bottleEmptyTexture;
-				case (ushort)Items.BowlEmpty: return bowlEmptyTexture;
-				case (ushort)Items.BowlWithMushrooms: return bowlMushroomsTexture;
-				case (ushort)Items.BowlWithVegetables: return bowlVegetablesTexture;
+				(ushort)Items.BottleWater => bottleWaterTexture,
+				(ushort)Items.Bottle => bottleEmptyTexture,
+				(ushort)Items.BowlEmpty => bowlEmptyTexture,
+				(ushort)Items.BowlWithMushrooms => bowlMushroomsTexture,
+				(ushort)Items.BowlWithVegetables => bowlVegetablesTexture,
 
-				case (ushort)Items.ElectricDrillOff: return TextureDrillElectric;
-				case (ushort)Items.ElectricSawOff: return electricSawTexture;
+				(ushort)Items.ElectricDrillOff => TextureDrillElectric,
+				(ushort)Items.ElectricSawOff => electricSawTexture,
 
-				case (ushort)Items.HoeStone: return TextureHoeStone;
-				case (ushort)Items.HoeBronze: return TextureHoeBronze;
-				case (ushort)Items.HoeIron: return TextureHoeIron;
+				(ushort)Items.HoeStone => TextureHoeStone,
+				(ushort)Items.HoeBronze => TextureHoeBronze,
+				(ushort)Items.HoeIron => TextureHoeIron,
 
-				case (ushort)Items.Charger: return chargerTexture;
+				(ushort)Items.Charger => chargerTexture,
 
-				case (ushort)Items.Clay: return clayTexture;
-				case (ushort)Items.GrassBlockClay: return TextureGrassBlockClay;
-				case (ushort)Items.BackDirt: return backgroundDirtTexture;
-				case (ushort)Items.BackSand: return backgroundSandTexture;
-				case (ushort)Items.BackClay: return backgroundClayTexture;
-				case (ushort)Items.BackCobblestone: return backgroundCobblestoneTexture;
-				case (ushort)Items.BackGravel: return backgroundGravelTexture;
-				case (ushort)Items.BackRedSand: return backgroundRedSandTexture;
-				case (ushort)Items.BackRegolite: return backgroundRegoliteTexture;
+				(ushort)Items.Clay => clayTexture,
+				(ushort)Items.GrassBlockClay => TextureGrassBlockClay,
+				(ushort)Items.BackDirt => backgroundDirtTexture,
+				(ushort)Items.BackSand => backgroundSandTexture,
+				(ushort)Items.BackClay => backgroundClayTexture,
+				(ushort)Items.BackCobblestone => backgroundCobblestoneTexture,
+				(ushort)Items.BackGravel => backgroundGravelTexture,
+				(ushort)Items.BackRedSand => backgroundRedSandTexture,
+				(ushort)Items.BackRegolite => backgroundRegoliteTexture,
 
-				case (ushort)Items.BackCoal: return backgroundCoalTexture;
-				case (ushort)Items.BackAluminium: return backgroundAluminiumTexture;
-				case (ushort)Items.BackCopper: return backgroundCopperTexture;
-				case (ushort)Items.BackGold: return backgroundGoldTexture;
-				case (ushort)Items.BackIron: return backgroundIronTexture;
-				case (ushort)Items.BackTin: return backgroundTinTexture;
-				case (ushort)Items.BackSilver: return backgroundSilverTexture;
+				(ushort)Items.BackCoal => backgroundCoalTexture,
+				(ushort)Items.BackAluminium => backgroundAluminiumTexture,
+				(ushort)Items.BackCopper => backgroundCopperTexture,
+				(ushort)Items.BackGold => backgroundGoldTexture,
+				(ushort)Items.BackIron => backgroundIronTexture,
+				(ushort)Items.BackTin => backgroundTinTexture,
+				(ushort)Items.BackSilver => backgroundSilverTexture,
 
 
-				case (ushort)Items.BackAnorthosite: return backgroundAnorthositeTexture;
-				case (ushort)Items.BackBasalt: return backgroundBasaltTexture;
-				case (ushort)Items.BackDiorit: return backgroundDioritTexture;
-				case (ushort)Items.BackDolomite: return backgroundDolomiteTexture;
-				case (ushort)Items.BackFlint: return backgroundFlintTexture;
-				case (ushort)Items.BackGabbro: return backgroundGabbroTexture;
-				case (ushort)Items.BackGneiss: return backgroundGneissTexture;
-				case (ushort)Items.BackLimestone: return backgroundLimestoneTexture;
-				case (ushort)Items.BackMudstone: return backgroundMudstoneTexture;
-				case (ushort)Items.BackSandstone: return backgroundSandstoneTexture;
-				case (ushort)Items.BackSchist: return backgroundSchistTexture;
-				case (ushort)Items.BackRhyolite: return backgroundRhyoliteTexture;
+				(ushort)Items.BackAnorthosite => backgroundAnorthositeTexture,
+				(ushort)Items.BackBasalt => backgroundBasaltTexture,
+				(ushort)Items.BackDiorit => backgroundDioritTexture,
+				(ushort)Items.BackDolomite => backgroundDolomiteTexture,
+				(ushort)Items.BackFlint => backgroundFlintTexture,
+				(ushort)Items.BackGabbro => backgroundGabbroTexture,
+				(ushort)Items.BackGneiss => backgroundGneissTexture,
+				(ushort)Items.BackLimestone => backgroundLimestoneTexture,
+				(ushort)Items.BackMudstone => backgroundMudstoneTexture,
+				(ushort)Items.BackSandstone => backgroundSandstoneTexture,
+				(ushort)Items.BackSchist => backgroundSchistTexture,
+				(ushort)Items.BackRhyolite => backgroundRhyoliteTexture,
 
-				case (ushort)Items.StoneFlint: return flintTexture;
-				case (ushort)Items.StoneMudstone: return mudstoneTexture;
-				case (ushort)Items.StoneAnorthosite: return anorthositeTexture;
-				case (ushort)Items.AnimalRabbit: return rabbitStillTexture;
-				case (ushort)Items.AnimalParrot: return TextureParrotStill;
-				case (ushort)Items.AnimalChicken: return chickenStillTexture;
-				case (ushort)Items.Rod: return RodTexture;
-				case (ushort)Items.TorchElectricOFF: return LightElectricTexture;
-				case (ushort)Items.TorchElectricON: return LightElectricTexture;
-				case (ushort)Items.Compost: return CompostTexture;
-				case (ushort)Items.Composter: return ComposterTexture;
+				(ushort)Items.StoneFlint => flintTexture,
+				(ushort)Items.StoneMudstone => mudstoneTexture,
+				(ushort)Items.StoneAnorthosite => anorthositeTexture,
+				(ushort)Items.AnimalRabbit => rabbitStillTexture,
+				(ushort)Items.AnimalParrot => TextureParrotStill,
+				(ushort)Items.AnimalChicken => chickenStillTexture,
+				(ushort)Items.Rod => RodTexture,
+				(ushort)Items.TorchElectricOFF => LightElectricTexture,
+				(ushort)Items.TorchElectricON => LightElectricTexture,
+				(ushort)Items.Compost => CompostTexture,
+				(ushort)Items.Composter => ComposterTexture,
 
-				case (ushort)Items.FormalShoes: return TextureItemFormalShoes;
-				case (ushort)Items.Pumps: return TextureItemPumps;
-				case (ushort)Items.Sneakers: return TextureItemSneakers;
-				case (ushort)Items.SpaceBoots: return TextureItemSpaceBoots;
+				(ushort)Items.FormalShoes => TextureItemFormalShoes,
+				(ushort)Items.Pumps => TextureItemPumps,
+				(ushort)Items.Sneakers => TextureItemSneakers,
+				(ushort)Items.SpaceBoots => TextureItemSpaceBoots,
 
-				case (ushort)Items.Jeans: return TextureItemJeans;
-				case (ushort)Items.Shorts: return TextureItemShorts;
-				case (ushort)Items.SpaceTrousers: return TextureItemSpaceTrousers;
-				case (ushort)Items.ArmyTrousers: return TextureItemArmyTrousers;
-				case (ushort)Items.Skirt: return TextureItemSkirt;
+				(ushort)Items.Jeans => TextureItemJeans,
+				(ushort)Items.Shorts => TextureItemShorts,
+				(ushort)Items.SpaceTrousers => TextureItemSpaceTrousers,
+				(ushort)Items.ArmyTrousers => TextureItemArmyTrousers,
+				(ushort)Items.Skirt => TextureItemSkirt,
 
-				case (ushort)Items.TShirt: return TextureItemTShirt;
-				case (ushort)Items.SpaceSuit: return TextureItemSpaceSuit;
-				case (ushort)Items.Dress: return TextureItemDress;
-				case (ushort)Items.Shirt: return TextureItemShirt;
+				(ushort)Items.TShirt => TextureItemTShirt,
+				(ushort)Items.SpaceSuit => TextureItemSpaceSuit,
+				(ushort)Items.Dress => TextureItemDress,
+				(ushort)Items.Shirt => TextureItemShirt,
 
-				case (ushort)Items.Cap: return TextureItemCap;
-				case (ushort)Items.Hat: return TextureItemHat;
-				case (ushort)Items.Crown: return TextureItemCrown;
-				case (ushort)Items.SpaceHelmet: return TextureItemSpaceHelmet;
+				(ushort)Items.Cap => TextureItemCap,
+				(ushort)Items.Hat => TextureItemHat,
+				(ushort)Items.Crown => TextureItemCrown,
+				(ushort)Items.SpaceHelmet => TextureItemSpaceHelmet,
 
-				case (ushort)Items.Underpants: return TextureItemUnderpants;
-				case (ushort)Items.BoxerShorts: return TextureItemBoxerShorts;
-				case (ushort)Items.Panties: return TextureItemPanties;
-				case (ushort)Items.Swimsuit: return TextureItemSwimsuit;
-				case (ushort)Items.BikiniDown: return TextureItemBikiniDown;
+				(ushort)Items.Underpants => TextureItemUnderpants,
+				(ushort)Items.BoxerShorts => TextureItemBoxerShorts,
+				(ushort)Items.Panties => TextureItemPanties,
+				(ushort)Items.Swimsuit => TextureItemSwimsuit,
+				(ushort)Items.BikiniDown => TextureItemBikiniDown,
 
-				case (ushort)Items.Bra: return TextureItemBra;
-				case (ushort)Items.BikiniTop: return TextureItemBikiniTop;
+				(ushort)Items.Bra => TextureItemBra,
+				(ushort)Items.BikiniTop => TextureItemBikiniTop,
 
-				case (ushort)Items.CoatArmy: return TextureItemCoatArmy;
-				case (ushort)Items.Coat: return TextureItemCoat;
-				case (ushort)Items.JacketDenim: return ItemJacketDenimTexture;
-				case (ushort)Items.JacketFormal: return ItemJacketFormalTexture;
-				case (ushort)Items.JacketShort: return TextureItemJacketShort;
+				(ushort)Items.CoatArmy => TextureItemCoatArmy,
+				(ushort)Items.Coat => TextureItemCoat,
+				(ushort)Items.JacketDenim => ItemJacketDenimTexture,
+				(ushort)Items.JacketFormal => ItemJacketFormalTexture,
+				(ushort)Items.JacketShort => TextureItemJacketShort,
 
-				case (ushort)Items.AcaciaLeaves: return TextureAcaciaLeaves;
-				case (ushort)Items.AcaciaWood: return TextureAcaciaWood;
-				case (ushort)Items.AcaciaSapling: return TextureAcaciaSapling;
-				case (ushort)Items.MangroveLeaves: return TextureMangroveLeaves;
-				case (ushort)Items.MangroveWood: return TextureMangroveWood;
-				case (ushort)Items.MangroveSapling: return TextureMangroveSapling;
-				case (ushort)Items.WillowLeaves: return TextureWillowLeaves;
-				case (ushort)Items.WillowWood: return TextureWillowWood;
-				case (ushort)Items.WillowSapling: return TextureWillowSapling;
-				case (ushort)Items.Olive: return ItemOliveTexture;
-				case (ushort)Items.OliveLeaves: return TextureOliveLeaves;
-				case (ushort)Items.OliveLeavesWithOlives:return TextureOliveLeavesWithOlives;
-				case (ushort)Items.OliveWood: return TextureOliveWood;
-				case (ushort)Items.OliveSapling: return TextureOliveSapling;
-				case (ushort)Items.EucalyptusLeaves: return TextureEucalyptusLeaves;
-				case (ushort)Items.EucalyptusSapling: return TextureEucalyptusSapling;
-				case (ushort)Items.EucalyptusWood: return TextureEucalyptusWood;
-				case (ushort)Items.RubberTreeLeaves: return TextureRubberTreeLeaves;
-				case (ushort)Items.RubberTreeSapling: return TextureRubberTreeSapling;
-				case (ushort)Items.RubberTreeWood: return TextureRubberTreeWood;
-				case (ushort)Items.KapokLeaves: return TextureKapokLeaves;
-				case (ushort)Items.KapokLeavesFibre: return TextureKapokLeavesFibre;
-				case (ushort)Items.KapokLeacesFlowering: return TextureKapokBlossom;
-				case (ushort)Items.KapokSapling: return TextureKapokSapling;
-				case (ushort)Items.KapokWood: return TextureKapokWood;
-				case (ushort)Items.KapokFibre: return ItemKapokFibreTexture;
-				case (ushort)Items.KnifeCopper: return TextureKnifeCopper;
-				case (ushort)Items.KnifeBronze: return TextureKnifeBronze;
-				case (ushort)Items.KnifeGold: return TextureKnifeGold;
-				case (ushort)Items.KnifeIron: return TextureKnifeIron;
-				case (ushort)Items.KnifeSteel: return TextureKnifeSteel;
-				case (ushort)Items.KnifeAluminium: return TextureKnifeAluminium;
+				(ushort)Items.AcaciaLeaves => TextureAcaciaLeaves,
+				(ushort)Items.AcaciaWood => TextureAcaciaWood,
+				(ushort)Items.AcaciaSapling => TextureAcaciaSapling,
+				(ushort)Items.MangroveLeaves => TextureMangroveLeaves,
+				(ushort)Items.MangroveWood => TextureMangroveWood,
+				(ushort)Items.MangroveSapling => TextureMangroveSapling,
+				(ushort)Items.WillowLeaves => TextureWillowLeaves,
+				(ushort)Items.WillowWood => TextureWillowWood,
+				(ushort)Items.WillowSapling => TextureWillowSapling,
+				(ushort)Items.Olive => ItemOliveTexture,
+				(ushort)Items.OliveLeaves => TextureOliveLeaves,
+				(ushort)Items.OliveLeavesWithOlives => TextureOliveLeavesWithOlives,
+				(ushort)Items.OliveWood => TextureOliveWood,
+				(ushort)Items.OliveSapling => TextureOliveSapling,
+				(ushort)Items.EucalyptusLeaves => TextureEucalyptusLeaves,
+				(ushort)Items.EucalyptusSapling => TextureEucalyptusSapling,
+				(ushort)Items.EucalyptusWood => TextureEucalyptusWood,
+				(ushort)Items.RubberTreeLeaves => TextureRubberTreeLeaves,
+				(ushort)Items.RubberTreeSapling => TextureRubberTreeSapling,
+				(ushort)Items.RubberTreeWood => TextureRubberTreeWood,
+				(ushort)Items.KapokLeaves => TextureKapokLeaves,
+				(ushort)Items.KapokLeavesFibre => TextureKapokLeavesFibre,
+				(ushort)Items.KapokLeacesFlowering => TextureKapokBlossom,
+				(ushort)Items.KapokSapling => TextureKapokSapling,
+				(ushort)Items.KapokWood => TextureKapokWood,
+				(ushort)Items.KapokFibre => ItemKapokFibreTexture,
+				(ushort)Items.KnifeCopper => TextureKnifeCopper,
+				(ushort)Items.KnifeBronze => TextureKnifeBronze,
+				(ushort)Items.KnifeGold => TextureKnifeGold,
+				(ushort)Items.KnifeIron => TextureKnifeIron,
+				(ushort)Items.KnifeSteel => TextureKnifeSteel,
+				(ushort)Items.KnifeAluminium => TextureKnifeAluminium,
 
-				case (ushort)Items.HoeGold: return TextureHoeGold;
-				case (ushort)Items.HoeSteel: return TextureHoeSteel;
-				case (ushort)Items.HoeAluminium: return TextureHoeAluminium;
-				case (ushort)Items.DyeGold: return TextureDyeGold;
-				case (ushort)Items.DyeWhite: return TextureDyeWhite;
-				case (ushort)Items.DyeYellow: return TextureDyeYellow;
-				case (ushort)Items.DyeOrange: return TextureDyeOrange;
-				case (ushort)Items.DyeRed: return TextureDyeRed;
-				case (ushort)Items.DyeDarkRed: return TextureDyeDarkRed;
-				case (ushort)Items.DyeOlive: return TextureDyeOlive;
-				case (ushort)Items.DyePurple: return TextureDyePurple;
-				case (ushort)Items.DyePink: return TextureDyePink;
-				case (ushort)Items.DyeTeal: return TextureDyeTeal;
-				case (ushort)Items.DyeLightBlue: return TextureDyeLightBlue;
-				case (ushort)Items.DyeBlue: return TextureDyeBlue;
-				case (ushort)Items.DyeMagenta: return TextureDyeMagenta;
-				case (ushort)Items.DyeDarkBlue: return TextureDyeDarkBlue;
-				case (ushort)Items.DyeBlack: return TextureDyeBlack;
-				case (ushort)Items.DyeBrown: return TextureDyeBrown;
-				case (ushort)Items.DyeLightGray: return TextureDyeLightGray;
-				case (ushort)Items.DyeGray: return TextureDyeGray;
-				case (ushort)Items.DyeDarkGray: return TextureDyeDarkGray;
-				case (ushort)Items.DyeViolet: return TextureDyeViolet;
-				case (ushort)Items.DyeSpringGreen: return TextureDyeSpringGreen;
-				case (ushort)Items.DyeRoseQuartz: return TextureDyeRoseQuartz;
-				case (ushort)Items.TestTube: return TextureTestTube;
-				case (ushort)Items.DyeLightGreen: return TextureDyeLightGreen;
-				case (ushort)Items.DyeGreen: return TextureDyeGreen;
-				case (ushort)Items.DyeArmy: return TextureDyeArmy;
-				case (ushort)Items.DyeDarkGreen: return TextureDyeDarkGreen;
+				(ushort)Items.HoeGold => TextureHoeGold,
+				(ushort)Items.HoeSteel => TextureHoeSteel,
+				(ushort)Items.HoeAluminium => TextureHoeAluminium,
+				(ushort)Items.DyeGold => TextureDyeGold,
+				(ushort)Items.DyeWhite => TextureDyeWhite,
+				(ushort)Items.DyeYellow => TextureDyeYellow,
+				(ushort)Items.DyeOrange => TextureDyeOrange,
+				(ushort)Items.DyeRed => TextureDyeRed,
+				(ushort)Items.DyeDarkRed => TextureDyeDarkRed,
+				(ushort)Items.DyeOlive => TextureDyeOlive,
+				(ushort)Items.DyePurple => TextureDyePurple,
+				(ushort)Items.DyePink => TextureDyePink,
+				(ushort)Items.DyeTeal => TextureDyeTeal,
+				(ushort)Items.DyeLightBlue => TextureDyeLightBlue,
+				(ushort)Items.DyeBlue => TextureDyeBlue,
+				(ushort)Items.DyeMagenta => TextureDyeMagenta,
+				(ushort)Items.DyeDarkBlue => TextureDyeDarkBlue,
+				(ushort)Items.DyeBlack => TextureDyeBlack,
+				(ushort)Items.DyeBrown => TextureDyeBrown,
+				(ushort)Items.DyeLightGray => TextureDyeLightGray,
+				(ushort)Items.DyeGray => TextureDyeGray,
+				(ushort)Items.DyeDarkGray => TextureDyeDarkGray,
+				(ushort)Items.DyeViolet => TextureDyeViolet,
+				(ushort)Items.DyeSpringGreen => TextureDyeSpringGreen,
+				(ushort)Items.DyeRoseQuartz => TextureDyeRoseQuartz,
+				(ushort)Items.TestTube => TextureTestTube,
+				(ushort)Items.DyeLightGreen => TextureDyeLightGreen,
+				(ushort)Items.DyeGreen => TextureDyeGreen,
+				(ushort)Items.DyeArmy => TextureDyeArmy,
+				(ushort)Items.DyeDarkGreen => TextureDyeDarkGreen,
 
 					 //Shovel
-				case (ushort)Items.ShovelHeadCopper: return TextureShovelHeadCopper;
-				case (ushort)Items.ShovelHeadBronze: return TextureShovelHeadBronze;
-				case (ushort)Items.ShovelHeadGold: return TextureShovelHeadGold;
-				case (ushort)Items.ShovelHeadIron: return TextureShovelHeadIron;
-				case (ushort)Items.ShovelHeadSteel: return TextureShovelHeadSteel;
-				case (ushort)Items.ShovelHeadAluminium: return TextureShovelHeadAluminium;
+				(ushort)Items.ShovelHeadCopper => TextureShovelHeadCopper,
+				(ushort)Items.ShovelHeadBronze => TextureShovelHeadBronze,
+				(ushort)Items.ShovelHeadGold => TextureShovelHeadGold,
+				(ushort)Items.ShovelHeadIron => TextureShovelHeadIron,
+				(ushort)Items.ShovelHeadSteel => TextureShovelHeadSteel,
+				(ushort)Items.ShovelHeadAluminium => TextureShovelHeadAluminium,
 
 				// Pickaxe
-				case (ushort)Items.PickaxeHeadCopper: return TexturePickaxeHeadCopper;
-				case (ushort)Items.PickaxeHeadBronze: return TexturePickaxeHeadBronze;
-				case (ushort)Items.PickaxeHeadGold: return TexturePickaxeHeadGold;
-				case (ushort)Items.PickaxeHeadIron: return TexturePickaxeHeadIron;
-				case (ushort)Items.PickaxeHeadSteel: return TexturePickaxeHeadSteel;
-				case (ushort)Items.PickaxeHeadAluminium: return TexturePickaxeHeadAluminium;
+				(ushort)Items.PickaxeHeadCopper => TexturePickaxeHeadCopper,
+				(ushort)Items.PickaxeHeadBronze => TexturePickaxeHeadBronze,
+				(ushort)Items.PickaxeHeadGold => TexturePickaxeHeadGold,
+				(ushort)Items.PickaxeHeadIron => TexturePickaxeHeadIron,
+				(ushort)Items.PickaxeHeadSteel => TexturePickaxeHeadSteel,
+				(ushort)Items.PickaxeHeadAluminium => TexturePickaxeHeadAluminium,
 
 				// Axe
-				case (ushort)Items.AxeHeadCopper: return TextureAxeHeadCopper;
-				case (ushort)Items.AxeHeadBronze: return TextureAxeHeadBronze;
-				case (ushort)Items.AxeHeadGold: return TextureAxeHeadGold;
-				case (ushort)Items.AxeHeadIron: return TextureAxeHeadIron;
-				case (ushort)Items.AxeHeadSteel: return TextureAxeHeadSteel;
-				case (ushort)Items.AxeHeadAluminium: return TextureAxeHeadAluminium;
+				(ushort)Items.AxeHeadCopper => TextureAxeHeadCopper,
+				(ushort)Items.AxeHeadBronze => TextureAxeHeadBronze,
+				(ushort)Items.AxeHeadGold => TextureAxeHeadGold,
+				(ushort)Items.AxeHeadIron => TextureAxeHeadIron,
+				(ushort)Items.AxeHeadSteel => TextureAxeHeadSteel,
+				(ushort)Items.AxeHeadAluminium => TextureAxeHeadAluminium,
 
 				// Shears
-				case (ushort)Items.ShearsHeadCopper: return TextureShearsHeadCopper;
-				case (ushort)Items.ShearsHeadBronze: return TextureShearsHeadBronze;
-				case (ushort)Items.ShearsHeadGold: return TextureShearsHeadGold;
-				case (ushort)Items.ShearsHeadIron: return TextureShearsHeadIron;
-				case (ushort)Items.ShearsHeadSteel: return TextureShearsHeadSteel;
-				case (ushort)Items.ShearsHeadAluminium: return TextureShearsHeadAluminium;
+				(ushort)Items.ShearsHeadCopper => TextureShearsHeadCopper,
+				(ushort)Items.ShearsHeadBronze => TextureShearsHeadBronze,
+				(ushort)Items.ShearsHeadGold => TextureShearsHeadGold,
+				(ushort)Items.ShearsHeadIron => TextureShearsHeadIron,
+				(ushort)Items.ShearsHeadSteel => TextureShearsHeadSteel,
+				(ushort)Items.ShearsHeadAluminium => TextureShearsHeadAluminium,
 
-				case (ushort)Items.KnifeHeadCopper: return TextureKnifeHeadCopper;
-				case (ushort)Items.KnifeHeadBronze: return TextureKnifeHeadBronze;
-				case (ushort)Items.KnifeHeadGold: return TextureKnifeHeadGold;
-				case (ushort)Items.KnifeHeadIron: return TextureKnifeHeadIron;
-				case (ushort)Items.KnifeHeadSteel: return TextureKnifeHeadSteel;
-				case (ushort)Items.KnifeHeadAluminium: return TextureKnifeHeadAluminium;
+				(ushort)Items.KnifeHeadCopper => TextureKnifeHeadCopper,
+				(ushort)Items.KnifeHeadBronze => TextureKnifeHeadBronze,
+				(ushort)Items.KnifeHeadGold => TextureKnifeHeadGold,
+				(ushort)Items.KnifeHeadIron => TextureKnifeHeadIron,
+				(ushort)Items.KnifeHeadSteel => TextureKnifeHeadSteel,
+				(ushort)Items.KnifeHeadAluminium => TextureKnifeHeadAluminium,
 
-				case (ushort)Items.HoeHeadCopper: return TextureHoeHeadCopper;
-				case (ushort)Items.HoeHeadBronze: return TextureHoeHeadBronze;
-				case (ushort)Items.HoeHeadGold: return TextureHoeHeadGold;
-				case (ushort)Items.HoeHeadIron: return TextureHoeHeadIron;
-				case (ushort)Items.HoeHeadSteel: return TextureHoeHeadSteel;
-				case (ushort)Items.HoeHeadAluminium: return TextureHoeHeadAluminium;
+				(ushort)Items.HoeHeadCopper => TextureHoeHeadCopper,
+				(ushort)Items.HoeHeadBronze => TextureHoeHeadBronze,
+				(ushort)Items.HoeHeadGold => TextureHoeHeadGold,
+				//(ushort)Items.HoeHeadIron => TextureHoeHeadIron,
+				(ushort)Items.HoeHeadSteel => TextureHoeHeadSteel,
+				(ushort)Items.HoeHeadAluminium => TextureHoeHeadAluminium,
 
-				case (ushort)Items.RedSand: return TextureRedSand;
-				case (ushort)Items.FishMeat: return fishTexture0;
+				(ushort)Items.RedSand => TextureRedSand,
+				(ushort)Items.FishMeat => fishTexture0,
 
-				default:
+				_=>
 					#if DEBUG
-					throw new Exception("Missing texture for item "+(Items)id);
+					throw new Exception("Missing texture for item "+(Items)id),
 					#else
-					return null;
+					null,
 					#endif
-			}
+			};
 		}
 
 		//void ItemDrop(ItemNonInv item, DInt _pos) {
@@ -20867,7 +21821,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							break;
 
 						case "ExternalTextEditor":
-							FormTextInput f = new FormTextInput(editText);
+							FormTextInput f = new(editText);
 							f.ShowDialog();
 							if (f.save) {
 								editText=f.ret;
@@ -20897,7 +21851,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 									case "ExternalTextEditor":
 										// ExternalTextEditor=true;
-										FormTextInput f = new FormTextInput(editText);
+										FormTextInput f = new(editText);
 										f.ShowDialog();
 										if (f.save) {
 											editText=f.ret;
@@ -21016,80 +21970,77 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		string ConvertNormalToUpper(string key) {
-			switch (key) {
-				case "q": return "Q";
-				case "w": return "W";
-				case "e": return "E";
-				case "r": return "R";
-				case "t": return "T";
-				case "z": return "Z";
-				case "u": return "U";
-				case "i": return "I";
-				case "o": return "O";
-				case "p": return "P";
-				case "a": return "A";
-				case "s": return "S";
-				case "d": return "D";
-				case "f": return "F";
-				case "g": return "G";
-				case "h": return "H";
-				case "j": return "J";
-				case "k": return "K";
-				case "l": return "L";
-				case "y": return "Y";
-				case "x": return "X";
-				case "c": return "C";
-				case "v": return "V";
-				case "b": return "B";
-				case "n": return "N";
-				case "m": return "M";
-
-				case "ú": return "/";
-				case ")": return "(";
-				case ",": return "?";
-				case ".": return ":";
-				case "-": return "_";
-				case "¨": return "'";
-				case "´": return "ˇ";
-				case "=": return "%";
-				case "§": return "!";
-			}
-
-			return "";
-		}
+            return key switch {
+                "q" => "Q",
+                "w" => "W",
+                "e" => "E",
+                "r" => "R",
+                "t" => "T",
+                "z" => "Z",
+                "u" => "U",
+                "i" => "I",
+                "o" => "O",
+                "p" => "P",
+                "a" => "A",
+                "s" => "S",
+                "d" => "D",
+                "f" => "F",
+                "g" => "G",
+                "h" => "H",
+                "j" => "J",
+                "k" => "K",
+                "l" => "L",
+                "y" => "Y",
+                "x" => "X",
+                "c" => "C",
+                "v" => "V",
+                "b" => "B",
+                "n" => "N",
+                "m" => "M",
+                "ú" => "/",
+                ")" => "(",
+                "," => "?",
+                "." => ":",
+                "-" => "_",
+                "¨" => "'",
+                "´" => "ˇ",
+                "=" => "%",
+                "§" => "!",
+                _ => "",
+            };
+        }
 
 		string ConvertNormalToCtrls(string key) {
-			switch (key) {
-				case "x": return "Delete";
-				case "c": return "Copy";
-				case "v": return "Paste";
-				case "i": return "ExternalTextEditor";
-			}
-			return "";
-		}
+            return key switch {
+                "x" => "Delete",
+                "c" => "Copy",
+                "v" => "Paste",
+                "i" => "ExternalTextEditor",
+                _ => "",
+            };
+        }
 
-		string ConvertNormalToAtls(string key) {
-			 switch (key) {
-				case "q": return "\"";
-				case "w": return "|";
-				case "f": return "[";
-				case "g": return "]";
-				case "x": return "#";
-				case "c": return "&";
-				case "v": return "@";
-				case "b": return "{";
-				case "n": return "}";
-				case "ú": return "÷";
-				case ")": return "×";
-				case ",": return "<";
-				case ".": return ">";
-				case "-": return "*";
-				case "+": return "~";
-				case "š": return "^";
-				case "ř": return "°";
-			}
-			return "";
-		}
+		string ConvertNormalToAtls(string key) 
+			=> key switch {
+                "q" => "\"",
+                "w" => "|",
+                "f" => "[",
+                "g" => "]",
+                "x" => "#",
+                "c" => "&",
+                "v" => "@",
+                "b" => "{",
+                "n" => "}",
+                "ú" => "÷",
+                ")" => "×",
+                "," => "<",
+                "." => ">",
+                "-" => "*",
+                "+" => "~",
+                "š" => "^",
+                "ř" => "°",
+                _ => "",
+            };
 		#endregion
 
 		#region Energy
@@ -21097,7 +22048,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			for (int i=0; i<energy.Count; i++) {
 				Energy e = energy[i];
 
-				if (random.Int(500)==1) {
+				if (FastRandom.Int(500)==1) {
 					energy.RemoveAt(i);
 					i--;
 				} else if (terrain[e.X].IsTopBlocks[e.Y]) {
@@ -21136,7 +22087,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case 15:
 					switch (e.Direction) {
 						case 1:
-							switch (random.Int(3)) {
+							switch (FastRandom.Int(3)) {
 								case 0: e.X--; e.Direction=4; return;
 								case 1: e.Y++; e.Direction=3; return;
 								case 2: e.X++; e.Direction=2; return;
@@ -21144,7 +22095,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							break;
 
 						case 2:
-							switch (random.Int(3)) {
+							switch (FastRandom.Int(3)) {
 								case 0: e.Y--; e.Direction=1; return;
 								case 1: e.Y++; e.Direction=3; return;
 								case 2: e.X++; return;
@@ -21152,7 +22103,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							break;
 
 						case 3:
-							switch (random.Int(3)) {
+							switch (FastRandom.Int(3)) {
 								case 0: e.Y++; return;
 								case 1: e.X--; e.Direction=4; return;
 								case 2: e.X++; e.Direction=2; return;
@@ -21160,7 +22111,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							break;
 
 						case 4:
-							switch (random.Int(3)) {
+							switch (FastRandom.Int(3)) {
 								case 0: e.Y--; e.Direction=1; return;
 								case 1: e.X--; return;
 								case 2: e.Y++; e.Direction=3; return;
@@ -21172,7 +22123,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case 14:
 						switch (e.Direction) {
 							case 1:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.X--;
 									e.Direction=4;
 									return;
@@ -21183,7 +22134,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 2:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.X++;
 									return;
 								} else {
@@ -21193,7 +22144,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 4:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.X--;
 									return;
 								} else {
@@ -21207,7 +22158,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case 13:
 						switch (e.Direction) {
 							case 1:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y--;
 									return;
 								} else {
@@ -21217,7 +22168,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 2:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y--;
 									e.Direction=1;
 									return;
@@ -21228,7 +22179,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 3:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y++;
 									return;
 								} else {
@@ -21242,7 +22193,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case 12:
 						switch (e.Direction) {
 							case 2:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y--;
 									e.Direction=1;
 									return;
@@ -21252,7 +22203,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 3:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.X++;
 									e.Direction=2;
 									return;
@@ -21263,7 +22214,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 4:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y--;
 									e.Direction=1;
 									return;
@@ -21277,7 +22228,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case 11:
 						switch (e.Direction) {
 							case 1:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y--;
 									return;
 								} else {
@@ -21287,7 +22238,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 3:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y++;
 									return;
 								} else {
@@ -21297,7 +22248,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 
 							case 4:
-								if (random.Bool()) {
+								if (FastRandom.Bool()) {
 									e.Y++;
 									e.Direction=3;
 									return;
@@ -21434,14 +22385,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				return;
 			} else {
 				if ( down&& left&& right) {
-					switch (random.Int(3)) {
+					switch (FastRandom.Int(3)) {
 						case 0: energy.Add(new Energy(x+1, y, 2)); return;
 						case 1: energy.Add(new Energy(x, y+1, 3)); return;
 						case 2: energy.Add(new Energy(x-1, y, 4)); return;
 					}
 				}
 				if (!down&& left&& right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x+1, y, 2));
 						return;
 					} else {
@@ -21450,7 +22401,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				if ( down&&!left&& right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x, y+1, 3));
 						return;
 					} else {
@@ -21459,7 +22410,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				if ( down&& left&&!right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x+1, y, 2));
 						return;
 					} else {
@@ -21490,14 +22441,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				return;
 			} else {
 				if (up&&left&&right) {
-					switch (random.Int(3)) {
+					switch (FastRandom.Int(3)) {
 						case 0: energy.Add(new Energy(x+1, y, 2)); return;
 						case 1: energy.Add(new Energy(x, y-1, 1)); return;
 						case 2: energy.Add(new Energy(x-1, y, 4)); return;
 					}
 				}
 				if (!up&&left&&right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x+1, y, 2));
 						return;
 					} else {
@@ -21506,7 +22457,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				if (up&&!left&&right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x, y-1, 1));
 						return;
 					} else {
@@ -21515,7 +22466,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				if (up&&left&&!right) {
-					if (random.Bool()) {
+					if (FastRandom.Bool()) {
 						energy.Add(new Energy(x+1, y, 2));
 						return;
 					} else {
@@ -21564,7 +22515,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				|| chunk.TopBlocks[y-1].Id==(ushort)BlockId.SewingMachine
 				|| chunk.TopBlocks[y-1].Id==(ushort)BlockId.SolarPanel
 				|| chunk.TopBlocks[y-1].Id==(ushort)BlockId.Charger
-				|| chunk.TopBlocks[y-1].Id==(ushort)BlockId.FurnaceElectric;;
+				|| chunk.TopBlocks[y-1].Id==(ushort)BlockId.FurnaceElectric;
 
 			if (chunk.IsTopBlocks[y+1])
 				down = chunk.TopBlocks[y+1].Id==(ushort)BlockId.Label
@@ -21647,7 +22598,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						windable.RemoveAt(i);
 						return;
 					}
-				} 
+				}
 			}
 		}
 
@@ -21730,26 +22681,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		#endregion
 
 		void SetMousePos() {
-			if (Setting.Scale.Without==Setting.currentScale) {
-			//	float DividerZoom=1/Setting.Zoom;
+		//	if (Setting.Scale.Without==Setting.currentScale) {
 				mousePos = new Vector2((newMouseState.X-Global.WindowWidthHalf)*divider_zoom/*/Setting.Zoom*/+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)*divider_zoom/*/Setting.Zoom*/+WindowCenterY);
 				return;
-			}
+			//}
 
-			if (Setting.Scale.Proportions==Setting.currentScale) {
-				float screenScaleH = Global.WindowHeight/560f;
-				float screenScaleW = Global.WindowWidth/848f;
+			//if (Setting.Scale.Proportions==Setting.currentScale) {
+			//	float screenScaleH = Global.WindowHeight/560f;
+			//	float screenScaleW = Global.WindowWidth/848f;
 
-				if (screenScaleH>screenScaleW) {
-					mousePos= new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW*divider_zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW*divider_zoom)+WindowCenterY);
-					return;
-				} else {
-					mousePos = new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH*divider_zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH*divider_zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
-					return;
-				}
-			}
+			//	if (screenScaleH>screenScaleW) {
+			//		mousePos= new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleW*divider_zoom+(Global.WindowWidth-(int)(screenScaleW*848f))/2)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleW*divider_zoom)+WindowCenterY);
+			//		return;
+			//	} else {
+			//		mousePos = new Vector2((int)((newMouseState.X-Global.WindowWidthHalf)/screenScaleH*divider_zoom)+WindowCenterX, (int)((newMouseState.Y-Global.WindowHeightHalf)/screenScaleH*divider_zoom)+WindowCenterX+(Global.WindowHeight-(int)(screenScaleH*560f))/2);
+			//		return;
+			//	}
+			//}
 
-			mousePos= new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)*divider_zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)*divider_zoom+WindowCenterY);
+			//mousePos= new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)*divider_zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)*divider_zoom+WindowCenterY);
 		}
 
 		void MobileON() => ( mobileOS=new Mobile.System { Content=Rabcr.content } ).Init();
@@ -21849,7 +22799,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void OxygenMachineJob(ShortAndByte ch) {
 			MashineBlockBasic oxygenMachine=(MashineBlockBasic)terrain[ch.X].TopBlocks[ch.Y];
 			if (dayAlpha>0.5f) {
-				if (random.Bool_10Percent())oxygenMachine.AddEnergy();
+				if (FastRandom.Bool_10Percent())oxygenMachine.AddEnergy();
 			}
 
 			if (oxygenMachine.Inv[0].Id!=0) {
@@ -21962,7 +22912,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							DroppedItems.RemoveAt(i);
 							return;
 						}
-					} 
+					}
 				}
 				Terrain chunk=terrain[ch.X];
 				for (int y=ch.Y+1; y<100; y++) {
@@ -21984,7 +22934,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			for (int y=ch.Y+1; y<100; y++) {
 				if (terrain[ch.X].IsBackground[y]) {
 					if (terrain[ch.X].Background[y].Id==(ushort)BlockId.RubberTreeWood) {
-						if (random.Int(2000)==1) {
+						if (FastRandom.Int(2000)==1) {
 							RemovefromBucketsForRubber(ch.X,ch.Y);
 							TerrainSetTopBlockNormal(ch.X,ch.Y,(ushort)BlockId.BucketWithLatex,TextureBucketWithLatex);
 							return true;
@@ -22067,7 +23017,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (o.Name==world) {
 						gravity=(float)(6.67259e-11*o.Mass/(o.MeanDiameter*o.MeanDiameter*1000000))/20f;
 						notNeedScafander=o.astrO==AstrO.Life;
-						dayLenght=(int)(o.DayLenght*200);
+					//	dayLenght=(int)(o.DayLenght*hour);
 						return;
 					}
 				}
@@ -22135,9 +23085,31 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					destroingBlockDepth=0;
 					if (Global.WorldDifficulty!=2) GetItemsFromBlock(p.Id, x, y);
 					chunk.Plants.RemoveAt(i);
-					RemovePlant(x);
+
+					if (Setting.WavingElements) {
+						foreach (object wp in WavingPlants) {
+							if (wp is FruitPlantWaving f) {
+								if (f.Position.X==x*16) { 
+									if (f.Position.Y==y*16) {
+										WavingPlants.Remove(wp);
+										//chunk.Plants[i]=f.TurnOff();
+										break;
+									}
+								}
+							}
+							//if (wp is BasicWavingPlant b) {
+							//	if (b.Position.X==x*16) { 
+							//		if (b.Position.Y==y*16) { 
+							//			chunk.Plants[i]=b.TurnOff();
+							//			break;
+							//		}
+							//	}
+							//}
+						}
+					}
+					RemovePlantChunk(x);
 					break;
-				} 
+				}
 			}
 		}
 
@@ -22176,7 +23148,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							   // chunk.IsTopBlocks[yy]=false;
 							   //((AirSolidBlock)chunk.SolidBlocks[yy]).Top=chunk.TopBlocks[yy]=null;
 								RemoveTopBlock(x,yy);
-							}
+							}else return;
 						}else return;
 					}
 				}
@@ -22195,10 +23167,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							if (chunk.TopBlocks[yy].Id==(ushort)BlockId.CactusSmall) {
 								if (Global.WorldDifficulty!=2) GetItemsFromBlock((byte)id, x, yy);
 							  //  chunk.IsTopBlocks[yy]=false;
-							  //  ((AirSolidBlock)chunk.SolidBlocks[yy]).Top=chunk.TopBlocks[yy]=null;
-
 								RemoveTopBlock(x,yy);
-							}
+							} else return;
 						} else return;
 					}
 				}
@@ -22215,7 +23185,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					  //  chunk.IsTopBlocks[yy]=false;
 					 //   ((AirSolidBlock)chunk.SolidBlocks[yy]).Top=chunk.TopBlocks[yy]=null;
 						RemoveTopBlock(x,yy);
-					}
+					} else return;
 				} else return;
 			}
 		}
@@ -22230,7 +23200,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						//chunk.IsTopBlocks[yy]=false;
 					   // ((AirSolidBlock)chunk.SolidBlocks[yy]).Top=chunk.TopBlocks[yy]=null;
 						RemoveTopBlock(x,yy);
-					}
+					} else return;
 				} else return;
 			}
 		}
@@ -22238,8 +23208,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		#region Trees
 		void AutoDestroyLeaves(ushort wood, ushort leaves) {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX),
-				Yran=terrainStartIndexY+random.Int(terrainStartIndexH-terrainStartIndexY);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX),
+				Yran=terrainStartIndexY+FastRandom.Int(terrainStartIndexH-terrainStartIndexY);
 
 			if (terrain[Xran].IsTopBlocks[Yran]) {
 				if (terrain[Xran].TopBlocks[Yran].Id==leaves) {
@@ -22259,7 +23229,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						Terrain chunk=terrain[Xran];
 
 						List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
-													
+
 						for (int i = 0; i<listLeaves.Count; i++) {
 							if (listLeaves[i].X==Xran){
 								if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
@@ -22283,8 +23253,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void AutoDestroyLeaves(ushort wood, ushort leaves, ushort alternativeLeaves) {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX),
-				Yran=terrainStartIndexY+random.Int(terrainStartIndexH-terrainStartIndexY);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX),
+				Yran=terrainStartIndexY+FastRandom.Int(terrainStartIndexH-terrainStartIndexY);
 
 			if (terrain[Xran].IsTopBlocks[Yran]) {
 				Terrain chunk=terrain[Xran];
@@ -22309,7 +23279,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						// if not Artifical leaves (created by player)
 						if (tree!=null) {
 							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
-													
+
 							for (int i = 0; i<listLeaves.Count; i++) {
 								if (listLeaves[i].X==destroyBlockX) {
 									if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
@@ -22326,8 +23296,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void AutoDestroyLeaves(ushort wood, ushort leaves, ushort alternativeLeaves, ushort alternativeLeaves2) {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX),
-				Yran=terrainStartIndexY+random.Int(terrainStartIndexH-terrainStartIndexY);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX),
+				Yran=terrainStartIndexY+FastRandom.Int(terrainStartIndexH-terrainStartIndexY);
 
 			if (terrain[Xran].IsTopBlocks[Yran]) {
 				Terrain chunk=terrain[Xran];
@@ -22352,7 +23322,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						// if not Artifical leaves (created by player)
 						if (tree!=null) {
 							List<UShortAndByte> listLeaves=((LeavesBlock)chunk.TopBlocks[Yran]).tree.TitlesLeaves;
-													
+
 							for (int i = 0; i<listLeaves.Count; i++) {
 								if (listLeaves[i].X==destroyBlockX) {
 									if (listLeaves[i].Y==Yran) listLeaves.RemoveAt(i);
@@ -22378,12 +23348,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 			return true;
 		}
-		
+
 		#endregion
 
 		#region Animals
 		void MoveChicken() {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX);
 		 //   Terrain chunk=terrain[Xran];
 			if (terrain[Xran].Mobs.Count!=0) {
 				foreach (Mob mob in terrain[Xran].Mobs) {
@@ -22473,14 +23443,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										}
 									}
 								} else {
-									if (random.Bool_1Percent()) {
+									if (FastRandom.Bool_1Percent()) {
 										int /*x=(int)ch.Position.X/16,*/
 											y=(int)ch.Position.Y/16;
 										Terrain chunk=terrain[Xran];
 
 										if (!chunk.IsTopBlocks[y]) {
 											chunk.IsTopBlocks[y]=true;
-											chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.EggDrop,ch.Position);
+											chunk.TopBlocks[y]=TopBlockFromId((ushort)BlockId.EggDrop, ch.Position);
 											break;
 										}
 									}
@@ -22493,7 +23463,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void MoveRabbit() {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX);
 
 			if (terrain[Xran].Mobs.Count!=0) {
 				foreach (Mob mob in terrain[Xran].Mobs) {
@@ -22590,7 +23560,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void MoveParrot() {
-			int Xran=terrainStartIndexX+random.Int(terrainStartIndexW-terrainStartIndexX);
+			int Xran=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX);
 			Terrain chunk=terrain[Xran];
 			if (chunk.Mobs.Count!=0) {
 				foreach (Mob mob in chunk.Mobs) {
@@ -22599,39 +23569,39 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 						Parrot r=(Parrot)mob;
 						//if (!r.Flying) {
-							// Sort random near chunks
-							List<(int, float)> rndChunks=new List<(int, float)>();
+							// Sort FastRandom near chunks
+							List<(int, float)> rndChunks=new();
 							int src=(int)(r.Position.X)/16;
-							for (int i=1; i<20; i++){ 
-								(int, float) ch1 = (src+i, random.Float());
-								(int, float) ch2 = (src-i, random.Float());
+							for (int i=1; i<20; i++){
+								(int, float) ch1 = (src+i, FastRandom.Float());
+								(int, float) ch2 = (src-i, FastRandom.Float());
 								rndChunks.Add(ch1);
 								rndChunks.Add(ch2);
 							}
-					
-							// sort chunks randomly 
+
+							// sort chunks randomly
 							rndChunks.Sort((i1, i2) => i1.Item2.CompareTo(i2.Item2));
 
 							// find leaves and move to
-							foreach ((int, float) ch in rndChunks) { 
+							foreach ((int, float) ch in rndChunks) {
 								Terrain chunkJ=terrain[ch.Item1];
-								for (int i=chunkJ.StartSomething; i<125; i++) { 
-									if (chunkJ.IsTopBlocks[i]){ 
+								for (int i=chunkJ.StartSomething; i<125; i++) {
+									if (chunkJ.IsTopBlocks[i]){
 										if (GameMethods.IsLeaves(chunkJ.TopBlocks[i].Id)) {
-                                            r.StopFlying +=  delegate() { 
+                                            r.StopFlying +=  delegate() {
 												Terrain dscChunk=terrain[(int)r.Position.X/16];
 
                                                 if (dscChunk.IsTopBlocks[(int)r.Position.Y/16]) {
 													return true;
                                                 }
-                                    
-												return false; 
+
+												return false;
 											};
-                               
+
                                             r.SetFlying(ch.Item1*16,i*16);
 											return;
 										}
-									}	
+									}
 								}
 						//	}
 						}
@@ -22685,10 +23655,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x,   y-7, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
 			TerrainSetBackground(x,   y-8, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
 			TerrainSetBackground(x-2, y-6, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-5, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-5, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.RubberTreeWood, TextureRubberTreeWood);
 
 			TerrainSetTopBlockNormal(x+1, y-4, (ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
 			TerrainSetTopBlockNormal(x+1, y-4, (ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
@@ -22717,17 +23687,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-9, (ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
 			TerrainSetTopBlockNormal(x,   y-10,(ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
 
-			  Terrain chunk0=terrain[x ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			  Terrain 
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
-			if (chunkM2.StartSomething>y-6) chunkM2.StartSomething=y-6;
-			if (chunkM1.StartSomething>y-9) chunkM1.StartSomething=y-9;
+			if (chunkM2.StartSomething>y-6)  chunkM2.StartSomething=y-6;
+			if (chunkM1.StartSomething>y-9)  chunkM1.StartSomething=y-9;
 			if (chunk0. StartSomething>y-10) chunk0. StartSomething=y-10;
-			if (chunkP1.StartSomething>y-9) chunkP1.StartSomething=y-9;
-			if (chunkP2.StartSomething>y-6) chunkP2.StartSomething=y-6;
+			if (chunkP1.StartSomething>y-9)  chunkP1.StartSomething=y-9;
+			if (chunkP2.StartSomething>y-6)  chunkP2.StartSomething=y-6;
 		}
 
 		void TreeAcacia(int x, int y) {
@@ -22737,7 +23708,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-4, (ushort)BlockId.AcaciaWood, TextureAcaciaWood);
 			TerrainSetBackground(x, y-5, (ushort)BlockId.AcaciaWood, TextureAcaciaWood);
 
-			if (random.Bool()) {
+			if (FastRandom.Bool()) {
 				TerrainSetBackground(x-1, y-4, (ushort)BlockId.AcaciaWood, TextureAcaciaWood);
 				TerrainSetBackground(x-2, y-5, (ushort)BlockId.AcaciaWood, TextureAcaciaWood);
 				TerrainSetBackground(x+1, y-3, (ushort)BlockId.AcaciaWood, TextureAcaciaWood);
@@ -22766,14 +23737,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x+1, y-6, (ushort)BlockId.AcaciaLeaves, TextureAcaciaLeaves);
 			TerrainSetTopBlockNormal(x,   y-6, (ushort)BlockId.AcaciaLeaves, TextureAcaciaLeaves);
 
-			Terrain 
-				chunk0= terrain[x   ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkM3=terrain[x- 3],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2],
-				chunkP3=terrain[x+ 3];
+			Terrain
+				chunk0= terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkM3=terrain[x-3],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2],
+				chunkP3=terrain[x+3];
 
 			if (chunkM3.StartSomething>y-5) chunkM3.StartSomething=y-5;
 			if (chunkM2.StartSomething>y-5) chunkM2.StartSomething=y-5;
@@ -22790,8 +23761,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-3, (ushort)BlockId.MangroveWood, TextureMangroveWood);
 			TerrainSetBackground(x, y-4, (ushort)BlockId.MangroveWood, TextureMangroveWood);
 
-			if (random.Bool()) TerrainSetBackground(x-1, y-3, (ushort)BlockId.MangroveWood, TextureMangroveWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.MangroveWood, TextureMangroveWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-3, (ushort)BlockId.MangroveWood, TextureMangroveWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.MangroveWood, TextureMangroveWood);
 
 			TerrainSetTopBlockNormal(x+1, y-3, (ushort)BlockId.MangroveLeaves, TextureMangroveLeaves);
 			TerrainSetTopBlockNormal(x-1, y-3, (ushort)BlockId.MangroveLeaves, TextureMangroveLeaves);
@@ -22801,10 +23772,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-4, (ushort)BlockId.MangroveLeaves, TextureMangroveLeaves);
 			TerrainSetTopBlockNormal(x,   y-5, (ushort)BlockId.MangroveLeaves, TextureMangroveLeaves);
 
-			Terrain 
-				chunkM1=terrain[x- 1],
-				chunk0= terrain[x   ],
-				chunkP1=terrain[x+ 1];
+			Terrain
+				chunkM1=terrain[x-1],
+				chunk0= terrain[x  ],
+				chunkP1=terrain[x+1];
 
 			if (chunkM1.StartSomething>y-4) chunkM1.StartSomething=y-4;
 			if (chunk0. StartSomething>y-5) chunk0. StartSomething=y-5;
@@ -22816,9 +23787,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-2, (ushort)BlockId.WillowWood, TextureWillowWood);
 			TerrainSetBackground(x, y-3, (ushort)BlockId.WillowWood, TextureWillowWood);
 			TerrainSetBackground(x, y-4, (ushort)BlockId.WillowWood, TextureWillowWood);
-			if (random.Bool()) TerrainSetBackground(x, y-4, (ushort)BlockId.WillowWood, TextureWillowWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x, y-4, (ushort)BlockId.WillowWood, TextureWillowWood);
 
-			switch (Rabcr.random.Int(3)) {
+			switch (FastRandom.Int(3)) {
 				case 0:
 					TerrainSetBackground(x-1, y-3, (ushort)BlockId.WillowWood,TextureWillowWood);
 
@@ -22855,12 +23826,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-5, (ushort)BlockId.WillowLeaves, TextureWillowLeaves);
 			TerrainSetTopBlockNormal(x+1, y-5, (ushort)BlockId.WillowLeaves, TextureWillowLeaves);
 
-			Terrain 
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-4) chunkM2.StartSomething=y-4;
 			if (chunkM1.StartSomething>y-5) chunkM1.StartSomething=y-5;
@@ -22877,7 +23848,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-5, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 			TerrainSetBackground(x, y-6, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 
-			if (random.Bool()) {
+			if (FastRandom.Bool()) {
 				TerrainSetBackground(x-1, y-3, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 				TerrainSetBackground(x-2, y-4, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 				TerrainSetBackground(x-2, y-5, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
@@ -22888,7 +23859,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				TerrainSetBackground(x-2, y-5, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 			}
 
-			if (random.Bool()) {
+			if (FastRandom.Bool()) {
 				TerrainSetBackground(x+1, y-3, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 				TerrainSetBackground(x+2, y-4, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
 				TerrainSetBackground(x+2, y-5, (ushort)BlockId.EucalyptusWood, TextureEucalyptusWood);
@@ -22916,12 +23887,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-7, (ushort)BlockId.EucalyptusLeaves, TextureEucalyptusLeaves);
 			TerrainSetTopBlockNormal(x+1, y-7, (ushort)BlockId.EucalyptusLeaves, TextureEucalyptusLeaves);
 
-			Terrain 
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0= terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0= terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-6) chunkM2.StartSomething=y-6;
 			if (chunkM1.StartSomething>y-7) chunkM1.StartSomething=y-7;
@@ -22934,7 +23905,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-1, (ushort)BlockId.OliveWood, TextureOliveWood);
 			TerrainSetBackground(x, y-2, (ushort)BlockId.OliveWood, TextureOliveWood);
 
-			if (random.Bool()) {
+			if (FastRandom.Bool()) {
 				TerrainSetBackground(x,   y-3, (ushort)BlockId.OliveWood, TextureOliveWood);
 				TerrainSetBackground(x-1, y-3, (ushort)BlockId.OliveWood, TextureOliveWood);
 				TerrainSetBackground(x-1, y-4, (ushort)BlockId.OliveWood, TextureOliveWood);
@@ -22963,12 +23934,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-6, (ushort)BlockId.OliveLeaves, TextureOliveLeaves);
 			TerrainSetTopBlockNormal(x+1, y-6, (ushort)BlockId.OliveLeaves, TextureOliveLeaves);
 
-			Terrain 
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-8) chunkM2.StartSomething=y-5;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -22979,13 +23950,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		void TreeKapok(int x, int y) {
 
-			TerrainSetBackground(x, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
-			TerrainSetBackground(x+1, y-1,(ushort)BlockId.KapokWood, TextureKapokWood);
-			TerrainSetBackground(x-1, y-1,(ushort)BlockId.KapokWood, TextureKapokWood);
-	
-			if (random.Bool()) {
-				TerrainSetBackground(x+1, y-2,(ushort)BlockId.KapokWood, TextureKapokWood);
-				TerrainSetBackground(x-1, y-2,(ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x,   y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x+1, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x-1, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
+
+			if (FastRandom.Bool()) {
+				TerrainSetBackground(x+1, y-2, (ushort)BlockId.KapokWood, TextureKapokWood);
+				TerrainSetBackground(x-1, y-2, (ushort)BlockId.KapokWood, TextureKapokWood);
 			}
 
 			TerrainSetBackground(x,   y-2,  (ushort)BlockId.KapokWood, TextureKapokWood);
@@ -23034,7 +24005,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-18, (ushort)BlockId.KapokLeaves, TextureKapokLeaves);
 			TerrainSetTopBlockNormal(x+1, y-18, (ushort)BlockId.KapokLeaves, TextureKapokLeaves);
 
-			Terrain 
+			Terrain
 				chunkM3=terrain[x-3],
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
@@ -23061,7 +24032,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x+1, y-5, (ushort)BlockId.AppleWood, TextureAppleWood);
 			TerrainSetBackground(x-1, y-5, (ushort)BlockId.AppleWood, TextureAppleWood);
 			TerrainSetBackground(x+1, y-6, (ushort)BlockId.AppleWood, TextureAppleWood);
-			
+
 			TerrainSetTopBlockNormal(x+2, y-3,(ushort)BlockId.AppleLeavesWithApples, TextureAppleLeavesWithApples);
 			TerrainSetTopBlockNormal(x-2, y-3,(ushort)BlockId.AppleLeaves, TextureAppleLeaves);
 			TerrainSetTopBlockNormal(x+1, y-3,(ushort)BlockId.AppleLeavesWithApples, TextureAppleLeavesWithApples);
@@ -23078,13 +24049,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x+1, y-6,(ushort)BlockId.AppleLeavesWithApples, TextureAppleLeavesWithApples);
 			TerrainSetTopBlockNormal(x-1, y-6,(ushort)BlockId.AppleLeavesWithApples, TextureAppleLeavesWithApples);
 			TerrainSetTopBlockNormal(x,   y-6,(ushort)BlockId.AppleLeaves, TextureAppleLeaves);
-	
-			Terrain 
-				chunk0 =terrain[x   ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+
+			Terrain
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-4) chunkM2.StartSomething=y-4;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -23101,13 +24072,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-5, (ushort)BlockId.OrangeWood, TextureOrangeWood);
 			TerrainSetBackground(x, y-6, (ushort)BlockId.OrangeWood, TextureOrangeWood);
 
-			if (random.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.OrangeWood, TextureOrangeWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.OrangeWood, TextureOrangeWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-7, (ushort)BlockId.OrangeWood, TextureOrangeWood);
-			if (random.Bool()) {
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.OrangeWood, TextureOrangeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.OrangeWood, TextureOrangeWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-7, (ushort)BlockId.OrangeWood, TextureOrangeWood);
+			if (FastRandom.Bool()) {
 				TerrainSetBackground(x+1, y-7, (ushort)BlockId.OrangeWood, TextureOrangeWood);
 
-				if (random.Bool()) TerrainSetBackground(x+1, y-8, (ushort)BlockId.OrangeWood, TextureOrangeWood);
+				if (FastRandom.Bool()) TerrainSetBackground(x+1, y-8, (ushort)BlockId.OrangeWood, TextureOrangeWood);
 			}
 
 			TerrainSetTopBlockNormal(x+1, y-4, (ushort)BlockId.OrangeLeaves, TextureOrangeLeavesWithOranges);
@@ -23136,8 +24107,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x+1, y-9, (ushort)BlockId.OrangeLeaves, TextureOrangeLeaves);
 			TerrainSetTopBlockNormal(x-1, y-9, (ushort)BlockId.OrangeLeaves, TextureOrangeLeaves);
 			TerrainSetTopBlockNormal(x,   y-9, (ushort)BlockId.OrangeLeaves, TextureOrangeLeaves);
-	
-			Terrain 
+
+			Terrain
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
@@ -23157,7 +24128,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(0, y-3, (ushort)BlockId.LemonWood, TextureLemonWood);
 			TerrainSetBackground(0, y-4, (ushort)BlockId.LemonWood, TextureLemonWood);
 
-			if (random.Bool()) TerrainSetBackground(x-1, y-4,(ushort)BlockId.LemonWood, TextureLemonWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-4,(ushort)BlockId.LemonWood, TextureLemonWood);
 			else TerrainSetBackground(x+1, y-5, (ushort)BlockId.LemonWood, TextureLemonWood);
 
 			TerrainSetTopBlockNormal(x+1, y-3, (ushort)BlockId.LemonLeaves, TextureLemonLeaves);
@@ -23176,14 +24147,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-6, (ushort)BlockId.LemonLeaves, TextureLemonLeaves);
 			TerrainSetTopBlockNormal(x+1, y-6, (ushort)BlockId.LemonLeaves, TextureLemonLeaves);
 			TerrainSetTopBlockNormal(x-1, y-6, (ushort)BlockId.LemonLeaves, TextureLemonLeaves);
-		
 
-			Terrain 
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+
+			Terrain
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-5) chunkM2.StartSomething=y-5;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -23222,7 +24193,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-7, (ushort)BlockId.CherryLeaves, TextureCherryLeaves);
 			TerrainSetTopBlockNormal(x,   y-7, (ushort)BlockId.CherryLeaves, TextureCherryLeaves);
 
-			Terrain 
+			Terrain
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
@@ -23245,7 +24216,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x-1, y-5, (ushort)BlockId.PlumWood, TexturePlumWood);
 			TerrainSetBackground(x+1, y-5, (ushort)BlockId.PlumWood, TexturePlumWood);
 			TerrainSetBackground(x-1, y-6, (ushort)BlockId.PlumWood, TexturePlumWood);
-			
+
 			TerrainSetTopBlockNormal(x+1, y-3, (ushort)BlockId.PlumLeaves, TexturePlumLeaves);
 			TerrainSetTopBlockNormal(x-1, y-3, (ushort)BlockId.PlumLeaves, TexturePlumLeaves);
 			TerrainSetTopBlockNormal(x,   y-3, (ushort)BlockId.PlumLeaves, TexturePlumLeaves);
@@ -23264,7 +24235,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-6, (ushort)BlockId.PlumLeaves, TexturePlumLeaves);
 			TerrainSetTopBlockNormal(x,   y-7, (ushort)BlockId.PlumLeaves, TexturePlumLeaves);
 
-			Terrain 
+			Terrain
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
@@ -23287,10 +24258,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x,   y-5, (ushort)BlockId.OakWood, TextureOakWood);
 			TerrainSetBackground(x-1, y-7, (ushort)BlockId.OakWood, TextureOakWood);
 			TerrainSetBackground(x+1, y-7, (ushort)BlockId.OakWood, TextureOakWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.OakWood, TextureOakWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-8, (ushort)BlockId.OakWood, TextureOakWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-8, (ushort)BlockId.OakWood, TextureOakWood);
-			if (random.Bool_20Percent()) TerrainSetBackground(x-2, y-7, (ushort)BlockId.OakWood, TextureOakWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.OakWood, TextureOakWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-8, (ushort)BlockId.OakWood, TextureOakWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-8, (ushort)BlockId.OakWood, TextureOakWood);
+			if (FastRandom.Bool_20Percent()) TerrainSetBackground(x-2, y-7, (ushort)BlockId.OakWood, TextureOakWood);
 
 			TerrainSetTopBlockNormal(x+1, y-4, (ushort)BlockId.OakLeaves, TextureOakLeaves);
 			TerrainSetTopBlockNormal(x,   y-4, (ushort)BlockId.OakLeaves, TextureOakLeaves);
@@ -23318,8 +24289,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x+1, y-9, (ushort)BlockId.OakLeaves, TextureOakLeaves);
 			TerrainSetTopBlockNormal(x,   y-9, (ushort)BlockId.OakLeaves, TextureOakLeaves);
 			TerrainSetTopBlockNormal(x-1, y-9, (ushort)BlockId.OakLeaves, TextureOakLeaves);
-				 
-			Terrain 
+
+			Terrain
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
@@ -23342,7 +24313,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(0, y-6,(ushort)BlockId.PineWood, pineWoodTexture);
 			TerrainSetBackground(0, y-7,(ushort)BlockId.PineWood, pineWoodTexture);
 
-			if (random.Bool())  TerrainSetBackground(0, y-8,(ushort)BlockId.PineWood, pineWoodTexture);
+			if (FastRandom.Bool())  TerrainSetBackground(0, y-8,(ushort)BlockId.PineWood, pineWoodTexture);
 
 			TerrainSetTopBlockNormal(x+2, y-6,  (ushort)BlockId.PineLeaves, pineLeavesTexture);
 			TerrainSetTopBlockNormal(x-2, y-6,  (ushort)BlockId.PineLeaves, pineLeavesTexture);
@@ -23356,11 +24327,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-10, (ushort)BlockId.PineLeaves, pineLeavesTexture);
 			TerrainSetTopBlockNormal(x+1, y-10, (ushort)BlockId.PineLeaves, pineLeavesTexture);
 
-			Terrain chunk0=terrain[x ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain 
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-8 ) chunkM2.StartSomething=y-8;
 			if (chunkM1.StartSomething>y-10) chunkM1.StartSomething=y-10;
@@ -23377,10 +24349,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(x, y-5, (ushort)BlockId.SpruceWood, spruceWoodTexture);
 			TerrainSetBackground(x, y-6, (ushort)BlockId.SpruceWood, spruceWoodTexture);
 			TerrainSetBackground(x, y-8, (ushort)BlockId.SpruceWood, spruceWoodTexture);
-			if (random.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.SpruceWood, spruceWoodTexture);
-			if (random.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.SpruceWood, spruceWoodTexture);
-			if (random.Bool()) TerrainSetBackground(x+1, y-6, (ushort)BlockId.SpruceWood, spruceWoodTexture);
-			if (random.Bool()) TerrainSetBackground(x-1, y-6, (ushort)BlockId.SpruceWood, spruceWoodTexture);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.SpruceWood, spruceWoodTexture);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.SpruceWood, spruceWoodTexture);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-6, (ushort)BlockId.SpruceWood, spruceWoodTexture);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-6, (ushort)BlockId.SpruceWood, spruceWoodTexture);
 
 			TerrainSetTopBlockNormal(x+2, y-3,  (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
 			TerrainSetTopBlockNormal(x+1, y-3,  (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
@@ -23409,7 +24381,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-9,  (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
 			TerrainSetTopBlockNormal(x,   y-10, (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
 
-			Terrain 
+			Terrain
 				chunkM2=terrain[x-2],
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
@@ -23430,10 +24402,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetBackground(0, y-4, (ushort)BlockId.LindenWood, TextureLindenWood);
 			TerrainSetBackground(0, y-5, (ushort)BlockId.LindenWood, TextureLindenWood);
 
-			if (random.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.LindenWood, TextureLindenWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.LindenWood, TextureLindenWood);
-			if (random.Bool()) TerrainSetBackground(x-1, y-5, (ushort)BlockId.LindenWood, TextureLindenWood);
-			if (random.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.LindenWood, TextureLindenWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-4, (ushort)BlockId.LindenWood, TextureLindenWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-4, (ushort)BlockId.LindenWood, TextureLindenWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x-1, y-5, (ushort)BlockId.LindenWood, TextureLindenWood);
+			if (FastRandom.Bool()) TerrainSetBackground(x+1, y-5, (ushort)BlockId.LindenWood, TextureLindenWood);
 
 			TerrainSetBackground(x,   y-6, (ushort)BlockId.LindenWood, TextureLindenWood);
 			TerrainSetBackground(x,   y-7, (ushort)BlockId.LindenWood, TextureLindenWood);
@@ -23466,12 +24438,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-9, (ushort)BlockId.LindenLeaves, TextureLindenLeaves);
 			TerrainSetTopBlockNormal(x,   y-10,(ushort)BlockId.LindenLeaves, TextureLindenLeaves);
 
-			Terrain 
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-7 ) chunkM2.StartSomething=y-7;
 			if (chunkM1.StartSomething>y-9 ) chunkM1.StartSomething=y-9;
@@ -23492,8 +24464,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x,   y-4, (ushort)BlockId.OakLeaves, TextureOakLeaves);
 			TerrainSetTopBlockNormal(x-1, y-4, (ushort)BlockId.OakLeaves, TextureOakLeaves);
 			TerrainSetTopBlockNormal(x,   y-5, (ushort)BlockId.OakLeaves, TextureOakLeaves);
-		
-			Terrain 
+
+			Terrain
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
 				chunkP1=terrain[x+1];
@@ -23516,8 +24488,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TerrainSetTopBlockNormal(x-1, y-3, (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
 			TerrainSetTopBlockNormal(x,   y-4, (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
 			TerrainSetTopBlockNormal(x,   y-5, (ushort)BlockId.SpruceLeaves, spruceLeavesTexture);
-		
-			Terrain 
+
+			Terrain
 				chunkM1=terrain[x-1],
 				chunk0 =terrain[x  ],
 				chunkP1=terrain[x+1];
@@ -23535,32 +24507,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		static DInt InventoryGetPosFurnaceStone(int ix) {
-			switch (ix) {
-				case 0: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4    };
-				case 1: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4   };
-				case 2: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40*2+40+4, Y=Global.WindowHeightHalf-200+2+4+60 +4   };
-				case 3: return new DInt{ X=Global.WindowWidthHalf-300+4+1+40+40+4, Y=Global.WindowHeightHalf-200+2+4+60+40+8 +4  };
-			}
-			#if DEBUG
-			throw new Exception("Unknown pos id of stone frurnace inv");
-			#else
-			return null;
-			#endif
-		}
+            return ix switch {
+                0 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                1 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                2 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                3 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+				#if DEBUG
+                _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+				#else
+				_ => new DInt(0,0)
+				#endif
+            };
+        }
 
 		static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
-			switch (ix) {
-				case 0: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+4,      Y=Global.WindowHeightHalf-200+2+4+60+4};
-				case 1: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40+4,   Y=Global.WindowHeightHalf-200+2+4+60+4};
-				case 2: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40*2+40+4, Y=Global.WindowHeightHalf-200+2+4+60+4};
-				case 3: return new Vector2{X=Global.WindowWidthHalf-300+4+1+40+40+4,   Y=Global.WindowHeightHalf-200+2+4+60+40+8+4};
-			}
-			#if DEBUG
-			throw new Exception("Unknown pos id of stone frurnace inv");
-			#else
-			return Vector2.Zero;
-			#endif
-		}
+            return ix switch {
+                0 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                1 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                2 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+                3 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+				#if DEBUG
+                _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+				#else
+				_=> Vector2.Zero
+				#endif
+            };
+        }
 
 		static Vector2 InventoryGetPosClothesVector2(int ix) {
 			if (ix<4) return new Vector2{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
@@ -23573,8 +24545,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
 				if (i>maxInvCount) break;
 
-				if (ix==i) return new DInt{X= Global.WindowWidthHalf-300+4+200+4+4+xx+4,Y=Global.WindowHeightHalf-200+2+4+yh+4 };
-				
+				if (ix==i) return new DInt{ X= Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
+
 				xx+=40;
 
 				if (xx==9*40) {
@@ -23592,7 +24564,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (i>maxInvCount) break;
 
 				if (ix==i) return new Vector2{ X=Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
-				
+
 				xx+=40;
 
 				if (xx==9*40) {
@@ -23603,9 +24575,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			return Vector2.Zero;
 		}
 
-		static DInt InventoryGetPosNormal5(int ix) => new DInt{ X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+		static DInt InventoryGetPosNormal5(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
 
-		static Vector2 InventoryGetPosNormal5Vector2(int ix) => new Vector2{ X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+		static Vector2 InventoryGetPosNormal5Vector2(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
 
 		static DInt InventoryGetPosAdvBox(int i) {
 			int row=i/12;
@@ -23646,12 +24618,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void ShowPopUpWindow() => textChooseItemWindow=new Text(Lang.Texts[160], Global.WindowWidthHalf-150-2+10, Global.WindowHeightHalf-134+10,BitmapFont.bitmapFont18);
 
 		void DrawChooseItemWindow() {
-			spriteBatch.Draw(pixel, new Rectangle(0,0, Global.WindowWidth, Global.WindowHeight), color_r0_g0_b0_a100);
+			spriteBatch.Draw(pixel, Fullscreen, color_r0_g0_b0_a100);
 
 			DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-134,304,234+2,1, color_r0_g0_b0_a100);
 			DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-133,302,234,1, color_r0_g0_b0_a200);
 			spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-132,300,34), color_r10_g140_b255);
-			spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-100+2,300,200-2), ColorLightBlue);
+			spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-100+2,300,200-2), Color.LightBlue);
 
 			buttonClosePopUp.Position=new Vector2(Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1);
 			buttonClosePopUp.ButtonDraw(/*spriteBatch,newMouseState.X,newMouseState.Y,Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1,mouseLeftDown*/);
@@ -23669,16 +24641,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					bool hasItem=HasItem();
 
 					bool HasItem() {
-						switch (items[i]) {
-							case ItemNonInvBasic t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=t.Count;
-							case ItemNonInvTool t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=t.Count;
-							case ItemNonInvFood t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=t.Count;
-							//case ItemNonInvNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
-							//case ItemNonInvBasicColoritzedNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
-							default:return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
-						}
-						//return false;
-					}
+                        return items[i] switch {
+                            ItemNonInvBasic t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+                            ItemNonInvTool t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+                            ItemNonInvFood t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+                            //case ItemNonInvNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
+                            //case ItemNonInvBasicColoritzedNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
+                            _ => TotalItemsInInventoryForAllTypes(items[i].Id) >= 1,
+                        };
+                        //return false;
+                    }
 
 					if (In40(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20)) {
 						if (mouseLeftDown) {
@@ -23693,7 +24665,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.DarkGray);
 						else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.Red);
 					} else {
-						if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), ColorWhite);
+						if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.White);
 						else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), new Color(255,150,150));
 					}
 
@@ -23757,7 +24729,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				case InventoryType.FurnaceStone:
 					textOpenInventory=new Text(Lang.Texts[170],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					//for (int i=0; i<4; i++) { 
+					//for (int i=0; i<4; i++) {
 					//	((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
 					//}
 					return;
@@ -23805,7 +24777,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				case InventoryType.OxygenMachine:
 					textOpenInventory=new Text(Lang.Texts[298], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
 					return;
-					
+
 				case InventoryType.GameMenu:
 					textOpenInventory=new Text(Lang.Texts[114], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
 					return;
@@ -23823,7 +24795,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
 						if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
 						else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
-					} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorWhite);
+					} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
 
 				   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
 					   InventoryCreative[i].Draw();
@@ -23856,14 +24828,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		}
 
 		void UpdateLiquid(ushort id) {
-			int blocks=((int)(Global.WindowWidthHalf*1.25f))/16;
-			int max=(int)PlayerX/16+2*blocks;
+			int blocks = ((int)(Global.WindowWidthHalf*1.25f))/16;
+			int max    = PlayerXInt/16+2*blocks;
 			if (max>=TerrainLength)max=TerrainLength;
-			int start=(int)PlayerX/16-blocks;
+			int start  = PlayerXInt/16-blocks;
 			if (start<0)start=0;
-
+			Terrain chunk;
 			for (int ix=start; ix<max; ix++) {
-				Terrain chunk=terrain[ix];
+				chunk=terrain[ix];
 
 				for (int iy=chunk.StartSomething; iy<100; iy++) {
 					if (chunk.IsTopBlocks[iy]) {
@@ -23877,7 +24849,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										if (precipitation) {
 											Water w=(Water)chunk.TopBlocks[iy];
 											if (w.GetMass<255) {
-												if (random.Bool_1Percent())w.Mass(w.GetMass+1);
+												if (FastRandom.Bool_1Percent())w.Mass(w.GetMass+1);
 											}
 										}
 									}
@@ -23891,7 +24863,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									// Pokud zde něco je rozbij to
 									if (chunk.TopBlocks[iy+1].Id!=id) {
 										GetItemsFromBlock(chunk.TopBlocks[iy+1].Id,ix,iy+1);
-										/*((AirSolidBlock)chunk.SolidBlocks[iy+1]).Top=*/chunk.TopBlocks[iy+1]=new Water(waterTexture,id,new Vector2(ix*16,iy*16+16));
+										chunk.TopBlocks[iy+1]=new Water(waterTexture, id, new Vector2(ix*16, iy*16+16));
 									}
 
 									// Voda padá na vodu
@@ -23910,14 +24882,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											down.Mass(totalMass);
 											down.Fill=true;//?????
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 											continue;
 										}
 									}
 								} else {
 
 									// Voda padá na prázdné místo
-									Water w=new Water(waterTexture,id,new Vector2(ix*16,iy*16+16),((Water)chunk.TopBlocks[iy]).GetMass);
+									Water w=new(waterTexture,id,new Vector2(ix*16,iy*16+16),((Water)chunk.TopBlocks[iy]).GetMass);
 									//if (chunk.IsBackground[iy+1]) ((AirSolidBlock)chunk.SolidBlocks[iy+1]).Top=w;
 									//else chunk.SolidBlocks[iy+1]=new AirSolidBlock{ Top=w };
 									chunk.TopBlocks[iy+1]=w;
@@ -23930,8 +24902,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									 //   chunk.SolidBlocks[iy]=null;
 									//    chunk.Background[iy]=null;
 								   // }
-
-									chunk.IsTopBlocks[iy]=false;
+									chunk.IsBackground/*IsTopBlocks*/[iy]=false;
 									continue;
 								}
 							}
@@ -23939,8 +24910,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							bool left=false, right=false;
 
 							Terrain leftChunk=null, rightChunk=null;
-							if (ix>0){ 
-								leftChunk=terrain[ix-1]; 
+							if (ix>0){
+								leftChunk=terrain[ix-1];
 
 								if (leftChunk.IsTopBlocks[iy]) {
 									if (leftChunk.TopBlocks[iy].Id==id) left=true;
@@ -23948,7 +24919,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								if (!left) {
 									if (!leftChunk.IsSolidBlocks[iy]) {
-										Water w=new Water(waterTexture, id, new Vector2(ix*16-16, iy*16));
+										Water w=new(waterTexture, id, new Vector2(ix*16-16, iy*16));
 									  //  if (leftChunk.IsBackground[iy]) ((AirSolidBlock)leftChunk.SolidBlocks[iy]).Top=w;
 									   // else leftChunk.SolidBlocks[iy]=new AirSolidBlock{ Top=w };
 
@@ -23961,7 +24932,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								}
 							}
 
-							if (ix<TerrainLength-1) { 
+							if (ix<TerrainLength-1) {
 								rightChunk=terrain[ix+1];
 
 								if (rightChunk.IsTopBlocks[iy]) {
@@ -23970,7 +24941,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 								if (!right) {
 									if (!rightChunk.IsSolidBlocks[iy]) {
-										Water w=new Water(waterTexture, id, new Vector2(ix*16+16, iy*16));
+										Water w=new(waterTexture, id, new Vector2(ix*16+16, iy*16));
 									 //   if (rightChunk.IsBackground[iy]) ((AirSolidBlock)rightChunk.SolidBlocks[iy]).Top=w;
 									  //  else rightChunk.SolidBlocks[iy]=new AirSolidBlock{ Top=w };
 
@@ -23999,21 +24970,21 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								if (leftChunk.IsTopBlocks[iy-1]) waterLUp=leftChunk.TopBlocks[iy-1].Id==id;
 
 								Water waterL=(Water)leftChunk.TopBlocks[iy],
-									water=(Water)chunk.TopBlocks[iy],
+									water = (Water)chunk.TopBlocks[iy],
 									waterR=(Water)rightChunk.TopBlocks[iy];
 
-								int massL=waterL.GetMass,
-									mass=water.GetMass,
-									massR=waterR.GetMass;
+								int massL= waterL.GetMass,
+									mass = water .GetMass,
+									massR= waterR.GetMass;
 
 								if (massL!=mass || massR!=mass) {
 									int totalMass=massL+mass+massR;
 									if (totalMass==255*3) continue;
 
 									if (totalMass==1) {
-										if (random.Bool()) {
+										if (FastRandom.Bool()) {
 											leftChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)leftChunk.SolidBlocks[iy]).Top=*/leftChunk.TopBlocks[iy]=null;
+											leftChunk.TopBlocks[iy]=null;
 										   // waterR.Fill=false;
 											waterR.MassNoFill(1);
 										} else {
@@ -24021,12 +24992,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											waterL.MassNoFill(1);
 
 											rightChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)rightChunk.SolidBlocks[iy]).Top=*/rightChunk.TopBlocks[iy]=null;
+											rightChunk.TopBlocks[iy]=null;
 										}
 
 										chunk.IsTopBlocks[iy]=false;
-										/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
-
+										chunk.TopBlocks[iy]=null;
 
 									} else if (totalMass==2) {
 									   // waterL.Fill=false;
@@ -24036,8 +25006,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										waterR.MassNoFill(1);
 
 										chunk.IsTopBlocks[iy]=false;
-										/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
-
+										chunk.TopBlocks[iy]=null;
 									} else {
 										int rMass=totalMass/3;
 										int d=totalMass-3*rMass;
@@ -24088,14 +25057,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (totalMass==0) {
 
 									} else if (totalMass==1) {
-										if (random.Bool()) {
+										if (FastRandom.Bool()) {
 										   // waterL.Fill=false;
 											waterL.MassNoFill(1);
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 										}else{
 											leftChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)leftChunk.SolidBlocks[iy]).Top=*/leftChunk.TopBlocks[iy]=null;
+											leftChunk.TopBlocks[iy]=null;
 											water.MassNoFill(1);
 										}
 									} else {
@@ -24126,13 +25095,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									if (totalMass==0) {
 
 									} else if (totalMass==1) {
-										if (random.Bool()) {
+										if (FastRandom.Bool()) {
 											waterR.MassNoFill(1);
 											chunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)chunk.SolidBlocks[iy]).Top=*/chunk.TopBlocks[iy]=null;
+											chunk.TopBlocks[iy]=null;
 										} else {
 											rightChunk.IsTopBlocks[iy]=false;
-											/*((AirSolidBlock)rightChunk.SolidBlocks[iy]).Top=*/rightChunk.TopBlocks[iy]=null;
+											rightChunk.TopBlocks[iy]=null;
 											water.MassNoFill(1);
 										}
 									} else {
@@ -24184,9 +25153,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		void CreateShot() {
 			SoundEffects.Shot.Play();
 			GunShots.Add(new GunShot{
-				Angle=(float)Math.Atan2(mousePos.Y-PlayerY, mousePos.X-PlayerX),
-				X=PlayerX,
-				Y=PlayerY
+				Angle=(float)Math.Atan2(mousePos.Y-PlayerYInt, mousePos.X-PlayerXInt),
+				X=PlayerXInt,
+				Y=PlayerYInt
 			});
 		}
 
@@ -24222,7 +25191,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, ColorWhite, 0, 0);
+				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White, 0, 0);
 				return;
 			}
 			if (GameMethods.IsItemInvNonStackable32(id)) {
@@ -24268,7 +25237,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, ColorWhite/*, 0, 0*/);
+				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White/*, 0, 0*/);
 				return;
 			}
 			if (GameMethods.IsItemInvNonStackable32(id)) {
@@ -24288,11 +25257,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		void AddItemToPlayer(ItemNonInv it) {
 			ItemNonInv remain=InventoryAdd(it);
-			if (remain!=null) ItemDrop(remain,(int)PlayerX,(int)PlayerY);
+			if (remain!=null) ItemDrop(remain, PlayerXInt, PlayerYInt);
 		}
 
 		void SaveInventory(string name, ItemInv[] inv) {
-			List<byte> bytes=new List<byte>();
+			List<byte> bytes=new();
 			foreach (ItemInv x in inv) x.SaveBytes(bytes);
 			File.WriteAllBytes(pathToWorld+@"\"+name+".bin", bytes.ToArray());
 		}
@@ -24349,7 +25318,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					//if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
 					//    if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
 					//    else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
-					//} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorWhite);
+					//} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
 
 				   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
 						InventoryCreative[i].SetPos(Global.WindowWidthHalf-300+4+60+x+4-16+4, Global.WindowHeightHalf-200+2+4+y+4+243+4);
@@ -24377,11 +25346,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				int cursorWidth = 15;
 
 				if (mouseRealPosX+cursorWidth+mouseItemNameWidth<Global.WindowWidth) {
-					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX+cursorWidth, mouseRealPosY,mouseItemNameWidth,30), ColorWhite);
+					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX+cursorWidth, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
 					itemText.ChangePosition(mouseRealPosX+cursorWidth, mouseRealPosY);
 				} else {
-					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX-cursorWidth-mouseItemNameWidth, mouseRealPosY,mouseItemNameWidth,30), ColorWhite);
-					itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth, mouseRealPosY);
+					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
+					itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY);
 				}
 				itemText.Draw(spriteBatch);
 			}
@@ -24455,7 +25424,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
 				    if (debug) {
 					   string add="";
-						switch (item) { 
+						switch (item) {
 							case ItemInvFood16 food16:
 								add="ItemInvFood16";
 								add+='\n';
@@ -24473,7 +25442,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								break;
 						}
 						itemText=new Text(mouseItemName+'\n'+add, 0, 0, BitmapFont.bitmapFont18);
-					} else { 
+					} else {
 						itemText=new Text(mouseItemName, 0, 0, BitmapFont.bitmapFont18);
 					}
 					mouseItemNameWidth=(int)itemText.MeasureX();
@@ -24535,107 +25504,185 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			return int.MinValue;
 		}
 
-		//void UpdateFallingBlocks() {
-		//    for (int i=0; i<fallingBlocks.Count;) {
-		//        FallingBlockInfo d = fallingBlocks[i];
-		//        NormalBlock block=d.block;
+		void AddShake(float x, float y) {
+			float distanceToPlayer=FastMath.Distance(PlayerXInt, PlayerYInt, x, y);
+			//if (distanceToPlayer<20)  EarthShakeSize+=7;
+			//if (distanceToPlayer<40)  EarthShakeSize+=6;
+			//if (distanceToPlayer<80)  EarthShakeSize+=5;
+			//if (distanceToPlayer<120) EarthShakeSize+=4;
+			//if (distanceToPlayer<180) EarthShakeSize+=3;
+			//if (distanceToPlayer<250) EarthShakeSize+=2;
+			//if (distanceToPlayer<400) EarthShakeSize+=1;
+			//if (distanceToPlayer<800) EarthShakeSize+=0.5f;
+			//float add=15-5.5f*(float)Math.Log10(distanceToPlayer+10);
+			float add=(100f-distanceToPlayer*0.2f)/(10f+distanceToPlayer*0.15f);
+			if (add<0) return;
+			EarthShakeSize+=add;
 
-		//        // Only down
-		//        block.Position.Y++;
-		//        if (d.side) {
-		//            if (block.Position.X<d.to16.X) block.Position.X++;
-		//            else block.Position.X--;
-		//        }
+			if (EarthShakeSize>10) EarthShakeSize=10;
 
-		//        if (block.Position.Y==d.to16.X) {
-		//            fallingBlocks.RemoveAt(i);
-		//        } else i++;
+			EarthShakeTime=(int)(EarthShakeSize*10);
+			if (EarthShakeTime>50)EarthShakeTime=50;
+			if (EarthShakeTime<10)EarthShakeTime=10;
+		}
 
-		//    }
-		//}
+        void UpdateFallingBlocks() {
+            for (int i = 0; i < fallingBlocks.Count;) {
+                FallingBlockInfo d = fallingBlocks[i];
+                NormalBlock block=d.block;
 
-		//void CheckBlocksAfterRemove(int x, int y) {
-		//    if (y>0) {
-		//        if (terrain[x].IsSolidBlocks[y-1]) {
-		//            Block b =terrain[x].SolidBlocks[y-1];
-		//            if (b is NormalBlock n) {
-		//                terrain[x].SolidBlocks[y]=n;
-		//                terrain[x].SolidBlocks[y-1]=null;
+				
+				
 
-		//                fallingBlocks.Add(new FallingBlockInfo {
-		//                    block=n,
-		//                    to=new DInt{X=x, Y=y-1 },
-		//                    to16=new DInt{X=x*16, Y=(y-1)*16 }
-		//                });
-		//                return;
-		//            }
-		//        }
+                // Only down
+				d.Speed+=gravity/3f;
+				if (d.Speed>5) d.Speed=5;
+               // block.Position.Y++;
+                block.Position.Y+=d.Speed;
+                //if (d.side) {
+                //    if (block.Position.X < d.to16.X) block.Position.X++;
+                //    else block.Position.X--;
+                //}
+			//	bool transform = block.Position.Y+d.Speed>= d.to16.Y
 
-		//        if (random.Bool()) {
-		//            if (terrain[x-1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x-1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x-1].SolidBlocks[y-1]=null;
+                if (block.Position.Y+d.Speed>= d.to16.Y) {
+					Terrain chunkFrom=terrain[d.from.X];
+					Terrain chunkTo=terrain[d.to.X];
+					chunkFrom.SolidBlocks[d.from.Y]=null;
+					chunkFrom.IsSolidBlocks[d.from.Y]=false;
+AddShake(d.to.X*16, d.to.Y*16);
+					chunkTo.SolidBlocks[d.to.Y]=block;
+					block.Position.Y=d.to16.Y;
+					chunkTo.IsSolidBlocks[d.to.Y]=true;
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
+					if (chunkTo.IsTopBlocks[d.to.Y]) { 
+						GetItemsFromBlock(chunkTo.TopBlocks[d.to.Y].Id, d.to.X, d.to.Y);
+						chunkTo.IsTopBlocks[d.to.Y]=false;
+						chunkTo.TopBlocks[d.to.Y]=null;
+					}
 
-		//            if (terrain[x+1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x+1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x+1].SolidBlocks[y-1]=null;
+					if (chunkTo.IsBackground[d.to.Y]) { 
+						GetItemsFromBlock(chunkTo.Background[d.to.Y].Id, d.to.X, d.to.Y);
+						chunkTo.IsBackground[d.to.Y]=false;
+						chunkTo.Background[d.to.Y]=null;
+					}
+				
+					chunkFrom.RefreshLightingRemoveSolid(d.from.X, d.from.Y);
+					chunkTo.RefreshLightingAddSolid(d.to.X, d.to.Y);
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
-		//        }else{
-		//            if (terrain[x+1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x+1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x+1].SolidBlocks[y-1]=null;
+					
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
+					//if (block is NormalBlock b) {
+						Texture2D tex = block.Texture;
 
-		//            if (terrain[x-1].IsSolidBlocks[y-1]) {
-		//                Block b =terrain[x-1].SolidBlocks[y-1];
-		//                if (b is NormalBlock n) {
-		//                    terrain[x].SolidBlocks[y]=n;
-		//                    terrain[x-1].SolidBlocks[y-1]=null;
+						for (int j=0; j<8; j++) {
+							float z=FastRandom.Float();
+							Particles.Add(new ParticleMess {
+								Disepeard=50,
+								Texture=tex,
+								Position=new Vector2(d.to.X*16f+(j)*2, d.to.Y*16+8),
+								Source= z>0.5f ? new Rectangle(j, 0, 2, 2) : new Rectangle(j, 0, 1, 1),
+								HSpeed=(j-4f)*0.1f+FastRandom.Float()*0.2f/*-1.5f-z*/,
+								VSpeed=-1-z/*(i-4)*0.1f*/,
+								LimitY=d.to.Y*16+16,
+								Color=(FastRandom.Bool() ? Color.Gray : Color.LightGray)* ((FastRandom.Float()+1)*0.5f)
+							});
+						}
+					//}
+					
+		
 
-		//                    fallingBlocks.Add(new FallingBlockInfo {
-		//                        block=n,
-		//                        to=new DInt{X=x, Y=y-1 },
-		//                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
-		//                    });
-		//                    return;
-		//                }
-		//            }
-		//        }
-		//    }
-		//}
+                    fallingBlocks.RemoveAt(i);
 
-		static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
+					if (d.from.Y>0)CheckBlockFallling(d.from.X,d.from.Y-1);
+                }
+                else i++;
+
+            }
+        }
+
+        //void CheckBlocksAfterRemove(int x, int y) {
+        //    if (y>0) {
+        //        if (terrain[x].IsSolidBlocks[y-1]) {
+        //            Block b =terrain[x].SolidBlocks[y-1];
+        //            if (b is NormalBlock n) {
+        //                terrain[x].SolidBlocks[y]=n;
+        //                terrain[x].SolidBlocks[y-1]=null;
+
+        //                fallingBlocks.Add(new FallingBlockInfo {
+        //                    block=n,
+        //                    to=new DInt{X=x, Y=y-1 },
+        //                    to16=new DInt{X=x*16, Y=(y-1)*16 }
+        //                });
+        //                return;
+        //            }
+        //        }
+
+        //        if (FastRandom.Bool()) {
+        //            if (terrain[x-1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x-1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x-1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+
+        //            if (terrain[x+1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x+1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x+1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+        //        }else{
+        //            if (terrain[x+1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x+1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x+1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x+1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+
+        //            if (terrain[x-1].IsSolidBlocks[y-1]) {
+        //                Block b =terrain[x-1].SolidBlocks[y-1];
+        //                if (b is NormalBlock n) {
+        //                    terrain[x].SolidBlocks[y]=n;
+        //                    terrain[x-1].SolidBlocks[y-1]=null;
+
+        //                    fallingBlocks.Add(new FallingBlockInfo {
+        //                        block=n,
+        //                        to=new DInt{X=x, Y=y-1 },
+        //                        to16=new DInt{X=(x-1)*16, Y=(y-1)*16 }
+        //                    });
+        //                    return;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
 			if (a1==a2) return true;
 			if (a1.Length!=a2.Length) return false;
 
@@ -24896,7 +25943,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						break;
 
 					case ItemInvBasic32 i:
-						if (GameMethods.IsItemInvBasic32(newId)) { 
+						if (GameMethods.IsItemInvBasic32(newId)) {
 							if (barrel.LiquidAmount-max>=0) {
 								DInt p=InventoryGetPosBarrel(1);
 								barrel.Inv[1]=new ItemInvBasic32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
@@ -24976,7 +26023,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void CreateGradientTexture() { 
+		void CreateGradientTexture() {
 			TextureSunGradient?.Dispose();
 
 			int height=Global.WindowHeight;
@@ -24985,13 +26032,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			Color[] colors=new Color[height];
 			Color ColorBef;
 
-			for (int p=1; p<Gradient.Count; p++) { 
+			for (int p=1; p<Gradient.Count; p++) {
 				(Color, float) gradientPoint=Gradient[p];
 				int end= (int)(gradientPoint.Item2*height);
-				
+
 				ColorBef=Gradient[p-1].Item1;
 
-				for (int i=start; i<end; i++) { 
+				for (int i=start; i<end; i++) {
 					colors[i]=FastMath.Lerp(ColorBef, gradientPoint.Item1, (i-start)/(float)(end-start));
 				}
 
@@ -25001,19 +26048,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			TextureSunGradient.SetData(colors);
 		}
 
-		BiomeData GetBiomeByPos(int pos) { 
+		BiomeData GetBiomeByPos(int pos) {
 			int len=Biomes.Length;
 			int half=len/2;
 
 			if (Biomes[half].End>pos) {
 				for (int i = 0; i<half; i++) {
-					if (Biomes[i].End>pos) { 
+					if (Biomes[i].End>pos) {
 						return Biomes[i]/*.Name*/;
 					}
 				}
-			} else { 
+			} else {
 				for (int i = half; i<len; i++) {
-					if (Biomes[i].End>pos) { 
+					if (Biomes[i].End>pos) {
 						return Biomes[i]/*.Name*/;
 					}
 				}
@@ -25022,41 +26069,41 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			return new BiomeData();
 		}
 
-		Color BiomeColor(Biome biome) { 
-			switch (biome) { 
-				case Biome.Desert: return Color.Yellow;
-				case Biome.Savanna: return new Color(110,85,32);
-				case Biome.SaltOcean: return new Color(10,48,96);
-				case Biome.Arctic: return Color.White;
-				case Biome.Bog: return new Color(111,81,14);
-				case Biome.ColdTaiga: return new Color(25,21,3);
-				case Biome.Taiga: return new Color(47,59,11);
-				case Biome.Tundra: return new Color(188,7,1);
-				case Biome.WetTundra: return new Color(20,16,3);
-				case Biome.Swamp: return new Color(26,46,12);
-				case Biome.TropicalRainforest: return new Color(3,36,2);
-				case Biome.Subtropics: return new Color(39,42,14);
-				case Biome.ArcticPlains: return new Color(163,169,186);
-				case Biome.Beach: return new Color(213,159,109);
-				case Biome.BothForest: return new Color(107,146,15);
-				case Biome.DryTundra: return new Color(9,8,5);
-				case Biome.Fen: return new Color(61,84,21);
-				case Biome.HotPlains: return new Color(128,54,8);
-				case Biome.HumidSubtropical: return new Color(28,59,13);
-				case Biome.LeaveForest: return new Color(11,57,10);
-				case Biome.Mangrove: return new Color(60,85,16);
-				case Biome.Plains: return new Color(57,59,9);
-				case Biome.SpruceForest: return new Color(53,54,13);
-				case Biome.Jungle: return new Color(2,61,0);
-			}
-			//#if DEBUG
-			//throw new Exception("Missing biome color");
-			//#else
-			return Color.Green;
-		   // #endif
-		}
+		Color BiomeColor(Biome biome) {
+            return biome switch {
+                Biome.Desert => Color.Yellow,
+                Biome.Savanna => new Color(110, 85, 32),
+                Biome.SaltOcean => new Color(10, 48, 96),
+                Biome.Arctic => Color.White,
+                Biome.Bog => new Color(111, 81, 14),
+                Biome.ColdTaiga => new Color(25, 21, 3),
+                Biome.Taiga => new Color(47, 59, 11),
+                Biome.Tundra => new Color(188, 7, 1),
+                Biome.WetTundra => new Color(20, 16, 3),
+                Biome.Swamp => new Color(26, 46, 12),
+                Biome.TropicalRainforest => new Color(3, 36, 2),
+                Biome.Subtropics => new Color(39, 42, 14),
+                Biome.ArcticPlains => new Color(163, 169, 186),
+                Biome.Beach => new Color(213, 159, 109),
+                Biome.BothForest => new Color(107, 146, 15),
+                Biome.DryTundra => new Color(9, 8, 5),
+                Biome.Fen => new Color(61, 84, 21),
+                Biome.HotPlains => new Color(128, 54, 8),
+                Biome.HumidSubtropical => new Color(28, 59, 13),
+                Biome.LeaveForest => new Color(11, 57, 10),
+                Biome.Mangrove => new Color(60, 85, 16),
+                Biome.Plains => new Color(57, 59, 9),
+                Biome.SpruceForest => new Color(53, 54, 13),
+                Biome.Jungle => new Color(2, 61, 0),
+                //#if DEBUG
+                //throw new Exception("Missing biome color");
+                //#else
+                _ => Color.Green,
+            };
+            // #endif
+        }
 
-		void SaveSettings(){ 
+		void SaveSettings(){
 			#if DEBUG
 			Debug.WriteLine("Saved Settings.txt");
 			#endif
@@ -25067,13 +26114,14 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				time+"\r\n"+
 			   // dayAlpha+"\r\n"+
 
-				barWater+"\r\n"+
-				barEat+"\r\n"+
-				barHeart+"\r\n"+
-				barOxygen+"\r\n"+
+				barWater.Value+"\r\n"+
+				barEat.Value+"\r\n"+
+				barHeart.Value+"\r\n"+
+				barOxygen.Value+"\r\n"+
+				barEnergy.Value+"\r\n"+
 
-				(int)PlayerX+"\r\n"+
-				(int)PlayerY+"\r\n"+
+				PlayerXInt+"\r\n"+
+				PlayerYInt+"\r\n"+
 
 				windForce+"\r\n"+
 				wind+"\r\n"+
@@ -25094,25 +26142,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 		void CreateJumpMess(List<DInt> blocks) {
 			if (blocks.Count==2){
-				DInt d=blocks[0].Y<blocks[1].Y ? blocks[0] : blocks[1]; 
+				DInt d=blocks[0].Y<blocks[1].Y ? blocks[0] : blocks[1];
 				Block block=terrain[d.X].SolidBlocks[d.Y];
 				Particles.Clear();
 
 				if (block is NormalBlock b) {
 					Texture2D tex = b.Texture;
 
-					for (int i=0; i<8; i++) { 
-						float x=PlayerX+(i-4);
-						float z=random.Float();
+					for (int i=0; i<8; i++) {
+						float x=PlayerXInt+(i-4);
+						float z=FastRandom.Float();
 						Particles.Add(new ParticleMess {
 							Disepeard=50,
 							Texture=tex,
-							Position=new Vector2(x, d.Y*16-1f),
+							Position=new Vector2(x, d.Y*16-3f),
 							Source=new Rectangle(i, 0, z>0.5f ? 2 : 1, z>0.5f ? 2 : 1),
-							HSpeed=-1.5f-z,
-							VSpeed=(i-4+random.Float()*0.5f)*0.1f,
-							LimitY=(x<blocks[1].X*16) ? blocks[0].Y*16-2 : blocks[1].Y*16-2,
-							Color=(random.Bool() ? ColorWhite : Color.LightGray) * ((random.Float()+1)*0.5f)
+							HSpeed=(i-4+FastRandom.FloatHalf()/**0.5f*/)*0.1f,
+							VSpeed=-2.5f-z,
+							LimitY=((x<blocks[1].X*16) ? blocks[0].Y*16 : blocks[1].Y*16)-(z>0.5f ? 2 : 1),
+							Color=(FastRandom.Bool() ? Color.White : Color.LightGray) * ((FastRandom.Float()+1)*0.5f)
 						});
 					}
 				}
@@ -25124,30 +26172,30 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (block is NormalBlock b) {
 					Texture2D tex = b.Texture;
 
-					for (int i=0; i<8; i++) { 
-						float z=random.Float();
+					for (int i=0; i<8; i++) {
+						int z=FastRandom.Int2()+1;
 						Particles.Add(new ParticleMess {
 							Disepeard=50,
 							Texture=tex,
-							Position=new Vector2(PlayerX+(i-4), d.Y*16-1f),
-							Source=new Rectangle(i, 0, z>0.5f ? 2 : 1, z>0.5f ? 2 : 1),
-							HSpeed=-1.5f-z,
-							VSpeed=(i-4)*0.1f,
-							LimitY=d.Y*16-2,
-							Color=(random.Bool() ? ColorWhite : Color.LightGray)* ((random.Float()+1)*0.5f)
+							Position=new Vector2(PlayerXInt+(i-4), d.Y*16-3f),
+							Source=new Rectangle(i, 0, z, z),
+							HSpeed=(i-4)*0.1f,
+							VSpeed= -1.5f - z*0.5f,
+							LimitY=d.Y*16-z,
+							Color=(FastRandom.Bool() ? Color.White : Color.LightGray)* ((FastRandom.Float()+1)*0.5f)
 						});
 					}
 				}
 			}
 		}
 
-		void FindPlants(){
-			int x=(int)PlayerX/16, 
-				y=(int)(PlayerY+22-16)/16;
+		void FindPlants() {
+			int x=PlayerXInt/16,
+				y=(PlayerYInt+22-16)/16;
 
 			Terrain chunk=terrain[x];
-			if (chunk.IsTopBlocks[y]) { 
-				switch (chunk.TopBlocks[y].Id) { 
+			if (chunk.IsTopBlocks[y]) {
+				switch (chunk.TopBlocks[y].Id) {
 					case (ushort)BlockId.GrassDesert:
 					case (ushort)BlockId.GrassForest:
 					case (ushort)BlockId.GrassHills:
@@ -25161,7 +26209,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					case (ushort)BlockId.Rose:
 						{
 							if (chunk.TopBlocks[y] is NormalBlock n){
-								BasicWavingPlant p=new BasicWavingPlant(n.Texture, n.Id, n.Position, speedDir==1);
+								BasicWavingPlant p=new(n.Texture, n.Id, n.Position, speedDir==1);
 								chunk.TopBlocks[y]=p;
 								WavingPlants.Add(p);
 								return;
@@ -25174,7 +26222,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
             for (int i = 0; i<chunk.Plants.Count; i++) {
 				Plant p=chunk.Plants[i];
 
-				if (!(p is FruitPlantWaving)) {
+				if (p is not FruitPlantWaving) {
 					FruitPlantWaving z=p.TurnToWavingPlant(speedDir==1);
 					chunk.Plants[i]=z;
 					WavingPlants.Add(z);
@@ -25183,24 +26231,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
             }
 		}
 
-		void StopWavingTrees() { 
+		void StopWavingTrees() {
 			 if (wind) {
 				for (int i = 0; i<LiveObjects.Length; i++) {
 					LiveObjects[i].angle=0;
 				}
-			} 
+			}
 		}
 
-		void WaveGrassDuringWind(){ 
-			if (!Constants.AnimationsGame) return;
+		void WaveGrassDuringWind(){
+			if (!Setting.WavingElements) return;
 			if (waveGrassIndex<terrainStartIndexX-20)waveGrassIndex=(terrainStartIndexX-10<0) ? 0 : terrainStartIndexX-10;
 			waveGrassIndex++;
 			if (waveGrassIndex>terrainStartIndexW+10) waveGrassIndex=terrainStartIndexX-10<0 ? 0 : terrainStartIndexX-10;
 
 			Terrain chunk=terrain[waveGrassIndex];
-			for (int y=chunk.StartSomething; y<125; y++) { 
+			for (int y=chunk.StartSomething; y<125; y++) {
 				if (chunk.IsTopBlocks[y]){
-					switch (chunk.TopBlocks[y].Id) { 
+					switch (chunk.TopBlocks[y].Id) {
 						case (ushort)BlockId.GrassDesert:
 						case (ushort)BlockId.GrassForest:
 						case (ushort)BlockId.GrassHills:
@@ -25214,7 +26262,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						case (ushort)BlockId.Rose:
 							{
 								if (chunk.TopBlocks[y] is NormalBlock n) {
-									BasicWavingPlant p=new BasicWavingPlant(n.Texture, n.Id, n.Position, true);
+									BasicWavingPlant p=new(n.Texture, n.Id, n.Position, true);
 									chunk.TopBlocks[y]=p;
 									WavingPlants.Add(p);
 									return;
@@ -25228,15 +26276,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			for (int i=0; i< chunk.Plants.Count; i++) {
 				Plant p = chunk.Plants[i];
 
-				if (!(p is FruitPlantWaving)) {
+				if (p is not FruitPlantWaving) {
 					if (p.Height<=chunk.LightPosFull) {
-						
+
 						FruitPlantWaving z=p.TurnToWavingPlant(true);
 						//	chunk.TopBlocks[y]=p;
 						chunk.Plants[i]=z;
 						WavingPlants.Add(z);
 						return;
-						
+
 					}
 				}
 			}
@@ -25258,7 +26306,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		//bool IsSelectedShears() { 
+		//bool IsSelectedShears() {
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.ShearsCopper) return true;
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.ShearsBronze) return true;
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.ShearsGold) return true;
@@ -25268,7 +26316,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	return false;
 		//}
 
-		//bool IsSelectedKnife() { 
+		//bool IsSelectedKnife() {
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.KnifeCopper) return true;
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.KnifeBronze) return true;
 		//	if (InventoryNormal[boxSelected].Id==(ushort)Items.KnifeGold) return true;
@@ -25278,98 +26326,126 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		//	return false;
 		//}
 
-		float GetTemperature(Biome biome) { 
-			switch (biome) {
-				case Biome.ArcticPlains: return TemperatureFromTo(-5,-15, -50,-60);
-				case Biome.Arctic: return TemperatureFromTo(0,-6, -24,-32);
-				case Biome.DryTundra: return TemperatureFromTo(20,-2, -30,-50);
-				case Biome.Tundra: return TemperatureFromTo(13,-2, -15,-40);
-				case Biome.WetTundra: return TemperatureFromTo(18,1, -20,-35);
-				case Biome.ColdTaiga: return TemperatureFromTo(20,1,-30,-54);
-				case Biome.Taiga: return TemperatureFromTo(22,8, -20,-45);
-				case Biome.SpruceForest: return TemperatureFromTo(15,9, -2,-7);
-				case Biome.BothForest: return TemperatureFromTo(25,15, -1,-6);
-				case Biome.Plains: return TemperatureFromTo(29,16, -2,-7);
-				case Biome.LeaveForest: return TemperatureFromTo(26,19, 5,-1);
-				case Biome.Swamp: return TemperatureFromTo(29,24, 16,6);
-				case Biome.Fen: return TemperatureFromTo(24,16, -2,-4);
-				case Biome.Bog: return TemperatureFromTo(19,11,7,1);
-				case Biome.SaltOcean: return TemperatureFromTo(28,24, 15,8);
-				case Biome.ExtremeColdBeach: return TemperatureFromTo(2,-1, 1,-3);
-				case Biome.ColdBeach: return TemperatureFromTo(16,12, 1,-3);
-				case Biome.Beach: return TemperatureFromTo(26,23, 10,8);
-				case Biome.HotBeach: return TemperatureFromTo(27,24, 21,16);
-				case Biome.HotPlains: return TemperatureFromTo(33,21, 14,2);
-				case Biome.Mangrove: return TemperatureFromTo(24,20, 22,18);
-				case Biome.HumidSubtropical: return TemperatureFromTo(28,24, 18,6);
-				case Biome.Subtropics: return TemperatureFromTo(29,18, 20,9);
-				case Biome.Desert: return TemperatureFromTo(39,25, 19,6);
-				case Biome.Savanna: return TemperatureFromTo(33,24, 17,6);
-				case Biome.Jungle: return TemperatureFromTo(32,24, 29,23);
-				case Biome.TropicalRainforest: return TemperatureFromTo(32,24, 29,23);
-				case Biome.None: return 0;
-			}
-			#if DEBUG
-			throw new Exception("Missing biome color");
-			#else
-			return 0;
-			#endif
-		}
+		float GetTemperature(Biome biome) {
+            return biome switch {
+                Biome.ArcticPlains => TemperatureFromTo(-5, -15, -50, -60),
+                Biome.Arctic => TemperatureFromTo(0, -6, -24, -32),
+                Biome.DryTundra => TemperatureFromTo(20, -2, -30, -50),
+                Biome.Tundra => TemperatureFromTo(13, -2, -15, -40),
+                Biome.WetTundra => TemperatureFromTo(18, 1, -20, -35),
+                Biome.ColdTaiga => TemperatureFromTo(20, 1, -30, -54),
+                Biome.Taiga => TemperatureFromTo(22, 8, -20, -45),
+                Biome.SpruceForest => TemperatureFromTo(15, 9, -2, -7),
+                Biome.BothForest => TemperatureFromTo(25, 15, -1, -6),
+                Biome.Plains => TemperatureFromTo(29, 16, -2, -7),
+                Biome.LeaveForest => TemperatureFromTo(26, 19, 5, -1),
+                Biome.Swamp => TemperatureFromTo(29, 24, 16, 6),
+                Biome.Fen => TemperatureFromTo(24, 16, -2, -4),
+                Biome.Bog => TemperatureFromTo(19, 11, 7, 1),
+                Biome.SaltOcean => TemperatureFromTo(28, 24, 15, 8),
+                Biome.ExtremeColdBeach => TemperatureFromTo(2, -1, 1, -3),
+                Biome.ColdBeach => TemperatureFromTo(16, 12, 1, -3),
+                Biome.Beach => TemperatureFromTo(26, 23, 10, 8),
+                Biome.HotBeach => TemperatureFromTo(27, 24, 21, 16),
+                Biome.HotPlains => TemperatureFromTo(33, 21, 14, 2),
+                Biome.Mangrove => TemperatureFromTo(24, 20, 22, 18),
+                Biome.HumidSubtropical => TemperatureFromTo(28, 24, 18, 6),
+                Biome.Subtropics => TemperatureFromTo(29, 18, 20, 9),
+                Biome.Desert => TemperatureFromTo(39, 25, 19, 6),
+                Biome.Savanna => TemperatureFromTo(33, 24, 17, 6),
+                Biome.Jungle => TemperatureFromTo(32, 24, 29, 23),
+                Biome.TropicalRainforest => TemperatureFromTo(32, 24, 29, 23),
+                Biome.None => 0,
+				#if DEBUG
+                _ => throw new Exception("Missing biome color"),
+				#else
+				_ => 0
+				#endif
+            };
+        }
 
-		/// <param name="temperatureSpeedChange">From 1 to 8, bigger for more humid</param>
+		/// <param name="temperatureSpeedChange">From 0 to 1, 0=fastly after sun rise, 1 late in time when sun fall</param>
 		/// <returns></returns>
-		float TemperatureFromTo(int daySummerTemperature, int nightSummerTemperature, int dayWinterTemperature, int nightWinterTemperature, float temperatureSpeedChange=6) { 
+		float TemperatureFromTo(int daySummerTemperature, int nightSummerTemperature, int dayWinterTemperature, int nightWinterTemperature, float temperatureSpeedChange=0.45f) {
 			float tempDay, tempNight;
 
-			if (day>22 && day<200){ 
+			if (day>22 && day<200){
 				tempDay=FastMath.Smooth((day-22)/178f)*(daySummerTemperature-dayWinterTemperature)+dayWinterTemperature;
 				tempNight=FastMath.Smooth((day-22)/178f)*(nightSummerTemperature-nightWinterTemperature)+nightWinterTemperature;
-			} else if (day<22) { 
+			} else if (day<22) {
 				tempDay=(1-FastMath.Smooth((day+156)/178f))*(daySummerTemperature-dayWinterTemperature)+dayWinterTemperature;
 				tempNight=(1-FastMath.Smooth((day+156)/178f))*(nightSummerTemperature-nightWinterTemperature)+nightWinterTemperature;
-			} else { 
-				tempDay=(1-FastMath.Smooth((day-200)/178))*(daySummerTemperature-dayWinterTemperature)+dayWinterTemperature;
-				tempNight=(1-FastMath.Smooth((day-200)/178))*(nightSummerTemperature-nightWinterTemperature)+nightWinterTemperature;
+			} else {
+				tempDay=(1-FastMath.Smooth((day-200)/178f))*(daySummerTemperature-dayWinterTemperature)+dayWinterTemperature;
+				tempNight=(1-FastMath.Smooth((day-200)/178f))*(nightSummerTemperature-nightWinterTemperature)+nightWinterTemperature;
 			}
 
-			float noon=(dayEnd-(dayStart+1))*hour;
+		//	float noon=(dayEnd-(dayStart+1))*hour;
+		//Debug.WriteLine(tempDay);
+		//Debug.WriteLine(tempNight);
 
-			// Rising temp
-			if (time>dayStart*hour && time<noon) return FastMath.Smooth((time-dayStart*hour)/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
-			//aftenoon
-			else if (time>noon) return FastMath.Smooth((time-noon)/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
-			//before sun rise
-			else return FastMath.Smooth((time-(noon-dayStart*hour))/(noon-dayStart*hour))*(tempDay-tempNight)+tempNight;
+		
+
+			// Rising temp after rozednivani
+			int _time=time-(int)(dayStart*hour);
+			if (_time<0)_time+=24*hour;
+
+			float maximumInHour=(dayEnd-dayStart)*temperatureSpeedChange*hour;
+			float nightTempChange=(tempDay-tempNight)/10f;
+			//float dayEndE=dayEnd*hour-maximumInHour;
+
+			// rising
+			if (_time<maximumInHour) return FastMath.Smooth(_time/maximumInHour)*(tempDay-tempNight-nightTempChange)+tempNight;
+			if (_time<dayEnd*hour-dayStart*hour) return tempDay-nightTempChange*(1f-_time/(dayEnd*hour-dayStart*hour));
+			if (_time<dayEnd*hour-dayStart*hour+maximumInHour) {
+				float start=dayEnd*hour-dayStart*hour;
+				float end=dayEnd*hour-dayStart*hour+maximumInHour;
+				return FastMath.Smooth(1f-(_time-start)/(end-start)) *(tempDay-tempNight+nightTempChange)+tempNight;
+			}
+			//night
+			float _dayLenght=(dayStart-dayEnd)*hour;
+			float _nightLenght=24*hour-_dayLenght;
+			return (1f-(_time-maximumInHour)/(_nightLenght))*(nightTempChange)+tempNight;
+
+			// Rising temp until noon
+		//	if (time>dayStart*hour && time<noon) return FastMath.Smooth((time-dayStart*hour)/(/*noon-dayStart*hour*/dayLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	// aftenoon
+		//	else if (time>noon && time<dayEnd*hour) return FastMath.Smooth((noon-time)/(/*noon-dayEnd*hour*/dayLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	// night after aftenoon
+		//	else if (time>dayEnd*hour) return FastMath.Smooth((time-dayEnd*hour)/(/*dayEnd*hour-noon*/nightLenght/2f))*(tempDay-tempNight)+tempNight;
+		//	//before sun rise
+		//	else return FastMath.Smooth(time/(nightLenght/2f))*(tempDay-tempNight)+tempNight;
+		////	else return FastMath.Smooth((time/*-(noon-dayStart*hour)*/)/(/*noon-dayStart*hour*/nightLenght/2f))*(tempDay-tempNight)+tempNight;
 		}
 
-		void ChangeLeavesForceEverything() { 
+		void ChangeLeavesForceEverything() {
 
 			// Spring: branches -> flowering leaves or leaves
-			if (day>=80 && day<=100) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day>=80 && day<=100) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id){
                                     #region Apple -> Blossom
 									case (ushort)BlockId.AppleBranches:
 										leaves.Id=(ushort)BlockId.AppleLeavesBlossom;
 										leaves.Texture=TextureAppleBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
                                     case (ushort)BlockId.AppleLeaves:
 										leaves.Id=(ushort)BlockId.AppleLeavesBlossom;
 										leaves.Texture=TextureAppleBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.AppleLeavesWithApples:
 										leaves.Id=(ushort)BlockId.AppleLeavesBlossom;
 										leaves.Texture=TextureAppleBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
@@ -25377,19 +26453,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.PlumBranches:
 										leaves.Id=(ushort)BlockId.PlumLeavesBlossom;
 										leaves.Texture=TexturePlumBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
                                     case (ushort)BlockId.PlumLeaves:
 										leaves.Id=(ushort)BlockId.PlumLeavesBlossom;
 										leaves.Texture=TexturePlumBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.PlumLeavesWithPlums:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 									#endregion
 
@@ -25397,7 +26473,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.CherryBranches:
 										leaves.Id=(ushort)BlockId.CherryLeavesBlossom;
 										leaves.Texture=TextureCherryBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.CherryLeaves:
@@ -25408,7 +26484,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.CherryLeavesWithCherries:
 										leaves.Id=(ushort)BlockId.CherryLeavesBlossom;
 										leaves.Texture=TextureCherryBlossom;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 									#endregion
 
@@ -25416,19 +26492,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.OakBranches:
 										leaves.Id=(ushort)BlockId.OakLeaves;
 										leaves.Texture=TextureOakLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.LindenBranches:
 										leaves.Id=(ushort)BlockId.LindenLeaves;
 										leaves.Texture=TextureLindenLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.WillowBranches:
 										leaves.Id=(ushort)BlockId.WillowLeaves;
 										leaves.Texture=TextureWillowLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 									#endregion
 								}
@@ -25440,25 +26516,25 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			// Summer: set leaves
-			if (day>=100 && day<=280) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day>=100 && day<=280) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-					
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id) {
                                     #region Apple
                                     case (ushort)BlockId.AppleBranches:
 										leaves.Id=(ushort)BlockId.AppleLeaves;
 										leaves.Texture=TextureAppleLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.AppleLeavesBlossom:
 										leaves.Id=(ushort)BlockId.AppleLeaves;
 										leaves.Texture=TextureAppleLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
@@ -25466,13 +26542,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     case (ushort)BlockId.PlumBranches:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.PlumLeavesBlossom:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
@@ -25480,32 +26556,32 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.CherryLeavesBlossom:
 										leaves.Id=(ushort)BlockId.CherryLeaves;
 										leaves.Texture=TextureCherryLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.CherryBranches:
 										leaves.Id=(ushort)BlockId.CherryLeaves;
 										leaves.Texture=TextureCherryLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
                                     case (ushort)BlockId.LindenBranches:
 										leaves.Id=(ushort)BlockId.LindenLeaves;
 										leaves.Texture=TextureLindenLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.OakBranches:
 										leaves.Id=(ushort)BlockId.OakLeaves;
 										leaves.Texture=TextureOakLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.WillowBranches:
 										leaves.Id=(ushort)BlockId.WillowLeaves;
 										leaves.Texture=TextureWillowLeaves;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 								}
 							}
@@ -25513,12 +26589,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				return;
-			} 
+			}
 
 			// Autumn: leaves -> Colorful
-			if (day>=280 && day<=340) { 
-				Color[] colors=new Color[]{ 
-		
+			if (day>=280 && day<=340) {
+				Color[] colors=new Color[]{
+
 					new Color(144, 170, 6),
 					new Color(162, 163, 3),
 					new Color(212, 103, 25),
@@ -25526,12 +26602,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					new Color(254, 255, 74),
 				};
 
-				for (int x=0; x<TerrainLength; x++) { 
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id) {
 									#region Apple
                                     case (ushort)BlockId.AppleBranches:
@@ -25548,9 +26624,9 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										leaves.Id=(ushort)BlockId.AppleLeaves;
 										leaves.Texture=TextureAppleLeaves;
 										goto case (ushort)BlockId.AppleLeaves;
-                                  
+
                                     case (ushort)BlockId.AppleLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
 									#endregion
 
@@ -25559,7 +26635,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
 										goto case (ushort)BlockId.PlumLeaves;
-																			
+
 									case (ushort)BlockId.PlumLeavesBlossom:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
@@ -25571,7 +26647,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										goto case (ushort)BlockId.PlumLeaves;
 
                                     case (ushort)BlockId.PlumLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                     #endregion
 
@@ -25592,7 +26668,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										goto case (ushort)BlockId.CherryLeaves;
 
 									case (ushort)BlockId.CherryLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                     #endregion
 
@@ -25600,11 +26676,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     case (ushort)BlockId.OakBranches:
 										leaves.Id=(ushort)BlockId.OakLeaves;
 										leaves.Texture=TextureCherryLeaves;
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
 
 									case (ushort)BlockId.OakLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                     #endregion
 
@@ -25612,11 +26688,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     case (ushort)BlockId.LindenBranches:
 										leaves.Id=(ushort)BlockId.LindenLeaves;
 										leaves.Texture=TextureLindenLeaves;
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
 
 									case (ushort)BlockId.LindenLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                     #endregion
 
@@ -25624,11 +26700,11 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     case (ushort)BlockId.WillowBranches:
 										leaves.Id=(ushort)BlockId.WillowLeaves;
 										leaves.Texture=TextureWillowLeaves;
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
 
 									case (ushort)BlockId.WillowLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                     #endregion
                                 }
@@ -25640,31 +26716,31 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			// Winter: Leaves -> Branches
-			if (day<=80 || day>=340) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day<=80 || day>=340) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id){
                                     #region Apple
 									case (ushort)BlockId.AppleLeaves:
 										leaves.Id=(ushort)BlockId.AppleBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
                                     case (ushort)BlockId.AppleLeavesBlossom:
 										leaves.Id=(ushort)BlockId.AppleBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.AppleLeavesWithApples:
 										leaves.Id=(ushort)BlockId.AppleBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
@@ -25672,19 +26748,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
                                     case (ushort)BlockId.PlumLeaves:
 										leaves.Id=(ushort)BlockId.PlumBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.PlumLeavesBlossom:
 										leaves.Id=(ushort)BlockId.PlumBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
-										
+
 									case (ushort)BlockId.PlumLeavesWithPlums:
 										leaves.Id=(ushort)BlockId.PlumBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
@@ -25692,38 +26768,38 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									case (ushort)BlockId.CherryLeaves:
 										leaves.Id=(ushort)BlockId.CherryBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
-																		
+
                                     case (ushort)BlockId.CherryLeavesBlossom:
 										leaves.Id=(ushort)BlockId.CherryBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.CherryLeavesWithCherries:
 										leaves.Id=(ushort)BlockId.CherryBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
                                     #endregion
 
                                     case (ushort)BlockId.LindenLeaves:
 										leaves.Id=(ushort)BlockId.LindenBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.OakLeaves:
 										leaves.Id=(ushort)BlockId.OakBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.WillowLeaves:
 										leaves.Id=(ushort)BlockId.WillowBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 								}
 							}
@@ -25733,16 +26809,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		void ChangeLeavesSomething() { 
+		void ChangeLeavesSomething() {
 
 			// Spring: branches -> flowering leaves or leaves
-			if (day>=80 && day<=100) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day>=80 && day<=100) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id){
 									case (ushort)BlockId.AppleBranches:
 										leaves.Id=(ushort)BlockId.AppleLeavesBlossom;
@@ -25782,24 +26858,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			// Summer: set leaves
-			if (day>=100 && day<=280) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day>=100 && day<=280) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-					
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id) {
                                     case (ushort)BlockId.AppleBranches:
 										leaves.Id=(ushort)BlockId.AppleLeaves;
 										leaves.Texture=TextureAppleLeaves;
 										continue;
-																		
+
                                     case (ushort)BlockId.PlumBranches:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
 										continue;
-																			
+
 									case (ushort)BlockId.CherryLeavesBlossom:
 										leaves.Id=(ushort)BlockId.CherryLeaves;
 										leaves.Texture=TextureCherryLeaves;
@@ -25810,12 +26886,12 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 				}
 				return;
-			} 
+			}
 
 			// Autumn: leaves -> Colorful
-			if (day>=280 && day<=340) { 
-				Color[] colors=new Color[]{ 
-		
+			if (day>=280 && day<=340) {
+				Color[] colors=new Color[]{
+
 					new Color(144, 170, 6),
 					new Color(162, 163, 3),
 					new Color(212, 103, 25),
@@ -25823,48 +26899,48 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					new Color(254, 255, 74),
 				};
 
-				for (int x=0; x<TerrainLength; x++) { 
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id) {
-								
+
 									case (ushort)BlockId.AppleLeavesWithApples:
 										leaves.Id=(ushort)BlockId.AppleLeaves;
 										leaves.Texture=TextureAppleLeaves;
 										goto case (ushort)BlockId.AppleLeaves;
-                                  
+
                                     case (ushort)BlockId.AppleLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
-									
+
 									case (ushort)BlockId.PlumLeavesWithPlums:
 										leaves.Id=(ushort)BlockId.PlumLeaves;
 										leaves.Texture=TexturePlumLeaves;
 										goto case (ushort)BlockId.PlumLeaves;
 
                                     case (ushort)BlockId.PlumLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
-                                  
+
 									case (ushort)BlockId.CherryLeavesWithCherries:
 										leaves.Id=(ushort)BlockId.CherryLeaves;
 										leaves.Texture=TextureCherryLeaves;
 										goto case (ushort)BlockId.CherryLeaves;
 
 									case (ushort)BlockId.CherryLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
-                                   
+
 
 									case (ushort)BlockId.OakLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
-                                   
+
 									case (ushort)BlockId.LindenLeaves:
-										leaves.Color=colors[random.Int(5)];
+										leaves.Color=colors[FastRandom.Int(5)];
 										continue;
                                 }
                             }
@@ -25875,49 +26951,49 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 
 			// Winter: Leaves -> Branches
-			if (day<=80 || day>=340) { 
-				for (int x=0; x<TerrainLength; x++) { 
+			if (day<=80 || day>=340) {
+				for (int x=0; x<TerrainLength; x++) {
 					Terrain chunk=terrain[x];
-								
+
 					for (int y=chunk.StartSomething; y<125; y++) {
-						if (chunk.IsTopBlocks[y]) { 
-							if (chunk.TopBlocks[y] is LeavesBlock leaves) { 
+						if (chunk.IsTopBlocks[y]) {
+							if (chunk.TopBlocks[y] is LeavesBlock leaves) {
 								switch (leaves.Id){
-                                   
+
 									case (ushort)BlockId.AppleLeaves:
 										leaves.Id=(ushort)BlockId.AppleBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
                                     case (ushort)BlockId.PlumLeaves:
 										leaves.Id=(ushort)BlockId.PlumBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.CherryLeaves:
 										leaves.Id=(ushort)BlockId.CherryBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
-											
+
                                     case (ushort)BlockId.LindenLeaves:
 										leaves.Id=(ushort)BlockId.LindenBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.OakLeaves:
 										leaves.Id=(ushort)BlockId.OakBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 
 									case (ushort)BlockId.WillowLeaves:
 										leaves.Id=(ushort)BlockId.WillowBranches;
 										leaves.Texture=TextureBranches;
-										leaves.Color=ColorWhite;
+										leaves.Color=Color.White;
 										continue;
 								}
 							}
@@ -25927,201 +27003,209 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
 
-		Color GetColorBackNoRain() { 
+		Color GetColorBackNoRain() {
 			// Day
-			if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
-				return Color.LightSkyBlue; 
+			if (time>=(dayStart+1f)*hour && time<=dayEnd*hour) {
+				return Color.LightSkyBlue;
 
 			// Night
-			} else if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
+			} else if (time<=dayStart*hour || time>=(dayEnd+1f)*hour) {
 				return ColorNightColorBack;
 
 			// Sun rising (before sun)
-			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) { 
-				if (Constants.AnimationsGame) {
-					float a=-(dayStart*hour-time)/(hour);
-					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
-				} else return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, -(dayStart*hour-time)/(hour));
+			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) {
+				//if (Setting.BackgroundFancy) {
+				//	float a=-(dayStart*hour-time)/(hour);
+					//return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, -(dayStart*hour-time)/((float)hour));
 
-			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour) { 
+			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1f)*hour) {
 
 				// Sun rising (before sun)
-				if (Constants.AnimationsGame) {
-					float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
-					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
-				} else return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f+((dayStart+0.5f)*hour-time)/hour);
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
+				//	return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
+				//} else 
+					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f+((dayStart+0.5f)*hour-time)/(float)hour);
 
-			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) { 
-
-				// Sun setting
-				if (Constants.AnimationsGame) {
-					float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
-					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
-				} else return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
-
-			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) { 
+			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
 
 				// Sun setting
-				if (Constants.AnimationsGame) {
-					float a=((dayEnd+1)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
-				} else return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, ((dayEnd+1)*hour-time)/(hour*2));
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, a);
+				//} else 
+					return FastMath.Lerp(Color.LightSkyBlue, ColorNightColorBack, 0.5f-((dayEnd+0.5f)*hour-time)/((float)hour*2f));
+
+			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1f)*hour) {
+
+				// Sun setting
+			//	if (Setting.BackgroundFancy) {
+				//	float a=((dayEnd+1)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBack, Color.LightSkyBlue, ((dayEnd+1f)*hour-time)/((float)hour*2f));
 
 			}
-			return Color.LightSkyBlue; 
+			return Color.LightSkyBlue;
 		}
 
-		Color GetColorBackRain() { 
+		Color GetColorBackRain() {
 			// Day
 			if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
-				return ColorDayRainBack; 
+				return ColorDayRainBack;
 
 			// Night
-			} else if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
+			} else if (time<=dayStart*hour || time>=(dayEnd+1f)*hour) {
 				return ColorNightColorBackRain;
 
 			// Sun rising (before sun)
-			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) { 
-				if (Constants.AnimationsGame) {
-					float a=-(dayStart*hour-time)/(hour);
-					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
-				} else return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, -(dayStart*hour-time)/(hour));
+			} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour) {
+				//if (Setting.BackgroundFancy) {
+				//	float a=-(dayStart*hour-time)/(hour);
+				//	return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, -(dayStart*hour-time)/(hour));
 
-			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour) { 
+			} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1f)*hour) {
 
 				// Sun rising (before sun)
-				if (Constants.AnimationsGame) {
-					float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
-					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
-				} else return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f+((dayStart+0.5f)*hour-time)/hour);
+			//	if (Setting.BackgroundFancy) {
+				//	float a=0.5f+((dayStart+0.5f)*hour-time)/hour;
+				//	return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
+				//} else 
+					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f+((dayStart+0.5f)*hour-time)/hour);
 
-			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) { 
-
-				// Sun setting
-				if (Constants.AnimationsGame) {
-					float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
-				} else return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
-
-			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) { 
+			} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
 
 				// Sun setting
-				if (Constants.AnimationsGame) {
-					float a=((dayEnd+1)*hour-time)/(hour*2);
-					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
-				} else return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, ((dayEnd+1)*hour-time)/(hour*2));
+				//if (Setting.BackgroundFancy) {
+				//	float a=0.5f-((dayEnd+0.5f)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, a);
+				//} else 
+					return FastMath.Lerp(ColorDayRainBack, ColorNightColorBackRain, 0.5f-((dayEnd+0.5f)*hour-time)/(hour*2));
+
+			} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) {
+
+				// Sun setting
+			//	if (Setting.BackgroundFancy) {
+				//	float a=((dayEnd+1)*hour-time)/(hour*2);
+				//	return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, a);
+				//} else 
+					return FastMath.Lerp(ColorNightColorBackRain, ColorDayRainBack, ((dayEnd+1)*hour-time)/(hour*2));
 
 			}
-			return ColorDayRainBack; 
+			return ColorDayRainBack;
 		}
 
-		bool Command() { 
+		bool Command() {
 			if (text.StartsWith("*time-set ")) {
 				if (int.TryParse(text.Substring("*time-set ".Length), out int num)) {
-					time=num*hour; 
+					time=num*hour;
 				} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)) {
-					time=(int)(num2*hour); 
+					time=(int)(num2*hour);
 				}
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 			if (text.StartsWith("*day-set ")){
 				if (int.TryParse(text.Substring("*day-set ".Length), out int num)){
-					day=num; 
+					day=num;
 					ChangeLeavesForceEverything();
 				}
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*time-set early morning"){
-				time=(int)(5.5f*hour); 
+				time=(int)(5.5f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set late morning"){
-				time=(int)(9.5f*hour); 
+				time=(int)(9.5f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
-						
+			}
+
 			if (text=="*time-set morning"){
-				time=(int)(7f*hour); 
+				time=(int)(7f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set noon"){
-				time=(int)(12f*hour); 
+				time=(int)(12f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set night"){
-				time=(int)(20f*hour); 
+				time=(int)(20f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set afternoon"){
-				time=(int)(14f*hour); 
+				time=(int)(14f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set evening"){
-				time=(int)(16f*hour); 
+				time=(int)(16f*hour);
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*time-set midnight"){
-				time=0; 
+				time=0;
 				ChangeLeavesForceEverything();
 				text="";
 				diserpeard=0;
 				return true;
-			} 
+			}
 
 			if (text=="*give-mobile") {
 				InventoryAddOne((ushort)Items.Mobile);
 				text="";
 				diserpeard=0;text="";diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*wd0") {
 				Global.WorldDifficulty=0;text="";diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*wd1") {
 				Global.WorldDifficulty=1;text="";diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*wd2") {
 				Global.WorldDifficulty=2;text="";diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*rain-change") {
 				changeRain=1;
 				text="";diserpeard=0;
 				return true;
-			} 
+			}
 			if (text=="*wind-change") {
 				timeToChageWind=1;
 				text="";diserpeard=0;
@@ -26129,140 +27213,264 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 			if (text.StartsWith("*error")) {
 				throw new Exception("Manual error");
-			} 
+			}
 			return false;
 		}
 
-		 class ParticleMess {
-            public Vector2 Position;
-            public Rectangle Source;
-            public Texture2D Texture;
-            public int Disepeard;
+		void CheckBlockFallling(int x, int y) {
+			Terrain chunk=terrain[x];
+			if (chunk.IsSolidBlocks[y]) {
+				if (!chunk.IsSolidBlocks[y+1]) {
+					if (GameMethods.IsFallingBlock(chunk.SolidBlocks[y].Id)) {
+						int fallTo=y+1;
+						while (!chunk.IsSolidBlocks[fallTo+1]) {  fallTo++; }
 
-            public float LimitY;
-            public float HSpeed;
-            public float VSpeed;
-            public Color Color;
+						fallingBlocks.Add(new FallingBlockInfo(){ 
+							block=(NormalBlock)chunk.SolidBlocks[y],
+							to=new DInt(x, fallTo/*-1*/),
+							from=new DInt(x, y/*-1*/),
+							to16=new DInt(x*16, fallTo*16/*-16*/)
+						//	side=true
+						});
 
-            public void Update() {
-                HSpeed+=gravity*0.5f;
-                Position.Y+=HSpeed;
+						DestroyGrassUp(x,y-1);
+					}
+				}
+			}
+		}
 
-                Position.X+=VSpeed;
+		void SetSuperSampling() {
+			// No SSAA
+			if (Setting.UpScalingSuperSapling==1f) {
+				SuperSamplingActing=1f;
+				SetOther();
+				return;
+			}
 
-                if (Position.Y>=LimitY) Position.Y=LimitY;
+			// Pixelizer SSAA
+			if (Setting.UpScalingSuperSapling<1f) {
+				SuperSamplingActing=1f/Setting.Zoom;
+				targetGame?.Dispose();
+				targetGame=new RenderTarget2D(Graphics, 
+					(int)(Global.WindowWidth*SuperSamplingActing), 
+					(int)(Global.WindowHeight*SuperSamplingActing), 
+					false, 
+					SurfaceFormat.Color, 
+					DepthFormat.Depth24, 
+					1, 
+					RenderTargetUsage.PlatformContents);
+				SetOther();
+				return;
+			}
+
+			float maxUpscaling=20f;
+            if (Graphics.GraphicsProfile==GraphicsProfile.HiDef) {
+                float scale = 8192f/Global.WindowWidth;
+                if (scale<maxUpscaling)maxUpscaling=scale;
+
+                scale = 8192f/Global.WindowHeight;
+                if (scale<maxUpscaling) maxUpscaling=scale;
+            } else { 
+                float scale = 4096f/Global.WindowWidth;
+                if (scale<maxUpscaling) maxUpscaling=scale;
+
+                scale = 4096f/Global.WindowHeight;
+                if (scale<maxUpscaling) maxUpscaling=scale;
             }
 
-            public void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Source, Color*(Disepeard/50f));
-        }
+			if (Setting.UpScalingSuperSapling==2f) {
+				if (maxUpscaling>=Setting.UpScalingSuperSapling) { 
+					SuperSamplingActing=2f;
+						targetGame?.Dispose();
+						targetGame=new RenderTarget2D(
+							Graphics, 
+							Global.WindowWidth*2, 
+							Global.WindowHeight*2, 
+							false, 
+							SurfaceFormat.Color, 
+							DepthFormat.Depth24Stencil8, 
+							1, 
+							RenderTargetUsage.PlatformContents
+						);
+					SetOther();
+					return;
+				} else { 
+					SuperSamplingActing=1f;
+					targetGame?.Dispose();
+					SetOther();
+					return;
+				}
+			}
 
-        class ParticleRain {
-            public Vector2 Position;
+			if (Setting.UpScalingSuperSapling==4f) {
+				if (maxUpscaling>=4f) { 
+					SuperSamplingActing=4f;
 
-            public float HSpeed;
-            public float VSpeed;
-            public Color Color;
-            //	public float Angle;
+					targetGame?.Dispose();
+					targetGame=new RenderTarget2D(
+						Graphics, 
+						Global.WindowWidth*4, 
+						Global.WindowHeight*4, 
+						false, 
+						SurfaceFormat.Color, 
+						DepthFormat.Depth24Stencil8, 
+						1, 
+						RenderTargetUsage.PlatformContents
+					);
 
-            public float Size;
+					targetGame2?.Dispose();
+					targetGame2=new RenderTarget2D(
+						Graphics, 
+						Global.WindowWidth*2, 
+						Global.WindowHeight*2, 
+						false, 
+						SurfaceFormat.Color, 
+						DepthFormat.Depth24Stencil8, 
+						1, 
+						RenderTargetUsage.PlatformContents
+					);
+					SetOther();
+					return;
+				} else { 
+					if (maxUpscaling>=2f) {
+						SuperSamplingActing=2f;
 
-            public ParticleRain(float size, float vSpeed) {
-                Color=Color.Blue*(Size=size);
-                VSpeed=vSpeed*(size*0.5f+0.5f);
-            }
+						targetGame?.Dispose();
+						targetGame=new RenderTarget2D(
+							Graphics, 
+							Global.WindowWidth*2, 
+							Global.WindowHeight*2, 
+							false, 
+							SurfaceFormat.Color, 
+							DepthFormat.Depth24Stencil8, 
+							1, 
+							RenderTargetUsage.PlatformContents
+						);
 
-            public void Update() {
-                Position.X+=HSpeed*Size;
-                Position.Y+=VSpeed;
-            }
+						targetGame2?.Dispose();
+						SetOther();
+						return;
+					} else {
+						SuperSamplingActing=1f;
+						targetGame?.Dispose();
+						targetGame2?.Dispose();
+						SetOther();
+						return;
+					}
+				}
+			}
 
-            public void Draw(float x, float y,float a) => Rabcr.spriteBatch.Draw(
-                    texture: Rabcr.Pixel,
-                    destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), 1, Size<0.5f ? 2 : 3),
-                    //sourceRectangle: null,
-                    //effects:SpriteEffects.None,
-                    color: Color*a/*,*/
-                //rotation: Angle,
-                //origin: Vector2.Zero,
-                //layerDepth: 1f
-                );
-        }
+			void SetOther() { 
+				ZoomMatrix = Matrix.CreateScale(Setting.Zoom*SuperSamplingActing, Setting.Zoom*SuperSamplingActing, 0);
+				ZoomMatrixNoUpScaling = Matrix.CreateScale(Setting.Zoom, Setting.Zoom, 0);
+			
+				if (SuperSamplingActing!=1f) MatrixUpScaling = Matrix.CreateScale(SuperSamplingActing, SuperSamplingActing, 0);
+					Translation = ZoomMatrix*Matrix.CreateTranslation(new Vector3(
+					Global.WindowWidthHalf*SuperSamplingActing, 
+					Global.WindowHeightHalf*SuperSamplingActing, 
+				0));
 
-        class ParticleSnow {
-            public Vector2 Position;
+				TranslationNoOpMultisapling = ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(
+					Global.WindowWidthHalf, 
+					Global.WindowHeightHalf, 
+				0));
+				
+			}
+			
+			//if (Setting.UpScalingSuperSapling==8f) {
+			//	if (maxUpscaling>=Setting.UpScalingSuperSapling) { 
+			//		SuperSamplingActing=Setting.UpScalingSuperSapling;
+               
+			//		targetGame?.Dispose();
+			//		targetGame=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*8, 
+			//			Global.WindowHeight*8, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
 
-            public float HSpeed;
-            public float VSpeed;
-            public Color Color;
-            //	public float Angle;
-            int time;
-            public float Size;
+			//		targetGame2?.Dispose();
+			//		targetGame2=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*4, 
+			//			Global.WindowHeight*4, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
 
-            public ParticleSnow(float size, float vSpeed) {
-                Color=Color.White*(Size=size);
-                VSpeed=vSpeed*size;
-            }
+			//		targetGame4?.Dispose();
+			//		targetGame4=new RenderTarget2D(
+			//			Graphics, 
+			//			Global.WindowWidth*2, 
+			//			Global.WindowHeight*2, 
+			//			false, 
+			//			SurfaceFormat.Color, 
+			//			DepthFormat.Depth24, 
+			//			1, 
+			//			RenderTargetUsage.PlatformContents
+			//		);
+			//		return;
+			//	} else { 
+			//		if (maxUpscaling>=4f) {
+			//			SuperSamplingActing=4f;
+			//			targetGame?.Dispose();
+			//			targetGame=new RenderTarget2D(
+			//				Graphics, 
+			//				Global.WindowWidth*4, 
+			//				Global.WindowHeight*4, 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
 
-            public void Update() {
-                time++;
-                Position.X+=HSpeed+((float)Math.Cos(time/10f))*0.25f;
-                Position.Y+=VSpeed+((float)Math.Sin(time/10f))*HSpeed*0.5f/*+0.2f*/;
-            }
+			//			targetGame2?.Dispose();
+			//			targetGame2=new RenderTarget2D(
+			//				Graphics, 
+			//				Global.WindowWidth*2, 
+			//				Global.WindowHeight*2, 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
 
-            public void Draw(float x, float y,float A) => Rabcr.spriteBatch.Draw(
-                    texture: Rabcr.Pixel,
-                    destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Size>0.5f ? 2 : 1, Size>0.5f ? 2 : 1),
-                    //sourceRectangle: null,
-                    //effects:SpriteEffects.None,
-                    color: Color*A//,
-                                //rotation: Angle,
-                                //origin: Vector2.Zero,
-                                //layerDepth: 1f
-                );
+			//			targetGame4?.Dispose();
+			//		} else if (maxUpscaling>=2f) {
+			//			SuperSamplingActing=2f;
+			//			targetGame?.Dispose();
+			//			targetGame=new RenderTarget2D(
+			//				Graphics, 
+			//				(int)(Global.WindowWidth*SuperSamplingActing), 
+			//				(int)(Global.WindowHeight*SuperSamplingActing), 
+			//				false, 
+			//				SurfaceFormat.Color, 
+			//				DepthFormat.Depth24, 
+			//				1, 
+			//				RenderTargetUsage.PlatformContents
+			//			);
 
-        }
-
-        class FallingLeave {
-            public Texture2D texture;
-            public Vector2 Position;
-            public float angle;
-            public float time;
-            //	public float size;
-            Vector2 vecOrigin;
-            public float VSpeed;
-            public Rectangle srcrec;
-            public Color Color = Color.White;
-            public FallingLeave(int x, int y, float size, bool leftWind, bool rain, Rectangle src) {
-                Position=new Vector2(x, y);
-                vecOrigin=new Vector2(size, size);
-                if (rain) {
-                    if (leftWind) VSpeed=-0.01f; else VSpeed=0.01f;
-                } else {
-                    if (leftWind) VSpeed=-0.09f; else VSpeed=0.09f;
-                }
-                srcrec=src;
-            }
-
-            public void Update() {
-                time+=0.07f;
-                Position.X+=VSpeed;
-                Position.Y+=(float)Math.Cos(time)*0.125f+0.35f;
-                angle=(float)Math.Cos(time)*0.3f+FastMath.PI/2f;
-            }
-
-            public void Draw() {
-                Rabcr.spriteBatch.Draw(
-                    texture: texture,		
-                    position: new Vector2(Position.X, Position.Y/*, srcrec.Width, srcrec.Height*/),
-                //    destinationRectangle: new Rectangle((int)Position.X, (int)Position.Y, srcrec.Width, srcrec.Height),
-                    sourceRectangle: srcrec/*new Rectangle(0,0,2,3)*/,
-                    effects: SpriteEffects.None,
-                    color: Color,
-					scale: 1f,
-                    rotation: angle,
-                    origin: vecOrigin,
-                    layerDepth: 1f);
-            }
-        }
+			//			targetGame2?.Dispose();
+			//			targetGame4?.Dispose();
+			//			return;
+			//		} else {
+			//			SuperSamplingActing=1f;
+			//			targetGame?.Dispose();
+			//			targetGame2?.Dispose();
+			//			targetGame4?.Dispose();
+			//			return;
+			//		}
+			//	}
+			//}
+		}
 	}
 }

@@ -2,15 +2,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Color = Microsoft.Xna.Framework.Color;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace rabcrClient {
@@ -21,19 +18,17 @@ namespace rabcrClient {
         public static GraphicsDeviceManager GraphicsManager;
         public static Game Game;
         public static Texture2D Pixel;
-        public static FastRandom random;
+        public static Texture2D Pixel2;
         public static SpriteBatch spriteBatch;
         static bool exiting=false;
         static bool saved=false;
         public static bool ActiveWindow;
         public static MouseState newMouseState;
         public static bool IsBannedCountry, IsLimitedCountry;
-        public static Color color_r0_g0_b0_a100 = new Color(0,0,0,100);
+        public static Color color_r0_g0_b0_a100 = new(0,0,0,100);
 
         public Rabcr() {
             newMouseState=new MouseState();
-            //Activated += ActivateMyGame;
-            //Deactivated += DeactivateMyGame;
             bool runWithArgs=Environment.GetCommandLineArgs().Length>=3;
             Game=this;
 
@@ -101,19 +96,32 @@ namespace rabcrClient {
                    // Global.OnlineAccount=false;
 
                     Setting.Path=GetPathIfNotArgs();
-                    
+
                     //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
                 }
 
-                if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
-           //     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
-                if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
-              //  if (!Directory.Exists(Setting.Path+"\\Servers"))Directory.CreateDirectory(Setting.Path+"\\Servers");
+                if (!Directory.Exists(Setting.Path)) {
+                    try {
+                        Directory.CreateDirectory(Setting.Path);
+                    } catch (UnauthorizedAccessException) { 
+                        MessageBox.Show("Settings cannot be saved. This application does not have permissions to manipulate folders/files. Try run as administrator.");
+                    } catch (Exception ex) { 
+                        throw ex;
+                    }
+                }
 
-                //Log.Init();
+                if (!Directory.Exists(Setting.Path+"\\Worlds")){
+                    try {
+                        Directory.CreateDirectory(Setting.Path+"\\Worlds");
+                    } catch (UnauthorizedAccessException) { 
+                        MessageBox.Show("Folder for worlds cannot be created. This application does not have permissions to manipulate folders/files. Try run as administrator.");
+                    } catch (Exception ex) { 
+                        throw ex;
+                    }
+                }
 
                 if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
-                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){ 
+                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName) {
                          default:
                             MessageBox.Show("Game data not found, game was probably runned from archive"
                             #if DEBUG
@@ -130,7 +138,7 @@ namespace rabcrClient {
                             ,"Chyba - Nenalezeny data hry");
                             break;
                     }
-                   
+
 
                     Environment.Exit(-1);
                     return;
@@ -146,14 +154,32 @@ namespace rabcrClient {
                 }
 
             #endregion
-
+          
             GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
 
-            GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
-            GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
+            GraphicsManager.PreferredBackBufferHeight = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
+            GraphicsManager.PreferredBackBufferWidth  = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width *0.6667f);
+
+            //    Graphics.RasterizerState.MultiSampleAntiAlias=true;
+            GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+
+            static void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
+                if (Setting.GraphicsProfile==GraphicsProfile.HiDef) { 
+                    try { 
+                        e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+                    } catch { 
+                        Setting.GraphicsProfile=GraphicsProfile.Reach;
+                        e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+                    }
+                }else e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;
+
+                e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount=Setting.Multisapling;
+            //    //  e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval
+              //  Debug.WriteLine("MultiSampleCount: " + e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount);
+            }
+            GraphicsManager.PreferMultiSampling = Setting.Multisapling>1 /*|| Setting.Multisapling==0*/;
            
-     
             try {
                 GraphicsManager.ApplyChanges();
             } catch{ }
@@ -162,12 +188,14 @@ namespace rabcrClient {
             SetLangUp();
             Content = new ContentManager(Services, "RabcrData");
             content=Content;
-       
-            (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
 
-            random=new FastRandom();
+            (Pixel  = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
+            (Pixel2 = new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White, Color.White, Color.White, Color.White });
 
-            Window.Position=new Microsoft.Xna.Framework.Point((int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f),(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f));
+            Window.Position=new Microsoft.Xna.Framework.Point(
+                (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f), 
+                (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f)
+            );
             {
                 Form MyGameForm = (Form)Control.FromHandle(Window.Handle);
                 MyGameForm.LocationChanged+=Window_ClientSizeChanged;
@@ -175,7 +203,7 @@ namespace rabcrClient {
                 MyGameForm.MinimumSize=new Size(320, 200);
                 MyGameForm.SizeChanged+=Window_ClientSizeChanged;
                 MyGameForm.StartPosition=FormStartPosition.CenterScreen;
-            } 
+            }
         }
 
         public static void SetLangUp(){
@@ -217,7 +245,7 @@ namespace rabcrClient {
                     GC.WaitForPendingFinalizers();
                     BitmapFont.bitmapFont18=new BitmapFont(18,Properties.Resources.FontInfo_traditionalChinese_18);
                     break;
-                    
+
                 case "korean":
                     BitmapFont.bitmapFont34=new BitmapFont(34,Properties.Resources.FontInfo_korean_34);
                     GC.Collect();
@@ -261,12 +289,16 @@ namespace rabcrClient {
         }
 
         void MyGameForm_FormClosing(object sender, FormClosingEventArgs e) {
-            Console.WriteLine("Closing game");
+            #if DEBUG
+            Debug.WriteLine("Closing screen");
+            #endif
             exiting=true;
             screen.Shutdown();
 
-            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) {Setting.SaveSetting(); if (exiting) saved=true;}
-            else {
+            if (Global.ChangedSettings || !File.Exists(Setting.Path+@"\Setting.bin")) {
+                Setting.SaveSetting(); 
+                if (exiting) saved=true;
+            } else {
                 saved=true;
             }
 
@@ -296,9 +328,9 @@ namespace rabcrClient {
                 }
             }
 
-            if (resize){
+            if (resize) {
                 GraphicsManager.ApplyChanges();
-                if (screen!=null) screen.Resize();
+                screen?.Resize();
             }
         }
 
@@ -306,7 +338,7 @@ namespace rabcrClient {
             spriteBatch=new SpriteBatch(GraphicsDevice);
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
-            
+
             GoTo(new Start());
             base.LoadContent();
         }
@@ -325,7 +357,7 @@ namespace rabcrClient {
 
         public static void GoTo(Screen name) {
             if (screen!=null) {
-                if (!screen.isDisposed) screen.Shutdown(); 
+                if (!screen.isDisposed) screen.Shutdown();
             }
             name.Init();
             screen=name;
@@ -400,14 +432,14 @@ namespace rabcrClient {
         //    bytes.AddRange(BitConverter.GetBytes(Setting.slideChangeTime));
         //    bytes.AddRange(BitConverter.GetBytes(Setting.Zoom));
         //    bytes.AddRange(BitConverter.GetBytes(Setting.NightBrightness));
-                
-          
+
+
 
         //    File.WriteAllBytes(Setting.Path+@"\Setting.bin",bytes.ToArray());
         //    //Debug.Write(" Uloženo!");
 
         //    //if (Global.OnlineAccount && Global.Logged) UploadAccountSetting();
-        //    //else 
+        //    //else
         //    if (exiting)saved=true;
         //}
 

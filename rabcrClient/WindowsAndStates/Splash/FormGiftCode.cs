@@ -6,13 +6,13 @@ namespace rabcrClient {
 
         public string giftData;
         public bool DropGift;
-       
+
         public FormGiftCode() {
             InitializeComponent();
             DoubleBuffered=true;
             Text=textPanel8.Text=gTextPanel1.Text=Lang.Texts[1476];
             textPanel8.Resize+=TextPanel8_Resize;
-            
+
             gTextBox1.textBox.TextChanged+=TextBox_TextChanged;
 
             buttonApply.Text=Lang.Texts[58];
@@ -36,16 +36,16 @@ namespace rabcrClient {
                 #if DEBUG
                 System.Diagnostics.Debug.WriteLine("Gift result: "+result);
                 #endif
-                if (result.Length==0) { 
-                    MessageBox.Show(Lang.Texts[46]);    
-                } else if (result.Contains("|")) { 
+                if (result.Length==0) {
+                    MessageBox.Show(Lang.Texts[46]);
+                } else if (result.Contains("|")) {
                     string[] raw=result.Split('|');
-                    switch (raw[0]) { 
+                    switch (raw[0]) {
                         case "E":
                             if (int.TryParse(raw[1], out int eid)) {
-                                switch (eid){ 
+                                switch (eid){
                                     case 1:
-                                        MessageBox.Show(Lang.Texts[46]); 
+                                        MessageBox.Show(Lang.Texts[46]);
                                         break;
 
                                     case 2:
@@ -53,7 +53,7 @@ namespace rabcrClient {
                                         break;
 
                                     case 3:
-                                        MessageBox.Show(Lang.Texts[46]); 
+                                        MessageBox.Show(Lang.Texts[46]);
                                         break;
 
                                     case 4:
@@ -64,25 +64,25 @@ namespace rabcrClient {
                                         MessageBox.Show(Lang.Texts[1495]);
                                         break;
 
-                                    default: 
+                                    default:
                                         MessageBox.Show(Lang.Texts[46]);
                                         break;
                                 }
-                            } else MessageBox.Show(Lang.Texts[46]); 
+                            } else MessageBox.Show(Lang.Texts[46]);
                             break;
 
                         case "O":
-                            MessageBox.Show(Lang.Texts[1492]);  
+                            MessageBox.Show(Lang.Texts[1492]);
                             giftData=raw[1];
                             DropGift=true;
                             break;
 
                         default:
-                            MessageBox.Show(Lang.Texts[46]); 
+                            MessageBox.Show(Lang.Texts[46]);
                             break;
                     }
                 } else {
-                    MessageBox.Show(Lang.Texts[46]);   
+                    MessageBox.Show(Lang.Texts[46]);
                 }
             }
 

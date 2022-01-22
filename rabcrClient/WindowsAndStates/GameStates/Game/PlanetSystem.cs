@@ -64,7 +64,7 @@ namespace rabcrClient {
         }
 
         //double[] CalculatePos(double angle, double Inclination, double Aphelion, double Perihelion) {
-        //    return ;
+        //    return;
         //}
         double z;
         public void Draw(SpriteBatch sb, Double2 pos, Color c,double zoom) {
@@ -161,7 +161,6 @@ namespace rabcrClient {
        // Planet canOrbit, mercur, venus, earth, mars, jupiter, saturn, uran, neptun, pluto, moon, io, callisto, galimedes, europa, titan, triton,station;
       //  ContentManager Content;
         Texture2D /*pixel,*/ /*SunTexture,*/ /*rocketTexture,*/ buttonCenter, buttonAround;
-      // Vector2 ;
         Double2 windowPosition=new Double2(0,0)/*,*//*rocketPos=new Double2(0,0), selectedPos=new Double2(0,0),*/ /*mousePos=new Double2(0,0)*//*, lastPos=new Double2(0,0)*/;
         SpriteFont spriteFont_medium,spriteFont_small;
         AstronomicalObject[] sun;
@@ -318,9 +317,14 @@ sun=new GeneratePlanetSystem().SunSystem();
             Console.WriteLine(pathToWorld+@"\Inventory.txt");
               if (File.Exists(pathToWorld+@"\Inventory.txt")) {Console.WriteLine("txt");
                 using (StreamReader sr = new StreamReader(pathToWorld+@"\Inventory.txt")) {
-                    foreach (DInt x in Inventory) {
-                       x.X= int.Parse(sr.ReadLine());
-                       x.Y= int.Parse(sr.ReadLine());
+                    //foreach (DInt x in Inventory) {
+                    //   x.X= int.Parse(sr.ReadLine());
+                    //   x.Y= int.Parse(sr.ReadLine());
+                    //}
+                    for(int i = 0; i < Inventory.Count; i+= 1) //  for each file
+                    {
+                        Inventory[i].X= int.Parse(sr.ReadLine());
+                        Inventory[i].Y= int.Parse(sr.ReadLine());
                     }
                 }
             }
@@ -643,7 +647,9 @@ sun=new GeneratePlanetSystem().SunSystem();
         void InventoryRemove(int x, int y) {
             int needToRemove=y;
 
-            foreach (DInt i in Inventory){
+            for (int o = 0; o < Inventory.Count; o++){
+                //   foreach (DInt i in Inventory){
+                DInt i = Inventory[o];
                 if (i.X==x) {
                     if (i.Y<needToRemove){
                         needToRemove-=i.Y;

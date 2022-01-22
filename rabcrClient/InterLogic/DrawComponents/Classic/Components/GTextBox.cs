@@ -82,7 +82,7 @@ namespace rabcrClient {
 
 
         public string TextInTextBox {
-            get => textBox.Text; 
+            get => textBox.Text;
             set => textBox.Text=value;
         }
 

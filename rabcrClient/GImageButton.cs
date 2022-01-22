@@ -25,7 +25,7 @@ using System.Drawing.Drawing2D;
 		    SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			BackColor =Color.FromArgb(0,255,255,255);
-            (timer=new Timer { 
+            (timer=new Timer {
                 Interval=40
             }).Tick+=Timer_Tick;
 		}

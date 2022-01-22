@@ -34,9 +34,9 @@
             this.buttonSubmit = new GButton();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
             this.panel1.Controls.Add(this.textPanel8);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -44,9 +44,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(440, 34);
             this.panel1.TabIndex = 0;
-            // 
+            //
             // textPanel8
-            // 
+            //
             this.textPanel8.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel8.BackColor = System.Drawing.Color.Transparent;
             this.textPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -57,9 +57,9 @@
             this.textPanel8.TabIndex = 0;
             this.textPanel8.TabStop = false;
             this.textPanel8.Text = "Share stone age acheavement";
-            // 
+            //
             // buttonCancel
-            // 
+            //
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonCancel.BackColor = System.Drawing.Color.Transparent;
             this.buttonCancel.Disamble = false;
@@ -71,9 +71,9 @@
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
-            // 
+            //
             // textBoxNick
-            // 
+            //
             this.textBoxNick.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textBoxNick.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBoxNick.Location = new System.Drawing.Point(84, 118);
@@ -83,9 +83,9 @@
             this.textBoxNick.StateSelect = GBounds.StateSelect.Between;
             this.textBoxNick.TabIndex = 3;
             this.textBoxNick.TextInTextBox = "";
-            // 
+            //
             // textPanelNick
-            // 
+            //
             this.textPanelNick.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textPanelNick.BackColor = System.Drawing.Color.Transparent;
             this.textPanelNick.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -96,9 +96,9 @@
             this.textPanelNick.TabIndex = 0;
             this.textPanelNick.TabStop = false;
             this.textPanelNick.Text = "Game Jolt Nick";
-            // 
+            //
             // textBoxToken
-            // 
+            //
             this.textBoxToken.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textBoxToken.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBoxToken.Location = new System.Drawing.Point(84, 194);
@@ -108,9 +108,9 @@
             this.textBoxToken.StateSelect = GBounds.StateSelect.Between;
             this.textBoxToken.TabIndex = 3;
             this.textBoxToken.TextInTextBox = "";
-            // 
+            //
             // textPanelToken
-            // 
+            //
             this.textPanelToken.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.textPanelToken.BackColor = System.Drawing.Color.Transparent;
             this.textPanelToken.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -121,9 +121,9 @@
             this.textPanelToken.TabIndex = 0;
             this.textPanelToken.TabStop = false;
             this.textPanelToken.Text = "Game Jolt Token";
-            // 
+            //
             // buttonSubmit
-            // 
+            //
             this.buttonSubmit.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonSubmit.BackColor = System.Drawing.Color.Transparent;
             this.buttonSubmit.Disamble = true;
@@ -135,9 +135,9 @@
             this.buttonSubmit.TabIndex = 2;
             this.buttonSubmit.Text = "Submit";
             this.buttonSubmit.Click += new System.EventHandler(this.CustomButton1_Click);
-            // 
+            //
             // FormAchGameJolt
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(440, 330);

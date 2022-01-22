@@ -2,12 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 
 namespace rabcrClient {
-    public class FallingBlockInfo{
-        public NormalBlock block;
-        public DInt to, to16;
-        public bool side;
-    }
-
     public class ClothesTypeUnderwearDown {
         public Texture2D TextureStatic, TextureWalking, TextureSwimming;
         public bool Colorize;
@@ -63,7 +57,7 @@ namespace rabcrClient {
         public bool ShinkHair;
         public Color Color;
     }
-    public enum HandClothSize : byte{
+    public enum HandClothSize : int{
         None=0,
         Half=18/2,
         NearlyFull=18-4,

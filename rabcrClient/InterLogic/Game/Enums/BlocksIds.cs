@@ -22,20 +22,22 @@
 
     WaterBlock,
     WaterSalt,
-        
-    Barrel, 
-        
 
-    _MoreInLoad,  
-        
+    Barrel,
+
+
+    _MoreInLoad,
+
     Lava,
-        
+
     #region Trees
     OakLeaves,
     OakWood,
     OakBranches,
+    OakBranchesSnow,
 
     SpruceLeaves,
+    SpruceLeavesWithSnow,
     SpruceWood,
 
     PineLeaves,
@@ -44,24 +46,28 @@
     LindenLeaves,
     LindenWood,
     LindenBranches,
+    LindenBranchesSnow,
 
     AppleLeaves,
     AppleLeavesWithApples,
     AppleLeavesBlossom,
     AppleWood,
     AppleBranches,
+    AppleBranchesSnow,
 
     CherryLeaves,
     CherryLeavesWithCherries,
     CherryLeavesBlossom,
     CherryWood,
     CherryBranches,
+    CherryBranchesSnow,
 
     PlumLeaves,
     PlumLeavesWithPlums,
     PlumLeavesBlossom,
     PlumWood,
     PlumBranches,
+    PlumBranchesSnow,
 
     LemonWood,
     LemonLeaves,
@@ -74,6 +80,7 @@
     WillowLeaves,
     WillowWood,
     WillowBranches,
+    WillowBranchesSnow,
 
     MangroveLeaves,
     MangroveWood,
@@ -339,4 +346,6 @@
     ChristmasBallPurple,
     ChristmasBallLightGreen,
     MobParrot,
+    Spawner, // for server, place where are players spawned
+    Teleporter // for gates - other places in current world or another world
 }

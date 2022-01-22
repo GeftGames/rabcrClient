@@ -34,7 +34,8 @@ namespace rabcrClient {
         public AddSingleWorld(string rndName) {
             DirName=rndName;
             InitializeComponent();
-   textPanel8.Resize+=TextPanel8_Resize;
+
+            textPanel8.Resize+=TextPanel8_Resize;
             textPanel8.Text=Lang.Texts[188];
             textPanel1.Text=Lang.Texts[59];
             link1.Text=Lang.Texts[60];
@@ -46,7 +47,7 @@ namespace rabcrClient {
             gTextPanel1.Text=Lang.Texts[323];
             textPanel3.Text=Lang.Texts[72];
             customButton4.Text=Lang.Texts[194];
-         changeButtonStartUpItems.List= new string[]{ Lang.Texts[148],Lang.Texts[320],Lang.Texts[321],Lang.Texts[322]};
+            changeButtonStartUpItems.List= new string[]{ Lang.Texts[148],Lang.Texts[320],Lang.Texts[321],Lang.Texts[322]};
             changeButtonStartUpItems.selected=0;
             changeButton1.List = new string[] { Lang.Texts[195], Lang.Texts[198], Lang.Texts[183]};
 
@@ -56,19 +57,18 @@ namespace rabcrClient {
 
             timer1.Start();
             newWorld=Lang.Texts[17];
-            //if (Setting.czechLanguage) newWorld="Nový svět"; else newWorld="New world";
             string o="";
             for (int i=0; i<newWorld.Length; i++){
                 if (newWorld[i]==' '){
                     o+=" ";
                 }else{
-                    string code=codes[Rabcr.random.Int(codes.Length-1)];
+                    string code=codes[FastRandom.Int(codes.Length-1)];
                     o+="<"+code+">"+newWorld[i]+"</"+code+">";
                 }
             }
-           
+
             xTextBoxName.textBox.Text=o;
-            xTextBoxName.textBox.TextChanged+=TextBoxName_TextChanged;//"<Green>N</Green><LightBlue>o</LightBlue><Red>v</Red><LightGreen>ý</LightGreen> <Brown>s</Brown><Teal>v</Teal><Blue>ě</Blue><Purple>t</Purple>";
+            xTextBoxName.textBox.TextChanged+=TextBoxName_TextChanged;
         }
 
         void TextPanel8_Resize(object sender, System.EventArgs e) => textPanel8.Location=new System.Drawing.Point(Width/2-textPanel8.Width/2, textPanel8.Location.Y);

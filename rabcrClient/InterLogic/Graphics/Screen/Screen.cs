@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace rabcrClient {
     public abstract class Screen: IDisposable {
@@ -35,6 +36,7 @@ namespace rabcrClient {
         public virtual void Resize() { }
 
         public Texture2D GetDataTexture(string path) => Content.Load<Texture2D>(fastloadtexturespath+path);
+        public SoundEffect GetDataSoundEffect(string path) => Content.Load<SoundEffect>(Setting.StyleName+"/SoundEffects/"+path);
 
         public Song GetDataSong(string path) => Content.Load<Song>(Setting.StyleName+"/Songs/"+path);
 

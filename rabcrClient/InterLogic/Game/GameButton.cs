@@ -6,13 +6,12 @@ namespace rabcrClient {
 
         #region Varibles
         int fill=255;
-     //   int needBeFill=255;
         Color color;
 
         public Texture2D texture;
         public string text;
 
-        /*float*/int Xp,Yp;
+        int Xp,Yp;
         int TextPositionX, TextPositionY;
         Vector2 TexturePositon;
         Text Ttext;
@@ -48,7 +47,7 @@ namespace rabcrClient {
         }
 
         void SetText(){
-            Ttext=new Text(text,TextPositionX, TextPositionY,BitmapFont.bitmapFont18);
+            Ttext=new Text(text,TextPositionX, TextPositionY, BitmapFont.bitmapFont18);
         }
 
         public bool Update() {

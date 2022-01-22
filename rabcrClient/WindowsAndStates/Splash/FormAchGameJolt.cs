@@ -12,7 +12,7 @@ namespace rabcrClient {
             Level=level;
             DoubleBuffered=true;
             textBoxNick.textBox.TextChanged+=TextBox_TextChanged;
-            textBoxToken.textBox.TextChanged+=TextBox_TextChanged1;  
+            textBoxToken.textBox.TextChanged+=TextBox_TextChanged1;
             textPanel8.Text=Text=name;
             textPanelNick.Text=Lang.Texts[1488];
             textPanelToken.Text=Lang.Texts[1489];
@@ -24,10 +24,10 @@ namespace rabcrClient {
 
         void TextPanel8_Resize(object sender, System.EventArgs e) => textPanel8.Location=new System.Drawing.Point(Width/2-textPanel8.Width/2, textPanel8.Location.Y);
 
-        void TextBox_TextChanged1(object sender, System.EventArgs e) => buttonSubmit.Disamble=textBoxNick.textBox.Text.Length<3 || textBoxToken.textBox.Text.Length<3; 
+        void TextBox_TextChanged1(object sender, System.EventArgs e) => buttonSubmit.Disamble=textBoxNick.textBox.Text.Length<3 || textBoxToken.textBox.Text.Length<3;
 
-        void TextBox_TextChanged(object sender, System.EventArgs e) => buttonSubmit.Disamble=textBoxNick.textBox.Text.Length<3 || textBoxToken.textBox.Text.Length<3; 
- 
+        void TextBox_TextChanged(object sender, System.EventArgs e) => buttonSubmit.Disamble=textBoxNick.textBox.Text.Length<3 || textBoxToken.textBox.Text.Length<3;
+
         void CustomButton1_Click(object sender, System.EventArgs e) {
             if (!buttonCancel.Disamble) {
                 WebClient wc = new WebClient();
@@ -37,7 +37,7 @@ namespace rabcrClient {
                 secretKey="url"+secretKey.Substring(1,9);
                 secretKey="";
 
-                switch (Level) { 
+                switch (Level) {
 
                     // Bronze
                     case 0:
@@ -45,9 +45,9 @@ namespace rabcrClient {
                             string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134205&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
-                            if (get=="SUCCESS") { 
+                            if (get=="SUCCESS") {
                                 MessageBox.Show(Lang.Texts[1499]);
-                            } else { 
+                            } else {
                                 MessageBox.Show(Lang.Texts[1500],Lang.Texts[46]);
                             }
 
@@ -64,9 +64,9 @@ namespace rabcrClient {
                             string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=13407&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
-                            if (get=="SUCCESS") { 
+                            if (get=="SUCCESS") {
                                 MessageBox.Show(Lang.Texts[1499]);
-                            } else { 
+                            } else {
                                 MessageBox.Show(Lang.Texts[1500],Lang.Texts[46]);
                             }
 
@@ -83,9 +83,9 @@ namespace rabcrClient {
                             string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134208&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
-                            if (get=="SUCCESS") { 
+                            if (get=="SUCCESS") {
                                 MessageBox.Show(Lang.Texts[1499]);
-                            } else { 
+                            } else {
                                 MessageBox.Show(Lang.Texts[1500],Lang.Texts[46]);
                             }
 
@@ -102,9 +102,9 @@ namespace rabcrClient {
                             string url=Release.stringGameJoltServerGate+"username="+textBoxNick.textBox.Text+"&token="+textBoxToken.textBox.Text+"&id=134209&version="+Release.VersionString+secretKey;
                             string get = wc.DownloadString(url);
 
-                            if (get=="SUCCESS") { 
+                            if (get=="SUCCESS") {
                                 MessageBox.Show(Lang.Texts[1499]);
-                            } else { 
+                            } else {
                                 MessageBox.Show(Lang.Texts[1500],Lang.Texts[46]);
                             }
 
@@ -115,7 +115,7 @@ namespace rabcrClient {
                         }
                         break;
                 }
-                
+
                 Close();
             }
         }

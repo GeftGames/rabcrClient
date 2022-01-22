@@ -34,25 +34,25 @@ namespace rabcrClient {
         }
 
         void AchievmentControl0_Click(object sender, System.EventArgs e) {
-            using (FormAchDetail fad=new FormAchDetail(achievmentControl0.Text,achievmentControl0.Done,Lang.Texts[1480],0)) { 
+            using (FormAchDetail fad=new FormAchDetail(achievmentControl0.Text,achievmentControl0.Done,Lang.Texts[1480],0)) {
                 fad.ShowDialog();
             }
         }
 
         void AchievmentControl1_Click(object sender, System.EventArgs e) {
-            using (FormAchDetail fad=new FormAchDetail(achievmentControl1.Text,achievmentControl1.Done, Lang.Texts[1482],1)) { 
+            using (FormAchDetail fad=new FormAchDetail(achievmentControl1.Text,achievmentControl1.Done, Lang.Texts[1482],1)) {
                 fad.ShowDialog();
             }
         }
 
         void achievmentControl2_Click(object sender, System.EventArgs e) {
-            using (FormAchDetail fad=new FormAchDetail(achievmentControl2.Text,achievmentControl2.Done, Lang.Texts[1484],2)) { 
+            using (FormAchDetail fad=new FormAchDetail(achievmentControl2.Text,achievmentControl2.Done, Lang.Texts[1484],2)) {
                 fad.ShowDialog();
             }
         }
 
         void AchievmentControl3_Click(object sender, System.EventArgs e) {
-            using (FormAchDetail fad=new FormAchDetail(achievmentControl3.Text,achievmentControl3.Done, Lang.Texts[1486],3)) { 
+            using (FormAchDetail fad=new FormAchDetail(achievmentControl3.Text,achievmentControl3.Done, Lang.Texts[1486],3)) {
                 fad.ShowDialog();
             }
         }

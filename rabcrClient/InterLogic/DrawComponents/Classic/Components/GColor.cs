@@ -28,10 +28,10 @@ namespace rabcrClient{
         #endregion
 
         public bool Selected {
-            get => selected; 
-            set { 
-                selected = value; 
-                Invalidate(); 
+            get => selected;
+            set {
+                selected = value;
+                Invalidate();
             }
         }
 
@@ -268,7 +268,7 @@ namespace rabcrClient{
 
                         g.DrawImage(nb, new Point(1, 1));
                     if (!Custom) g.FillRectangle(new SolidBrush(color),new Rectangle(4,4,buttonSize.Width-4-2,buttonSize.Height-4-2));
-               
+
                            // NativeMethods.Text(g, Constants.font14,Text,pos.X,pos.Y,255);
                     }else if (State.Click==currentState){
                         //    if (shadow!=null) {
@@ -385,7 +385,7 @@ namespace rabcrClient{
 
 				    g2.DrawRectangle(sb, new Rectangle(0, 0, buttonSize.Width-1, buttonSize.Height-1));
                 }
-             
+
                 using (Bitmap small=new Bitmap((int)(buttonSize.Width*Constants.TextBlur)+2, (int)(buttonSize.Height*Constants.TextBlur)+2)){
                     using (Graphics gT = Graphics.FromImage(small)) {
                         gT.CompositingQuality=CompositingQuality.HighQuality;

@@ -230,6 +230,7 @@
     OakLeaves,
     OrangeLeaves,
     SpruceLeaves,
+    SpruceLeavesWithSnow,
     PlumLeavesWithPlums,
     PlumLeaves,
     PineLeaves,

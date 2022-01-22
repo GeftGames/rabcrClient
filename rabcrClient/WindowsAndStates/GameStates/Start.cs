@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace rabcrClient {
     class Start :Screen {
-        enum AnimationState{ 
+        enum AnimationState{
             No,
             Initing,
             StandBy,
@@ -68,13 +68,13 @@ namespace rabcrClient {
 
             switch (CurrentAnimationState) {
                 case AnimationState.No:
-                    if (gameTime.TotalGameTime.TotalMilliseconds>500) { 
+                    if (gameTime.TotalGameTime.TotalMilliseconds>500) {
                         StartChangeAnimation=gameTime.TotalGameTime.TotalMilliseconds-500;
                         CurrentAnimationState=AnimationState.Initing;
                     }
                     break;
 
-                case AnimationState.Initing: 
+                case AnimationState.Initing:
                     if (alpha!=1) {
                         alpha+=gameTime.ElapsedGameTime.Milliseconds/500f;
                         if (alpha>1)alpha=1;
@@ -125,7 +125,7 @@ namespace rabcrClient {
 
             if (Textures.Logo!=null) {
                 switch (CurrentAnimationState) {
-                    case AnimationState.Initing: 
+                    case AnimationState.Initing:
                         spriteBatch.Draw(Textures.Logo,new Vector2(Global.WindowWidthHalf-Textures.Logo.Width/2,Global.WindowHeightHalf-Textures.Logo.Height+20), Color.White*(float)Math.Sin(alpha*Math.PI/2f));
                         break;
 
@@ -136,7 +136,7 @@ namespace rabcrClient {
                     case AnimationState.Ending:
                         spriteBatch.Draw(Textures.Logo,new Vector2(Global.WindowWidthHalf-Textures.Logo.Width/2,Global.WindowHeightHalf-Textures.Logo.Height+20), Color.White*(1f-(float)Math.Sin(alpha*Math.PI/2f)));
                         break;
-                } 
+                }
             }
 
             spriteBatch.End();
@@ -159,13 +159,13 @@ namespace rabcrClient {
 
         #region Load content methods
         SpriteFont LoadDataFont(string str) => Content.Load<SpriteFont>(Setting.StyleName+"\\Fonts\\"+str);
-		
+
         Effect LoadDataEffect(string str) => Content.Load<Effect>(Setting.StyleName+"\\Effects\\"+str);
 
         Song LoadDataSong(string str) => Content.Load<Song>(Setting.StyleName+"\\Songs\\"+str);
-		
+
         SoundEffect LoadDataSoundEffect(string str) => Content.Load<SoundEffect>(Setting.StyleName+"\\SoundEffects\\"+str);
-		
+
         Texture2D LoadDataTexture(string str) => Content.Load<Texture2D>(Setting.StyleName+"\\Textures\\"+str);
         #endregion
 

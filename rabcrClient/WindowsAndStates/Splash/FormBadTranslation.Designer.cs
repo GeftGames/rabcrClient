@@ -36,9 +36,9 @@
             this.textPanel8 = new GTextPanel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // customButton2
-            // 
+            //
             this.customButton2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton2.BackColor = System.Drawing.Color.Transparent;
             this.customButton2.Disamble = false;
@@ -50,9 +50,9 @@
             this.customButton2.TabIndex = 3;
             this.customButton2.Text = "Zrušit";
             this.customButton2.Click += new System.EventHandler(this.GButton2_Click);
-            // 
+            //
             // customButton1
-            // 
+            //
             this.customButton1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.customButton1.BackColor = System.Drawing.Color.Transparent;
             this.customButton1.Disamble = false;
@@ -64,9 +64,9 @@
             this.customButton1.TabIndex = 4;
             this.customButton1.Text = "Podtvrdit";
             this.customButton1.Click += new System.EventHandler(this.GButton1_Click);
-            // 
+            //
             // gTextPanel1
-            // 
+            //
             this.gTextPanel1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.gTextPanel1.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -77,9 +77,9 @@
             this.gTextPanel1.TabIndex = 11;
             this.gTextPanel1.TabStop = false;
             this.gTextPanel1.Text = "Write down what is currently showing";
-            // 
+            //
             // gTextPanel2
-            // 
+            //
             this.gTextPanel2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.gTextPanel2.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -90,9 +90,9 @@
             this.gTextPanel2.TabIndex = 11;
             this.gTextPanel2.TabStop = false;
             this.gTextPanel2.Text = "Write down what should show";
-            // 
+            //
             // gTextPanel3
-            // 
+            //
             this.gTextPanel3.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.gTextPanel3.BackColor = System.Drawing.Color.Transparent;
             this.gTextPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -103,9 +103,9 @@
             this.gTextPanel3.TabIndex = 11;
             this.gTextPanel3.TabStop = false;
             this.gTextPanel3.Text = "Write down where is it";
-            // 
+            //
             // xTextboxRight
-            // 
+            //
             this.xTextboxRight.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.xTextboxRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.xTextboxRight.Location = new System.Drawing.Point(37, 170);
@@ -115,9 +115,9 @@
             this.xTextboxRight.StateSelect = GBounds.StateSelect.Between;
             this.xTextboxRight.TabIndex = 1;
             this.xTextboxRight.TextInTextBox = "";
-            // 
+            //
             // xTextboxWrong
-            // 
+            //
             this.xTextboxWrong.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.xTextboxWrong.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.xTextboxWrong.Location = new System.Drawing.Point(37, 90);
@@ -127,9 +127,9 @@
             this.xTextboxWrong.StateSelect = GBounds.StateSelect.Between;
             this.xTextboxWrong.TabIndex = 0;
             this.xTextboxWrong.TextInTextBox = "";
-            // 
+            //
             // gTextBoxWhere
-            // 
+            //
             this.gTextBoxWhere.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.gTextBoxWhere.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.gTextBoxWhere.Location = new System.Drawing.Point(37, 249);
@@ -139,10 +139,10 @@
             this.gTextBoxWhere.StateSelect = GBounds.StateSelect.Between;
             this.gTextBoxWhere.TabIndex = 2;
             this.gTextBoxWhere.TextInTextBox = "";
-            // 
+            //
             // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
             this.panel1.Controls.Add(this.textPanel8);
@@ -150,9 +150,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(426, 34);
             this.panel1.TabIndex = 11;
-            // 
+            //
             // textPanel8
-            // 
+            //
             this.textPanel8.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.textPanel8.BackColor = System.Drawing.Color.Transparent;
             this.textPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
@@ -163,9 +163,9 @@
             this.textPanel8.TabIndex = 9;
             this.textPanel8.TabStop = false;
             this.textPanel8.Text = "Report bad translation";
-            // 
+            //
             // FormBadTranslation
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(253)))), ((int)(((byte)(253)))));

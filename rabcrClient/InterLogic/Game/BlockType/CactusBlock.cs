@@ -13,32 +13,27 @@ namespace rabcrClient {
 
         public CactusBlock() { }
 
-        public CactusBlock(Texture2D texture, ushort id, Vector2 position) {
-            Texture = texture;
-            Id = id;
-            Position = position;
-        }
+        //public CactusBlock(Texture2D texture, ushort id, Vector2 position) {
+        //    Texture = texture;
+        //    Id = id;
+        //    Position = position;
+        //}
 
-       // public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
-
-
-         public void SetOrigin() { 
+        public void SetOrigin() {
             vecOrigin=-new Vector2(Position.X-cactus.Root.X*16/*+*/-8, Position.Y-cactus.Root.Y*16/*-8*/-8/*-16*/);
-            
         }
 
-         public override void Draw() {
-            if (cactus!=null) Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, ColorWhite, cactus.angle, vecOrigin, 1f, SpriteEffects.None, 0); 
+        public override void Draw() {
+            if (cactus!=null) Rabcr.spriteBatch.Draw(Texture, Position+vecOrigin, null, Global.ColorWhite, cactus.angle, vecOrigin, 1f, SpriteEffects.None, 0);
         }
 
-        public override Block CloneDown() {
-            CactusBlock n = new CactusBlock{
+        public override Block CloneDown() => new CactusBlock{
                 Texture=Texture,
                 Id=Id,
-                Position=Position
+                Position=new Vector2(Position.X, Position.Y+16)
             };
-            n.Position.Y+=16;
-            return n;
-        }
+           // n.Position.Y+=16;
+           // return n;
+       // }
     }
 }

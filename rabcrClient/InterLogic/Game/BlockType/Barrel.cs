@@ -24,12 +24,11 @@ namespace rabcrClient {
             Inv=new ItemInv[2];
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Global.ColorWhite);
 
-        public override Block CloneDown() {
-            Barrel s=new Barrel(Texture, Id, Position);
-            s.Position.Y+=16;
-            return s;
-        }
+        public override Block CloneDown() => new Barrel(Texture, Id, new Vector2(Position.X, Position.Y));
+            //s.Position.Y+=16;
+           // return s;
+       // }
     }
 }

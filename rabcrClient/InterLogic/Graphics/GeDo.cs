@@ -15,9 +15,9 @@ namespace rabcrClient {
         List<GeDoString> gedoBuilding;
         const int lineSize=30;
         public int mouseAdd;
-        float TextW;
+        /*float*/int TextW;
         int X, Y, yy2, gedoLen;
-        bool changingPos=false;    
+        bool changingPos=false;
         public int width;
         public EventHandler changeHeight;
         #endregion
@@ -138,39 +138,39 @@ namespace rabcrClient {
 
                     //first
                     if (i==0) {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                     //   GeDoStringNormal g = ;
+                        gedoBuilding.Add(new GeDoStringNormal() {
                             //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
-                        };
-                        gedoBuilding.Add(g);
+                            text=new TextWithMeasure(lines[i], X+ TextW, Y)
+                        });
                         Y+=lineSize;
                         TextW=0;
 
                     //last
                     } else if (i==lines.Length-1) {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                        GeDoStringNormal g = new() {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
+                            text=new TextWithMeasure(lines[i], X+TextW, Y)
                         };
                         gedoBuilding.Add(g);
-                        TextW=g.text.X;
+                        TextW=g.text.MeasureX;
 
                     //middle
                     } else {
-                        GeDoStringNormal g = new GeDoStringNormal {
+                       // GeDoStringNormal g = ;
+                        gedoBuilding.Add(new GeDoStringNormal() {
                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
-                        };
-                        gedoBuilding.Add(g);
+                            text=new TextWithMeasure(lines[i], X+ TextW, Y)
+                        });
                         Y+=lineSize;
                     }
                 }
             } else {
-                GeDoStringNormal g = new GeDoStringNormal {
+                GeDoStringNormal g = new() {
                     text=new TextWithMeasure(tmpText, X+(int)TextW, Y)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
             }
         }
 
@@ -209,14 +209,14 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringNormal g = new GeDoStringNormal {
+                GeDoStringNormal g = new() {
                     //X=(int)(X+TextW),
                     //Y=Y-10,
                    // str=tmpText,
                     text=new TextWithMeasure(tmpText, (int)(X+TextW), Y-10/*, BitmapFont.bitmapFont18*/)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
            // }
         }
 
@@ -227,9 +227,8 @@ namespace rabcrClient {
 
                     //first
                     if (i==0) {
-                        Subscript g = new Subscript {
-                            //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y+10/*, BitmapFont.bitmapFont18*/)
+                        Subscript g = new() {
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y+10)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -237,32 +236,27 @@ namespace rabcrClient {
 
                         //last
                     } else if (i==lines.Length-1) {
-                        Subscript g = new Subscript {
-                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y+10/*, BitmapFont.bitmapFont18*/)
+                        Subscript g = new() {
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y+10)
                         };
                         gedoBuilding.Add(g);
-                        TextW=g.text.X;
+                        TextW=g.text.MeasureX;
 
                         //middle
                     } else {
-                        Subscript g = new Subscript {
-                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y+10/*, BitmapFont.bitmapFont18*/)
+                        Subscript g = new() {
+                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y+10)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
                     }
                 }
             } else {
-                Subscript g = new Subscript {
-                 //   X=(int)(X+TextW),
-                    //Y=Y,
-                   // str=tmpText,
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y+10/*, BitmapFont.bitmapFont18*/)
+                Subscript g = new() {
+                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y+10)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
             }
         }
 
@@ -274,12 +268,9 @@ namespace rabcrClient {
 
                     //first
                     if (i==0) {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
-                            //X=(int)(X+TextW),
-                            //Y=Y,
-                            //str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
@@ -287,39 +278,30 @@ namespace rabcrClient {
 
                         //last
                     } else if (i==lines.Length-1) {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
-                            //X=(int)(X+TextW),
-                            //Y=Y,
-                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], X+(int)TextW, Y)
                         };
                         gedoBuilding.Add(g);
-                        TextW=g.text.X;
+                        TextW=g.text.MeasureX;
 
                         //middle
                     } else {
-                        GeDoStringColoredText g = new GeDoStringColoredText {
+                        GeDoStringColoredText g = new() {
                             color=c,
-                            //X=(int)(X+TextW),
-                            //Y=Y,
-                            // str=lines[i],
-                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                            text=new TextWithMeasure(lines[i], (int)(X+TextW), Y)
                         };
                         gedoBuilding.Add(g);
                         Y+=lineSize;
                     }
                 }
             } else {
-                GeDoStringColoredText g= new GeDoStringColoredText {
+                GeDoStringColoredText g= new() {
                     color=c,
-                    //X=(int)(X+TextW),
-                    //Y=Y,
-                    //str=tmpText,
-                    text=new TextWithMeasure(tmpText,(int)(X+TextW), Y/*,BitmapFont.bitmapFont18*/)
+                    text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
             }
         }
 
@@ -358,12 +340,11 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringBold g= new GeDoStringBold {
-                    //str=tmpText,
-                   text=new TextWithMeasure(tmpText,(int)(X+TextW), Y/*,BitmapFont.bitmapFont18*/)
+                GeDoStringBold g= new() {
+                   text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
             //}
         }
 
@@ -399,11 +380,11 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringItalic g = new GeDoStringItalic {
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                GeDoStringItalic g = new() {
+                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
            // }
         }
 
@@ -442,8 +423,8 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringAnimated g= new GeDoStringAnimated {
-                   text=new TextWithMeasure(tmpText,(int)(X+TextW), Y/*,BitmapFont.bitmapFont18*/)
+                GeDoStringAnimated g= new() {
+                   text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
 
                 string[] moreinforaw=more.Split('|');
@@ -455,13 +436,11 @@ namespace rabcrClient {
                         string name=str.Substring(0,sep);
                         string what=str.Substring(sep+1);
                         if (name=="back") {
-                            //CColor clrColor = CColor.FromName(what);
-                            g.colorBack=StringToColor(what);//new Color(clrColor.R, clrColor.G, clrColor.B, (byte)255);
+                            g.colorBack=StringToColor(what);
                             backset=true;
                         }
                         if (name=="fore"){
-                            //CColor clrColor = CColor.FromName(what);
-                            g.colorGoing=StringToColor(what);//(new Color(clrColor.R, clrColor.G, clrColor.B, (byte)255);
+                            g.colorGoing=StringToColor(what);
                             foreset=true;
                         }
                     }
@@ -473,9 +452,8 @@ namespace rabcrClient {
                 g.colorBeet=new Color((g.colorBack.R+g.colorGoing.R)/2, (g.colorBack.G+g.colorGoing.G)/2, (g.colorBack.B+g.colorGoing.B)/2);
 
                 g.len=g.text.Chars.Length;
-                //if (gedoBuilding==null)return;
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
             //}
         }
 
@@ -514,13 +492,13 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringUnderline g= new GeDoStringUnderline {
+                GeDoStringUnderline g= new() {
                     X=(int)TextW+X,
                     Y=Y,
                 };
-                g.text=new TextWithMeasure(tmpText,(int)(X+TextW), Y/*,BitmapFont.bitmapFont18*/);
+                g.text=new TextWithMeasure(tmpText,(int)(X+TextW), Y);
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
            // }
         }
 
@@ -562,10 +540,10 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringMark g= new GeDoStringMark {
+                GeDoStringMark g = new() {
                     Y=Y,
                     X=(int)TextW+X,
-                    text=new TextWithMeasure(tmpText,(int)(X+TextW), Y/*,BitmapFont.bitmapFont18*/)
+                    text=new TextWithMeasure(tmpText,(int)(X+TextW), Y)
                 };
 
                 string[] moreinforaw=more.Split('|');
@@ -577,8 +555,7 @@ namespace rabcrClient {
                         string name=str.Substring(0,sep);
                         string what=str.Substring(sep+1);
                         if (name=="color") {
-                           // CColor clrColor = CColor.FromName(what);
-                            g.color=StringToColor(what);// new Color(clrColor.R, clrColor.G, clrColor.B, (byte)255);
+                            g.color=StringToColor(what);
                             set=true;
                         }
                     }
@@ -587,7 +564,7 @@ namespace rabcrClient {
                 if (!set) g.color=new Color(173,216,255);
 
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
            // }
         }
 
@@ -604,7 +581,7 @@ namespace rabcrClient {
             //if (tmpText.Contains(Environment.NewLine)) {
             //    //ShowError("Multiline link");
             //} else {
-                GeDoStringLink g = new GeDoStringLink(tmpText, (int)(X+TextW), Y) {
+                GeDoStringLink g = new GeDoStringLink(tmpText, X+TextW, Y) {
                     mouseAdd2=mouseAdd,
                 };
 
@@ -646,7 +623,7 @@ namespace rabcrClient {
                 }
 
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
+                TextW+=g.text.MeasureX;
            // }
         }
 
@@ -682,12 +659,11 @@ namespace rabcrClient {
             //        }
             //    }
             //} else {
-                GeDoStringRandom g = new GeDoStringRandom {
-                    text=new TextWithMeasure(tmpText, (int)(X+TextW), Y/*, BitmapFont.bitmapFont18*/)
+                GeDoStringRandom g = new() {
+                    text=new TextWithMeasure(tmpText, X+TextW, Y)
                 };
                 gedoBuilding.Add(g);
-                TextW+=g.text.X;
-           // }
+                TextW+=g.text.MeasureX;
         }
 
         void BuildPartSpoiler(string tmpText, string more, bool n) {
@@ -711,7 +687,7 @@ namespace rabcrClient {
                 if (showText=="") showText=Lang.Texts[292];
                 if (hideText=="") hideText=Lang.Texts[293];
             }
-            GeDoStringSpoiler g = new GeDoStringSpoiler(tmpText, X,(int)(X+TextW), Y, mouseAdd) {
+            GeDoStringSpoiler g = new(tmpText, X, X+TextW, Y, mouseAdd) {
                 textShow=showText,
                 textHide=hideText
             };
@@ -737,7 +713,7 @@ namespace rabcrClient {
                 }
             }
 
-            GeDoStringArticle g = new GeDoStringArticle(tmpText, X, Y, width, mouseAdd, wrap);
+            GeDoStringArticle g = new(tmpText, X, Y, width, mouseAdd, wrap);
 
             gedoBuilding.Add(g);
             TextW=0;
@@ -746,28 +722,29 @@ namespace rabcrClient {
         }
 
         Color GetColorByTag(GeDoType tag){
-            switch (tag) {
-                case GeDoType.Blue: return new Color(20,64,224);
-                case GeDoType.Green: return new Color(32,128,0);
-                case GeDoType.Red: return new Color(255,0,0);
-                case GeDoType.DarkBlue: return new Color(0,0,128);
-                case GeDoType.DarkGreen: return new Color(0,64,0);
-                case GeDoType.DarkRed: return new Color(128,0,0);
-                case GeDoType.Orange: return new Color(255,92,0);
-                case GeDoType.LightGreen: return new Color(0,255,0);
-                case GeDoType.LightBlue: return new Color(128,192,255);
-                case GeDoType.DarkGray: return new Color(64,64,64);
-                case GeDoType.Gold: return new Color(120,120,0);
-                case GeDoType.Yellow: return new Color(220,220,0);
-                case GeDoType.Gray: return new Color(128,128,128);
-                case GeDoType.Teal: return new Color(0,128,128);
-                case GeDoType.Purple: return new Color(255,0,255);
-                case GeDoType.Pink: return new Color(255,128,172);
-                case GeDoType.Brown: return new Color(128,30,0);
-                case GeDoType.Black: return new Color(0,0,0);
-                case GeDoType.White: return new Color(255,255,255);
-                default:/* ShowError("Unknown tag");*/ return Color.Black;
-            }
+            return tag switch {
+                GeDoType.Blue => new Color(20, 64, 224),
+                GeDoType.Green => new Color(32, 128, 0),
+                GeDoType.Red => new Color(255, 0, 0),
+                GeDoType.DarkBlue => new Color(0, 0, 128),
+                GeDoType.DarkGreen => new Color(0, 64, 0),
+                GeDoType.DarkRed => new Color(128, 0, 0),
+                GeDoType.Orange => new Color(255, 92, 0),
+                GeDoType.LightGreen => new Color(0, 255, 0),
+                GeDoType.LightBlue => new Color(128, 192, 255),
+                GeDoType.DarkGray => new Color(64, 64, 64),
+                GeDoType.Gold => new Color(120, 120, 0),
+                GeDoType.Yellow => new Color(220, 220, 0),
+                GeDoType.Gray => new Color(128, 128, 128),
+                GeDoType.Teal => new Color(0, 128, 128),
+                GeDoType.Purple => new Color(255, 0, 255),
+                GeDoType.Pink => new Color(255, 128, 172),
+                GeDoType.Brown => new Color(128, 30, 0),
+                GeDoType.Black => new Color(0, 0, 0),
+                GeDoType.White => new Color(255, 255, 255),
+                /* ShowError("Unknown tag");*/
+                _ => Color.Black,
+            };
         }
 
         string Symbols(string s) {
@@ -1188,7 +1165,7 @@ namespace rabcrClient {
         public TextWithMeasure text;
 
         public override void Draw(SpriteBatch sb) {
-            text.Draw(sb, Rabcr.random.ColorMonogame());/* new Color(Rabcr.random.Int255(),Rabcr.random.Int255(),Rabcr.random.Int255()));;*/
+            text.Draw(sb, FastRandom.ColorMonogame());
         }
 
         public override int Height() => text.NewLines*30;
@@ -1263,10 +1240,10 @@ namespace rabcrClient {
 
                     if (click) {
                         click=false;
-                        if (Rabcr.ActiveWindow /*&& !selected*/) { 
+                        if (Rabcr.ActiveWindow /*&& !selected*/) {
                             //Console.WriteLine(action);
-                            if (Menu.newKeyboardState.IsKeyDown(Keys.LeftControl)){ 
-                                System.Windows.Forms.MessageBox.Show(info,"Link info");    
+                            if (Menu.newKeyboardState.IsKeyDown(Keys.LeftControl)){
+                                System.Windows.Forms.MessageBox.Show(info,"Link info");
                             } else{
                             switch (action){
                                 case Action.Event:
@@ -1338,8 +1315,8 @@ namespace rabcrClient {
             color=new Color(0, colorChanger, 255);
             text.Draw(sb, color/**Constants.alpha*/);
 
-            sb.Draw(Rabcr.Pixel, new Rectangle(X, Y+underlinecount/*+y2*/, text.X+2, 1), color/**Constants.alpha*/);
-            sb.Draw(Rabcr.Pixel, new Rectangle(X, Y+1+underlinecount/*+y2*/, text.X+2, 1), color/**(Constants.alpha/2)*/);
+            sb.Draw(Rabcr.Pixel, new Rectangle(X, Y+underlinecount/*+y2*/, text.MeasureX+2, 1), color/**Constants.alpha*/);
+            sb.Draw(Rabcr.Pixel, new Rectangle(X, Y+1+underlinecount/*+y2*/, text.MeasureX+2, 1), color/**(Constants.alpha/2)*/);
 
           //  oldMouseState=Rabcr.newMouseState;
         }
@@ -1348,7 +1325,7 @@ namespace rabcrClient {
          //   Console.WriteLine("X: "+X+", Y: "+Y+", M.X: "+Rabcr.newMouseState.X+", M.Y: "+(Rabcr.newMouseState.Y-mouseAdd2)+", t.X:"+text.X+", ma: "+mouseAdd2);
             if (Rabcr.newMouseState.X < X) return false;
             if (Rabcr.newMouseState.Y+mouseAdd2< Y) return false;
-            if (Rabcr.newMouseState.X > X+text.X) return false;
+            if (Rabcr.newMouseState.X > X+text.MeasureX) return false;
             if (Rabcr.newMouseState.Y+mouseAdd2> Y+30) return false;
             return true;
         }
@@ -1441,8 +1418,8 @@ namespace rabcrClient {
             color=new Color(0, colorChanger, 255);
             text.Draw(sb, color/**Constants.alpha*/);
 
-            sb.Draw(Rabcr.Pixel, new Rectangle(X2, Y+underlinecount/*+y2*/, text.X+2, 1), color/**Constants.alpha*/);
-            sb.Draw(Rabcr.Pixel, new Rectangle(X2, Y+1+underlinecount/*+y2*/, text.X+2, 1), color*0.5f/**(Constants.alpha)*/);
+            sb.Draw(Rabcr.Pixel, new Rectangle(X2, Y+underlinecount/*+y2*/, text.MeasureX+2, 1), color/**Constants.alpha*/);
+            sb.Draw(Rabcr.Pixel, new Rectangle(X2, Y+1+underlinecount/*+y2*/, text.MeasureX+2, 1), color*0.5f/**(Constants.alpha)*/);
 
             if (Show) innerGedo.DrawGedo(Constants.alpha, sb);
         }
@@ -1451,7 +1428,7 @@ namespace rabcrClient {
          //   Console.WriteLine("X: "+X+", Y: "+Y+", M.X: "+Rabcr.newMouseState.X+", M.Y: "+(Rabcr.newMouseState.Y-mouseAdd2)+", t.X:"+text.X+", ma: "+mouseAdd2);
             if (Rabcr.newMouseState.X < X2) return false;
             if (Rabcr.newMouseState.Y+mouseAdd2< Y) return false;
-            if (Rabcr.newMouseState.X > X2+text.X) return false;
+            if (Rabcr.newMouseState.X > X2+text.MeasureX) return false;
             if (Rabcr.newMouseState.Y+mouseAdd2> Y+30) return false;
             return true;
         }
@@ -1530,7 +1507,7 @@ namespace rabcrClient {
         public Color color;
 
         public override void Draw(SpriteBatch sb) {
-            sb.Draw(Rabcr.Pixel,new Rectangle(X, Y, text.X+2,30), color/*new Color(173,216,255)*//**Constants.alpha*/);
+            sb.Draw(Rabcr.Pixel,new Rectangle(X, Y, text.MeasureX+2,30), color/*new Color(173,216,255)*//**Constants.alpha*/);
             text.Draw(sb, Color.Black/**Constants.alpha*/);
         }
         public override int Height() => text.NewLines*30;
@@ -1543,7 +1520,7 @@ namespace rabcrClient {
       public TextWithMeasure text;
         public override void Draw(SpriteBatch sb) {
             //DrawSelection(sb);
-            sb.Draw(Rabcr.Pixel,new Rectangle(X, Y+27, text.X+2,1), new Color(0,0,0)/**Constants.alpha*/);
+            sb.Draw(Rabcr.Pixel,new Rectangle(X, Y+27, text.MeasureX+2,1), new Color(0,0,0)/**Constants.alpha*/);
             text.Draw(sb, Color.Black/**Constants.alpha*/);
         }
         public override int Height() => text.NewLines*30;
@@ -1568,7 +1545,7 @@ namespace rabcrClient {
        int w;
         public GeDoStringArticle(string txt, int x, int y, int ww, int mouseAdd2, bool wr) {
             this.mouseAdd2=mouseAdd2;
-            wrap=wr; 
+            wrap=wr;
             w=ww;
             innerGedo=new GeDo(x, y) {
                 mouseAdd=mouseAdd2-Y
@@ -1634,7 +1611,7 @@ namespace rabcrClient {
 
             innerGedo.BuildString(Wrap());
 
-           // return ;
+           // return;
         }
 
         string Wrap(){
@@ -1646,7 +1623,7 @@ namespace rabcrClient {
   foreach (string line in lines) {
 
             string[] words = line.Replace('\r', ' ').Split(' ');
-           
+
             float lineWidth = 0f;
                 int ii=0;
             foreach (string word in words) {

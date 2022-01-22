@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.IO;
+using System.Diagnostics;
 
 namespace rabcrClient {
     enum BackBlockId:ushort {
@@ -106,7 +107,7 @@ namespace rabcrClient {
 
     class Background :IDisposable {
         public const int MaxIndex=25;
-        readonly BlendState Multiply = new BlendState() {
+        readonly BlendState Multiply = new() {
             AlphaSourceBlend=Blend.Zero,
             AlphaDestinationBlend=Blend.SourceColor,
             ColorSourceBlend=Blend.Zero,
@@ -117,7 +118,7 @@ namespace rabcrClient {
         #region Varibles
         readonly GraphicsDevice Graphics;
         RenderTarget2D fogTarget;
-Texture2D[] rocksTexture;
+        readonly Texture2D[] rocksTexture;
         #region Textures
         readonly Texture2D
             orangeWoodTexture,lightMaskLineTexture,
@@ -239,7 +240,7 @@ Texture2D[] rocksTexture;
             BGChunkLenght=int.Parse(File.ReadAllText(Setting.Path+"\\MenuBackgroundChunks.txt"));
             terrain =new BTerrain[BGChunkLenght];
 
-            WindowX=Rabcr.random.Int(BGChunkLenght*16);
+            WindowX=FastRandom.Int(BGChunkLenght*16);
             WindowY =848-Global.WindowHeightHalf-150;
             WindowCenterY=WindowY+Global.WindowHeightHalf;
 
@@ -366,7 +367,7 @@ Texture2D[] rocksTexture;
             startIndex=start+delta/16;
             endIndex=start+(Global.WindowWidth-delta)/16+3;
             if (endIndex>=terrain.Length)endIndex=0;
-            
+
             lights=new Rectangle[endIndex-startIndex];
             for (int x=startIndex; x<endIndex; x++)  {
                 int l16=terrain[x].LightPos16;
@@ -387,11 +388,11 @@ Texture2D[] rocksTexture;
                 #region Draw lighting
                 Graphics.SetRenderTarget(fogTarget);
                 Graphics.Clear(Color.Black);
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive,SamplerState.PointClamp, null, null, null, camera);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: camera);
 
-                for (int x= startIndex; x<endIndex; x++) spriteBatch.Draw(lightmap, terrain[x].LightVec, Color.White);
+                for (int x = startIndex; x<endIndex; x++) spriteBatch.Draw(lightmap, terrain[x].LightVec, Color.White);
 
-                for (int i = 0; i<lights.Length; i++) spriteBatch.Draw(lightMaskLineTexture, lights[i], Color.White); 
+                for (int i = 0; i<lights.Length; i++) spriteBatch.Draw(lightMaskLineTexture, lights[i], Color.White);
 
                 spriteBatch.End();
                 #endregion
@@ -399,16 +400,19 @@ Texture2D[] rocksTexture;
                 #region Draw game
                 Graphics.SetRenderTarget(null);
                 Graphics.Clear(Color.LightSkyBlue);
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, camera);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: camera);
 
-                for (int x = startIndex; x<endIndex; x++) {
-                    BTerrain chunk=terrain[x];
-                    for (int y =chunk.StartSomething; y<chunk.LightPos+4; y++) {
-
-                        if (chunk.IsSolidBlocks[y]) chunk.SolidBlocks[y].Draw();
-                        else{
-                            if (chunk.IsBackground[y]) chunk.Background[y].Draw();
-                            if (chunk.IsTopBlocks[y]) chunk.TopBlocks[y].Draw();
+                {
+                    BTerrain chunk;
+                    for (int x = startIndex; x<endIndex; x++) {
+                        chunk=terrain[x];
+                        bool[] solidbloks=chunk.IsSolidBlocks;
+                        for (int y =chunk.StartSomething; y<chunk.LightPos+4; y++) {
+                            if (solidbloks[y]) chunk.SolidBlocks[y].Draw();
+                            else {
+                                if (chunk.IsBackground[y]) chunk.Background[y].Draw();
+                                if (chunk.IsTopBlocks[y]) chunk.TopBlocks[y].Draw();
+                            }
                         }
                     }
                 }
@@ -530,7 +534,7 @@ Texture2D[] rocksTexture;
 
                 case BackBlockId.Toadstool: return new BBlockNormal{ Texture=toadstoolTexture,  Pos=pos };
 
-                case BackBlockId.Rocks:return new BBlockNormal{ Texture=rocksTexture[Rabcr.random.Int(3)], Pos=pos };
+                case BackBlockId.Rocks:return new BBlockNormal{ Texture=rocksTexture[FastRandom.Int(3)], Pos=pos };
             }
             return null;
         }
@@ -538,29 +542,7 @@ Texture2D[] rocksTexture;
 		Texture2D GetDataTexture(string path) => Rabcr.Game.Content.Load<Texture2D>(Setting.StyleName+"\\Textures\\"+path);
 
         Matrix CameraMatrix() {
-            if (Setting.Scale.Without == Setting.currentScale) return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) * Translation;
-
-            if (Setting.Scale.Proportions == Setting.currentScale) {
-                float _screenScaleW = Global.WindowWidth / 848f;
-                float _screenScaleH = Global.WindowHeight / 560f;
-
-                if (_screenScaleH > _screenScaleW) {
-                    return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                        MatrixZoom*
-                        Matrix.CreateScale(_screenScaleW, _screenScaleW, 0) *
-                        Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
-                } else {
-                    return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                        MatrixZoom*
-                        Matrix.CreateScale(_screenScaleH, _screenScaleH, 0) *
-                        Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
-                }
-            }
-
-            return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) *
-                Matrix.CreateScale(new Vector3(Global.WindowWidth / 848f, Global.WindowHeight / 560f, 0)) *
-                MatrixZoom *
-                Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
+             return Matrix.CreateTranslation(new Vector3(-WindowCenterX, -WindowCenterY, 0)) * Translation;
         }
 
         bool isDisposed;
@@ -583,97 +565,122 @@ Texture2D[] rocksTexture;
 
         void Load() {
             if (File.Exists(Setting.Path+"\\MenuBackground.ter")) {
-                using (StreamReader sr = new StreamReader(Setting.Path+"\\MenuBackground.ter")) {
-                    for (int pos=0; pos<terrain.Length; pos++) {
-                        BinaryReader br = new BinaryReader(sr.BaseStream);
+                using StreamReader sr = new(Setting.Path + "\\MenuBackground.ter");
 
-                        BTerrain chunk=terrain[pos]=new BTerrain() {
-                            LightPos=br.ReadByte(),
-                        };
+                for (int pos = 0; pos < terrain.Length; pos++) {
+                    BinaryReader br = new(sr.BaseStream);
+                    float xPos16=pos*16;
+                    BTerrain chunk=terrain[pos]=new BTerrain() {
+                        LightPos=br.ReadByte(),
+                    };
 
-                        chunk.LightVec=new Vector2(pos*16-48+8,chunk.LightPos*16-48+8+40);
-                        chunk.LightPos16=chunk.LightPos*16;
-                        int ss=MaxIndex;
+                    chunk.LightVec = new Vector2(xPos16 - 48 + 8, chunk.LightPos * 16 - 48 + 8 + 40);
+                    chunk.LightPos16 = chunk.LightPos * 16;
+                    int ss=MaxIndex;
 
-                        //0=nic
-                        //1=připrav se, další byte o přeskočení
+                    //0=nic
+                    //1=připrav se, další byte o přeskočení
 
-                        // BackBlocks
-                        for (int lenght=0; lenght<MaxIndex; lenght++) {
-                            byte input = br.ReadByte();
+                    // BackBlocks
+                    for (int lenght = 0; lenght < MaxIndex; lenght++) {
+                        byte input = br.ReadByte();
 
-                            if (input>1){
-                                BBlock block=BackBlockFromId(input, new Vector2(pos*16, lenght*16));
-                                if (block!=null){
-                                    if (ss>lenght) ss=lenght;
-                                    chunk.Background[lenght]=block;
-                                    chunk.IsBackground[lenght]=true;
-                                }else chunk.Background[lenght]=new BBlockEmpty();
-                            } else if (input==1) {
-                                int skip=br.ReadByte();
-                                int to=lenght+skip;
-                                for (int i=lenght; i<to; i++) chunk.Background[i]=new BBlockEmpty();
-                                lenght+=skip-1;
-                            } else if (input==0) chunk.Background[lenght]=new BBlockEmpty();
+                        if (input > 1) {
+                            BBlock block=BackBlockFromId(input, new Vector2(xPos16, lenght*16));
+                            if (block != null) {
+                                if (ss > lenght) ss = lenght;
+                                chunk.Background[lenght] = block;
+                                chunk.IsBackground[lenght] = true;
+                            }
+                            else {
+                                // default bool value is false, so this code is not need
+                                // chunk.IsBackground[lenght] = false;
+                            }
                         }
-
-                        // TopBlocks
-                        for (int lenght=0; lenght<MaxIndex; lenght++) {
-                            byte input = br.ReadByte();
-
-                            if (input>1){
-                                BBlock block=TopBlockFromId(input, new Vector2(pos*16, lenght*16));
-                                if (block!=null){
-                                    if (ss>lenght) ss=lenght;
-                                    chunk.IsTopBlocks[lenght]=true;
-                                    chunk.TopBlocks[lenght]=block;
-                                } else {
-                                    chunk.TopBlocks[lenght]=new BBlockEmpty();
-                                }
-                            } else if (input==1) {
-                                int skip=br.ReadByte();
-                                int to=lenght+skip;
-                                for (int i=lenght; i<to; i++) chunk.TopBlocks[i]=new BBlockEmpty();
-                                lenght+=skip-1;
-                            } else if (input==0) chunk.TopBlocks[lenght]=new BBlockEmpty();
+                        else if (input == 1) {
+                            int skip=br.ReadByte();
+                            int to=lenght+skip;
+                            for (int i = lenght; i < to; i++) {
+                                // default bool value is false, so this code is not need
+                                //  chunk.IsBackground[i] = false;
+                            }
+                            lenght += skip - 1;
                         }
+                        else if (input == 0) {
+                            // default bool value is false, so this code is not need
+                            // chunk.IsBackground[lenght] = false;
+                        }
+                    }
 
-                        // SolidBlocks
-                        for (int lenght=0; lenght<MaxIndex; lenght++) {
-                            byte input = br.ReadByte();
+                    // TopBlocks
+                    for (int lenght = 0; lenght < MaxIndex; lenght++) {
+                        byte input = br.ReadByte();
 
-                            if (input>1){
-                                BBlock block=SolidBlockFromId(input, new Vector2(pos*16, lenght*16));
-                                if (block!=null){
-                                    if (ss>lenght) ss=lenght;
-                                    chunk.SolidBlocks[lenght]=block;
-                                    chunk.IsSolidBlocks[lenght]=true;
-                                } else {
-                                   // chunk.SolidBlocks[lenght]=new BBlockEmptySolid(){
-                                      //  /*Back=*/chunk.Background[lenght];
-                                      //  /*Top=*/chunk.TopBlocks[lenght];
-                                    //};
-                                }
-                            } else if (input==1){
-                                int skip=br.ReadByte();
-                               // int to=lenght+skip;
-                                //for (int i=lenght; i<to; i++) chunk.SolidBlocks[i]=new BBlockEmptySolid(){
-                                //    Back=chunk.Background[i],
-                                //    Top=chunk.TopBlocks[i]
-                                //};
-                                lenght+=skip-1;
-                            } else if (input==0){
-                                //chunk.SolidBlocks[lenght]=new BBlockEmptySolid(){
-                                //    Back=chunk.Background[lenght],
-                                //    Top=chunk.TopBlocks[lenght]
+                        if (input > 1) {
+                            BBlock block=TopBlockFromId(input, new Vector2(xPos16, lenght*16));
+                            if (block != null) {
+                                if (ss > lenght) ss = lenght;
+                                chunk.IsTopBlocks[lenght] = true;
+                                chunk.TopBlocks[lenght] = block;
+                            }
+                            else {
+                                // default bool value is false, so this code is not need
+                                // chunk.IsTopBlocks[lenght] = false;
+                            }
+                        }
+                        else if (input == 1) {
+                            int skip=br.ReadByte();
+                            int to=lenght+skip;
+                            for (int i = lenght; i < to; i++) {
+                                // default bool value is false, so this code is not need
+                                // chunk.IsTopBlocks[i] = false;
+                            }
+                            lenght += skip - 1;
+                        }
+                        else if (input == 0) {
+                            // default bool value is false, so this code is not need
+                            //chunk.IsTopBlocks[lenght] = false;
+                        }
+                    }
+
+                    // SolidBlocks
+                    for (int lenght = 0; lenght < MaxIndex; lenght++) {
+                        byte input = br.ReadByte();
+
+                        if (input > 1) {
+                            BBlock block=SolidBlockFromId(input, new Vector2(xPos16, lenght*16));
+                            if (block != null) {
+                                if (ss > lenght) ss = lenght;
+                                chunk.SolidBlocks[lenght] = block;
+                                chunk.IsSolidBlocks[lenght] = true;
+                            }
+                            else {
+                                // chunk.SolidBlocks[lenght]=new BBlockEmptySolid(){
+                                //  /*Back=*/chunk.Background[lenght];
+                                //  /*Top=*/chunk.TopBlocks[lenght];
                                 //};
                             }
                         }
-
-                        if (sr.BaseStream.Position==sr.BaseStream.Length)break;
-
-                        chunk.StartSomething=(byte)ss;
+                        else if (input == 1) {
+                            int skip=br.ReadByte();
+                            // int to=lenght+skip;
+                            //for (int i=lenght; i<to; i++) chunk.SolidBlocks[i]=new BBlockEmptySolid(){
+                            //    Back=chunk.Background[i],
+                            //    Top=chunk.TopBlocks[i]
+                            //};
+                            lenght += skip - 1;
+                        }
+                        else if (input == 0) {
+                            //chunk.SolidBlocks[lenght]=new BBlockEmptySolid(){
+                            //    Back=chunk.Background[lenght],
+                            //    Top=chunk.TopBlocks[lenght]
+                            //};
+                        }
                     }
+
+                    if (sr.BaseStream.Position == sr.BaseStream.Length) break;
+
+                    chunk.StartSomething = (byte)ss;
                 }
             }
         }
@@ -682,7 +689,7 @@ Texture2D[] rocksTexture;
     public class BGenerateWorld {
 
         #region Varibles
-        readonly List<BGChunk> terrain = new List<BGChunk>();
+        readonly List<BGChunk> terrain = new();
         List<byte> biomes;
 
         bool seabedSand;
@@ -703,7 +710,7 @@ Texture2D[] rocksTexture;
         bool grass = true;
       //  bool hill = true;
         int treeChange = 9;
-        readonly FastRandom random;
+      //  readonly FastRandom FastRandom;
        // int state;
         int biomeSize;
  const int waterHeight=20;
@@ -715,7 +722,7 @@ Texture2D[] rocksTexture;
             //pathWorld=Setting.Path+"MenuWorld";
          //   state=0;
             //type=ntype;
-            random=Rabcr.random;
+            //FastRandom=FastRandom;
         }
 
         public void Action() {
@@ -735,28 +742,28 @@ Texture2D[] rocksTexture;
             biomes=new List<byte>();
             for (byte i = 1; i<11; i++) {
                 byte DInt;
-                if (random.Int(11)==1) DInt=0;
+                if (FastRandom.Int(11)==1) DInt=0;
                 else DInt=i;
                 biomes.Add(DInt);
             }
 
             for (byte i = 11; i>0; i--) {
                 byte DInt;
-                if (random.Int(11)==1) DInt=0;
+                if (FastRandom.Int(11)==1) DInt=0;
                 else DInt=i;
                 biomes.Add(DInt);
             }
 
             for (byte i = 0; i<11; i++) {
                 byte DInt;
-                if (random.Int(11)==1) DInt=0;
+                if (FastRandom.Int(11)==1) DInt=0;
                 else DInt=i;
                 biomes.Add(DInt);
             }
 
             for (byte i = 11; i>0; i--) {
                 byte DInt;
-                if (random.Int(11)==1) DInt=0;
+                if (FastRandom.Int(11)==1) DInt=0;
                 else DInt=i;
                 biomes.Add(DInt);
             }
@@ -835,7 +842,7 @@ Texture2D[] rocksTexture;
             File.WriteAllText(Setting.Path+"\\MenuBackgroundChunks.txt", (terrain.Count-7).ToString());
             Finish=true;
             #if DEBUG
-            Console.WriteLine("Vygenerováno za "+(((DateTime.Now-now).TotalMilliseconds)/1000f).ToString(".000")+"s");
+            Debug.WriteLine("Vygenerováno za "+(((DateTime.Now-now).TotalMilliseconds)/1000f).ToString(".000")+"s");
             #endif
         }
 
@@ -850,16 +857,16 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight+3) terrainHeight--;
                     else if (terrainHeight<waterHeight+6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=4+random.Int(5);
+                    terrainChange=4+FastRandom.Int(5);
                 } else terrainChange--;
 
                 if (seabedChange<0) {
                     seabedSand=!seabedSand;
-                    seabedChange=10+random.Int(20);
+                    seabedChange=10+FastRandom.Int(20);
                 } else seabedChange--;
 
                 chunk.LightPos=waterHeight;
@@ -867,7 +874,6 @@ Texture2D[] rocksTexture;
                 // Water
                 for (int yy = waterHeight; yy<terrainHeight; yy++) {
                     chunk.TopBlocks[yy]=(byte)BackBlockId.Water;
-                    //if (random.Int(10)==1) chunk.Blocks[yy]=(byte)BackBlockId.Fish;
                 }
 
                 // Seabed
@@ -889,7 +895,7 @@ Texture2D[] rocksTexture;
                 // BGChunk height
                 if (terrainChange<0) {
                     terrainHeight--;
-                    terrainChange=3+random.Int(3);
+                    terrainChange=3+FastRandom.Int(3);
                 } else terrainChange--;
 
                 chunk.LightPos=waterHeight;
@@ -897,7 +903,7 @@ Texture2D[] rocksTexture;
                 // Water
                 for (int yy = waterHeight; yy<terrainHeight; yy++) {
                     chunk.TopBlocks[yy]=(byte)BackBlockId.Water;
-                    //if (random.Int(10)==1) chunk.TopBlocks[yy]=(byte)BackBlockId.Fish;
+                    //if (FastRandom.Int(10)==1) chunk.TopBlocks[yy]=(byte)BackBlockId.Fish;
                 }
 
 
@@ -907,7 +913,7 @@ Texture2D[] rocksTexture;
 
                 if (seabedChange<0) {
                     seabedSand=!seabedSand;
-                    seabedChange=10+random.Int(20);
+                    seabedChange=10+FastRandom.Int(20);
                 } else seabedChange--;
 
                 // Lithosphere
@@ -924,7 +930,7 @@ Texture2D[] rocksTexture;
                 // BGChunk height
                 if (terrainChange<0) {
                     terrainHeight++;
-                    terrainChange=1+random.Int(3);
+                    terrainChange=1+FastRandom.Int(3);
                 } else terrainChange--;
 
                 // Height dirt
@@ -932,10 +938,10 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
@@ -961,7 +967,7 @@ Texture2D[] rocksTexture;
                 if (terrainChange<0) {
                     terrainHeight--;
 
-                    terrainChange=1+random.Int(3);
+                    terrainChange=1+FastRandom.Int(3);
                 } else terrainChange--;
 
                 // Sand height
@@ -969,11 +975,11 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>waterHeight+1) terrainHeight--;
                     else if (terrainHeight>waterHeight+4) terrainHeight--;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
@@ -982,7 +988,7 @@ Texture2D[] rocksTexture;
                 if (seabedSand) {
                     for (int yy = terrainHeight; yy<terrainHeight+dirtHeight; yy++) chunk.BackBlocks[yy]=(byte)BackBlockId.Sand;
                 } else {
-                    for (int yy = terrainHeight; yy<terrainHeight+dirtHeight; yy++) chunk.BackBlocks[yy]=(byte)BackBlockId.Gravel; ;
+                    for (int yy = terrainHeight; yy<terrainHeight+dirtHeight; yy++) chunk.BackBlocks[yy]=(byte)BackBlockId.Gravel;
                 }
 
                 // Lithosphere
@@ -1000,11 +1006,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 // Height dirt
@@ -1012,17 +1018,17 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 BGChunk.LightPos=terrainHeight;
 
                 BGChunk.Blocks[terrainHeight]=(byte)BackBlockId.Snow;
 
-                if (random.Bool_33_333Percent()) BGChunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.SnowTop;
+                if (FastRandom.Bool_33_333Percent()) BGChunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.SnowTop;
 
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) BGChunk.Blocks[b]=(byte)BackBlockId.Ice;
 
@@ -1041,10 +1047,10 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
-                    terrainChange=4+random.Int(5);
+                    terrainChange=4+FastRandom.Int(5);
                 } else terrainChange--;
 
                 // Height dirt
@@ -1052,31 +1058,31 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockHills;
-                    if (random.Int(5)==1) {
-                        if (random.Bool()) chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Heather;
+                    if (FastRandom.Int(5)==1) {
+                        if (FastRandom.Bool()) chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Heather;
                         else chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.GrassHills;
                     }
                 } else {
-                    if (random.Bool()) chunk.Blocks[terrainHeight]=(byte)BackBlockId.Ice;
+                    if (FastRandom.Bool()) chunk.Blocks[terrainHeight]=(byte)BackBlockId.Ice;
                     else chunk.TopBlocks[terrainHeight]=(byte)BackBlockId.Snow;
 
-                    if (random.Int(3)==1) chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.SnowTop;
+                    if (FastRandom.Int(3)==1) chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.SnowTop;
                 }
 
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Ice;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[dirtHeight+terrainHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1094,11 +1100,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-5) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=4+random.Int(5);
+                    terrainChange=4+FastRandom.Int(5);
                 } else terrainChange--;
 
                 // Height dirt
@@ -1106,18 +1112,18 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockHills;
 
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Heather;
                             break;
@@ -1154,14 +1160,14 @@ Texture2D[] rocksTexture;
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_20Percent()) TreeSpruceLittle(pos, terrainHeight);
+                    if (FastRandom.Bool_20Percent()) TreeSpruceLittle(pos, terrainHeight);
                     else TreeSpruceBig(pos, terrainHeight);
                 } else treeChange--;
 
                 for (int b = terrainHeight+1; b<dirtHeight+terrainHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[dirtHeight+terrainHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, dirtHeight+1+terrainHeight);
                 } else GenerateUnderSurface(chunk, dirtHeight+terrainHeight);
@@ -1179,11 +1185,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1191,18 +1197,18 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Blueberry;
                             break;
@@ -1232,7 +1238,7 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 9:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 2:
                                     chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Toadstool;
                                     break;
@@ -1242,7 +1248,7 @@ Texture2D[] rocksTexture;
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(3)) {
+                    switch (FastRandom.Int(3)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1273,7 +1279,7 @@ Texture2D[] rocksTexture;
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1291,11 +1297,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1303,18 +1309,18 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    switch (random.Int(11)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(11)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Rashberry;
                             break;
@@ -1348,14 +1354,14 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 9:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax1; break;
                                 case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax2; break;
                             }
                             break;
 
                         case 10:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1:
                                     chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Boletus;
                                     break;
@@ -1371,7 +1377,7 @@ Texture2D[] rocksTexture;
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1402,7 +1408,7 @@ Texture2D[] rocksTexture;
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1420,11 +1426,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1432,19 +1438,19 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    //if (random.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
-                    switch (random.Int(11)) {
+                if (FastRandom.Bool()) {
+                    //if (FastRandom.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
+                    switch (FastRandom.Int(11)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Rashberry;
                             break;
@@ -1478,7 +1484,7 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 10:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax1; break;
                                 case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax2; break;
                                 //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax3; break;
@@ -1486,7 +1492,7 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 9:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1:
                                     chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Boletus;
                                     break;
@@ -1502,7 +1508,7 @@ Texture2D[] rocksTexture;
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreePlum(pos, terrainHeight);
                             break;
@@ -1535,7 +1541,7 @@ Texture2D[] rocksTexture;
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1553,11 +1559,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1565,19 +1571,19 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockPlains;
 
-                if (random.Bool()) {
-                    //if (random.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
-                    switch (random.Int(10)) {
+                if (FastRandom.Bool()) {
+                    //if (FastRandom.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
+                    switch (FastRandom.Int(10)) {
                         case 1:
                          //   chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Onion;
                             break;
@@ -1611,7 +1617,7 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 9:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax1; break;
                                 case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax2; break;
                                 //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax3; break;
@@ -1623,7 +1629,7 @@ Texture2D[] rocksTexture;
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1641,11 +1647,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1653,16 +1659,16 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 //Sub
                 if (seabedChange<0) {
                     grass=!grass;
-                    seabedChange=5+random.Int(10);
+                    seabedChange=5+FastRandom.Int(10);
                 } else seabedChange--;
 
                 chunk.LightPos=terrainHeight;
@@ -1670,13 +1676,13 @@ Texture2D[] rocksTexture;
                 if (grass) {
                     chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockDesert;
 
-                    //if (random.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
-                    //else if (random.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Chicken;
+                    //if (FastRandom.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
+                    //else if (FastRandom.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Chicken;
 
-                    if (random.Bool()) {
-                        switch (random.Int(10)) {
+                    if (FastRandom.Bool()) {
+                        switch (FastRandom.Int(10)) {
                             case 1:
-                                switch (random.Int4()) {
+                                switch (FastRandom.Int4()) {
                                     case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat1; break;
                                     case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat2; break;
                                     //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat3; break;
@@ -1712,7 +1718,7 @@ Texture2D[] rocksTexture;
                                 break;
 
                             case 9:
-                                switch (random.Int4()) {
+                                switch (FastRandom.Int4()) {
                                     case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax1; break;
                                     case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax2; break;
                                     //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax3; break;
@@ -1722,10 +1728,10 @@ Texture2D[] rocksTexture;
                     }
                 } else {
                     chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockForest;
-                    //if (random.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
-                    //else if (random.Int(12)==1) chunk.Blocks[ terrainHeight-1]=(byte)BackBlockId.Chicken;
-                    if (random.Bool()) {
-                        switch (random.Int(11)) {
+                    //if (FastRandom.Int(12)==1) chunk.Blocks[terrainHeight-1]=(byte)BackBlockId.Rabbit;
+                    //else if (FastRandom.Int(12)==1) chunk.Blocks[ terrainHeight-1]=(byte)BackBlockId.Chicken;
+                    if (FastRandom.Bool()) {
+                        switch (FastRandom.Int(11)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Strawberry;
                                 break;
@@ -1759,7 +1765,7 @@ Texture2D[] rocksTexture;
                                 break;
 
                             case 9:
-                                switch (random.Int4()) {
+                                switch (FastRandom.Int4()) {
                                     case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax1; break;
                                     case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax2; break;
                                     //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Flax3; break;
@@ -1767,7 +1773,7 @@ Texture2D[] rocksTexture;
                                 break;
 
                             case 10:
-                                switch (random.Int4()) {
+                                switch (FastRandom.Int4()) {
                                     case 1: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat1; break;
                                     case 2: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat2; break;
                                     //case 3: chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Wheat3; break;
@@ -1780,7 +1786,7 @@ Texture2D[] rocksTexture;
 
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1812,7 +1818,7 @@ Texture2D[] rocksTexture;
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1830,11 +1836,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1842,17 +1848,17 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 if (seabedChange<0) {
-                    if (grass) seabedChange=20+random.Int(50);
-                    else seabedChange=3+random.Int(5);
+                    if (grass) seabedChange=20+FastRandom.Int(50);
+                    else seabedChange=3+FastRandom.Int(5);
                     grass=!grass;
                 } else seabedChange--;
 
@@ -1860,8 +1866,8 @@ Texture2D[] rocksTexture;
                     chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockDesert;
                     for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Sand;
 
-                    if (random.Bool()) {
-                        switch (random.Int(9)) {
+                    if (FastRandom.Bool()) {
+                        switch (FastRandom.Int(9)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Alore;
                                 break;
@@ -1885,8 +1891,8 @@ Texture2D[] rocksTexture;
                     }
                 } else {
                     for (byte b = terrainHeight; b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Sand;
-                    if (random.Int(20)==1) {
-                        switch (random.Int(9)) {
+                    if (FastRandom.Int(20)==1) {
+                        switch (FastRandom.Int(9)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Alore;
                                 break;
@@ -1896,11 +1902,11 @@ Texture2D[] rocksTexture;
                                 break;
 
                             case 5:
-                                for (int x = terrainHeight-1; x>terrainHeight+random.Int(6); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusBig;
+                                for (int x = terrainHeight-1; x>terrainHeight+FastRandom.Int(6); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusBig;
                                 break;
 
                             case 6:
-                                for (int x = terrainHeight-1; x>terrainHeight+random.Int(5); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusSmall;
+                                for (int x = terrainHeight-1; x>terrainHeight+FastRandom.Int(5); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusSmall;
                                 break;
 
                             case 8:
@@ -1911,7 +1917,7 @@ Texture2D[] rocksTexture;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1929,11 +1935,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -1941,17 +1947,17 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 if (seabedChange<0) {
-                    if (grass) seabedChange=20+random.Int(50);
-                    else seabedChange=3+random.Int(5);
+                    if (grass) seabedChange=20+FastRandom.Int(50);
+                    else seabedChange=3+FastRandom.Int(5);
                     grass=!grass;
                 } else seabedChange--;
 
@@ -1959,8 +1965,8 @@ Texture2D[] rocksTexture;
                     chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockDesert;
                     for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
-                    //if (random.Bool()) {
-                    switch (random.Int(6)) {
+                    //if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(6)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Alore;
                             break;
@@ -1987,11 +1993,11 @@ Texture2D[] rocksTexture;
                     for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                     if (treeChange<0) {
-                        if (random.Int(5)==1) TreePine(pos, terrainHeight);
+                        if (FastRandom.Int(5)==1) TreePine(pos, terrainHeight);
                     } else treeChange--;
 
-                    //if (random.Int(20)==1) {
-                    switch (random.Int(9)) {
+                    //if (FastRandom.Int(20)==1) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Alore;
                             break;
@@ -2005,11 +2011,11 @@ Texture2D[] rocksTexture;
                             break;
 
                         case 5:
-                            for (int x = terrainHeight-1; x>terrainHeight+random.Int(6); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusBig;
+                            for (int x = terrainHeight-1; x>terrainHeight+FastRandom.Int(6); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusBig;
                             break;
 
                         case 6:
-                            for (int x = terrainHeight-1; x>terrainHeight+random.Int(5); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusSmall;
+                            for (int x = terrainHeight-1; x>terrainHeight+FastRandom.Int(5); x--) chunk.TopBlocks[x]=(byte)BackBlockId.CactusSmall;
                             break;
 
                         case 8:
@@ -2020,7 +2026,7 @@ Texture2D[] rocksTexture;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2038,11 +2044,11 @@ Texture2D[] rocksTexture;
                     if (terrainHeight>waterHeight-1) terrainHeight--;
                     else if (terrainHeight<waterHeight-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int(3);
+                    terrainChange=2+FastRandom.Int(3);
                 } else terrainChange--;
 
                 //Height dirt
@@ -2050,18 +2056,18 @@ Texture2D[] rocksTexture;
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int(3);
+                    dirtChange=1+FastRandom.Int(3);
                 } else dirtChange--;
 
                 chunk.LightPos=terrainHeight;
 
                 chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.Orchid;
                             break;
@@ -2097,13 +2103,13 @@ Texture2D[] rocksTexture;
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool()) TreePineJunle(pos, terrainHeight);
+                    if (FastRandom.Bool()) TreePineJunle(pos, terrainHeight);
                 } else treeChange--;
 
                 for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2129,7 +2135,7 @@ Texture2D[] rocksTexture;
         //                else terrainHeight--;
         //            }
 
-        //            terrainChange=1+random.Int(3);
+        //            terrainChange=1+FastRandom.Int(3);
         //        } else terrainChange--;
 
         //        //Height dirt
@@ -2137,18 +2143,18 @@ Texture2D[] rocksTexture;
         //            if (dirtHeight>3) dirtHeight--;
         //            else if (dirtHeight<2) dirtHeight++;
         //            else {
-        //                if (random.Bool()) dirtHeight++;
+        //                if (FastRandom.Bool()) dirtHeight++;
         //                else dirtHeight--;
         //            }
-        //            dirtChange=1+random.Int(3);
+        //            dirtChange=1+FastRandom.Int(3);
         //        } else dirtChange--;
 
         //        chunk.LightPos=terrainHeight;
 
         //        chunk.Blocks[terrainHeight]=(byte)BackBlockId.GrassBlockHills;
 
-        //        if (random.Bool()) {
-        //            switch (random.Int(9)) {
+        //        if (FastRandom.Bool()) {
+        //            switch (FastRandom.Int(9)) {
         //                case 1:
         //                    chunk.TopBlocks[terrainHeight-1]=(byte)BackBlockId.GrassHills;
         //                    break;
@@ -2184,8 +2190,8 @@ Texture2D[] rocksTexture;
         //        }
 
         //        if (treeChange<0) {
-        //            if (random.Int(10)==1) {
-        //                if (random.Bool()) TreeSpruceLittle(pos, terrainHeight);
+        //            if (FastRandom.Int(10)==1) {
+        //                if (FastRandom.Bool()) TreeSpruceLittle(pos, terrainHeight);
         //                else TreeOakLittle(pos, terrainHeight);
         //            }
         //        } else treeChange--;
@@ -2193,7 +2199,7 @@ Texture2D[] rocksTexture;
         //        for (byte b = (byte)(terrainHeight+1); b<terrainHeight+dirtHeight; b++) chunk.Blocks[b]=(byte)BackBlockId.Dirt;
 
         //        // Lithosphere
-        //        if (random.Bool()) {
+        //        if (FastRandom.Bool()) {
         //            chunk.Blocks[terrainHeight+dirtHeight]=(byte)BackBlockId.Cobblestone;
         //            GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
         //        } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2206,17 +2212,17 @@ Texture2D[] rocksTexture;
 
             //Type
             if (level1Lenght==0) {
-                level1Type=random.Int(10);
+                level1Type=FastRandom.Int(10);
                 block1 = GetByIdHeight1(level1Type);
-                level1Lenght=random.Int(12)+8+8;
+                level1Lenght=FastRandom.Int(12)+8+8;
             } else {
                 level1Lenght--;
             }
 
             for (int y = 0; y<5 && height+y<Background.MaxIndex; y++) chunk.Blocks[height+y]=block1;
 
-            int rdn=height+random.Int(10);
-            if (rdn<Background.MaxIndex)chunk.Blocks[rdn]=(byte)BackBlockId.Cobblestone;
+            int rdn=height+FastRandom.Int(10);
+            if (rdn<Background.MaxIndex) chunk.Blocks[rdn]=(byte)BackBlockId.Cobblestone;
         }
 
         byte GetByIdHeight1(int v) {
@@ -2244,680 +2250,593 @@ Texture2D[] rocksTexture;
         }
 
         void Save() {
-            using (FileStream stream= new FileStream(Setting.Path+"\\MenuBackground.ter",FileMode.Create,FileAccess.Write)) {
-                for (int x=0; x<terrain.Count-7; x++) {
-                    BGChunk chunk=terrain[x];
-                    List<byte>
-                        backBlocks=new List<byte>(),
-                        solidBlocks= new List<byte>(),
-                        topBlocks= new List<byte>();
+            using FileStream stream = new(Setting.Path + "\\MenuBackground.ter", FileMode.Create, FileAccess.Write);
+            for (int x = 0; x < terrain.Count - 7; x++) {
+                BGChunk chunk=terrain[x];
+                List<byte>
+                        backBlocks=new(),
+                        solidBlocks= new(),
+                        topBlocks= new();
 
-                    byte
-                        backblockzeros = 0,
+                byte
+                    backblockzeros = 0,
                         topblockzeros = 0,
                         solidblockzeros = 0;
 
-                    for (int i=0; i<Background.MaxIndex; i++) {
+                for (int i = 0; i < Background.MaxIndex; i++) {
 
-                        //Back blocks
-                        if (chunk.BackBlocks[i]!=0) {
+                    //Back blocks
+                    if (chunk.BackBlocks[i] != 0) {
 
-                            if (backblockzeros!=0) {
-                                if (backblockzeros>2) {
-                                    backBlocks.Add(1);
-                                    backBlocks.Add(backblockzeros);
-                                } else {
-                                    for (int j = 0; j<backblockzeros; j++) backBlocks.Add(0);
-                                }
-                                backblockzeros=0;
+                        if (backblockzeros != 0) {
+                            if (backblockzeros > 2) {
+                                backBlocks.Add(1);
+                                backBlocks.Add(backblockzeros);
                             }
-
-                            backBlocks.Add(chunk.BackBlocks[i]);
-
-                        } else backblockzeros++;
-
-                        //Solid blocks
-                        if (chunk.Blocks[i]!=0) {
-                            if (solidblockzeros!=0) {
-                                if (solidblockzeros>2) {
-                                    solidBlocks.Add(1);
-                                    solidBlocks.Add(solidblockzeros);
-                                } else {
-                                    for (int j = 0; j<solidblockzeros; j++) solidBlocks.Add(0);
-                                }
-                                solidblockzeros=0;
+                            else {
+                                for (int j = 0; j < backblockzeros; j++) backBlocks.Add(0);
                             }
-                            solidBlocks.Add(chunk.Blocks[i]);
-                        } else solidblockzeros++;
+                            backblockzeros = 0;
+                        }
 
-                        //Top blocks
-                        if (chunk.TopBlocks[i]!=0) {
+                        backBlocks.Add(chunk.BackBlocks[i]);
 
-                            if (topblockzeros!=0) {
-                                if (topblockzeros>2) {
-                                    topBlocks.Add(1);
-                                    topBlocks.Add(topblockzeros);
-                                } else {
-                                    for (int j = 0; j<topblockzeros; j++) topBlocks.Add(0);
-                                }
-                                topblockzeros=0;
+                    }
+                    else backblockzeros++;
+
+                    //Solid blocks
+                    if (chunk.Blocks[i] != 0) {
+                        if (solidblockzeros != 0) {
+                            if (solidblockzeros > 2) {
+                                solidBlocks.Add(1);
+                                solidBlocks.Add(solidblockzeros);
                             }
-
-                            topBlocks.Add(chunk.TopBlocks[i]);
-                        } else  topblockzeros++;
+                            else {
+                                for (int j = 0; j < solidblockzeros; j++) solidBlocks.Add(0);
+                            }
+                            solidblockzeros = 0;
+                        }
+                        solidBlocks.Add(chunk.Blocks[i]);
                     }
+                    else solidblockzeros++;
 
-                    if (backblockzeros>2) {
-                        backBlocks.Add(1);
-                        backBlocks.Add(backblockzeros);
-                    } else {
-                        for (int j = 0; j<backblockzeros; j++) backBlocks.Add(0);
+                    //Top blocks
+                    if (chunk.TopBlocks[i] != 0) {
+
+                        if (topblockzeros != 0) {
+                            if (topblockzeros > 2) {
+                                topBlocks.Add(1);
+                                topBlocks.Add(topblockzeros);
+                            }
+                            else {
+                                for (int j = 0; j < topblockzeros; j++) topBlocks.Add(0);
+                            }
+                            topblockzeros = 0;
+                        }
+
+                        topBlocks.Add(chunk.TopBlocks[i]);
                     }
-
-                    if (solidblockzeros>2) {
-                        solidBlocks.Add(1);
-                        solidBlocks.Add(solidblockzeros);
-                    } else {
-                        for (int j = 0; j<solidblockzeros; j++) solidBlocks.Add(0);
-                    }
-
-                    if (topblockzeros>2) {
-                        topBlocks.Add(1);
-                        topBlocks.Add(topblockzeros);
-                    } else {
-                        for (int j = 0; j<topblockzeros; j++) topBlocks.Add(0);
-                    }
-
-                    stream.WriteByte(chunk.LightPos);
-
-                    stream.Write(backBlocks.ToArray(), 0, backBlocks.Count);
-                    stream.Write(topBlocks.ToArray(), 0, topBlocks.Count);
-                    stream.Write(solidBlocks.ToArray(), 0, solidBlocks.Count);
-
-                    //state++;
+                    else topblockzeros++;
                 }
+
+                if (backblockzeros > 2) {
+                    backBlocks.Add(1);
+                    backBlocks.Add(backblockzeros);
+                }
+                else {
+                    for (int j = 0; j < backblockzeros; j++) backBlocks.Add(0);
+                }
+
+                if (solidblockzeros > 2) {
+                    solidBlocks.Add(1);
+                    solidBlocks.Add(solidblockzeros);
+                }
+                else {
+                    for (int j = 0; j < solidblockzeros; j++) solidBlocks.Add(0);
+                }
+
+                if (topblockzeros > 2) {
+                    topBlocks.Add(1);
+                    topBlocks.Add(topblockzeros);
+                }
+                else {
+                    for (int j = 0; j < topblockzeros; j++) topBlocks.Add(0);
+                }
+
+                stream.WriteByte(chunk.LightPos);
+
+                stream.Write(backBlocks.ToArray(), 0, backBlocks.Count);
+                stream.Write(topBlocks.ToArray(), 0, topBlocks.Count);
+                stream.Write(solidBlocks.ToArray(), 0, solidBlocks.Count);
+
+                //state++;
             }
         }
 
         #region Structures
         void TreeApple(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.AppleWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.AppleWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.AppleWood;
-            terrain[x+1].BackBlocks[y-3]=(byte)BackBlockId.AppleWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.AppleWood;
-            terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.AppleWood;
-            terrain[x-1].BackBlocks[y-5]=(byte)BackBlockId.AppleWood;
-            terrain[x+1].BackBlocks[y-6]=(byte)BackBlockId.AppleWood;
-            terrain[x+2].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-2].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x+1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x+2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x+1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x+1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x+1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x-1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
-            terrain[x].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.AppleWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.AppleWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.AppleWood;
+            chunkP1.BackBlocks[y-3]=(byte)BackBlockId.AppleWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.AppleWood;
+            chunkP1.BackBlocks[y-5]=(byte)BackBlockId.AppleWood;
+            chunkM1.BackBlocks[y-5]=(byte)BackBlockId.AppleWood;
+            chunkP1.BackBlocks[y-6]=(byte)BackBlockId.AppleWood;
+            chunkP2.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM2.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkP1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunk0 .TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkP2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkP1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunk0 .TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkP1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunk0 .TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkP1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunkM1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
+            chunk0 .TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.AppleLeavesWithApples : (byte)BackBlockId.AppleLeaves;
         }
 
         void TreeOrange(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.OrangeWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.OrangeWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.OrangeWood;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
 
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.OrangeWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.OrangeWood;
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.OrangeWood;
 
-            if (random.Bool()) terrain[x-1].BackBlocks[y-4]=(byte)BackBlockId.OrangeWood;
-            if (random.Bool()) terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.OrangeWood;
-            if (random.Bool()) terrain[x-1].BackBlocks[y-7]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.OrangeWood;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.OrangeWood;
 
-            if (random.Bool()) {
-                terrain[x+1].BackBlocks[y-7]=(byte)BackBlockId.OrangeWood;
-                if (random.Bool()) terrain[x+1].BackBlocks[y-8]=(byte)BackBlockId.OrangeWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-4]=(byte)BackBlockId.OrangeWood;
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-5]=(byte)BackBlockId.OrangeWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-7]=(byte)BackBlockId.OrangeWood;
+
+            if (FastRandom.Bool()) {
+                chunkP1.BackBlocks[y-7]=(byte)BackBlockId.OrangeWood;
+                if (FastRandom.Bool()) chunkP1.BackBlocks[y-8]=(byte)BackBlockId.OrangeWood;
             }
-            terrain[x+1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
 
-            terrain[x].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-5]=(byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-5]=(byte)BackBlockId.OrangeLeaves;
 
-            terrain[x].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+2].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-2].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP2.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM2.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
 
-            terrain[x].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+2].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-2].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+1].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP2.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM2.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
 
-            terrain[x].TopBlocks[y-8]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+2].TopBlocks[y-8]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-2].TopBlocks[y-8]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x+1].TopBlocks[y-8]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-8]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-8]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP2.TopBlocks[y-8]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM2.TopBlocks[y-8]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-8]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-8]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
 
-            terrain[x+1].TopBlocks[y-9]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x-1].TopBlocks[y-9]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
-            terrain[x].TopBlocks[y-9]=random.Int(3)==1 ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkP1.TopBlocks[y-9]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunkM1.TopBlocks[y-9]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
+            chunk0 .TopBlocks[y-9]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.OrangeLeavesWithOranges : (byte)BackBlockId.OrangeLeaves;
         }
 
         void TreeLemon(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.LemonWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.LemonWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.LemonWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.LemonWood;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
 
-            if (random.Bool()) terrain[x-1].BackBlocks[y-4]=(byte)BackBlockId.LemonWood;
-            else terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.LemonWood;
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.LemonWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.LemonWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.LemonWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.LemonWood;
 
-            terrain[x+1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-4]=(byte)BackBlockId.LemonWood;
+            else chunkP1.BackBlocks[y-5]=(byte)BackBlockId.LemonWood;
 
-            terrain[x].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x+2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x+1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunk0 .TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
 
-            terrain[x].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x+2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x+1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunk0 .TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
 
-            terrain[x].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x+1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
-            terrain[x-1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunk0 .TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+
+            chunk0 .TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkP1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
+            chunkM1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.LemonLeavesWithLemons : (byte)BackBlockId.LemonLeaves;
         }
 
         void TreeCherry(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.CherryWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.CherryWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.CherryWood;
-            terrain[x-1].BackBlocks[y-3]=(byte)BackBlockId.CherryWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.CherryWood;
-            terrain[x-1].BackBlocks[y-5]=(byte)BackBlockId.CherryWood;
-            terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.CherryWood;
-            terrain[x-1].BackBlocks[y-6]=(byte)BackBlockId.CherryWood;
-            terrain[x+1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x+1].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x-1].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
-            terrain[x].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.CherryWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.CherryWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.CherryWood;
+            chunkM1.BackBlocks[y-3]=(byte)BackBlockId.CherryWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.CherryWood;
+            chunkM1.BackBlocks[y-5]=(byte)BackBlockId.CherryWood;
+            chunkP1.BackBlocks[y-5]=(byte)BackBlockId.CherryWood;
+            chunkM1.BackBlocks[y-6]=(byte)BackBlockId.CherryWood;
+            chunkP1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunk0 .TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunk0 .TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunk0 .TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunk0 .TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkP1.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunkM1.TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
+            chunk0 .TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.CherryLeavesWithCherries : (byte)BackBlockId.CherryLeaves;
         }
 
         void TreePlum(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.PlumWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.PlumWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.PlumWood;
-            terrain[x-1].BackBlocks[y-3]=(byte)BackBlockId.PlumWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.PlumWood;
-            terrain[x-1].BackBlocks[y-5]=(byte)BackBlockId.PlumWood;
-            terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.PlumWood;
-            terrain[x-1].BackBlocks[y-6]=(byte)BackBlockId.PlumWood;
-            terrain[x+1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-1].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x].TopBlocks[y-3]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x+2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-2].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x+1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-1].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x].TopBlocks[y-4]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x+2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-2].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x+1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-1].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x].TopBlocks[y-5]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x+1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x-1].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x].TopBlocks[y-6]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
-            terrain[x].TopBlocks[y-7]=random.Int(3)==1 ? (byte)BackBlockId.PlumLeavesWithPlums: (byte)BackBlockId.PlumLeaves;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.PlumWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.PlumWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.PlumWood;
+            chunkM1.BackBlocks[y-3]=(byte)BackBlockId.PlumWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.PlumWood;
+            chunkM1.BackBlocks[y-5]=(byte)BackBlockId.PlumWood;
+            chunkP1.BackBlocks[y-5]=(byte)BackBlockId.PlumWood;
+            chunkM1.BackBlocks[y-6]=(byte)BackBlockId.PlumWood;
+            chunkP1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM1.TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunk0 .TopBlocks[y-3]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkP2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM2.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkP1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM1.TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunk0 .TopBlocks[y-4]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkP2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM2.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkP1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM1.TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunk0 .TopBlocks[y-5]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkP1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunkM1.TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunk0 .TopBlocks[y-6]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums : (byte)BackBlockId.PlumLeaves;
+            chunk0 .TopBlocks[y-7]=FastRandom.Bool_33_333Percent() ? (byte)BackBlockId.PlumLeavesWithPlums: (byte)BackBlockId.PlumLeaves;
         }
 
         void TreeOakMedium(int x, int y) {
-            treeChange=2+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.OakWood;
-            if (random.Bool()) terrain[x+1].BackBlocks[y-4]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.OakWood;
-            terrain[x-1].BackBlocks[y-7]=(byte)BackBlockId.OakWood;
-            terrain[x+1].BackBlocks[y-7]=(byte)BackBlockId.OakWood;
-            if (random.Bool()) terrain[x+1].BackBlocks[y-8]=(byte)BackBlockId.OakWood;
-            if (random.Bool()) terrain[x-1].BackBlocks[y-8]=(byte)BackBlockId.OakWood;
-            if (random.Bool_20Percent()) terrain[x-2].BackBlocks[y-7]=(byte)BackBlockId.OakWood;
-            terrain[x+1].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
-            terrain[x+2].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
-            terrain[x-2].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
-            terrain[x+2].TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
-            terrain[x-2].TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
-            terrain[x+2].TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
-            terrain[x-2].TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
-            terrain[x-2].TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
-            terrain[x+2].TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
+            treeChange=2+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.OakWood;
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-4]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.OakWood;
+            chunkM1.BackBlocks[y-7]=(byte)BackBlockId.OakWood;
+            chunkP1.BackBlocks[y-7]=(byte)BackBlockId.OakWood;
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-8]=(byte)BackBlockId.OakWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-8]=(byte)BackBlockId.OakWood;
+            if (FastRandom.Bool_20Percent()) chunkM2.BackBlocks[y-7]=(byte)BackBlockId.OakWood;
+            chunkP1.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunk0.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            chunk0.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            chunkP2.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            chunkM2.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
+            chunk0 .TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
+            chunkP2.TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
+            chunkM2.TopBlocks[y-6]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
+            chunk0 .TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
+            chunkP2.TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
+            chunkM2.TopBlocks[y-7]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
+            chunk0 .TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
+            chunkM2.TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
+            chunkP2.TopBlocks[y-8]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
+            chunk0 .TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-9]=(byte)BackBlockId.OakLeaves;
         }
 
         void TreePine(int x, int y) {
-            treeChange=3+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-7]=(byte)BackBlockId.PineWood;
-            if (random.Bool()) terrain[x].BackBlocks[y-8]=(byte)BackBlockId.PineWood;
-            terrain[x+2].TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
-            terrain[x-2].TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
-            terrain[x+1].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x-1].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x+2].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x-2].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-9]=(byte)BackBlockId.PineLeaves;
-            terrain[x-1].TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
-            terrain[x+1].TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
+            treeChange=3+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-7]=(byte)BackBlockId.PineWood;
+            if (FastRandom.Bool()) chunk0.BackBlocks[y-8]=(byte)BackBlockId.PineWood;
+            chunkP2.TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
+            chunkM2.TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
+            chunkP1.TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunk0 .TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunkM1.TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunkP2.TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunk0 .TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunkM2.TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunk0 .TopBlocks[y-9]=(byte)BackBlockId.PineLeaves;
+            chunkM1.TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
+            chunkP1.TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
         }
 
         void TreePineJunle(int x, int y) {
-            treeChange=3+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.PineWood;
-            terrain[x].BackBlocks[y-7]=(byte)BackBlockId.PineWood;
-            terrain[x+2].TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
-            terrain[x-2].TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
-            terrain[x+1].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x-1].TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x+2].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x-2].TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
-            terrain[x].TopBlocks[y-9]=(byte)BackBlockId.PineLeaves;
-            terrain[x-1].TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
-            terrain[x+1].TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
-            //if (random.Int(3)==1) {
-            //    terrain[x-2].BackBlocks[y-6]=(byte)BackBlockId.Liana;
-            //    terrain[x-2].BackBlocks[y-6+1]=(byte)BackBlockId.Liana;
-            //    if (random.Bool()) terrain[x-2].BackBlocks[y-6+2]=(byte)BackBlockId.Liana;
-            //}
-            //if (random.Int(3)==1) {
-            //    terrain[x+2].BackBlocks[y-6]=(byte)BackBlockId.Liana;
-            //    terrain[x+2].BackBlocks[y-6+1]=(byte)BackBlockId.Liana;
-            //    if (random.Bool()) terrain[x+2].BackBlocks[y-6+2]=(byte)BackBlockId.Liana;
-            //}
-            //if (random.Int(3)==1) {
-            //    //terrain[x+1].BackBlocks[y-122]=(byte)BackBlockId.Liana;
-            //    //terrain[x+1].BackBlocks[y-122+1]=(byte)BackBlockId.Liana;
-            //    if (random.Bool()) terrain[x+1].BackBlocks[y-7+2]=(byte)BackBlockId.Liana;
-            //}
-            //if (random.Int(3)==1) {
-            //    terrain[x-1].BackBlocks[y-7]=(byte)BackBlockId.Liana;
-            //    terrain[x-1].BackBlocks[y-7+1]=(byte)BackBlockId.Liana;
-            //    if (random.Bool()) terrain[x-1].BackBlocks[y-7+2]=(byte)BackBlockId.Liana;
-            //}
-            //if (random.Int(3)==1) {
-            //    terrain[x].BackBlocks[y-9]=(byte)BackBlockId.Liana;
-            //    terrain[x].BackBlocks[y-9+1]=(byte)BackBlockId.Liana;
-            //    if (random.Bool()) terrain[x].BackBlocks[y-9+2]=(byte)BackBlockId.Liana;
-            //}
+            treeChange=3+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.PineWood;
+            chunk0.BackBlocks[y-7]=(byte)BackBlockId.PineWood;
+            chunkP2.TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
+            chunkM2.TopBlocks[y-6]=(byte)BackBlockId.PineLeaves;
+            chunkP1.TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunk0.TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunkM1.TopBlocks[y-7]=(byte)BackBlockId.PineLeaves;
+            chunk0 .TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunkP2.TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunk0.TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunkM2.TopBlocks[y-8]=(byte)BackBlockId.PineLeaves;
+            chunk0.TopBlocks[y-9]=(byte)BackBlockId.PineLeaves;
+            chunkM1.TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
+            chunkP1.TopBlocks[y-10]=(byte)BackBlockId.PineLeaves;
         }
 
         void TreeSpruceBig(int x, int y) {
-            treeChange=3+random.Int(2);
+            treeChange=3+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
 
-            terrain[x].BackBlocks[y]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
-            if (random.Bool()) terrain[x+1].BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
-            if (random.Bool()) terrain[x-1].BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
-            if (random.Bool()) terrain[x+1].BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
-            if (random.Bool()) terrain[x-1].BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-8]=(byte)BackBlockId.SpruceWood;
-            terrain[x+2].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-2].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+2].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-2].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-2].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+2].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-9]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-10]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.BackBlocks[y]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-4]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-6]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-8]=(byte)BackBlockId.SpruceWood;
+            chunkP2.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunkM2.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunkP2.TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunkM2.TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunkM2.TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunkP2.TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-6]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-7]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-8]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-9]=(byte)BackBlockId.SpruceLeaves;
+            chunk0 .TopBlocks[y-10]=(byte)BackBlockId.SpruceLeaves;
         }
 
         void TreeLinden(int x, int y) {
-            treeChange=3+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+            treeChange=3+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1],
+                chunkM2=terrain[x-2],
+                chunkP2=terrain[x+2];
 
-            if (random.Bool()) terrain[x+1].BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
-            if (random.Bool()) terrain[x-1].BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
-            if (random.Bool()) {
-                terrain[x-1].BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
-                if (random.Bool()) terrain[x-1].BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+
+            if (FastRandom.Bool()) chunkP1.BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
+            if (FastRandom.Bool()) chunkM1.BackBlocks[y-4]=(byte)BackBlockId.LindenWood;
+            if (FastRandom.Bool()) {
+                chunkM1.BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+                if (FastRandom.Bool()) chunkM1.BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
             }
-            if (random.Bool()) {
-                terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
-                if (random.Bool()) terrain[x+1].BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+            if (FastRandom.Bool()) {
+                chunkP1.BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
+                if (FastRandom.Bool()) chunkP1.BackBlocks[y-5]=(byte)BackBlockId.LindenWood;
             }
-            terrain[x].BackBlocks[y-6]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-7]=(byte)BackBlockId.LindenWood;
-            terrain[x].BackBlocks[y-8]=(byte)BackBlockId.LindenWood;
-            terrain[x-2].BackBlocks[y-6]=(byte)BackBlockId.LindenWood;
-            terrain[x+1].TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+1].TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+2].TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-2].TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+1].TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+2].TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-2].TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+1].TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+2].TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-2].TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+1].TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
-            terrain[x+1].TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
-            terrain[x-1].TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
-            terrain[x].TopBlocks[y-10]=(byte)BackBlockId.LindenLeaves;
+            chunk0.BackBlocks[y-6]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-7]=(byte)BackBlockId.LindenWood;
+            chunk0.BackBlocks[y-8]=(byte)BackBlockId.LindenWood;
+            chunkM2.BackBlocks[y-6]=(byte)BackBlockId.LindenWood;
+            chunkP1.TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
+            chunk0.TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-4]=(byte)BackBlockId.LindenLeaves;
+            chunkP1.TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
+            chunkP2.TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
+            chunkM2.TopBlocks[y-5]=(byte)BackBlockId.LindenLeaves;
+            chunkP1.TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
+            chunkP2.TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
+            chunkM2.TopBlocks[y-6]=(byte)BackBlockId.LindenLeaves;
+            chunkP1.TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
+            chunkP2.TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
+            chunkM2.TopBlocks[y-7]=(byte)BackBlockId.LindenLeaves;
+            chunkP1.TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-8]=(byte)BackBlockId.LindenLeaves;
+            chunkP1.TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
+            chunkM1.TopBlocks[y-9]=(byte)BackBlockId.LindenLeaves;
+            chunk0 .TopBlocks[y-10]=(byte)BackBlockId.LindenLeaves;
         }
 
         void TreeOakLittle(int x, int y) {
-            treeChange=1+random.Int(2);
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.OakWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.OakWood;
-            terrain[x+1].TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
-            terrain[x+1].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x-1].TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
-            terrain[x].TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
+            treeChange=1+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1];
+
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.OakWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.OakWood;
+            chunkP1.TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
+            chunk0.TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-3]=(byte)BackBlockId.OakLeaves;
+            chunkP1.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunk0.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunkM1.TopBlocks[y-4]=(byte)BackBlockId.OakLeaves;
+            chunk0.TopBlocks[y-5]=(byte)BackBlockId.OakLeaves;
         }
 
         void TreeSpruceLittle(int x, int y) {
-            treeChange=1+random.Int(2);
+            treeChange=1+FastRandom.Int(2);
+            BGChunk 
+                chunk0 =terrain[x  ],
+                chunkM1=terrain[x-1],
+                chunkP1=terrain[x+1];
 
-            terrain[x].BackBlocks[y-1]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-2]=(byte)BackBlockId.SpruceWood;
-            terrain[x].BackBlocks[y-3]=(byte)BackBlockId.SpruceWood;
-            terrain[x+1].TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x+1].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x-1].TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
-            terrain[x].TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.BackBlocks[y-1]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-2]=(byte)BackBlockId.SpruceWood;
+            chunk0.BackBlocks[y-3]=(byte)BackBlockId.SpruceWood;
+            chunkP1.TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-2]=(byte)BackBlockId.SpruceLeaves;
+            chunkP1.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunkM1.TopBlocks[y-3]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.TopBlocks[y-4]=(byte)BackBlockId.SpruceLeaves;
+            chunk0.TopBlocks[y-5]=(byte)BackBlockId.SpruceLeaves;
         }
-
-        //void OreCoal(int y) {
-        //    terrain[pos-10].Blocks[y-1]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10].Blocks[y+1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10+1].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10+1].Blocks[y+1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10+2].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10+2].Blocks[y+1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10+3].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10+3].Blocks[y+1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10+4].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10+5].Blocks[y]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10-1].Blocks[y+1]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-1].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-1].Blocks[y-1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10-2].Blocks[y+1]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-2].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-2].Blocks[y-1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10-3].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-3].Blocks[y-1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10-4].Blocks[y]=(byte)BackBlockId.Coal;
-        //    terrain[pos-10-4].Blocks[y-1]=(byte)BackBlockId.Coal;
-
-        //    terrain[pos-10-5].Blocks[y]=(byte)BackBlockId.Coal;
-        //}
-
-        //void OreIron(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y-1]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y-1]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y-2]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y-3]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y-4]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10-1].Blocks[y-5]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y+1]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y+2]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y+3]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y+4]=(byte)BackBlockId.OreIron;
-        //    terrain[pos-10].Blocks[y+5]=(byte)BackBlockId.OreIron;
-        //}
-
-        //void OreGold(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreGold;
-        //    terrain[pos-10+1].Blocks[y]=(byte)BackBlockId.OreGold;
-        //    terrain[pos-10+2].Blocks[y]=(byte)BackBlockId.OreGold;
-        //    terrain[pos-10-3].Blocks[y]=(byte)BackBlockId.OreGold;
-        //    terrain[pos-10-5].Blocks[y-1]=(byte)BackBlockId.OreGold;
-        //    terrain[pos-10-6].Blocks[y-1]=(byte)BackBlockId.OreGold;
-        //}
-
-        //void OreCopper(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10].Blocks[y+1]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10].Blocks[y+2]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10+1].Blocks[y+2]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10+1].Blocks[y+3]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10+2].Blocks[y+3]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10+3].Blocks[y+4]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10-1].Blocks[y-1]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10-1].Blocks[y-2]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10-2].Blocks[y-2]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10-2].Blocks[y-3]=(byte)BackBlockId.OreCopper;
-        //    terrain[pos-10-3].Blocks[y-4]=(byte)BackBlockId.OreCopper;
-        //}
-
-        //void OreTin(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreTin;
-        //    terrain[pos-10].Blocks[y-1]=(byte)BackBlockId.OreTin;
-        //    terrain[pos-10-1].Blocks[y+1]=(byte)BackBlockId.OreTin;
-        //    terrain[pos-10-1].Blocks[y+2]=(byte)BackBlockId.OreTin;
-        //}
-
-        //void OreSilver(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreSilver; ;
-        //    terrain[pos-10+1].Blocks[y]=(byte)BackBlockId.OreSilver; ;
-        //    terrain[pos-10+2].Blocks[y]=(byte)BackBlockId.OreSilver; ;
-        //    terrain[pos-10-3].Blocks[y]=(byte)BackBlockId.OreSilver; ;
-        //    terrain[pos-10-4].Blocks[y-1]=(byte)BackBlockId.OreSilver; ;
-        //    terrain[pos-10-6].Blocks[y-1]=(byte)BackBlockId.OreSilver; ;
-        //}
-
-        //void OreAliminium(int y) {
-        //    terrain[pos-10].Blocks[y]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10+1].Blocks[y]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10+1].Blocks[y+1]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10+3].Blocks[y+1]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10+2].Blocks[y]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10-3].Blocks[y]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10-4].Blocks[y-1]=(byte)BackBlockId.OreAluminium;
-        //    terrain[pos-10-6].Blocks[y]=(byte)BackBlockId.OreAluminium;
-        //}
-
-        //void OreOil(int y) {
-        //    if (random.Bool()) {
-        //        terrain[pos-10+6].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //        terrain[pos-10+5].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    }
-
-        //    terrain[pos-10+5].TopBlocks[y]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10+4].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10+4].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10+3].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10+3].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10+2].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10+2].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    if (random.Bool()) terrain[pos-10+2].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10+1].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10+1].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10+1].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10-2].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-2].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-2].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10-1].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-1].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-1].TopBlocks[y-2]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-1].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10-2].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-2].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-2].TopBlocks[y-2]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-2].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10-3].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-3].TopBlocks[y+1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-3].TopBlocks[y]=(byte)BackBlockId.Oil;
-
-        //    terrain[pos-10-4].TopBlocks[y-1]=(byte)BackBlockId.Oil;
-        //    terrain[pos-10-4].TopBlocks[y]=(byte)BackBlockId.Oil;
-
-        //    if (random.Bool()) terrain[pos-10-5].TopBlocks[y]=(byte)BackBlockId.Oil;
-        //}
         #endregion
     }
 
     public class BGChunk {
-        public byte[] Blocks = new byte[Background.MaxIndex];
-        public byte[] TopBlocks = new byte[Background.MaxIndex];
-        public byte[] BackBlocks = new byte[Background.MaxIndex];
+        public byte[] 
+            Blocks      = new byte[Background.MaxIndex],
+            TopBlocks   = new byte[Background.MaxIndex],
+            BackBlocks  = new byte[Background.MaxIndex];
         public byte LightPos;
     }
 
     public class BTerrain {
-        public BBlock[] SolidBlocks = new BBlock[rabcrClient.Background.MaxIndex];
-        public BBlock[] TopBlocks = new BBlock[rabcrClient.Background.MaxIndex];
-        public BBlock[] Background = new BBlock[rabcrClient.Background.MaxIndex];
+        public BBlock[] 
+            SolidBlocks = new BBlock[rabcrClient.Background.MaxIndex],
+            TopBlocks   = new BBlock[rabcrClient.Background.MaxIndex],
+            Background  = new BBlock[rabcrClient.Background.MaxIndex];
 
-        public bool[] IsSolidBlocks = new bool[rabcrClient.Background.MaxIndex];
-        public bool[] IsTopBlocks = new bool[rabcrClient.Background.MaxIndex];
-        public bool[] IsBackground = new bool[rabcrClient.Background.MaxIndex];
+        public bool[] 
+            IsSolidBlocks   = new bool[rabcrClient.Background.MaxIndex],
+            IsTopBlocks     = new bool[rabcrClient.Background.MaxIndex],
+            IsBackground    = new bool[rabcrClient.Background.MaxIndex];
 
-        public byte LightPos;
+        public byte LightPos, 
+            StartSomething;
 
         public Vector2 LightVec;
-        public byte StartSomething;
 
         public int LightPos16;
     }
@@ -2928,33 +2847,22 @@ Texture2D[] rocksTexture;
 
     public class BBlockNormal : BBlock{
 
+        public static Color White=Color.White;
         public Texture2D Texture;
         public Vector2 Pos;
-        public static Color White= Color.White;
         
         public BBlockNormal(){ }
-        
-        public BBlockNormal(Texture2D texture, Vector2 pos) {
-            Texture=texture;
-            Pos=pos;
-        }
+
+        //public BBlockNormal(Texture2D texture, Vector2 pos) {
+        //    Texture=texture;
+        //    Pos=pos;
+        //}
 
         public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Pos, White);
     }
 
     // Top and Back
-    public class BBlockEmpty: BBlock {
-        public override void Draw() { }
-    }
-
-    // Only solid
-    //public class BBlockEmptySolid : BBlock{
-
-    //    public BBlock Top, Back;
-
-    //    public override void Draw() {
-    //        Back.Draw();
-    //        Top.Draw();
-    //    }
+    //public class BBlockEmpty: BBlock {
+    //    public override void Draw() { }
     //}
 }

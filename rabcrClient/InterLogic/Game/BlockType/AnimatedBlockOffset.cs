@@ -27,13 +27,12 @@ namespace rabcrClient {
 			screen+=imageSpeed;
 			if (screen>=divideC) screen = 0;
 
-			Rabcr.spriteBatch.Draw(Texture, new Vector2(Position.X+ox,Position.Y+oy), new Rectangle(width*(int)screen,0,width,height), ColorWhite);
+			Rabcr.spriteBatch.Draw(Texture, new Vector2(Position.X+ox,Position.Y+oy), new Rectangle(width*(int)screen,0,width,height), Global.ColorWhite);
         }
 
-        public override Block CloneDown() {
-            AnimatedBlockOffset a = new AnimatedBlockOffset(Texture,Position,width,height,Id,ox,oy);
-            a.Position.Y+=16;
-            return a;
-        }
+        public override Block CloneDown() => new AnimatedBlockOffset(Texture, new Vector2(Position.X, Position.Y+16), width, height, Id, ox, oy);
+          //  a.Position.Y+=16;
+        ///    return a;
+        //}
     }
 }

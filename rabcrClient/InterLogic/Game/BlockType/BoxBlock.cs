@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 namespace rabcrClient {
-    internal class BoxBlock:Block{
+    public class BoxBlock:Block {
         public ItemInv[] Inv;
         public Vector2 Position;
         public Texture2D Texture;
@@ -14,12 +14,17 @@ namespace rabcrClient {
             Inv=new ItemInv[max];
         }
 
-        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, ColorWhite);
+        private BoxBlock(){ }
 
-        public override Block CloneDown() {
-            BoxBlock b=new BoxBlock(Texture, Id, Position, Inv.Length);
-            b.Position.Y+=16;
-            return b;
-        }
+        public override void Draw() => Rabcr.spriteBatch.Draw(Texture, Position, Global.ColorWhite);
+
+        public override Block CloneDown() => new BoxBlock{
+                Texture=Texture,
+                Position=new Vector2(Position.X,Position.Y+16),
+                Id=Id,
+            };//Texture, Id, Position, Inv.Length);
+         //   b.Position.Y+=16;
+           // return b;
+       // }
     }
 }

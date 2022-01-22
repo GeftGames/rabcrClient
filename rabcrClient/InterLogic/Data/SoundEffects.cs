@@ -1,7 +1,7 @@
 ﻿namespace rabcrClient {
     static class SoundEffects {
         public static volatile Microsoft.Xna.Framework.Audio.SoundEffect
-            
+
             // Eating
             Eat,
 

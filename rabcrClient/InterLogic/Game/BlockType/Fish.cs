@@ -34,15 +34,15 @@ namespace rabcrClient {
           Id=(ushort)BlockId.Fish;
         }
 
-        public unsafe override byte[] Save(){ 
+        public unsafe override byte[] Save(){
             ushort id=Id;
 			byte* mbytes=(byte*)&id;
- 
-            return new byte[]{ 
+
+            return new byte[]{
                 mbytes[1],
-                mbytes[0], 
-                Height, 
-                Dir ? (byte)1 : (byte)0 
+                mbytes[0],
+                Height,
+                Dir ? (byte)1 : (byte)0
             };
         }
 
@@ -51,15 +51,15 @@ namespace rabcrClient {
             else Position.X+=speed;
 
 
-            if (Rabcr.random.Bool()) speed += .01f; else speed -= .01f;
+            if (FastRandom.Bool()) speed += .01f; else speed -= .01f;
             if (speed < .01) speed += .01f;
             if (speed >  2) speed -= .01f;
         }
 
         public override void Draw() {
-            if (Rabcr.random.Int(10)==1){
-                if (Rabcr.random.Bool_12_5Percent()) Frame=!Frame;
-                if (Rabcr.random.Int(20)==1) Dir=!Dir;
+            if (FastRandom.Bool_10Percent()){
+                if (FastRandom.Bool_12_5Percent()) Frame=!Frame;
+                if (FastRandom.Bool_5Percent()) Dir=!Dir;
             }
 
             if (Dir){

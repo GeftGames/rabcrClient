@@ -7,7 +7,7 @@ namespace rabcrClient {
         public SettingMessage(string t) {
             Value=60;
             text=new Text(t,0,0,BitmapFont.bitmapFont18);
-        
+
             centerDelta=(int)(text.MeasureX()/2f);
         }
 

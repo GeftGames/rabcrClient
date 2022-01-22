@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace rabcrClient { 
-    public class GenDataBasic { 
+namespace rabcrClient {
+    public class GenDataBasic {
         public ushort Id;
 
         public virtual void SaveTop(List<byte> list) { }
@@ -74,149 +76,42 @@ namespace rabcrClient {
             SpaceStation,
         }
 
-    public class GenDataWater: GenDataBasic{ 
-        public override void SaveTop(List<byte> list) {   
+    public class GenDataWater: GenDataBasic{
+        public override void SaveTop(List<byte> list) {
             list.Add(255);
         }
-    } 
-    
+    }
+
     public class GenerateWorld {
-        //readonly GenDataBasic 
-        //    (ushort)BlockId.Gravel     =new GenDataBasic{ Id=(ushort)BlockId. Gravel },
-        //    (ushort)BlockId.Sand       =new GenDataBasic{ Id=(ushort)BlockId. Sand },
-        //    (ushort)BlockId.Cobblestone=new GenDataBasic{ Id=(ushort)BlockId. Cobblestone },
-        //    (ushort)BlockId.Snow       =new GenDataBasic{ Id=(ushort)BlockId. Snow },
-        //    (ushort)BlockId.Dandelion  =new GenDataBasic{ Id=(ushort)BlockId. Dandelion },
-        //    (ushort)BlockId.SnowTop    =new GenDataBasic{ Id=(ushort)BlockId. SnowTop },
-        //    (ushort)BlockId.Coral      =new GenDataBasic{ Id=(ushort)BlockId. Coral },
-        //    (ushort)BlockId.GrassBlockHills   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockHills },
-        //    (ushort)BlockId.GrassBlockForest   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockForest },
-        //    (ushort)BlockId.GrassBlockJungle   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockJungle },
-        //    (ushort)BlockId.GrassBlockDesert   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockDesert },
-        //    (ushort)BlockId.GrassBlockPlains   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockPlains },
-        //    (ushort)BlockId.GrassBlockClay   =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockClay },
-        //    (ushort)BlockId.Heater   =new GenDataBasic{ Id=(ushort)BlockId. Heather },
-        //    (ushort)BlockId.Rocks   =new GenDataBasic{ Id=(ushort)BlockId. Rocks },
-        //    (ushort)BlockId.GrassHills    =new GenDataBasic{ Id=(ushort)BlockId. GrassHills },
-        //    (ushort)BlockId.GrassJungle   =new GenDataBasic{ Id=(ushort)BlockId. GrassJungle },
-        //    (ushort)BlockId.GrassDesert   =new GenDataBasic{ Id=(ushort)BlockId. GrassDesert },
-        //    (ushort)BlockId.GrassForest   =new GenDataBasic{ Id=(ushort)BlockId. GrassForest },
-        //    (ushort)BlockId.GrassPlains   =new GenDataBasic{ Id=(ushort)BlockId. GrassPlains },
-        //    (ushort)BlockId.Alore   =new GenDataBasic{ Id=(ushort)BlockId. Alore },
-        //    (ushort)BlockId.BranchALittle1   =new GenDataBasic{ Id=(ushort)BlockId. BranchALittle1 },
-        //    (ushort)BlockId.BranchALittle2   =new GenDataBasic{ Id=(ushort)BlockId. BranchALittle2 },
-        //    (ushort)BlockId.BranchFull   =new GenDataBasic{ Id=(ushort)BlockId. BranchFull },
-        //    (ushort)BlockId.BranchWithout   =new GenDataBasic{ Id=(ushort)BlockId. BranchWithout },
-        //    (ushort)BlockId.Boletus   =new GenDataBasic{ Id=(ushort)BlockId. Boletus },
-        //    (ushort)BlockId.Toadstool   =new GenDataBasic{ Id=(ushort)BlockId. Toadstool },
-        //    (ushort)BlockId.Champignon   =new GenDataBasic{ Id=(ushort)BlockId. Champignon },
-        //    (ushort)BlockId.Rose   =new GenDataBasic{ Id=(ushort)BlockId. Rose },
-        //    (ushort)BlockId.Violet   =new GenDataBasic{ Id=(ushort)BlockId. Violet },
-        //    (ushort)BlockId.Orchid   =new GenDataBasic{ Id=(ushort)BlockId. Orchid },
-        //    (ushort)BlockId.Ice        =new GenDataBasic{ Id=(ushort)BlockId. Ice },
-        //    (ushort)BlockId.Seaweed    =new GenDataBasic{ Id=(ushort)BlockId. Seaweed },
-        //    (ushort)BlockId.Water    =new GenDataWater{ Id=(ushort)BlockId. WaterBlock },
-        //    waterSalt    =new GenDataWater{ Id=(ushort)BlockId. WaterSalt },
-        //    (ushort)BlockId.StoneBasalt    =new GenDataBasic{ Id=(ushort)BlockId. StoneBasalt },
-        //    (ushort)BlockId.StoneDiorit    =new GenDataBasic{ Id=(ushort)BlockId. StoneDiorit },
-        //    (ushort)BlockId.StoneDolomite    =new GenDataBasic{ Id=(ushort)BlockId. StoneDolomite },
-        //    (ushort)BlockId.StoneGabbro    =new GenDataBasic{ Id=(ushort)BlockId. StoneGabbro    },
-        //    (ushort)BlockId.StoneGneiss    =new GenDataBasic{ Id=(ushort)BlockId. StoneGneiss    },
-        //    clay    =new GenDataBasic{ Id=(ushort)BlockId. Clay    },
-        //    (ushort)BlockId.StoneLimestone =new GenDataBasic{ Id=(ushort)BlockId. StoneLimestone },
-        //    (ushort)BlockId.StoneRhyolite  =new GenDataBasic{ Id=(ushort)BlockId. StoneRhyolite  },
-        //    (ushort)BlockId.OreAluminium  =new GenDataBasic{ Id=(ushort)BlockId. OreAluminium  },
-        //    (ushort)BlockId.OreCopper  =new GenDataBasic{ Id=(ushort)BlockId. OreCopper  },
-        //    (ushort)BlockId.OreGold  =new GenDataBasic{ Id=(ushort)BlockId. OreGold  },
-        //    (ushort)BlockId.OreIron  =new GenDataBasic{ Id=(ushort)BlockId. OreIron  },
-        //    (ushort)BlockId.OreSaltpeter  =new GenDataBasic{ Id=(ushort)BlockId. OreSaltpeter  },
-        //    (ushort)BlockId.OreSilver  =new GenDataBasic{ Id=(ushort)BlockId. OreSilver  },
-        //    (ushort)BlockId.OreSulfur  =new GenDataBasic{ Id=(ushort)BlockId. OreSulfur  },
-        //    (ushort)BlockId.OreTin  =new GenDataBasic{ Id=(ushort)BlockId. OreTin  },
-        //    (ushort)BlockId.Oil  =new GenDataBasic{ Id=(ushort)BlockId. Oil  },
-        //    (ushort)BlockId.MudStone  =new GenDataBasic{ Id=(ushort)BlockId. MudStone  },
-        //    (ushort)BlockId.StoneSandstone =new GenDataBasic{ Id=(ushort)BlockId. StoneSandstone },
-        //    (ushort)BlockId.StoneSchist    =new GenDataBasic{ Id=(ushort)BlockId. StoneSchist    },
-        //    (ushort)BlockId.GrassBlockCompost    =new GenDataBasic{ Id=(ushort)BlockId. GrassBlockCompost    },
-        //    (ushort)BlockId.Compost    =new GenDataBasic{ Id=(ushort)BlockId. Compost    },
-        //    (ushort)BlockId.Regolite    =new GenDataBasic{ Id=(ushort)BlockId. Regolite    },
-        //    (ushort)BlockId.Anorthosite    =new GenDataBasic{ Id=(ushort)BlockId. Anorthosite    },
-        //    (ushort)BlockId.Lava    =new GenDataBasic{ Id=(ushort)BlockId. Lava    },
-        //    (ushort)BlockId.RedSand    =new GenDataBasic{ Id=(ushort)BlockId. RedSand    },
-        //    (ushort)BlockId.OreCoal    =new GenDataBasic{ Id=(ushort)BlockId. OreCoal    },
-        //    (ushort)BlockId.Dirt       =new GenDataBasic{ Id=(ushort)BlockId. Dirt };
+     
+        void SetLeave(GChunk chunk, int x, int y, ushort id, GenTree tree) {
+            if (chunk.TopBlocks[y]==0) {
+                chunk.TopBlocks[y]=id;
+            //    byte by=(byte)y;
+                tree.TitlesLeaves.Add(new UShortAndByte((ushort)x, (byte)y));
+              //  tree.AddLeave(x, by);
 
-        void SetLeave(GChunk chunk, int x, int y, ushort id, GenTree tree){ 
-            if (chunk.TopBlocks[y]==0){
-                chunk.TopBlocks[y]=id; 
-                byte by=(byte)y;
-                tree.AddLeave(x, by);
-
-                if (chunk.SetLightPosHalf) { 
-                    if (y<chunk.LightPosHalf) chunk.LightPosHalf=by;
-                } else { 
-                 //   chunk.Half=(byte)1;
-                    chunk.LightPosHalf=by;
+                if (chunk.SetLightPosHalf) {
+                    if (y<chunk.LightPosHalf) chunk.LightPosHalf=(byte)y;
+                } else {
+                    chunk.LightPosHalf=(byte)y;
+                    chunk.SetLightPosHalf=true;
                 }
-                chunk.SetLightPosHalf=true;
             }
         }
 
-        void SetWood(GChunk chunk, int x, int y, ushort id, GenTree tree){ 
-            if (chunk.SolidBlocks[y]==0) { 
-                chunk.BackBlocks[y]=id; 
-            
-                tree.AddWood(x, y);
+        void SetWood(GChunk chunk, int x, int y, ushort id, GenTree tree){
+            if (chunk.SolidBlocks[y]==0) {
+                chunk.BackBlocks[y]=id;
+//                chunk.T[y]==0;
+
+               // tree.AddWood(x, y);
+               tree.TitlesWood.Add(new UShortAndByte((ushort)x, (byte)y));
             }
         }
 
-        readonly List<GenLiveObject> LiveObjects = new List<GenLiveObject>();
-        //enum Biome :byte {
-        //    SaltOcean,
-        //  //  SugarOcean,
-
-        //    HotPlains,
-        //    //_polar,
-        //    Arctic,
-        //    //CoolTemperateDesertScrub,
-        //    //ArticMountains,
-
-        //    // _Subarctic,
-        //    Tundra,
-        //   // ArcticAlpineDesert,
-
-        //    //_Mild,
-        //    Bog,
-        //   // Wetland,
-        //   // TemperateFreshWaterSwampForest,
-        //  //  Saltmarsh,
-        //    Subtropics,
-        //  //  Heath,
-
-        //    //_Tropical,
-        //    Desert,
-        //    Savanna,
-        //    Mangrove,
-
-        //    //WarmTemperateDesert,
-
-        //    TropicalRainforest,
-        //    WetTundra,
-        //    Taiga,
-        //    Swamp,
-        //    Plains,
-        //    LeaveForest,
-        //    Jungle,
-        //    ColdTaiga,
-        //    DryTundra,
-        //    Fen,
-        //    ArcticPlains,
-        //    BothForest,
-        //    Beach,
-        //    SpruceForest,
-        //    HumidSubtropical,
-        //}
-
+        readonly List<GenLiveObject> LiveObjects = new();
+       
         enum HotBiome:byte{
             None,
 
@@ -261,13 +156,13 @@ namespace rabcrClient {
         void GenerateBiome(WetBiome wet, HotBiome hot, ChangerBiome changer, bool IsOceanNear) {
             switch (hot) {
 
-                case HotBiome.Ocean: 
+                case HotBiome.Ocean:
                     BiomeOcean();
                     BiomeOceanUp();
                     return;
-                
 
-                case HotBiome.Arctic: 
+
+                case HotBiome.Arctic:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomeCoolTemperateDesertScrub();
@@ -277,9 +172,9 @@ namespace rabcrClient {
                             BiomePoles(changer);
                             return;
                     }
-                
 
-                case HotBiome.Subarctic: 
+
+                case HotBiome.Subarctic:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomeDryTundra(/*changer*/);
@@ -293,9 +188,9 @@ namespace rabcrClient {
                             BiomeTundra(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.ColdTaiga: 
+
+                case HotBiome.ColdTaiga:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomePlains(/*changer,wet,hot*/);
@@ -309,9 +204,9 @@ namespace rabcrClient {
                             BiomeColdTaiga(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.Taiga: 
+
+                case HotBiome.Taiga:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomePlains(/*changer,wet,hot*/);
@@ -325,9 +220,9 @@ namespace rabcrClient {
                             BiomeTaiga(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.SpruceForest: 
+
+                case HotBiome.SpruceForest:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomePlains(/*changer,wet,hot*/);
@@ -341,9 +236,9 @@ namespace rabcrClient {
                             BiomeSpruceForest(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.BothForest: 
+
+                case HotBiome.BothForest:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomePlains(/*changer,wet,hot*/);
@@ -357,9 +252,9 @@ namespace rabcrClient {
                             BiomeBothForest(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.LeaveForest: 
+
+                case HotBiome.LeaveForest:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomePlains(/*changer,wet,hot*/);
@@ -373,9 +268,9 @@ namespace rabcrClient {
                             BiomeLeaveForest(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.Subtropics: 
+
+                case HotBiome.Subtropics:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomeSubtropicsPlains(/*changer*/);
@@ -389,14 +284,14 @@ namespace rabcrClient {
                             BiomeSubtropics(/*changer*/);
                             return;
                     }
-                
 
-                case HotBiome.Desert: 
+
+                case HotBiome.Desert:
                     BiomeDesert(/*changer,wet*/);
                     return;
-                
 
-                case HotBiome.Savanna: 
+
+                case HotBiome.Savanna:
                     switch (wet) {
                         case WetBiome.Low:
                             BiomeSubtropicsPlains(/*changer*/);
@@ -414,9 +309,9 @@ namespace rabcrClient {
                             BiomeSavana(/*changer,wet*/);
                             return;
                     }
-                
 
-                case HotBiome.Tropical: 
+
+                case HotBiome.Tropical:
                     if (IsOceanNear){
                         BiomeMangrove();
                         return;
@@ -435,21 +330,21 @@ namespace rabcrClient {
                                 return;
                         }
                     }
-                
+
             }
         }
 
         List<BiomeExt> GeneratePartOfBiomes(){
             List<BiomeExt> Biomes=new List<BiomeExt>();
 
-            int ocean=random.Int(12)+1;
-          //  int ocean2=random.Int(12);
+            int ocean=FastRandom.Int(12)+1;
+          //  int ocean2=FastRandom.Int(12);
 
             for (int i = 1; i<13; i++) {
                 if (i==ocean) {
                     Biomes.Add(new BiomeExt(){ Temterature=HotBiome.Ocean });
                 } else {
-                    switch (random.Int3()){
+                    switch (FastRandom.Int3()){
                         case 2:
                             Biomes.Add(new BiomeExt(){
                                 Temterature=(HotBiome)(i+2),
@@ -529,7 +424,7 @@ namespace rabcrClient {
 		bool hill=true;
 		int treeChange=/*9*/2;
 
-		//random random;
+		//FastRandom FastRandom;
 
         int biomeSize;
         readonly string playedWorld;
@@ -543,27 +438,27 @@ namespace rabcrClient {
 
         ushort plantPrefer;
         int plantSeek;
-        readonly FastRandom random;
+       // readonly FastRandom FastRandom;
 
         public GenerateWorld(string dir, WorldSize ws) {
             playedWorld=dir;
-            random=Rabcr.random;
-           // _boolBits=(uint)/*~*/random.Int();
+         //   FastRandom=Rabcr.FastRandom;
+           // _boolBits=(uint)/*~*/FastRandom.Int();
             // type=ntype;
             currentWorldSize=ws;
         }
 
         void AddCactus(int x, int y, int height, ushort id) {
-           
+
 
             GChunk chunk = terrain[x];
 
-            GenCactus cactus = new GenCactus(x, y);
+            GenCactus cactus = new(x, y);
             LiveObjects.Add(cactus);
 
             int to=y-height;
 
-            for (; y>to; y--) { 
+            for (; y>to; y--) {
                 if (chunk.TopBlocks[y]!=0) break;
                 chunk.TopBlocks[y]=id;
                 cactus.Add(x, y);
@@ -656,15 +551,35 @@ namespace rabcrClient {
                 else Biomes[i].Humidity=WetBiome.Low;
             }
 
-            foreach (BiomeExt biome in Biomes){
+            foreach (BiomeExt biome in Biomes) {
                 GenerateBiome(biome.Humidity,biome.Temterature,biome.Changer,biome.oceanIndex==1);
+            }
+
+            for (int i=100; i<terrain.Count-100; i+=40+FastRandom.Int(20+20)) {
+                CaveGenerator(i, FastRandom.Int(terrain[i].LightPosFull+5+2, 80));
+            }
+
+            for (int x=0; x<terrain.Count; x++) {
+                GChunk chunk=terrain[x];
+                int nLp=0;
+             //   if (chunk.LightPosFull < 124) {
+                 //   if (chunk.SolidBlocks[chunk.LightPosFull-1]==0) {
+                       // int y=chunk.LightPosFull-1;
+                        for (; nLp<125; nLp++) { 
+                            if (chunk.SolidBlocks[nLp]!=0) {
+                                chunk.LightPosFull=(byte)nLp;
+                                break;
+                            }
+                        } 
+                 //   }
+              //  }
             }
 
             Save("Earth");
 
 
             {
-                List<byte> bytes = new List<byte>{
+                List<byte> bytes = new() {
                     (byte)BiomeDataList.Count
                 };
 
@@ -677,13 +592,6 @@ namespace rabcrClient {
                 }
                 File.WriteAllBytes(playedWorld+"\\"+"Earth"+"Biomes.ter", bytes.ToArray());
             }
-            //using (StreamWriter stream= new StreamWriter(playedWorld+"\\"+"Earth"+"Biomes.ter")) {
-            //    foreach (BiomeData b in BiomeDataList){
-            //         stream.WriteLine(b.Start);
-            //         stream.WriteLine(b.End);
-            //         stream.WriteLine((int)b.Name);
-            //    }
-            //}
 		}
 
         void GenerateMoon() {
@@ -693,15 +601,15 @@ namespace rabcrClient {
 
             //   biomes.Clear();
             biomes=new List<byte> {
-                (byte)(/*random.Int2()*/random.Int2()-1),
-                (byte)(/*random.Int2()*/random.Int2()-1),
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1),
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1),
                 0,
-                (byte)(/*random.Int2()*/random.Int2()-1),
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1),
 
-                (byte)(/*random.Int2()*/random.Int2()-1),
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1),
                 1,
-                (byte)(/*random.Int2()*/random.Int2()-1),
-                (byte)(/*random.Int2()*/random.Int2()-1)
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1),
+                (byte)(/*FastRandom.Int2()*/FastRandom.Int2()-1)
             };
 
 
@@ -728,10 +636,6 @@ namespace rabcrClient {
             }
 
             Save("Moon");
-
-		//	File.WriteAllText(playedWorld + @"\MoonGenerated.txt", (terrain.Count-7).ToString());
-		//	Finish=true;
-          //  Console.WriteLine("Vygenerováno za "+(((DateTime.Now-now).TotalMilliseconds)/1000f).ToString(".000")+"s");
 		}
 
         void GenerateMars() {
@@ -741,18 +645,18 @@ namespace rabcrClient {
 
             biomes=new List<byte> {
                 0,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 1,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 3,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 0,
                 0,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 1,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 2,
-                random.Byte3(),
+                FastRandom.Byte3(),
                 0,
             };
 
@@ -805,16 +709,16 @@ namespace rabcrClient {
                     if (terrainHeight>52+5+2) terrainHeight--;
                     else if (terrainHeight<49+6+2) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 if (seabedChange<0) {
                     seabedSand=!seabedSand;
-                    seabedChange=10+random.Int(20);
+                    seabedChange=10+FastRandom.Int(20);
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -825,17 +729,17 @@ namespace rabcrClient {
                 // Water
                 for (int yy=53; yy<terrainHeight; yy++) {
 					chunk.TopBlocks[yy]=(ushort)BlockId.WaterSalt;
-                    if (random.Bool_5Percent()){
+                    if (FastRandom.Bool_5Percent()){
                         chunk.AddFish((byte)yy);
                     }
 				}
 
                 // Corals or Seaweed
                 if (terrainHeight>54){
-                    if (random.Bool()) {
-                        if (random.Bool()) chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Seaweed;
+                    if (FastRandom.Bool()) {
+                        if (FastRandom.Bool()) chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Seaweed;
                         else chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Coral;
-                    } 
+                    }
                 }
 
                 // Seabed
@@ -859,7 +763,7 @@ namespace rabcrClient {
                 // Terrain height
                 if (terrainChange<0) {
                     terrainHeight--;
-                    terrainChange=3+random.Int3();
+                    terrainChange=3+FastRandom.Int3();
                 } else terrainChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -870,15 +774,15 @@ namespace rabcrClient {
                 // Water
                 for (int yy=53; yy<terrainHeight; yy++) {
 					chunk.TopBlocks[yy]=(ushort)BlockId.WaterSalt;
-                    if (random.Bool_5Percent()){
+                    if (FastRandom.Bool_5Percent()){
                         chunk.AddFish((byte)yy);
                     }
 				}
 
                 // Corals or Seaweed
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     if (terrainHeight<53){
-                        if (random.Bool()) chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Seaweed;
+                        if (FastRandom.Bool()) chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Seaweed;
                         else chunk.BackBlocks[terrainHeight-1]=(ushort)BlockId.Coral;
                     }
                 }
@@ -889,7 +793,7 @@ namespace rabcrClient {
 
                 if (seabedChange<0) {
                     seabedSand=!seabedSand;
-                    seabedChange=10+random.Int(20);
+                    seabedChange=10+FastRandom.Int(20);
                 } else seabedChange--;
 
                 // Lithosphere
@@ -909,7 +813,7 @@ namespace rabcrClient {
     //            // Terrain height
     //            if (terrainChange<0) {
     //                 terrainHeight++;
-    //                 terrainChange=1+random.Int3();
+    //                 terrainChange=1+FastRandom.Int3();
     //            } else terrainChange--;
 
     //            // Height (ushort)BlockId.Dirt
@@ -917,10 +821,10 @@ namespace rabcrClient {
     //                if (dirtHeight>3) dirtHeight--;
     //                else if (dirtHeight<2) dirtHeight++;
     //                else {
-    //                    if (random.Bool()) dirtHeight++;
+    //                    if (FastRandom.Bool()) dirtHeight++;
     //                    else dirtHeight--;
     //                }
-    //                dirtChange=1+random.Int3();
+    //                dirtChange=1+FastRandom.Int3();
     //            } else dirtChange--;
 
     //            chunk.LightPos=terrainHeight;
@@ -932,8 +836,8 @@ namespace rabcrClient {
     //                for (int yy=terrainHeight; yy<terrainHeight+dirtHeight; yy++) chunk.SolidBlocks[yy]=(ushort)BlockId.Gravel;
     //             }
 
-    //            if (random.Bool()) {
-    //                switch (random.Int(9)) {
+    //            if (FastRandom.Bool()) {
+    //                switch (FastRandom.Int(9)) {
     //                    case 2:
     //                        chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
     //                        break;
@@ -979,7 +883,7 @@ namespace rabcrClient {
     //            if (terrainChange<0) {
     //                 terrainHeight--;
 
-    //                 terrainChange=1+random.Int3();
+    //                 terrainChange=1+FastRandom.Int3();
     //            } else terrainChange--;
 
     //            // Sand height
@@ -987,10 +891,10 @@ namespace rabcrClient {
     //                if (dirtHeight>3) dirtHeight--;
     //                else if (dirtHeight<2) dirtHeight++;
     //                else {
-    //                    if (random.Bool()) dirtHeight++;
+    //                    if (FastRandom.Bool()) dirtHeight++;
     //                    else dirtHeight--;
     //                }
-    //                dirtChange=1+random.Int3();
+    //                dirtChange=1+FastRandom.Int3();
     //            } else dirtChange--;
 
     //            chunk.LightPos=terrainHeight;
@@ -1002,8 +906,8 @@ namespace rabcrClient {
     //                for (int yy=terrainHeight; yy<terrainHeight+dirtHeight; yy++) chunk.SolidBlocks[yy]=(ushort)BlockId.Gravel;
     //            }
 
-    //            if (random.Bool()) {
-    //                switch (random.Int(9)) {
+    //            if (FastRandom.Bool()) {
+    //                switch (FastRandom.Int(9)) {
     //                    case 2:
     //                        chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
     //                        break;
@@ -1050,12 +954,12 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
-                    if (changer==ChangerBiome.Low) terrainChange=2+random.Int3();
-                    else if (changer==ChangerBiome.Medium) terrainChange=2+random.Int2();
-                    else terrainChange=1+random.Int2();
+                    if (changer==ChangerBiome.Low) terrainChange=2+FastRandom.Int3();
+                    else if (changer==ChangerBiome.Medium) terrainChange=2+FastRandom.Int2();
+                    else terrainChange=1+FastRandom.Int2();
                 } else terrainChange--;
 
                 // Height (ushort)BlockId.Dirt
@@ -1063,10 +967,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -1075,7 +979,7 @@ namespace rabcrClient {
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Snow;
 
-                if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
+                if (FastRandom.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
 
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Ice;
 
@@ -1095,11 +999,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height (ushort)BlockId.Dirt
@@ -1107,10 +1011,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -1118,12 +1022,12 @@ namespace rabcrClient {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
 
-                if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
-                else if (random.Bool_10Percent())chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
+                if (FastRandom.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
+                else if (FastRandom.Bool_10Percent())chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
 
                 if (seabedChange<0) {
                     grass=!grass;
-                    seabedChange=10+random.Int(20);
+                    seabedChange=10+FastRandom.Int(20);
                 } else seabedChange--;
 
                 if (grass) {
@@ -1137,7 +1041,7 @@ namespace rabcrClient {
 
         void BiomeTundra(/*ChangerBiome changer*/) {
              for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(80)==1) Lake((ushort)BlockId.Ice);
+                if (FastRandom.Int(80)==1) Lake((ushort)BlockId.Ice);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1146,10 +1050,10 @@ namespace rabcrClient {
                     if (terrainHeight>52) terrainHeight--;
                     else if (terrainHeight<49) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 // Height Dirt
@@ -1157,36 +1061,36 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool()) {
-                    if (random.Bool_5Percent()){
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_5Percent()){
                         chunk.AddRabbit((byte)(terrainHeight-1));
                     }
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
-                    if (random.Bool_20Percent()) {
-                        if (random.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
+                    if (FastRandom.Bool_20Percent()) {
+                        if (FastRandom.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
                         else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                     }
                 } else {
-                    if (random.Bool()) chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Ice;
+                    if (FastRandom.Bool()) chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Ice;
                     else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Snow;
 
-                    if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
                 }
 
                 for (int b=terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Ice;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[dirtHeight+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1197,7 +1101,7 @@ namespace rabcrClient {
 
         void BiomeDryTundra(/*ChangerBiome changer*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(120)==1) Lake((ushort)BlockId.Ice);
+                if (FastRandom.Int(120)==1) Lake((ushort)BlockId.Ice);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1206,10 +1110,10 @@ namespace rabcrClient {
                     if (terrainHeight>52) terrainHeight--;
                     else if (terrainHeight<47) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 // Height Dirt
@@ -1217,26 +1121,26 @@ namespace rabcrClient {
                     if (dirtHeight>2) dirtHeight--;
                     else if (dirtHeight<1) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool_20Percent()){
+                if (FastRandom.Bool_20Percent()){
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
-                    if (random.Bool_12_5Percent()) {
-                        if (random.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
+                    if (FastRandom.Bool_12_5Percent()) {
+                        if (FastRandom.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                         else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                     }
 
                 } else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
 
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[1/*dirtHeight*/+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+1);
@@ -1247,7 +1151,7 @@ namespace rabcrClient {
 
         void BiomeWetTundra() {
              for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(40)==1) Lake((ushort)BlockId.Ice);
+                if (FastRandom.Int(40)==1) Lake((ushort)BlockId.Ice);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1256,10 +1160,10 @@ namespace rabcrClient {
                     if (terrainHeight>52) terrainHeight--;
                     else if (terrainHeight<50) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 // Height (ushort)BlockId.Dirt
@@ -1267,35 +1171,35 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool()) {
-                    if (random.Bool_5Percent()) chunk.AddRabbit((byte)(terrainHeight-1));
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_5Percent()) chunk.AddRabbit((byte)(terrainHeight-1));
 
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
-                    if (random.Bool_20Percent()) {
-                        if (random.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
+                    if (FastRandom.Bool_20Percent()) {
+                        if (FastRandom.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
                         else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                     }
                 } else {
-                    if (random.Bool()) chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Ice;
+                    if (FastRandom.Bool()) chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Ice;
                     else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Snow;
 
-                    if (random.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.SnowTop;
                 }
 
                 for (int b=terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Ice;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[dirtHeight+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1307,7 +1211,7 @@ namespace rabcrClient {
         void BiomeColdTaiga() {
             for (; pos<biomeSize+generatePos; pos++) {
                 terrain.Add(new GChunk());
-                if (random.Int(45)==1)Lake((ushort)BlockId.Gravel);
+                if (FastRandom.Int(45)==1)Lake((ushort)BlockId.Gravel);
 
                 GChunk chunk = terrain[pos];
 
@@ -1316,11 +1220,11 @@ namespace rabcrClient {
                     if (terrainHeight>52) terrainHeight--;
                     else if (terrainHeight<49) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 // Height (ushort)BlockId.Dirt
@@ -1328,30 +1232,30 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
-                else if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
+                if (FastRandom.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
+                else if (FastRandom.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
                 else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
 
-                if (random.Bool()) {
-                    if (random.Bool_2Percent()) ClayPlace(pos-5, terrainHeight-1);
-        
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5, terrainHeight-1);
+
                     // Add animals
-                    if (random.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
+                    if (FastRandom.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
 
                     bool placed=false;
                     if (plantSeek!=0){
                         if (plantPrefer!=0){
-                        if (random.Bool()){
+                        if (FastRandom.Bool()){
                             chunk.AddPlant(plantPrefer,(byte)(terrainHeight-1));
                             placed=true;
                         }
@@ -1359,7 +1263,7 @@ namespace rabcrClient {
 
                     } plantSeek--;
                     if (!placed){
-                        switch (random.Int(10)) {
+                        switch (FastRandom.Int(10)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
                                 break;
@@ -1385,10 +1289,10 @@ namespace rabcrClient {
                                 break;
 
                             case 7:
-                                if (random.Bool()){
+                                if (FastRandom.Bool()){
                                     if (plantSeek<-20){
                                         plantPrefer=(ushort)BlockId.Blueberry;
-                                        plantSeek=3+random.Int(10);
+                                        plantSeek=3+FastRandom.Int(10);
                                     }
                                 }
                                 break;
@@ -1403,18 +1307,18 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_20Percent()) TreeSpruceLittle(pos, terrainHeight);
+                    if (FastRandom.Bool_20Percent()) TreeSpruceLittle(pos, terrainHeight);
                 } else treeChange--;
 
                 //Add dirt
                 for (int b=terrainHeight+1; b<dirtHeight+terrainHeight; b++) {
-                    if (random.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Cobblestone;
-                    else if (random.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Gravel;
+                    if (FastRandom.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                    else if (FastRandom.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Gravel;
                     else chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[dirtHeight+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, dirtHeight+1+terrainHeight);
                 } else GenerateUnderSurface(chunk, dirtHeight+terrainHeight);
@@ -1426,7 +1330,7 @@ namespace rabcrClient {
         void BiomeTaiga(/*ChangerBiome changer*/) {
             for (; pos<biomeSize+generatePos; pos++) {
                 terrain.Add(new GChunk());
-                if (random.Bool_2Percent())Lake((ushort)BlockId.Gravel);
+                if (FastRandom.Bool_2Percent())Lake((ushort)BlockId.Gravel);
                 GChunk chunk = terrain[pos];
 
                 // Terrain height
@@ -1434,11 +1338,11 @@ namespace rabcrClient {
                     if (terrainHeight>52) terrainHeight--;
                     else if (terrainHeight<49) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=4+random.Int5();
+                    terrainChange=4+FastRandom.Int5();
                 } else terrainChange--;
 
                 // Height (ushort)BlockId.Dirt
@@ -1446,30 +1350,30 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
-                else if (random.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
+                if (FastRandom.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
+                else if (FastRandom.Bool_1Percent())chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.Gravel;
                 else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
 
-                if (random.Bool()) {
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
-                    if (random.Int(15)==1){
+                    if (FastRandom.Int(15)==1){
                         chunk.AddRabbit((byte)(terrainHeight-1));
                     }
                     bool placed=false;
                     if (plantSeek!=0){
                         if (plantPrefer!=0){
-                            if (random.Bool()){
+                            if (FastRandom.Bool()){
                                 chunk.AddPlant(plantPrefer,(byte)(terrainHeight-1));
                                 placed=true;
                             }
@@ -1477,7 +1381,7 @@ namespace rabcrClient {
                     }
                     plantSeek--;
                     if (!placed){
-                        switch (random.Int(10)) {
+                        switch (FastRandom.Int(10)) {
                             case 1: chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Heather;
                             break;
 
@@ -1497,10 +1401,10 @@ namespace rabcrClient {
                             break;
 
                             case 7:
-                                if (random.Bool()){
+                                if (FastRandom.Bool()){
                                     if (plantSeek<-15){
                                         plantPrefer=(ushort)BlockId.Blueberry;
-                                        plantSeek=3+random.Int(10);
+                                        plantSeek=3+FastRandom.Int(10);
                                     }
                                 }
                             break;
@@ -1515,18 +1419,18 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_20Percent()) TreeSpruceLittle(pos,terrainHeight);
+                    if (FastRandom.Bool_20Percent()) TreeSpruceLittle(pos,terrainHeight);
                     else TreeSpruceBig(pos, terrainHeight);
                 }else treeChange--;
 
                 for (int b=terrainHeight+1; b<dirtHeight+terrainHeight; b++) {
-                    if (random.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Cobblestone;
-                    else if (random.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Gravel;
+                    if (FastRandom.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                    else if (FastRandom.Bool_1Percent())chunk.SolidBlocks[b]=(ushort)BlockId.Gravel;
                     else chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[dirtHeight+terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, dirtHeight+1+terrainHeight);
                 } else GenerateUnderSurface(chunk, dirtHeight+terrainHeight);
@@ -1537,7 +1441,7 @@ namespace rabcrClient {
 
         void BiomeSpruceForest(/*ChangerBiome changer*/) {
              for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent())LakeGravel(/*BlockId.*/);
+                if (FastRandom.Bool_1Percent())LakeGravel(/*BlockId.*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1546,11 +1450,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -1558,10 +1462,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -1570,17 +1474,17 @@ namespace rabcrClient {
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
 
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
-                    if (random.Int(14)==1){
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                    if (FastRandom.Int(14)==1){
                         chunk.AddRabbit((byte)(terrainHeight-1));
                     }
 
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
-                            if (random.Bool()) {
-                                if (random.Bool()){
+                            if (FastRandom.Bool()) {
+                                if (FastRandom.Bool()){
                                     chunk.AddPlant((ushort)BlockId.Blueberry,(byte)(terrainHeight-1));
                                 } else {
                                     chunk.AddPlant((ushort)BlockId.Rashberry,(byte)(terrainHeight-1));
@@ -1613,8 +1517,8 @@ namespace rabcrClient {
                             break;
 
                         case 8:
-                            if (random.Bool_20Percent()) {
-                                if (random.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Toadstool;
+                            if (FastRandom.Bool_20Percent()) {
+                                if (FastRandom.Bool()) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Toadstool;
                                 else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Boletus;
                             }
                             break;
@@ -1622,7 +1526,7 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int3()) {
+                    switch (FastRandom.Int3()) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1636,7 +1540,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1647,7 +1551,7 @@ namespace rabcrClient {
 
         void BiomeBothForest(/*ChangerBiome changer*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent()) LakeGravel(/*BlockId.Gravel*/);
+                if (FastRandom.Bool_1Percent()) LakeGravel(/*BlockId.Gravel*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1656,11 +1560,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -1668,10 +1572,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -1680,16 +1584,16 @@ namespace rabcrClient {
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
-                    if (random.Int(13)==1){
+                    if (FastRandom.Int(13)==1){
                        chunk.AddRabbit((byte)(terrainHeight-1));
                     }
 
-                    switch (random.Int(7)) {
+                    switch (FastRandom.Int(7)) {
                         case 0:
-                            switch (random.Int4()){
+                            switch (FastRandom.Int4()){
                                 case 0:
                                     chunk.AddPlant((ushort)BlockId.Rashberry,(byte)(terrainHeight-1));
                                     break;
@@ -1730,7 +1634,7 @@ namespace rabcrClient {
                             break;
 
                         case 6:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Boletus;
                                 break;
                                 case 2:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Toadstool;
@@ -1743,7 +1647,7 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1774,7 +1678,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1785,7 +1689,7 @@ namespace rabcrClient {
 
         void BiomeFen(/*ChangerBiome changer,HotBiome hot*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(40)==1)LakeDirt(/*BlockId.*/);
+                if (FastRandom.Int(40)==1)LakeDirt(/*BlockId.*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1794,11 +1698,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -1806,21 +1710,21 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                 if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
-                switch (random.Int(7)) {
+                switch (FastRandom.Int(7)) {
                     case 0:
-                        switch (random.Int4()){
+                        switch (FastRandom.Int4()){
                             case 0:
                                 chunk.AddPlant((ushort)BlockId.Rashberry,(byte)(terrainHeight-1));
                                 break;
@@ -1867,7 +1771,7 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -1897,8 +1801,8 @@ namespace rabcrClient {
 
 
                 if (seabedChange<0) {
-                    if (grass) seabedChange=10+random.Int(20);
-                    else seabedChange=3+random.Int5();
+                    if (grass) seabedChange=10+FastRandom.Int(20);
+                    else seabedChange=3+FastRandom.Int5();
                     grass=!grass;
                 } else seabedChange--;
 
@@ -1908,12 +1812,12 @@ namespace rabcrClient {
                 } else {
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockCompost;
                     for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) {
-                        chunk.SolidBlocks[b]=random.Bool_33_333Percent() ? (ushort)BlockId.Dirt : (ushort)BlockId.Compost;
+                        chunk.SolidBlocks[b]=FastRandom.Bool_33_333Percent() ? (ushort)BlockId.Dirt : (ushort)BlockId.Compost;
                     }
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -1924,7 +1828,7 @@ namespace rabcrClient {
 
         void BiomeSwamps(/*ChangerBiome changer, HotBiome hot*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(60)==1)LakeGravel(/*BlockId.*/);
+                if (FastRandom.Int(60)==1)LakeGravel(/*BlockId.*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -1933,11 +1837,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-3) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -1945,10 +1849,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -1957,12 +1861,12 @@ namespace rabcrClient {
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    if (random.Int(13)==1) {
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Int(13)==1) {
                         chunk.AddRabbit((byte)(terrainHeight-1));
                     }
 
-                    switch (random.Int(7)) {
+                    switch (FastRandom.Int(7)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassForest;
                             break;
@@ -1984,7 +1888,7 @@ namespace rabcrClient {
                             break;
 
                         case 6:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Boletus;
                                 break;
                                 case 2:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Toadstool;
@@ -1997,7 +1901,7 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeSpruceLittle(pos, terrainHeight);
                             break;
@@ -2028,7 +1932,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2039,7 +1943,7 @@ namespace rabcrClient {
 
         void BiomeLeaveForest(/*ChangerBiome changer*/) {
              for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(80)==1)LakeGravel(/*BlockId.*/);
+                if (FastRandom.Int(80)==1)LakeGravel(/*BlockId.*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2048,11 +1952,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -2060,10 +1964,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2073,14 +1977,14 @@ namespace rabcrClient {
 
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                if (random.Bool()) {
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
-                    if (random.Int(13)==1) {
+                    if (FastRandom.Int(13)==1) {
                          chunk.AddRabbit((byte)(terrainHeight-1));
                     }
 
-                    switch (random.Int(13)) {
+                    switch (FastRandom.Int(13)) {
                         case 1:
                             chunk.AddPlant((ushort)BlockId.Rashberry,(byte)(terrainHeight-1));
                             break;
@@ -2090,11 +1994,11 @@ namespace rabcrClient {
                             break;
 
                         case 3:
-                            chunk.AddPlantFlax(/*(ushort)BlockId.,*/(byte)(terrainHeight-1));
+                            chunk.AddPlantFlax((byte)(terrainHeight-1));
                             break;
 
                         case 4:
-                            chunk.AddPlantCarrot(/*(ushort)BlockId.,*/(byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlantCarrot((byte)(terrainHeight-1));
                             break;
 
                         case 5:
@@ -2126,7 +2030,7 @@ namespace rabcrClient {
                             break;
 
                         case 12:
-                            switch (random.Int4()) {
+                            switch (FastRandom.Int4()) {
                                 case 1:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Boletus;
                                 break;
                                 case 2:chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Toadstool;
@@ -2139,7 +2043,7 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreePlum(pos, terrainHeight);
                             break;
@@ -2172,7 +2076,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2183,7 +2087,7 @@ namespace rabcrClient {
 
         void BiomePlains(/*ChangerBiome changer, WetBiome wet, HotBiome hot*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent())LakeDirt(/*BlockId.*/);
+                if (FastRandom.Bool_1Percent())LakeDirt(/*BlockId.*/);
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2192,11 +2096,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -2204,10 +2108,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2218,17 +2122,17 @@ namespace rabcrClient {
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockPlains;
 
-                if (random.Bool()) {
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool()) {
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
                     // Animals
-                    if (random.Int(13)==1) chunk.AddRabbit((byte)(terrainHeight-1));
-                    else if (random.Int(15)==1)  chunk.AddChicken((byte)(terrainHeight-1));
+                    if (FastRandom.Int(13)==1) chunk.AddRabbit((byte)(terrainHeight-1));
+                    else if (FastRandom.Int(15)==1)  chunk.AddChicken((byte)(terrainHeight-1));
 
                     // Add something on grass
-                    switch (random.Int(10)) {
+                    switch (FastRandom.Int(10)) {
                         case 1:
-                            if (random.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
                             else chunk.AddPlantCarrot((byte)(terrainHeight-1));
                             break;
 
@@ -2240,9 +2144,9 @@ namespace rabcrClient {
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Dandelion;
                             break;
 
-                        case 4:
-                            chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
-                            break;
+                        //case 4:
+                        //    chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
+                        //    break;
 
                         case 5:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassPlains;
@@ -2261,7 +2165,7 @@ namespace rabcrClient {
                             break;
 
                         case 9:
-                            if (random.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
                             break;
                     }
                 }
@@ -2270,7 +2174,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2282,7 +2186,7 @@ namespace rabcrClient {
         void BiomeSubtropicsPlains(/*ChangerBiome changer*/) {
 
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent())LakeDirt();
+                if (FastRandom.Bool_1Percent())LakeDirt();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2291,11 +2195,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height Dirt
@@ -2303,10 +2207,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2315,15 +2219,15 @@ namespace rabcrClient {
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockDesert;
 
-                if (random.Bool_1Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool_1Percent()) ClayPlace(pos-5,terrainHeight-1);
 
                 // Add something on grass
-                if (random.Bool()) {
-                    double z=random.Double();
+                if (FastRandom.Bool()) {
+                    double z=FastRandom.Double();
                     if (z<0.5) chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassDesert;
-                    else { 
+                    else {
                         if (z<0.66)chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
-                        else if (z<0.88)chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Dandelion; 
+                        else if (z<0.88)chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Dandelion;
                         else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                     }
                 }
@@ -2332,7 +2236,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2344,7 +2248,7 @@ namespace rabcrClient {
 
         void BiomeSubtropics(/*ChangerBiome changer*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent()) LakeSand();
+                if (FastRandom.Bool_1Percent()) LakeSand();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2353,11 +2257,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -2365,30 +2269,30 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 // Sub
                 if (seabedChange<0) {
                     grass=!grass;
-                    seabedChange=5+random.Int(10);
+                    seabedChange=5+FastRandom.Int(10);
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
-                } 
+                }
                 if (grass) {
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockDesert;
-                    if (random.Bool()) {
+                    if (FastRandom.Bool()) {
                         // Add animals
-                        if (random.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
-                        else if (random.Bool_10Percent()) chunk.AddChicken((byte)(terrainHeight-1));
+                        if (FastRandom.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
+                        else if (FastRandom.Bool_10Percent()) chunk.AddChicken((byte)(terrainHeight-1));
 
-                        switch (random.Int(10)) {
+                        switch (FastRandom.Int(10)) {
                             case 1:
                                 chunk.AddPlantWheat((byte)(terrainHeight-1));
                                 break;
@@ -2414,7 +2318,7 @@ namespace rabcrClient {
                                 break;
 
                             case 7:
-                                if (random.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
+                                if (FastRandom.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
                                 else chunk.AddPlantCarrot((byte)(terrainHeight-1));
                                 break;
 
@@ -2423,16 +2327,16 @@ namespace rabcrClient {
                                 break;
 
                             case 9:
-                                if (random.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
+                                if (FastRandom.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
                                 break;
                             }
                         }
                 } else {
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                    if (random.Bool()) {
-                        if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
-                        switch (random.Int(11)) {
+                    if (FastRandom.Bool()) {
+                        if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                        switch (FastRandom.Int(11)) {
                             case 1:
                                 chunk.AddPlant((ushort)BlockId.Strawberry,(byte)(terrainHeight-1));
                                 break;
@@ -2466,18 +2370,18 @@ namespace rabcrClient {
                                 break;
 
                             case 9:
-                                if (random.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
+                                if (FastRandom.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
                                 break;
 
                             case 10:
-                                if (random.Bool_33_333Percent()) chunk.AddPlantWheat((byte)(terrainHeight-1));
+                                if (FastRandom.Bool_33_333Percent()) chunk.AddPlantWheat((byte)(terrainHeight-1));
                                 break;
                         }
                     }
                 }
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeEucalyptus(pos, terrainHeight);
                             break;
@@ -2509,7 +2413,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2520,7 +2424,7 @@ namespace rabcrClient {
 
         void BiomeHumidSubtropical(/*ChangerBiome changer*/) {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent()) LakeSand();
+                if (FastRandom.Bool_1Percent()) LakeSand();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2529,11 +2433,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height Dirt
@@ -2541,30 +2445,30 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 // Sub
                 if (seabedChange<0) {
                     grass=!grass;
-                    seabedChange=5+random.Int(10);
+                    seabedChange=5+FastRandom.Int(10);
                 } else seabedChange--;
 
                 chunk.LightPosFull=terrainHeight;
                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
 
                     // Add animals
-                    if (random.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
-                    else if (random.Bool_10Percent()) chunk.AddChicken((byte)(terrainHeight-1));
+                    if (FastRandom.Int(15)==1) chunk.AddRabbit((byte)(terrainHeight-1));
+                    else if (FastRandom.Bool_10Percent()) chunk.AddChicken((byte)(terrainHeight-1));
 
                     // Add something on grass
-                    switch (random.Int(10)) {
+                    switch (FastRandom.Int(10)) {
                         case 1:
                             chunk.AddPlantWheat((byte)(terrainHeight-1));
                             break;
@@ -2590,7 +2494,7 @@ namespace rabcrClient {
                             break;
 
                         case 7:
-                            if (random.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlant((ushort)BlockId.Onion,(byte)(terrainHeight-1));
                             else chunk.AddPlantCarrot((byte)(terrainHeight-1));
                             break;
 
@@ -2599,7 +2503,7 @@ namespace rabcrClient {
                             break;
 
                         case 9:
-                            if (random.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
+                            if (FastRandom.Bool()) chunk.AddPlantFlax((byte)(terrainHeight-1));
                             break;
                         }
                     }
@@ -2607,7 +2511,7 @@ namespace rabcrClient {
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
                 if (treeChange<0) {
-                    switch (random.Int(9)) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             TreeEucalyptus(pos, terrainHeight);
                             break;
@@ -2639,7 +2543,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2650,7 +2554,7 @@ namespace rabcrClient {
 
         void BiomeDesert() {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(150)==1) LakeSand();
+                if (FastRandom.Int(150)==1) LakeSand();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2659,11 +2563,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -2671,10 +2575,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2682,8 +2586,8 @@ namespace rabcrClient {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 if (seabedChange<0) {
-                    if (grass) seabedChange=20+random.Int(50);
-                    else seabedChange=3+random.Int5();
+                    if (grass) seabedChange=20+FastRandom.Int(50);
+                    else seabedChange=3+FastRandom.Int5();
                     grass=!grass;
                 } else seabedChange--;
 
@@ -2695,8 +2599,8 @@ namespace rabcrClient {
                     for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Sand;
 
                     // Add something on grass
-                    if (random.Bool()) {
-                        switch (random.Int(9)) {
+                    if (FastRandom.Bool()) {
+                        switch (FastRandom.Int(9)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Alore;
                                 break;
@@ -2723,8 +2627,8 @@ namespace rabcrClient {
                     for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Sand;
 
                     // Add somrthing on sand
-                    if (random.Bool_10Percent()) {
-                        switch (random.Int(6)) {
+                    if (FastRandom.Bool_10Percent()) {
+                        switch (FastRandom.Int(6)) {
                             case 1:
                                 chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Alore;
                                 break;
@@ -2734,11 +2638,11 @@ namespace rabcrClient {
                                 break;
 
                             default:
-                                AddCactus(pos, terrainHeight-1, random.Int(6), (ushort)BlockId.CactusBig);
+                                AddCactus(pos, terrainHeight-1, FastRandom.Int(6), (ushort)BlockId.CactusBig);
                                 break;
 
                             case 4:
-                                AddCactus(pos, terrainHeight-1, random.Int5(), (ushort)BlockId.CactusSmall);
+                                AddCactus(pos, terrainHeight-1, FastRandom.Int5(), (ushort)BlockId.CactusSmall);
                                 break;
 
                             case 5:
@@ -2749,7 +2653,7 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2760,7 +2664,7 @@ namespace rabcrClient {
 
         void BiomeSavana() {
               for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Bool_1Percent()) LakeDirt();
+                if (FastRandom.Bool_1Percent()) LakeDirt();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2769,11 +2673,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -2781,10 +2685,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2792,15 +2696,15 @@ namespace rabcrClient {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 if (seabedChange<0) {
-                    if (grass) seabedChange=20+random.Int(50);
-                    else seabedChange=3+random.Int5();
+                    if (grass) seabedChange=20+FastRandom.Int(50);
+                    else seabedChange=3+FastRandom.Int5();
                     grass=!grass;
                 } else seabedChange--;
 
                 if (grass) {
 
                     // Add animals
-                    if (random.Int(25)==1) chunk.AddChicken((byte)(terrainHeight-1));
+                    if (FastRandom.Int(25)==1) chunk.AddChicken((byte)(terrainHeight-1));
 
                     // Add grass
                     chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockDesert;
@@ -2808,7 +2712,7 @@ namespace rabcrClient {
                     // Add dirt
                     for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
-                    switch (random.Int(6)) {
+                    switch (FastRandom.Int(6)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Alore;
                             break;
@@ -2821,9 +2725,9 @@ namespace rabcrClient {
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassPlains;
                             break;
 
-                        case 4:
-                            chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
-                            break;
+                        //case 4:
+                        //    chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchFull;
+                        //    break;
 
                         case 5:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
@@ -2836,19 +2740,19 @@ namespace rabcrClient {
                     // Add dirt
                     for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
-                    if (random.Bool()){
+                    if (FastRandom.Bool()){
                         if (treeChange<0) {
-                           switch (random.Int8()){
+                           switch (FastRandom.Int8()){
                                 case 0:TreePine(pos,terrainHeight);break;
                                 case 1:TreeAcacia(pos,terrainHeight);break;
-                                case 2:if (random.Bool_33_333Percent())TreeEucalyptus(pos,terrainHeight);break;
+                                case 2:if (FastRandom.Bool_33_333Percent())TreeEucalyptus(pos,terrainHeight);break;
                             }
                         } else treeChange--;
                     }
-                    
-                    if (random.Int(120)==1) ClayPlace(pos-5,terrainHeight-1);
-                        
-                    switch (random.Int(9)) {
+
+                    if (FastRandom.Int(120)==1) ClayPlace(pos-5,terrainHeight-1);
+
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Alore;
                             break;
@@ -2862,9 +2766,9 @@ namespace rabcrClient {
                             break;
 
                         case 5:
-                            if (random.Bool_12_5Percent()) {
-                                if (random.Bool()) AddCactus(pos, terrainHeight-1, random.Int(6), (ushort)BlockId.CactusBig);
-                                else AddCactus(pos, terrainHeight-1, random.Int(6), (ushort)BlockId.CactusSmall);
+                            if (FastRandom.Bool_12_5Percent()) {
+                                if (FastRandom.Bool()) AddCactus(pos, terrainHeight-1, FastRandom.Int(6), (ushort)BlockId.CactusBig);
+                                else AddCactus(pos, terrainHeight-1, FastRandom.Int(6), (ushort)BlockId.CactusSmall);
                             }
                             break;
 
@@ -2875,7 +2779,7 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2887,7 +2791,7 @@ namespace rabcrClient {
 
         void BiomeMangrove() {
             for (; pos<biomeSize+generatePos; pos++) {
-                if (random.Int(40)==1) LakeDirt();
+                if (FastRandom.Int(40)==1) LakeDirt();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2896,11 +2800,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-2) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=3+random.Int3();
+                    terrainChange=3+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height dirt
@@ -2908,10 +2812,10 @@ namespace rabcrClient {
                     if (dirtHeight>2) dirtHeight--;
                     else if (dirtHeight<1) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -2920,8 +2824,8 @@ namespace rabcrClient {
                 }
                 for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
-                if (random.Bool()) {
-                    switch (random.Int(20)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(20)) {
                         case 2:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.BranchALittle2;
                             break;
@@ -2942,11 +2846,11 @@ namespace rabcrClient {
 
                 // Add trees
                 if (treeChange<0) {
-                    if (random.Bool()) TreeMangrove(pos, terrainHeight);
+                    if (FastRandom.Bool()) TreeMangrove(pos, terrainHeight);
                 } else treeChange--;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -2958,8 +2862,8 @@ namespace rabcrClient {
         void BiomeJungle(WetBiome wet) {
              for (; pos<biomeSize+generatePos; pos++) {
                 if (wet==WetBiome.High) {
-                    if (random.Int(60)==1) LakeDirt();
-                } else if (random.Int(80)==1)LakeDirt();
+                    if (FastRandom.Int(60)==1) LakeDirt();
+                } else if (FastRandom.Int(80)==1)LakeDirt();
                 terrain.Add(new GChunk());
                 GChunk chunk = terrain[pos];
 
@@ -2968,11 +2872,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -2980,25 +2884,25 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
 
-                    if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                    if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
                     // Add animals
-                    if (random.Int(15)==1) chunk.AddChicken((byte)(terrainHeight-1));
-                   
-                
-                    switch (random.Int(9)) {
+                    if (FastRandom.Int(15)==1) chunk.AddChicken((byte)(terrainHeight-1));
+
+
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Orchid;
                             break;
@@ -3038,13 +2942,13 @@ namespace rabcrClient {
                 else chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
                 if (treeChange<0) {
-                   switch (random.Int4()){
+                   switch (FastRandom.Int4()){
                        default:
                             TreePineJunle(pos, terrainHeight);
                             break;
 
                         case 1:
-                            TreeKapok(pos, terrainHeight);
+                            TreeKapok(pos-1, terrainHeight);
                             break;
 
                         case 2:
@@ -3057,7 +2961,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -3084,7 +2988,7 @@ namespace rabcrClient {
                         else terrainHeight--;
                     }
 
-                    terrainChange=1+random.Int3();
+                    terrainChange=1+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -3092,10 +2996,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3105,11 +3009,11 @@ namespace rabcrClient {
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
 
-                if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
                 // Add something on grass
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                             break;
@@ -3145,8 +3049,8 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_10Percent()) {
-                       if (random.Bool()) TreeSpruceLittle(pos, terrainHeight);
+                    if (FastRandom.Bool_10Percent()) {
+                       if (FastRandom.Bool()) TreeSpruceLittle(pos, terrainHeight);
                        else TreeOakLittle(pos, terrainHeight);
                    }
                 } else treeChange--;
@@ -3155,7 +3059,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -3181,7 +3085,7 @@ namespace rabcrClient {
                         else terrainHeight--;
                     }
 
-                    terrainChange=1+random.Int3();
+                    terrainChange=1+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3189,10 +3093,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3200,9 +3104,9 @@ namespace rabcrClient {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockHills;
-                if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                             break;
@@ -3238,8 +3142,8 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_10Percent()) {
-                       if (random.Bool()) TreeSpruceLittle(pos, terrainHeight);
+                    if (FastRandom.Bool_10Percent()) {
+                       if (FastRandom.Bool()) TreeSpruceLittle(pos, terrainHeight);
                        else TreeOakLittle(pos, terrainHeight);
                    }
                 } else treeChange--;
@@ -3248,7 +3152,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -3274,7 +3178,7 @@ namespace rabcrClient {
                         else terrainHeight--;
                     }
 
-                    terrainChange=1+random.Int3();
+                    terrainChange=1+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3282,10 +3186,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3295,10 +3199,10 @@ namespace rabcrClient {
                 // Add grass
                 chunk.SolidBlocks[terrainHeight]=(ushort)BlockId.GrassBlockForest;
 
-                if (random.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
+                if (FastRandom.Bool_2Percent()) ClayPlace(pos-5,terrainHeight-1);
 
-                if (random.Bool()) {
-                    switch (random.Int(9)) {
+                if (FastRandom.Bool()) {
+                    switch (FastRandom.Int(9)) {
                         case 1:
                             chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.GrassHills;
                             break;
@@ -3334,8 +3238,8 @@ namespace rabcrClient {
                 }
 
                 if (treeChange<0) {
-                    if (random.Bool_10Percent()) {
-                       if (random.Bool()) TreeSpruceLittle(pos, terrainHeight);
+                    if (FastRandom.Bool_10Percent()) {
+                       if (FastRandom.Bool()) TreeSpruceLittle(pos, terrainHeight);
                        else TreePine(pos, terrainHeight);
                    }
                 } else treeChange--;
@@ -3343,7 +3247,7 @@ namespace rabcrClient {
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
@@ -3362,11 +3266,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3374,10 +3278,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3386,22 +3290,22 @@ namespace rabcrClient {
                 }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
-                if (random.Int(9)==1) {
-                    if (random.Bool()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(9)==1) {
+                    if (FastRandom.Bool()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
                     else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 }
 
-                if (random.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.StoneBasalt;
-                else if (random.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.StoneBasalt;
+                else if (FastRandom.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
                 else chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Regolite;
 
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) {
-                     if (random.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                     if (FastRandom.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
                      else chunk_SolidBlocks[b]=(ushort)BlockId.StoneBasalt;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMoonDark(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurfaceMoonDark(chunk, terrainHeight+dirtHeight);
@@ -3419,11 +3323,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3431,10 +3335,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3443,23 +3347,23 @@ namespace rabcrClient {
                 }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
-                if (random.Bool_12_5Percent()) {
-                    if (random.Bool()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Bool_12_5Percent()) {
+                    if (FastRandom.Bool()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
                     else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 }
 
-                if (random.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Anorthosite;
-                else if (random.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Anorthosite;
+                else if (FastRandom.Int(9)==1) chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
                 else chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Regolite;
 
 
                 for (int b = terrainHeight+1; b<terrainHeight+dirtHeight; b++) {
-                     if (random.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                     if (FastRandom.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
                      else chunk_SolidBlocks[b]=(ushort)BlockId.Anorthosite;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMoonLight(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurfaceMoonLight(chunk, terrainHeight+dirtHeight);
@@ -3477,11 +3381,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 //Height (ushort)BlockId.Dirt
@@ -3489,17 +3393,17 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=(byte)(terrainHeight-2);
             if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
-                if (Rabcr.random.Bool_12_5Percent()) chunk.TopBlocks[terrainHeight-3]=(ushort)BlockId.SnowTop;
+                if (FastRandom.Bool_12_5Percent()) chunk.TopBlocks[terrainHeight-3]=(ushort)BlockId.SnowTop;
 
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
@@ -3507,7 +3411,7 @@ namespace rabcrClient {
                 chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Ice;
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMars(chunk, terrainHeight+1);
                 } else GenerateUnderSurfaceMars(chunk, terrainHeight);
@@ -3525,11 +3429,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3537,10 +3441,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3549,18 +3453,18 @@ namespace rabcrClient {
                 }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
-                if (random.Int(6)==1) {
-                    if (random.Bool_20Percent()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(6)==1) {
+                    if (FastRandom.Bool_20Percent()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
                     else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 }
 
                 for (int b =terrainHeight; b<terrainHeight+dirtHeight; b++) {
-                    if (random.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                    if (FastRandom.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
                     else chunk_SolidBlocks[b]=(ushort)BlockId.Sand;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight);
@@ -3578,11 +3482,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // Height dirt
@@ -3590,10 +3494,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3602,18 +3506,18 @@ namespace rabcrClient {
                 }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
-                if (random.Int(6)==1) {
-                    if (random.Bool_20Percent()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(6)==1) {
+                    if (FastRandom.Bool_20Percent()) chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
                     else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 }
 
                 for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) {
-                    if (random.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                    if (FastRandom.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
                     else chunk_SolidBlocks[b]=(ushort)BlockId.Regolite;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight);
@@ -3631,11 +3535,11 @@ namespace rabcrClient {
                     if (terrainHeight>53-1) terrainHeight--;
                     else if (terrainHeight<53-6) terrainHeight++;
                     else {
-                        if (random.Bool()) terrainHeight++;
+                        if (FastRandom.Bool()) terrainHeight++;
                         else terrainHeight--;
                     }
 
-                    terrainChange=2+random.Int3();
+                    terrainChange=2+FastRandom.Int3();
                 } else terrainChange--;
 
                 // height dirt
@@ -3643,10 +3547,10 @@ namespace rabcrClient {
                     if (dirtHeight>3) dirtHeight--;
                     else if (dirtHeight<2) dirtHeight++;
                     else {
-                        if (random.Bool()) dirtHeight++;
+                        if (FastRandom.Bool()) dirtHeight++;
                         else dirtHeight--;
                     }
-                    dirtChange=1+random.Int3();
+                    dirtChange=1+FastRandom.Int3();
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
@@ -3655,18 +3559,18 @@ namespace rabcrClient {
                 }
                 ushort[] chunk_SolidBlocks=chunk.SolidBlocks;
 
-                if (random.Int(6)==1) {
-                    if (random.Bool_20Percent())chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
+                if (FastRandom.Int(6)==1) {
+                    if (FastRandom.Bool_20Percent())chunk_SolidBlocks[terrainHeight-1]=(ushort)BlockId.Cobblestone;
                     else chunk.TopBlocks[terrainHeight-1]=(ushort)BlockId.Rocks;
                 }
 
                 for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) {
-                    if (random.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
+                    if (FastRandom.Int(6)==1) chunk_SolidBlocks[b]=(ushort)BlockId.Cobblestone;
                     else chunk_SolidBlocks[b]=(ushort)BlockId.RedSand;
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk_SolidBlocks[terrainHeight+dirtHeight]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurfaceMars(chunk, terrainHeight+dirtHeight);
@@ -3683,37 +3587,37 @@ namespace rabcrClient {
                 if (height12<65) height12++;
                 else if (height12>70) height12--;
                 else {
-                    if (random.Bool()) height12++;
+                    if (FastRandom.Bool()) height12++;
                     else height12--;
                 }
-                height12Change=random.Int2()+1;
+                height12Change=FastRandom.Int2()+1;
             } else height12Change--;
 
 
             if (height23Change==0) {
                 if (height23<80)height23++;
                 else if (height23>85)height23--;
-                else if (random.Bool()) height23++;
+                else if (FastRandom.Bool()) height23++;
                 else height23--;
 
-                height23Change=random.Int3()+1;
+                height23Change=FastRandom.Int3()+1;
             } else height23Change--;
 
             if (height34Change==0) {
                 if (height34<105)height34++;
                 else if (height34>110)height34--;
-                else if (random.Bool()) height34++;
+                else if (FastRandom.Bool()) height34++;
                 else height34--;
-                height34Change=random.Int4()+1;
+                height34Change=FastRandom.Int4()+1;
             } else height34Change--;
 
             //Type
             if (level1Lenght==0) {
                 level1TypeLast=level1Type;
                 level1Crossing=2;
-                level1Type=random.Int(10);
+                level1Type=FastRandom.Int(10);
 
-                level1Lenght=random.Int(12)+8+8;
+                level1Lenght=FastRandom.Int(12)+8+8;
                 block1 =GetByIdHeight1(level1Type);
             } else {
                 level1Lenght--;
@@ -3723,9 +3627,9 @@ namespace rabcrClient {
             if (level2Lenght==0) {
                 level2TypeLast=level2Type;
                 level2Crossing=2;
-                level2Type=random.Int(10);
+                level2Type=FastRandom.Int(10);
 
-                level2Lenght=random.Int16()+8+8+8;
+                level2Lenght=FastRandom.Int16()+8+8+8;
                 block2 =GetByIdHeight2(level2Type);
             } else {
                 level2Lenght--;
@@ -3735,9 +3639,9 @@ namespace rabcrClient {
             if (level3Lenght==0) {
                 level3TypeLast=level3Type;
                 level3Crossing=2;
-                level3Type=random.Int(10);
+                level3Type=FastRandom.Int(10);
 
-                level3Lenght=random.Int(20)+8+8+24;
+                level3Lenght=FastRandom.Int(20)+8+8+24;
                 block3 =GetByIdHeight3(level3Type);
             } else {
                 level3Lenght--;
@@ -3752,13 +3656,13 @@ namespace rabcrClient {
             if (level1Crossing==2) {
                 ushort oldTop = GetByIdHeight1(level1TypeLast);
                 for (int y = height; y<height12; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block1;
                 }
             } else if (level1Crossing==1) {
                 ushort oldTop = GetByIdHeight1(level1TypeLast);
                 for (int y = height; y<height12; y++) {
-                    if (random.Bool()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block1;
                 }
             } else {
@@ -3771,13 +3675,13 @@ namespace rabcrClient {
              if (level2Crossing==2) {
                 ushort oldTop = GetByIdHeight2(level2TypeLast);
                 for (int y = height12; y<height23; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block2;
                 }
             } else if (level2Crossing==1) {
                 ushort oldTop = GetByIdHeight2(level2TypeLast);
                 for (int y = height12; y<height23; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=block2;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=block2;
                     else chunk_SolidBlocks[y]=oldTop;
                 }
             } else {
@@ -3790,137 +3694,137 @@ namespace rabcrClient {
             if (level3Crossing==2) {
                 ushort oldTop = GetByIdHeight3(level3TypeLast);
                 for (int y = height23; y<height34; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block3;
                 }
             } else if (level3Crossing==1) {
                 ushort oldTop = GetByIdHeight3(level3TypeLast);
                 for (int y = height23; y<height34; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=block3;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=block3;
                     else chunk_SolidBlocks[y]=oldTop;
                 }
             } else {
                 for (int y=height23; y<height34; y++) chunk_SolidBlocks[y]=block3;
             }
 
-            chunk_SolidBlocks[height+random.Int(height34-height)]=(ushort)BlockId.Cobblestone;
+            chunk_SolidBlocks[height+FastRandom.Int(height34-height)]=(ushort)BlockId.Cobblestone;
 
             // Generate (ushort)BlockId.Lava
             for (int y=height34; y<125; y++) chunk.TopBlocks[y]=(ushort)BlockId.Lava;
 
             // Generate ores
-            if (random.Bool_20Percent()/* Int(5)==1*/) {
+            if (FastRandom.Bool_20Percent()) {
                 if (pos>15) {
-                    switch (random.Int(35)) {
+                    switch (FastRandom.Int(35)) {
                         case 1:
-                            OreCoal(height+3+random.Int(height34-height-10));
+                            OreCoal(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 2:
-                            OreCoal(height+3+random.Int(45));
+                            OreCoal(height+3+FastRandom.Int(45));
                             break;
                         case 3:
-                            OreCoal(height+3+random.Int(10));
+                            OreCoal(height+3+FastRandom.Int(10));
                             break;
                         case 4:
-                            OreCoal(height+3+random.Int(10));
+                            OreCoal(height+3+FastRandom.Int(10));
                             break;
                         case 5:
-                            OreCoal(height+3+30+random.Int(10));
+                            OreCoal(height+3+30+FastRandom.Int(10));
                             break;
                         case 6:
-                            OreCoal(height+3+30+random.Int(10));
+                            OreCoal(height+3+30+FastRandom.Int(10));
                             break;
 
 
                         case 7:
-                            OreCopper(height+3+random.Int(height34-height-10));
+                            OreCopper(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 8:
-                            OreCopper(height+3+random.Int(45));
+                            OreCopper(height+3+FastRandom.Int(45));
                             break;
                         case 9:
-                            OreCopper(height+3+random.Int(15));
+                            OreCopper(height+3+FastRandom.Int(15));
                             break;
                         case 10:
-                            OreCopper(height+3+random.Int(10));
+                            OreCopper(height+3+FastRandom.Int(10));
                             break;
                         case 11:
-                            OreCopper(height+10+random.Int(10));
+                            OreCopper(height+10+FastRandom.Int(10));
                             break;
 
 
                         case 12:
-                            OreIron(height+3+random.Int(height34-height-10)+2);
+                            OreIron(height+3+FastRandom.Int(height34-height-10)+2);
                             break;
                         case 13:
-                            OreIron(height+3+random.Int(45)+2);
+                            OreIron(height+3+FastRandom.Int(45)+2);
                             break;
                         case 14:
-                            OreIron(height+10+random.Int(20));
+                            OreIron(height+10+FastRandom.Int(20));
                             break;
                         case 15:
-                            OreIron(height+3+random.Int(45)+2);
+                            OreIron(height+3+FastRandom.Int(45)+2);
                             break;
 
 
                         case 16:
-                            OreOil(height+3+random.Int(height34-height-10));
+                            OreOil(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 17:
-                            OreOil(height+3+random.Int(45));
+                            OreOil(height+3+FastRandom.Int(45));
                             break;
                         case 18:
-                            OreOil(height+3+random.Int(34));
+                            OreOil(height+3+FastRandom.Int(34));
                             break;
                         case 19:
-                            OreOil(height+3+random.Int(35));
+                            OreOil(height+3+FastRandom.Int(35));
                             break;
 
 
                         case 20:
-                            OreTin(height+3+random.Int(height34-height-10));
+                            OreTin(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 21:
-                            OreTin(height+3+random.Int(35));
+                            OreTin(height+3+FastRandom.Int(35));
                             break;
                         case 22:
-                            OreTin(height+6+random.Int(25));
+                            OreTin(height+6+FastRandom.Int(25));
                             break;
 
 
                         case 23:
-                            OreSilver(height+3+random.Int(height34-height-5));
+                            OreSilver(height+3+FastRandom.Int(height34-height-5));
                             break;
 
 
                         case 24:
-                            OreGold(height+3+random.Int(height34-height-5));
+                            OreGold(height+3+FastRandom.Int(height34-height-5));
                             break;
 
                         case 25:
-                            OreAliminium(height+3+random.Int(height34-height-10));
+                            OreAliminium(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 26:
-                            OreAliminium(height+3+random.Int(45));
+                            OreAliminium(height+3+FastRandom.Int(45));
                             break;
                         case 27:
-                            OreAliminium(height+3+random.Int(35));
+                            OreAliminium(height+3+FastRandom.Int(35));
                             break;
 
                         case 28:
-                            OreSulfur(height+3+random.Int(height12-height/*-10*/));
+                            OreSulfur(height+3+FastRandom.Int(height12-height/*-10*/));
                             break;
 
                         case 29:
-                            OreSaltpeter(height+3+random.Int(height12-height/*-10*/));
+                            OreSaltpeter(height+3+FastRandom.Int(height12-height/*-10*/));
                             break;
 
                             case 30:
-                            OreSulfur(height+3+random.Int(height12-height/*-10*/));
+                            OreSulfur(height+3+FastRandom.Int(height12-height/*-10*/));
                             break;
 
                         case 31:
-                            OreSaltpeter(height+3+random.Int(height12-height/*-10*/));
+                            OreSaltpeter(height+3+FastRandom.Int(height12-height/*-10*/));
                             break;
                     }
                 }
@@ -3931,17 +3835,17 @@ namespace rabcrClient {
             if (height34Change==0) {
                 if (height34<105)height34++;
                 else if (height34>110)height34--;
-                else if (random.Bool()) height34++;
+                else if (FastRandom.Bool()) height34++;
                 else height34--;
-                height34Change=random.Int4()+1;
+                height34Change=FastRandom.Int4()+1;
             } else height34Change--;
 
             if (level3Lenght==0) {
                 level3TypeLast=level3Type;
                 level3Crossing=2;
-                level3Type=random.Int(10);
+                level3Type=FastRandom.Int(10);
 
-                level3Lenght=random.Int(20)+8+8+24;
+                level3Lenght=FastRandom.Int(20)+8+8+24;
             } else {
                 level3Lenght--;
                 level3Crossing--;
@@ -3953,76 +3857,76 @@ namespace rabcrClient {
             for (int y=height; y<height34;y++) chunk_SolidBlocks[y]=(ushort)BlockId.StoneBasalt;
 
 
-            chunk_SolidBlocks[height+random.Int(height34-height)]=(ushort)BlockId.Cobblestone;
+            chunk_SolidBlocks[height+FastRandom.Int(height34-height)]=(ushort)BlockId.Cobblestone;
 
             // Generate (ushort)BlockId.Lava
             for (int y=height34; y<125; y++) chunk.TopBlocks[y]=(ushort)BlockId.Lava;
 
             // Generate ores
-            if (random.Bool_20Percent()/* Int(5)==1*/) {
+            if (FastRandom.Bool_20Percent()/* Int(5)==1*/) {
                 if (pos>15) {
-                    switch (random.Int(25)) {
+                    switch (FastRandom.Int(25)) {
 
 
                         case 7:
-                            OreCopper(height+3+random.Int(height34-height-10));
+                            OreCopper(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 8:
-                            OreCopper(height+3+random.Int(45));
+                            OreCopper(height+3+FastRandom.Int(45));
                             break;
                         case 9:
-                            OreIron(height+3+random.Int(15));
+                            OreIron(height+3+FastRandom.Int(15));
                             break;
                         case 10:
-                            OreCopper(height+3+random.Int(10));
+                            OreCopper(height+3+FastRandom.Int(10));
                             break;
                         case 11:
-                            OreCopper(height+10+random.Int(10));
+                            OreCopper(height+10+FastRandom.Int(10));
                             break;
 
 
                         case 12:
-                            OreIron(height+3+random.Int(height34-height-10));
+                            OreIron(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 13:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
                         case 14:
-                            OreIron(height+10+random.Int(20));
+                            OreIron(height+10+FastRandom.Int(20));
                             break;
                         case 15:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
 
 
                         case 20:
-                            OreTin(height+3+random.Int(height34-height-10));
+                            OreTin(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 21:
-                            OreTin(height+3+random.Int(35));
+                            OreTin(height+3+FastRandom.Int(35));
                             break;
                         case 22:
-                            OreTin(height+6+random.Int(25));
+                            OreTin(height+6+FastRandom.Int(25));
                             break;
 
 
                         case 23:
-                            OreSilver(height+3+random.Int(height34-height-5));
+                            OreSilver(height+3+FastRandom.Int(height34-height-5));
                             break;
 
 
                         case 24:
-                            OreGold(height+3+random.Int(height34-height-5));
+                            OreGold(height+3+FastRandom.Int(height34-height-5));
                             break;
 
                         case 25:
-                            OreAliminium(height+3+random.Int(height34-height-10));
+                            OreAliminium(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 26:
-                            OreAliminium(height+3+random.Int(45));
+                            OreAliminium(height+3+FastRandom.Int(45));
                             break;
                         case 27:
-                            OreAliminium(height+3+random.Int(35));
+                            OreAliminium(height+3+FastRandom.Int(35));
                             break;
                     }
                 }
@@ -4033,18 +3937,18 @@ namespace rabcrClient {
             if (height34Change==0) {
                 if (height34<105)height34++;
                 else if (height34>110)height34--;
-                else if (random.Bool()) height34++;
+                else if (FastRandom.Bool()) height34++;
                 else height34--;
-                height34Change=random.Int4()+1;
+                height34Change=FastRandom.Int4()+1;
             } else height34Change--;
 
 
             if (level3Lenght==0) {
                 level3TypeLast=level3Type;
                 level3Crossing=2;
-                level3Type=random.Int(10);
+                level3Type=FastRandom.Int(10);
 
-                level3Lenght=random.Int(20)+8+8+24;
+                level3Lenght=FastRandom.Int(20)+8+8+24;
             } else {
                 level3Lenght--;
                 level3Crossing--;
@@ -4054,45 +3958,45 @@ namespace rabcrClient {
 
             for (int y=height; y<height34;y++) chunk_SolidBlocks[y]=(ushort)BlockId.Anorthosite;
 
-            chunk_SolidBlocks[height+random.Int(height34-height)]=(ushort)BlockId.Cobblestone;
+            chunk_SolidBlocks[height+FastRandom.Int(height34-height)]=(ushort)BlockId.Cobblestone;
 
             // Generate (ushort)BlockId.Lava
             for (int y=height34; y<125; y++) chunk.TopBlocks[y]=(ushort)BlockId.Lava;
 
             // Generate ores
-            if (random.Bool_20Percent()) {
+            if (FastRandom.Bool_20Percent()) {
                 if (pos>15) {
-                    switch (random.Int(25)) {
+                    switch (FastRandom.Int(25)) {
 
 
                         case 7:
-                            OreCopper(height+3+random.Int(height34-height-10));
+                            OreCopper(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 8:
-                            OreCopper(height+3+random.Int(45));
+                            OreCopper(height+3+FastRandom.Int(45));
                             break;
                         case 9:
-                            OreIron(height+3+random.Int(15));
+                            OreIron(height+3+FastRandom.Int(15));
                             break;
                         case 10:
-                            OreCopper(height+3+random.Int(10));
+                            OreCopper(height+3+FastRandom.Int(10));
                             break;
                         case 11:
-                            OreCopper(height+10+random.Int(10));
+                            OreCopper(height+10+FastRandom.Int(10));
                             break;
 
 
                         case 12:
-                            OreIron(height+3+random.Int(height34-height-10));
+                            OreIron(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 13:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
                         case 14:
-                            OreIron(height+10+random.Int(20));
+                            OreIron(height+10+FastRandom.Int(20));
                             break;
                         case 15:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
 
 
@@ -4100,33 +4004,33 @@ namespace rabcrClient {
 
 
                         case 20:
-                            OreTin(height+3+random.Int(height34-height-10));
+                            OreTin(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 21:
-                            OreTin(height+3+random.Int(35));
+                            OreTin(height+3+FastRandom.Int(35));
                             break;
                         case 22:
-                            OreTin(height+6+random.Int(25));
+                            OreTin(height+6+FastRandom.Int(25));
                             break;
 
 
                         case 23:
-                            OreSilver(height+3+random.Int(height34-height-5));
+                            OreSilver(height+3+FastRandom.Int(height34-height-5));
                             break;
 
 
                         case 24:
-                            OreGold(height+3+random.Int(height34-height-5));
+                            OreGold(height+3+FastRandom.Int(height34-height-5));
                             break;
 
                         case 25:
-                            OreAliminium(height+3+random.Int(height34-height-10));
+                            OreAliminium(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 26:
-                            OreAliminium(height+3+random.Int(45));
+                            OreAliminium(height+3+FastRandom.Int(45));
                             break;
                         case 27:
-                            OreAliminium(height+3+random.Int(35));
+                            OreAliminium(height+3+FastRandom.Int(35));
                             break;
                     }
                 }
@@ -4140,10 +4044,10 @@ namespace rabcrClient {
                 if (height12<65) height12++;
                 else if (height12>70) height12--;
                 else {
-                    if (random.Bool()) height12++;
+                    if (FastRandom.Bool()) height12++;
                     else height12--;
                 }
-                height12Change=random.Int2()+1;
+                height12Change=FastRandom.Int2()+1;
             } else height12Change--;
 
 
@@ -4152,9 +4056,9 @@ namespace rabcrClient {
             if (level1Lenght==0) {
                 level1TypeLast=level1Type;
                 level1Crossing=2;
-                level1Type=random.Int5();
+                level1Type=FastRandom.Int5();
 
-                level1Lenght=random.Int(20)+20;
+                level1Lenght=FastRandom.Int(20)+20;
             } else {
                 level1Lenght--;
                 level1Crossing--;
@@ -4169,13 +4073,13 @@ namespace rabcrClient {
             if (level1Crossing==2) {
                 ushort oldTop = GetByIdHeight1(level1TypeLast);
                 for (int y = height; y<height23; y++) {
-                    if (random.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool_33_333Percent()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block1;
                 }
             } else if (level1Crossing==1) {
                 ushort oldTop = GetByIdHeight1(level1TypeLast);
                 for (int y = height; y<height23; y++) {
-                    if (random.Bool()) chunk_SolidBlocks[y]=oldTop;
+                    if (FastRandom.Bool()) chunk_SolidBlocks[y]=oldTop;
                     else chunk_SolidBlocks[y]=block1;
                 }
             } else {
@@ -4187,83 +4091,83 @@ namespace rabcrClient {
                 for (int y=height23; y<height34; y++) chunk_SolidBlocks[y]=(ushort)BlockId.StoneBasalt;
            // }
 
-            chunk_SolidBlocks[height+random.Int(height34-height)]=(ushort)BlockId.Cobblestone;
+            chunk_SolidBlocks[height+FastRandom.Int(height34-height)]=(ushort)BlockId.Cobblestone;
 
             // Generate (ushort)BlockId.Lava
             for (int y=height34; y<125; y++) chunk.TopBlocks[y]=(ushort)BlockId.Lava;
 
             // Generate ores
-            if (random.Bool_20Percent()) {
+            if (FastRandom.Bool_20Percent()) {
                 if (pos>15) {
-                    switch (random.Int(25)) {
+                    switch (FastRandom.Int(25)) {
                         case 1:
-                            OreIron(height+3+random.Int(height34-height-10));
+                            OreIron(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 2:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
 
 
                         case 7:
-                            OreCopper(height+3+random.Int(height34-height-10));
+                            OreCopper(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 8:
-                            OreCopper(height+3+random.Int(45));
+                            OreCopper(height+3+FastRandom.Int(45));
                             break;
                         case 9:
-                            OreCopper(height+3+random.Int(15));
+                            OreCopper(height+3+FastRandom.Int(15));
                             break;
                         case 10:
-                            OreCopper(height+3+random.Int(10));
+                            OreCopper(height+3+FastRandom.Int(10));
                             break;
                         case 11:
-                            OreCopper(height+10+random.Int(10));
+                            OreCopper(height+10+FastRandom.Int(10));
                             break;
 
 
                         case 12:
-                            OreIron(height+3+random.Int(height34-height-10));
+                            OreIron(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 13:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
                         case 14:
-                            OreIron(height+10+random.Int(20));
+                            OreIron(height+10+FastRandom.Int(20));
                             break;
                         case 15:
-                            OreIron(height+3+random.Int(45));
+                            OreIron(height+3+FastRandom.Int(45));
                             break;
 
 
 
                         case 20:
-                            OreTin(height+3+random.Int(height34-height-10));
+                            OreTin(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 21:
-                            OreTin(height+3+random.Int(35));
+                            OreTin(height+3+FastRandom.Int(35));
                             break;
                         case 22:
-                            OreTin(height+6+random.Int(25));
+                            OreTin(height+6+FastRandom.Int(25));
                             break;
 
 
                         case 23:
-                            OreSilver(height+3+random.Int(height34-height-5));
+                            OreSilver(height+3+FastRandom.Int(height34-height-5));
                             break;
 
 
                         case 24:
-                            OreGold(height+3+random.Int(height34-height-5));
+                            OreGold(height+3+FastRandom.Int(height34-height-5));
                             break;
 
                         case 25:
-                            OreAliminium(height+3+random.Int(height34-height-10));
+                            OreAliminium(height+3+FastRandom.Int(height34-height-10));
                             break;
                         case 26:
-                            OreAliminium(height+3+random.Int(45));
+                            OreAliminium(height+3+FastRandom.Int(45));
                             break;
                         case 27:
-                            OreAliminium(height+3+random.Int(35));
+                            OreAliminium(height+3+FastRandom.Int(35));
                             break;
                     }
                 }
@@ -4320,51 +4224,47 @@ namespace rabcrClient {
         }
 
         ushort GetByIdHeight3(int v) {
-            switch (v) {
-                case 1: return (ushort)BlockId.StoneBasalt;
-                case 2: return (ushort)BlockId.StoneGabbro;
-                case 3: return (ushort)BlockId.StoneDiorit;
-                case 4: return (ushort)BlockId.StoneGneiss;
-
-                case 5: return  (ushort)BlockId.StoneBasalt;
-                case 11: return (ushort)BlockId.StoneGabbro;
-                case 12: return (ushort)BlockId.StoneDiorit;
-                case 13: return (ushort)BlockId.StoneGneiss;
-
-                case 14: return (ushort)BlockId.StoneBasalt;
-                case 15: return (ushort)BlockId.StoneBasalt;
-
-                case 6: return  (ushort)BlockId.StoneSandstone;
-                case 7: return  (ushort)BlockId.StoneLimestone;
-                case 8: return  (ushort)BlockId.StoneSchist;
-                case 9: return  (ushort)BlockId.StoneDolomite;
-                case 10: return (ushort)BlockId.StoneRhyolite;
-
-                default: return (ushort)BlockId.StoneDolomite;
-            }
+            return v switch {
+                1 => (ushort)BlockId.StoneBasalt,
+                2 => (ushort)BlockId.StoneGabbro,
+                3 => (ushort)BlockId.StoneDiorit,
+                4 => (ushort)BlockId.StoneGneiss,
+                5 => (ushort)BlockId.StoneBasalt,
+                11 => (ushort)BlockId.StoneGabbro,
+                12 => (ushort)BlockId.StoneDiorit,
+                13 => (ushort)BlockId.StoneGneiss,
+                14 => (ushort)BlockId.StoneBasalt,
+                15 => (ushort)BlockId.StoneBasalt,
+                6 => (ushort)BlockId.StoneSandstone,
+                7 => (ushort)BlockId.StoneLimestone,
+                8 => (ushort)BlockId.StoneSchist,
+                9 => (ushort)BlockId.StoneDolomite,
+                10 => (ushort)BlockId.StoneRhyolite,
+                _ => (ushort)BlockId.StoneDolomite,
+            };
         }
 
         ushort GetByIdHeightMars(int v) {
-            switch (v) {
-                case 1: return  (ushort)BlockId.StoneSandstone;
-                case 2: return  (ushort)BlockId.StoneBasalt;
-                case 3: return  (ushort)BlockId.StoneBasalt;
-                case 4: return  (ushort)BlockId.MudStone;
-                default: return (ushort)BlockId.StoneSandstone;
-            }
+            return v switch {
+                1 => (ushort)BlockId.StoneSandstone,
+                2 => (ushort)BlockId.StoneBasalt,
+                3 => (ushort)BlockId.StoneBasalt,
+                4 => (ushort)BlockId.MudStone,
+                _ => (ushort)BlockId.StoneSandstone,
+            };
         }
 
         unsafe void Save(string name) {
             world++;
 
-            List<byte> bytes=new List<byte>();
-            List<byte> bytesLiveObject = new List<byte> {
+            List<byte> bytes=new();
+            List<byte> bytesLiveObject = new() {
                 (byte)LiveObjects.Count,
                 (byte)(LiveObjects.Count>>8),
                 (byte)(LiveObjects.Count>>16)
             };
 
-            List<byte> tmpBytes=new List<byte>();
+            List<byte> tmpBytes=new();
 
             for (int x=0; x<generatePos-7; x++) {
                 GChunk chunk=terrain[x];
@@ -5020,7 +4920,7 @@ namespace rabcrClient {
             world++;
 
             void SaveLiveObject(GenLiveObject lo) {
-                    switch (lo) { 
+                    switch (lo) {
                         case GenTree tree:
                             // Basic info
                             bytesLiveObject.Add((byte)LiveObjectType.Tree);
@@ -5033,9 +4933,8 @@ namespace rabcrClient {
                             int countWood=tree.TitlesWood.Count;
                             bytesLiveObject.Add((byte)countWood);
 
-                            for (int i=0; i<countWood; i++) { 
+                            for (int i=0; i<countWood; i++) {
                                 UShortAndByte sab=tree.TitlesWood[i];
-
                                 bytesLiveObject.Add((byte)sab.X);
                                 bytesLiveObject.Add((byte)(sab.X>>8));
                                 bytesLiveObject.Add(sab.Y);
@@ -5045,7 +4944,7 @@ namespace rabcrClient {
                             int countLeaves=tree.TitlesLeaves.Count;
                             bytesLiveObject.Add((byte)countLeaves);
 
-                            for (int i=0; i<countLeaves; i++) { 
+                            for (int i=0; i<countLeaves; i++) {
                                 UShortAndByte sab=tree.TitlesLeaves[i];
 
                                 bytesLiveObject.Add((byte)sab.X);
@@ -5066,7 +4965,7 @@ namespace rabcrClient {
                             int count=cactus.Titles.Count;
                             bytesLiveObject.Add((byte)count);
 
-                            for (int i=0; i<count; i++) { 
+                            for (int i=0; i<count; i++) {
                                 UShortAndByte sab=cactus.Titles[i];
 
                                 bytesLiveObject.Add((byte)sab.X);
@@ -5075,7 +4974,7 @@ namespace rabcrClient {
                             }
                             break;
                     }
-                    
+
                 }
 
             void SaveMachineTop(ushort i) {
@@ -5142,7 +5041,7 @@ namespace rabcrClient {
         void Lake(ushort floor) {
             //if (pos-lastLakePos<9) return;
 
-            //int len=4+random.Int4();
+            //int len=4+FastRandom.Int4();
             //for (int xx=pos; xx<pos+len; xx++) {
             //    terrain.Add(new GChunk());
             //    GChunk chunk=terrain[xx];
@@ -5153,7 +5052,7 @@ namespace rabcrClient {
             //    chunk.LightPos=terrainHeight;
 
             //    // Lithosphere
-            //    if (random.Bool()) {
+            //    if (FastRandom.Bool()) {
             //        chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
             //        GenerateUnderSurface(chunk, terrainHeight+3);
             //    } else GenerateUnderSurface(chunk, terrainHeight+2);
@@ -5163,7 +5062,7 @@ namespace rabcrClient {
             //lastLakePos=pos;
              if (pos-lastLakePos<9) return;
 
-            int len=pos+4+random.Int4();
+            int len=pos+4+FastRandom.Int4();
             for (; pos<len; pos++) {
                 terrain.Add(new GChunk());
                 GChunk chunk=terrain[pos];
@@ -5177,7 +5076,7 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+3);
                 } else GenerateUnderSurface(chunk, terrainHeight+2);
@@ -5190,7 +5089,7 @@ namespace rabcrClient {
         void LakeDirt() {
             if (pos-lastLakePos<9) return;
 
-            int len=pos+4+random.Int4();
+            int len=pos+4+FastRandom.Int4();
 
             for (; pos<len; pos++) {
                 terrain.Add(new GChunk());
@@ -5205,19 +5104,19 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+3);
                 } else GenerateUnderSurface(chunk, terrainHeight+2);
             }
             terrainChange+=2;
             lastLakePos=pos;
-        } 
-        
+        }
+
         void LakeSand() {
             if (pos-lastLakePos<9) return;
 
-            int len=pos+4+random.Int4();
+            int len=pos+4+FastRandom.Int4();
 
             for (; pos<len; pos++) {
                 terrain.Add(new GChunk());
@@ -5232,7 +5131,7 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+3);
                 } else GenerateUnderSurface(chunk, terrainHeight+2);
@@ -5244,7 +5143,7 @@ namespace rabcrClient {
         void LakeGravel() {
             if (pos-lastLakePos<9) return;
 
-            int len=pos+4+random.Int4();
+            int len=pos+4+FastRandom.Int4();
 
             for (; pos<len; pos++) {
                 terrain.Add(new GChunk());
@@ -5259,7 +5158,7 @@ namespace rabcrClient {
                 }
 
                 // Lithosphere
-                if (random.Bool()) {
+                if (FastRandom.Bool()) {
                     chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
                     GenerateUnderSurface(chunk, terrainHeight+3);
                 } else GenerateUnderSurface(chunk, terrainHeight+2);
@@ -5271,7 +5170,7 @@ namespace rabcrClient {
         //void LakeSalt(BlockId floor) {
         //    if (pos-lastLakePos<9) return;
 
-        //    int len=4+random.Int4();
+        //    int len=4+FastRandom.Int4();
         //    for (int xx=pos; xx<pos+len; xx++) {
 
         //        terrain.Add(new GChunk());
@@ -5283,7 +5182,7 @@ namespace rabcrClient {
         //        /*terrain[xx]*/chunk.LightPos=terrainHeight;
 
         //        // Lithosphere
-        //        if (random.Bool()) {
+        //        if (FastRandom.Bool()) {
         //            chunk.SolidBlocks[terrainHeight+2]=(ushort)BlockId.Cobblestone;
         //            GenerateUnderSurface(chunk, terrainHeight+1+2);
         //        } else GenerateUnderSurface(chunk, terrainHeight+2);
@@ -5337,12 +5236,12 @@ namespace rabcrClient {
         }
 
         void TreeMangrove(int x, int y) {
-            treeChange=1+random.Int2();
+            treeChange=1+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
-            LiveObjects.Add(tree);      
-            
-            GChunk 
+            LiveObjects.Add(tree);
+
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1];
@@ -5352,8 +5251,8 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-3, (ushort)BlockId.MangroveWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.MangroveWood, tree);
 
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.MangroveWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-3, (ushort)BlockId.MangroveWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.MangroveWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-3, (ushort)BlockId.MangroveWood, tree);
 
             SetLeave(chunkXP1, x+1, y-3, (ushort)BlockId.MangroveLeaves, tree);
             SetLeave(chunkXM1, x-1, y-3, (ushort)BlockId.MangroveLeaves, tree);
@@ -5365,12 +5264,12 @@ namespace rabcrClient {
         }
 
         void TreeWillow(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5381,9 +5280,9 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-2, (ushort)BlockId.WillowWood, tree);
             SetWood(chunkX, x, y-3, (ushort)BlockId.WillowWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.WillowWood, tree);
-            if (random.Bool()) SetWood(chunkX, x, y-4, (ushort)BlockId.WillowWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkX, x, y-4, (ushort)BlockId.WillowWood, tree);
 
-            switch (random.Int3()){
+            switch (FastRandom.Int3()){
                 case 0:
                     SetWood(chunkXM1, x-1, y-3, (ushort)BlockId.WillowWood, tree);
 
@@ -5422,11 +5321,11 @@ namespace rabcrClient {
         }
 
         void TreeEucalyptus(int x, int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5442,7 +5341,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-5, (ushort)BlockId.EucalyptusWood, tree);
             SetWood(chunkX, x, y-6, (ushort)BlockId.EucalyptusWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXM1, x-1, y-3, (ushort)BlockId.EucalyptusWood, tree);
                 SetWood(chunkXM2, x-2, y-4, (ushort)BlockId.EucalyptusWood, tree);
                 SetWood(chunkXM2, x-2, y-5, (ushort)BlockId.EucalyptusWood, tree);
@@ -5453,7 +5352,7 @@ namespace rabcrClient {
                 SetWood(chunkXM2, x-2, y-5, (ushort)BlockId.EucalyptusWood, tree);
             }
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXP1, x+1, y-3, (ushort)BlockId.EucalyptusWood, tree);
                 SetWood(chunkXP2, x+2, y-4, (ushort)BlockId.EucalyptusWood, tree);
                 SetWood(chunkXP2, x+2, y-5, (ushort)BlockId.EucalyptusWood, tree);
@@ -5485,12 +5384,12 @@ namespace rabcrClient {
         }
 
         void TreeOlive(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5500,7 +5399,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-1, (ushort)BlockId.OliveWood, tree);
             SetWood(chunkX, x, y-2, (ushort)BlockId.OliveWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkX,   x   ,y-3,(ushort)BlockId.OliveWood, tree);
                 SetWood(chunkXM1, x-1, y-3, (ushort)BlockId.OliveWood, tree);
                 SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.OliveWood, tree);
@@ -5512,31 +5411,31 @@ namespace rabcrClient {
                 SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.OliveWood, tree);
             }
 
-            SetLeave(chunkXM1, x-1, y-3, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkXM1, x-1, y-3, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkX,   x  , y-3, (ushort)BlockId.OliveLeaves, tree);
             SetLeave(chunkXP1, x+1, y-3, (ushort)BlockId.OliveLeaves, tree);
             SetLeave(chunkXP1, x+1, y-4, (ushort)BlockId.OliveLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-4, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkXM1, x-1, y-4, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkX,   x  , y-4, (ushort)BlockId.OliveLeaves, tree);
             SetLeave(chunkXP2, x+2, y-4, (ushort)BlockId.OliveLeaves, tree);
-            SetLeave(chunkXM2, x-2, y-4, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkXM2, x-2, y-4, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkX,   x  , y-5, (ushort)BlockId.OliveLeaves, tree);
             SetLeave(chunkXP1, x+1, y-5, (ushort)BlockId.OliveLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-5, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkXM1, x-1, y-5, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkXM2, x-2, y-5, (ushort)BlockId.OliveLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-5, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkXP2, x+2, y-5, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkXM1, x-1, y-6, (ushort)BlockId.OliveLeaves, tree);
-            SetLeave(chunkX,   x  , y-6, random.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
+            SetLeave(chunkX,   x  , y-6, FastRandom.Bool() ? (ushort)BlockId.OliveLeaves : (ushort)BlockId.OliveLeavesWithOlives, tree);
             SetLeave(chunkXP1, x+1, y-6, (ushort)BlockId.OliveLeaves, tree);
         }
 
         void TreeApple(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
-            GenTree tree=new GenTree(x, y-1);
+            GenTree tree=new(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5552,31 +5451,31 @@ namespace rabcrClient {
             SetWood(chunkXM1, x-1, y-5, (ushort)BlockId.AppleWood, tree);
             SetWood(chunkXP1, x+1, y-6, (ushort)BlockId.AppleWood, tree);
 
-            SetLeave(chunkXP2, x+2, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXP2, x+2, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkXM2, x-2, y-3, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXP1, x+1, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkXM1, x-1, y-3, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkX,   x  , y-3, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
-            SetLeave(chunkXP2, x+2, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkX,   x  , y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXP2, x+2, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkXM2, x-2, y-4, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-4, random.Bool_33_333Percent()? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXP1, x+1, y-4, FastRandom.Bool_33_333Percent()? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkXM1, x-1, y-4, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkX,   x  , y-4, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkX,   x  , y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkXP1, x+1, y-5, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXM1, x-1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkX,   x  , y-5, (ushort)BlockId.AppleLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
-            SetLeave(chunkXM1, x-1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXP1, x+1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
+            SetLeave(chunkXM1, x-1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.AppleLeaves : (ushort)BlockId.AppleLeavesWithApples, tree);
             SetLeave(chunkX,   x  , y-6, (ushort)BlockId.AppleLeaves, tree);
         }
 
         void TreeOrange(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5590,50 +5489,50 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-5, (ushort)BlockId.OrangeWood, tree);
             SetWood(chunkX, x, y-6, (ushort)BlockId.OrangeWood, tree);
 
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.OrangeWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.OrangeWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-7, (ushort)BlockId.OrangeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.OrangeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.OrangeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-7, (ushort)BlockId.OrangeWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXP1, x+1, y-7, (ushort)BlockId.OrangeWood, tree);
-                if (random.Bool()) SetWood(chunkXP1, x+1, y-8, (ushort)BlockId.OrangeWood, tree);
+                if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-8, (ushort)BlockId.OrangeWood, tree);
             }
 
-            SetLeave(chunkXP1, x+1, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXM1, x-1, y-4, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkX,   x  , y-4, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkX,   x  , y-5, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkX,   x  , y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkX,   x  , y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXP2, x+2, y-5, (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXM2, x-2, y-5, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkX,   x  , y-6, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXM2, x-2, y-6, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkX,   x  , y-7, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-7, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXM2, x-2, y-7, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-7, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-7, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkX,   x  , y-8, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-8, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXM2, x-2, y-8, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-8, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXM2, x-2, y-8, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXP1, x+1, y-8, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-8, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-9, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-8, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-9, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
             SetLeave(chunkXM1, x-1, y-9, (ushort)BlockId.OrangeLeaves, tree);
-            SetLeave(chunkX,   x  , y-9, random.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
+            SetLeave(chunkX,   x  , y-9, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.OrangeLeavesWithOranges : (ushort)BlockId.OrangeLeaves, tree);
         }
 
         void TreeLemon(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5645,34 +5544,34 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-3, (ushort)BlockId.LemonWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.LemonWood, tree);
 
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.LemonWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.LemonWood, tree);
             else SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.LemonWood, tree);
 
-            SetLeave(chunkXP1, x+1, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkX,   x  , y-3, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkX,   x  , y-4, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkX,   x  , y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkX,   x  , y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
             SetLeave(chunkXM2, x-2, y-4, (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
             SetLeave(chunkXM1, x-1, y-4, (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkX,   x  , y-5, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXM2, x-2, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkX,   x  , y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXM2, x-2, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
             SetLeave(chunkXP1, x+1, y-5, (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
             SetLeave(chunkX,   x  , y-6, (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.LemonLeavesWithLemons : (ushort)BlockId.LemonLeaves, tree);
         }
 
         void TreeCherry(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5688,34 +5587,34 @@ namespace rabcrClient {
             SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.CherryWood, tree);
             SetWood(chunkXM1, x-1, y-6, (ushort)BlockId.CherryWood, tree);
 
-            SetLeave(chunkXP1, x+1, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkXM1, x-1, y-3, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkX,   x  , y-3, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXM2, x-2, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkX,   x  , y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXM2, x-2, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkXP1, x+1, y-4, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkX,   x  , y-4, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkXM2, x-2, y-5, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkXM1, x-1, y-5, (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkX,   x  , y-5, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkX,   x  , y-6, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-7, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
             SetLeave(chunkXM1, x-1, y-7, (ushort)BlockId.CherryLeaves, tree);
-            SetLeave(chunkX,   x  , y-7, random.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
+            SetLeave(chunkX,   x  , y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.CherryLeavesWithCherries : (ushort)BlockId.CherryLeaves, tree);
         }
 
         void TreePlum(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-1);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5732,31 +5631,31 @@ namespace rabcrClient {
             SetWood(chunkXM1, x-1, y-6, (ushort)BlockId.PlumWood, tree);
 
             SetLeave(chunkXP1, x+1, y-3, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-3, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-3, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkX,   x  , y-3, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkXM2, x-2, y-4, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-4, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-4, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkX,   x  , y-4, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXP2, x+2, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXP2, x+2, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkXM2, x-2, y-5, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-5, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-5, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkX,   x  , y-5, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-6, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXP1, x+1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkXM1, x-1, y-6, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
             SetLeave(chunkX,   x  , y-6, (ushort)BlockId.PlumLeaves, tree);
-            SetLeave(chunkX,   x  , y-7, random.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
+            SetLeave(chunkX,   x  , y-7, FastRandom.Bool_33_333Percent() ? (ushort)BlockId.PlumLeavesWithPlums : (ushort)BlockId.PlumLeaves, tree);
         }
 
         void TreeOakMedium(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-2);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5767,14 +5666,14 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-2, (ushort)BlockId.OakWood, tree);
             SetWood(chunkX, x, y-3, (ushort)BlockId.OakWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.OakWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.OakWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.OakWood, tree);
             SetWood(chunkX, x,   y-6, (ushort)BlockId.OakWood, tree);
             SetWood(chunkX, x,   y-5, (ushort)BlockId.OakWood, tree);
             SetWood(chunkXM1, x-1, y-7, (ushort)BlockId.OakWood, tree);
             SetWood(chunkXP1, x+1, y-7, (ushort)BlockId.OakWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-8, (ushort)BlockId.OakWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-8, (ushort)BlockId.OakWood, tree);
-            if (random.Bool_20Percent()) SetWood(chunkXM2, x-2, y-7, (ushort)BlockId.OakWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-8, (ushort)BlockId.OakWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-8, (ushort)BlockId.OakWood, tree);
+            if (FastRandom.Bool_20Percent()) SetWood(chunkXM2, x-2, y-7, (ushort)BlockId.OakWood, tree);
 
             SetLeave(chunkXP1, x+1, y-4, (ushort)BlockId.OakLeaves, tree);
             SetLeave(chunkX,   x  , y-4, (ushort)BlockId.OakLeaves, tree);
@@ -5805,12 +5704,12 @@ namespace rabcrClient {
         }
 
         void TreePine(int x, int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-3);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5824,7 +5723,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-5, (ushort)BlockId.PineWood, tree);
             SetWood(chunkX, x, y-6, (ushort)BlockId.PineWood, tree);
             SetWood(chunkX, x, y-7, (ushort)BlockId.PineWood, tree);
-            if (random.Bool()) SetWood(chunkX, x, y-8, (ushort)BlockId.PineWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkX, x, y-8, (ushort)BlockId.PineWood, tree);
 
             SetLeave(chunkXP2, x+2, y-6 , (ushort)BlockId.PineLeaves, tree);
             SetLeave(chunkXM2, x-2, y-6 , (ushort)BlockId.PineLeaves, tree);
@@ -5840,12 +5739,12 @@ namespace rabcrClient {
         }
 
         void TreePineJunle(int x, int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-3);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5859,7 +5758,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-5, (ushort)BlockId.PineWood, tree);
             SetWood(chunkX, x, y-6, (ushort)BlockId.PineWood, tree);
             SetWood(chunkX, x, y-7, (ushort)BlockId.PineWood, tree);
-            if (random.Bool()) SetWood(chunkX, x, y-8, (ushort)BlockId.PineWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkX, x, y-8, (ushort)BlockId.PineWood, tree);
 
             SetLeave(chunkXP2, x+2, y-6 , (ushort)BlockId.PineLeaves, tree);
             SetLeave(chunkXM2, x-2, y-6 , (ushort)BlockId.PineLeaves, tree);
@@ -5874,18 +5773,18 @@ namespace rabcrClient {
             SetLeave(chunkXM1, x-1, y-10, (ushort)BlockId.PineLeaves, tree);
             SetLeave(chunkXP1, x+1, y-10, (ushort)BlockId.PineLeaves, tree);
 
-            //if (random.Int(15)==1) chunkX.AddParrot((byte)(y-10));
-            //if (random.Int(15)==1) chunkXP2.AddParrot((byte)(y-8));
-            //if (random.Int(15)==1) chunkXM1.AddParrot((byte)(y-10));
+            //if (FastRandom.Int(15)==1) chunkX.AddParrot((byte)(y-10));
+            //if (FastRandom.Int(15)==1) chunkXP2.AddParrot((byte)(y-8));
+            //if (FastRandom.Int(15)==1) chunkXM1.AddParrot((byte)(y-10));
         }
 
         void TreeKapok(int x, int y) {
-            treeChange=2+random.Int2();
+            treeChange=2+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-12);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5895,14 +5794,15 @@ namespace rabcrClient {
                 chunkXM3 = terrain[x-3];
 
             //SetWood(x,   y, (ushort)BlockId.KapokWood, tree);
+
             SetWood(chunkXP1, x+1, y, (ushort)BlockId.KapokWood, tree);
             SetWood(chunkXM1, x-1, y, (ushort)BlockId.KapokWood, tree);
 
-            SetWood(chunkX, x,   y-1, (ushort)BlockId.KapokWood, tree); 
+            SetWood(chunkX, x,   y-1, (ushort)BlockId.KapokWood, tree);
             SetWood(chunkXP1, x+1, y-1, (ushort)BlockId.KapokWood, tree);
             SetWood(chunkXM1, x-1, y-1, (ushort)BlockId.KapokWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXP1, x+1, y-2, (ushort)BlockId.KapokWood, tree);
                 SetWood(chunkXM1, x-1, y-2, (ushort)BlockId.KapokWood, tree);
             }
@@ -5923,7 +5823,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-16, (ushort)BlockId.KapokWood, tree);
             SetWood(chunkX, x, y-17, (ushort)BlockId.KapokWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXM1, x-1, y-14, (ushort)BlockId.KapokWood, tree);
                 SetWood(chunkXM2, x-2, y-15, (ushort)BlockId.KapokWood, tree);
                 SetWood(chunkXP1, x+1, y-13, (ushort)BlockId.KapokWood, tree);
@@ -5937,46 +5837,46 @@ namespace rabcrClient {
                 SetWood(chunkXM2, x-2, y-15, (ushort)BlockId.KapokWood, tree);
             }
 
-            SetLeave(chunkXM3, x-3, y-15, random.Bool() ? (ushort)BlockId.KapokLeacesFlowering: (ushort)BlockId.KapokLeacesFibre, tree);
+            SetLeave(chunkXM3, x-3, y-15, FastRandom.Bool() ? (ushort)BlockId.KapokLeacesFlowering: (ushort)BlockId.KapokLeacesFibre, tree);
             SetLeave(chunkXM2, x-2, y-15, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-15, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
+            SetLeave(chunkXM1, x-1, y-15, FastRandom.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
             SetLeave(chunkXP1, x+1, y-15, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP2, x+2, y-15, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP3, x+3, y-15, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkXM3, x-3, y-16, random.Bool() ? (ushort)BlockId.KapokLeacesFlowering: (ushort)BlockId.KapokLeacesFibre, tree);
+            SetLeave(chunkXM3, x-3, y-16, FastRandom.Bool() ? (ushort)BlockId.KapokLeacesFlowering: (ushort)BlockId.KapokLeacesFibre, tree);
             SetLeave(chunkXM2, x-2, y-16, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXM1, x-1, y-16, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkX,   x  , y-16, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-16, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
+            SetLeave(chunkXP1, x+1, y-16, FastRandom.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
             SetLeave(chunkXP2, x+2, y-16, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP3, x+3, y-16, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP3, x+3, y-17, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP2, x+2, y-17, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP1, x+1, y-17, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkX,   x  , y-17, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkXM1, x-1, y-17, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFibre, tree);
+            SetLeave(chunkXM1, x-1, y-17, FastRandom.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFibre, tree);
             SetLeave(chunkXM2, x-2, y-17, (ushort)BlockId.KapokLeaves, tree);
             SetLeave(chunkXP3, x+3, y-17, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkX,   x  , y-18, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
+            SetLeave(chunkX,   x  , y-18, FastRandom.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFlowering, tree);
             SetLeave(chunkXM1, x-1, y-18, (ushort)BlockId.KapokLeaves, tree);
-            SetLeave(chunkXP1, x+1, y-18, random.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFibre, tree);
+            SetLeave(chunkXP1, x+1, y-18, FastRandom.Bool() ? (ushort)BlockId.KapokLeaves: (ushort)BlockId.KapokLeacesFibre, tree);
 
-            if (random.Int(15)==1) chunkXM3.AddParrot((byte)(y-17));
-            if (random.Int(15)==1) chunkXM2.AddParrot((byte)(y-17));
-            if (random.Int(15)==1) chunkXM1.AddParrot((byte)(y-18));
-            if (random.Int(15)==1) chunkX.AddParrot((byte)(y-18));
-            if (random.Int(15)==1) chunkXP1.AddParrot((byte)(y-18));
-            if (random.Int(15)==1) chunkXP2.AddParrot((byte)(y-17));
-            if (random.Int(15)==1) chunkXP3.AddParrot((byte)(y-17));
+            if (FastRandom.Int(15)==1) chunkXM3.AddParrot((byte)(y-17));
+            if (FastRandom.Int(15)==1) chunkXM2.AddParrot((byte)(y-17));
+            if (FastRandom.Int(15)==1) chunkXM1.AddParrot((byte)(y-18));
+            if (FastRandom.Int(15)==1) chunkX.AddParrot((byte)(y-18));
+            if (FastRandom.Int(15)==1) chunkXP1.AddParrot((byte)(y-18));
+            if (FastRandom.Int(15)==1) chunkXP2.AddParrot((byte)(y-17));
+            if (FastRandom.Int(15)==1) chunkXP3.AddParrot((byte)(y-17));
         }
 
         void TreeSpruceBig(int x,int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
 
             GenTree tree= new GenTree(x, y-2);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -5988,12 +5888,12 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-2, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-3, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.SpruceWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.SpruceWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.SpruceWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.SpruceWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-5, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-6, (ushort)BlockId.SpruceWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-6, (ushort)BlockId.SpruceWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-6, (ushort)BlockId.SpruceWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-6, (ushort)BlockId.SpruceWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-6, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-7, (ushort)BlockId.SpruceWood, tree);
             SetWood(chunkX, x, y-8, (ushort)BlockId.SpruceWood, tree);
 
@@ -6026,28 +5926,28 @@ namespace rabcrClient {
         }
 
         void TreeLinden(int x, int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
                 chunkXP2 = terrain[x+2],
                 chunkXM2 = terrain[x-2];
-                        
+
             SetWood(chunkX, x, y-1, (ushort)BlockId.LindenWood, tree);
             SetWood(chunkX, x, y-2, (ushort)BlockId.LindenWood, tree);
             SetWood(chunkX, x, y-3, (ushort)BlockId.LindenWood, tree);
             SetWood(chunkX, x, y-4, (ushort)BlockId.LindenWood, tree);
             SetWood(chunkX, x, y-5, (ushort)BlockId.LindenWood, tree);
 
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.LindenWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.LindenWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-5, (ushort)BlockId.LindenWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.LindenWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.LindenWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.LindenWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-5, (ushort)BlockId.LindenWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.LindenWood, tree);
 
             SetWood(chunkX, x, y-6, (ushort)BlockId.LindenWood, tree);
             SetWood(chunkX, x, y-7, (ushort)BlockId.LindenWood, tree);
@@ -6082,12 +5982,12 @@ namespace rabcrClient {
         }
 
         void TreeRubber(int x, int y) {
-            treeChange=3+random.Int2();
+            treeChange=3+FastRandom.Int2();
 
             GenTree tree=new GenTree(x, y-2);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -6100,10 +6000,10 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-4, (ushort)BlockId.RubberTreeWood, tree);
             SetWood(chunkX, x, y-5, (ushort)BlockId.RubberTreeWood, tree);
 
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.RubberTreeWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.RubberTreeWood, tree);
-            if (random.Bool()) SetWood(chunkXM1, x-1, y-5, (ushort)BlockId.RubberTreeWood, tree);
-            if (random.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.RubberTreeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-4, (ushort)BlockId.RubberTreeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.RubberTreeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXM1, x-1, y-5, (ushort)BlockId.RubberTreeWood, tree);
+            if (FastRandom.Bool()) SetWood(chunkXP1, x+1, y-5, (ushort)BlockId.RubberTreeWood, tree);
 
             SetWood(chunkX, x,   y-6, (ushort)BlockId.RubberTreeWood, tree);
             SetWood(chunkX, x,   y-7, (ushort)BlockId.RubberTreeWood, tree);
@@ -6138,12 +6038,12 @@ namespace rabcrClient {
         }
 
         void TreeOakLittle(int x, int y) {
-            treeChange=1+random.Int2();
+            treeChange=1+FastRandom.Int2();
 
             GenTree tree = new GenTree(x, y);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1];
@@ -6162,12 +6062,12 @@ namespace rabcrClient {
         }
 
         void TreeSpruceLittle(int x, int y) {
-            treeChange=1+random.Int2();
+            treeChange=1+FastRandom.Int2();
 
             GenTree tree = new GenTree(x, y);
             LiveObjects.Add(tree);
-            
-            GChunk 
+
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1];
@@ -6184,20 +6084,20 @@ namespace rabcrClient {
             SetLeave(chunkX,   x,   y-3, (ushort)BlockId.SpruceLeaves, tree);
             SetLeave(chunkXP1, x+1, y-3, (ushort)BlockId.SpruceLeaves, tree);
 
-            if (random.Bool()) SetLeave(chunkXM1, x-1, y-4, (ushort)BlockId.SpruceLeaves, tree);
+            if (FastRandom.Bool()) SetLeave(chunkXM1, x-1, y-4, (ushort)BlockId.SpruceLeaves, tree);
             SetLeave(chunkX,   x, y-4, (ushort)BlockId.SpruceLeaves, tree);
-            if (random.Bool()) SetLeave(chunkXP1, x+1, y-4, (ushort)BlockId.SpruceLeaves, tree);
+            if (FastRandom.Bool()) SetLeave(chunkXP1, x+1, y-4, (ushort)BlockId.SpruceLeaves, tree);
 
             SetLeave(chunkX,   x,   y-5, (ushort)BlockId.SpruceLeaves, tree);
         }
 
         void TreeAcacia(int x, int y) {
-            treeChange=1+random.Int(6);
+            treeChange=1+FastRandom.Int(6);
 
             GenTree tree = new GenTree(x, y-2);
             LiveObjects.Add(tree);
 
-            GChunk 
+            GChunk
                 chunkX   = terrain[x  ],
                 chunkXP1 = terrain[x+1],
                 chunkXM1 = terrain[x-1],
@@ -6212,7 +6112,7 @@ namespace rabcrClient {
             SetWood(chunkX, x, y-4, (ushort)BlockId.AcaciaWood, tree);
             SetWood(chunkX, x, y-5, (ushort)BlockId.AcaciaWood, tree);
 
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                 SetWood(chunkXM1, x-1, y-4, (ushort)BlockId.AcaciaWood, tree);
                 SetWood(chunkXM2, x-2, y-5, (ushort)BlockId.AcaciaWood, tree);
                 SetWood(chunkXP1, x+1, y-3, (ushort)BlockId.AcaciaWood, tree);
@@ -6323,7 +6223,7 @@ namespace rabcrClient {
             ushort[] chunk9_SolidBlocks=terrain[pos-9].SolidBlocks;
             chunk9_SolidBlocks[y+2]=(ushort)BlockId.OreCopper;
             chunk9_SolidBlocks[y+3]=(ushort)BlockId.OreCopper;
-            
+
             terrain[pos-10+2].SolidBlocks[y+3]=(ushort)BlockId.OreCopper;
 
             terrain[pos-10+3].SolidBlocks[y+4]=(ushort)BlockId.OreCopper;
@@ -6361,7 +6261,7 @@ namespace rabcrClient {
         void OreAliminium(int y) {
             terrain[pos-7 ].SolidBlocks[y+1]=(ushort)BlockId.OreAluminium;
             terrain[pos-8 ].SolidBlocks[y  ]=(ushort)BlockId.OreAluminium;
-             
+
             ushort[] chunk9_SolidBlocks=terrain[pos-9].SolidBlocks;
             chunk9_SolidBlocks[y  ]=(ushort)BlockId.OreAluminium;
             chunk9_SolidBlocks[y+1]=(ushort)BlockId.OreAluminium;
@@ -6373,43 +6273,43 @@ namespace rabcrClient {
         }
 
         void OreSulfur(int y) {
-            if (random.Bool()){
-                if (random.Bool()) terrain[pos-9 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-9 ].SolidBlocks[y-1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-10].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-10].SolidBlocks[y-1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-13].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
+            if (FastRandom.Bool()){
+                if (FastRandom.Bool()) terrain[pos-9 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-9 ].SolidBlocks[y-1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-10].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-10].SolidBlocks[y-1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-13].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
             } else {
-                if (random.Bool()) terrain[pos-10].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-9 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-9 ].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-8 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
-                if (random.Bool()) terrain[pos-8 ].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-10].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-9 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-9 ].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-8 ].SolidBlocks[y+1]=(ushort)BlockId.OreSulfur;
+                if (FastRandom.Bool()) terrain[pos-8 ].SolidBlocks[y  ]=(ushort)BlockId.OreSulfur;
             }
         }
 
         void OreSaltpeter(int y) {
-            if (random.Bool()){
+            if (FastRandom.Bool()){
                  terrain[pos-7 ].SolidBlocks[y+1]=(ushort)BlockId.OreSaltpeter;
                  terrain[pos-8 ].SolidBlocks[y+1]=(ushort)BlockId.OreSaltpeter;
                  terrain[pos-9 ].SolidBlocks[y  ]=(ushort)BlockId.OreSaltpeter;
                  terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSaltpeter;
                  terrain[pos-12].SolidBlocks[y  ]=(ushort)BlockId.OreSaltpeter;
-                 if (random.Bool()) terrain[pos-13].SolidBlocks[y]=(ushort)BlockId.OreSaltpeter;
+                 if (FastRandom.Bool()) terrain[pos-13].SolidBlocks[y]=(ushort)BlockId.OreSaltpeter;
             } else {
                 terrain[pos-13].SolidBlocks[y-1]=(ushort)BlockId.OreSaltpeter;
                 terrain[pos-12].SolidBlocks[y-1]=(ushort)BlockId.OreSaltpeter;
                 terrain[pos-11].SolidBlocks[y  ]=(ushort)BlockId.OreSaltpeter;
                 terrain[pos-10].SolidBlocks[y  ]=(ushort)BlockId.OreSaltpeter;
                 terrain[pos-10+2].SolidBlocks[y]=(ushort)BlockId.OreSaltpeter;
-                if (random.Bool()) terrain[pos-7].SolidBlocks[y]=(ushort)BlockId.OreSaltpeter;
+                if (FastRandom.Bool()) terrain[pos-7].SolidBlocks[y]=(ushort)BlockId.OreSaltpeter;
             }
         }
 
         void OreOil(int y) {
-            if (random.Bool()) {
+            if (FastRandom.Bool()) {
                  terrain[pos-4].TopBlocks[y  ]=(ushort)BlockId.Oil;
                  terrain[pos-5].TopBlocks[y-1]=(ushort)BlockId.Oil;
             }
@@ -6436,9 +6336,9 @@ namespace rabcrClient {
             ushort[] chunk8_SolidBlocks=terrain[pos-8].SolidBlocks;
             chunk8_SolidBlocks[y  ]=0;
             chunk8_SolidBlocks[y-1]=0;
-            if (random.Bool()) {
-                chunk8_TopBlocks[y+1]=(ushort)BlockId.Oil; 
-                chunk8_SolidBlocks[y+1]=0; 
+            if (FastRandom.Bool()) {
+                chunk8_TopBlocks[y+1]=(ushort)BlockId.Oil;
+                chunk8_SolidBlocks[y+1]=0;
             }
 
             ushort[] chunk9_TopBlocks=terrain[pos-9].TopBlocks;
@@ -6493,7 +6393,7 @@ namespace rabcrClient {
             chunk14_SolidBlocks[y-1]=0;
             chunk14_SolidBlocks[y  ]=0;
 
-            if (random.Bool()) terrain[pos-15].TopBlocks[y]=(ushort)BlockId.Oil;
+            if (FastRandom.Bool()) terrain[pos-15].TopBlocks[y]=(ushort)BlockId.Oil;
         }
         #endregion
 
@@ -6501,6 +6401,264 @@ namespace rabcrClient {
             if (currentWorldSize==WorldSize.Medium) return 7500;
             if (currentWorldSize==WorldSize.Small) return 5000;
             return 10000;
+        }
+        void CaveGenerator(int x, int y) {
+
+            // cave lenght
+            int len=FastRandom.Int(32)+16;
+
+            float angle=FastRandom.Rotatin();
+            (Vector2, float, float)[] points=new (Vector2, float, float)[len];
+
+            Vector2 lastPoint=new(x,y);
+
+            float lastRnd=FastRandom.Float();
+            for (int i=0; i<len; i++) {
+                points[i].Item1=new Vector2(lastPoint.X, lastPoint.Y);
+
+                float ta=angle;
+
+                // Cave asymetry
+                float add=(FastRandom.FloatHalf()/**0.5f*/-1f)*0.3f;
+
+                if (add+lastRnd>1f)add=1f;
+                if (add+lastRnd<0f)add=0f;
+
+                lastRnd+=add;
+
+                float half=(float)i/len;
+                points[i].Item2=lastRnd*(1f-(2f*half-1f)*(2f*half-1f));
+
+                // Next acc
+                float nextLen=FastRandom.Float()+0.5f;
+                lastPoint.X+=((float)Math.Cos(angle))*nextLen;
+                lastPoint.Y+=((float)Math.Sin(angle))*nextLen;
+
+                angle+=(FastRandom.Float()-0.5f)*0.1f;
+                points[i].Item3=(angle*ta)/2f;
+            }
+
+            Vector2[] fin=new Vector2[len];
+            for (int i=0; i<len; i++) {
+                float vecrot=points[i].Item3+FastMath.PIHalf;
+
+                fin[i]=new Vector2(points[i].Item1.X+((float)Math.Cos(vecrot))*points[i].Item2, points[i].Item1.Y+((float)Math.Sin(vecrot)*points[i].Item2));
+            }
+
+            for (int i=0; i<len; i++) {
+                int xx=(int)fin[i].X, yy=(int)fin[i].Y;
+                if (yy<100 && yy>40) RemoveRound(1+FastRandom.Int(7),xx,yy);
+            }
+
+            void RemoveRound(int size, int xx, int yy) {
+                RemoveBlock(xx,yy);
+
+                RemoveBlock(xx, yy+1);
+                RemoveBlock(xx, yy-1);
+                if (size>2) return;
+
+                RemoveBlock(xx-1, yy);
+                RemoveBlock(xx+1, yy);
+                if (size>3) return;
+
+                RemoveBlock(xx+1, yy+1);
+                RemoveBlock(xx-1, yy-1);
+                if (size>4) return;
+
+                RemoveBlock(xx+1, yy-1);
+                RemoveBlock(xx-1, yy+1);
+                if (size>5) return;
+
+                RemoveBlock(xx+2, yy);
+                RemoveBlock(xx-2, yy);
+                if (size>6) return;
+
+                RemoveBlock(xx, yy+2);
+                RemoveBlock(xx, yy-2);
+                if (size>7) return;
+            }
+
+            void RemoveBlock(int xx, int yy) {
+                GChunk chunk=terrain[xx];
+                ushort solidId=terrain[xx].SolidBlocks[yy];
+
+                if (solidId!=0) {
+
+                    switch (solidId) {
+                        case (ushort)BlockId.StoneBasalt:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackBasalt;
+                            break;
+
+                        case (ushort)BlockId.StoneDiorit:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDiorit;
+                            break;
+
+                        case (ushort)BlockId.StoneDolomite:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDolomite;
+                            break;
+
+                        case (ushort)BlockId.StoneGabbro:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGabbro;
+                            break;
+
+                        case (ushort)BlockId.StoneGneiss:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGneiss;
+                            break;
+
+                        case (ushort)BlockId.StoneLimestone:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackLimestone;
+                            break;
+
+                        case (ushort)BlockId.StoneRhyolite:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackRhyolite;
+                            break;
+
+                        case (ushort)BlockId.StoneSandstone:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSandstone;
+                            break;
+
+                        case (ushort)BlockId.StoneSchist:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSchist;
+                            break;
+
+                        case (ushort)BlockId.OreAluminium:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackAluminium;
+                            break;
+
+                        case (ushort)BlockId.OreCoal:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCoal;
+                            break;
+
+                        case (ushort)BlockId.OreCopper:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCopper;
+                            break;
+
+                        case (ushort)BlockId.OreGold:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGold;
+                            break;
+
+                        case (ushort)BlockId.OreIron:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackIron;
+                            break;
+
+                        case (ushort)BlockId.OreSaltpeter:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSaltpeter;
+                            break;
+
+                        case (ushort)BlockId.OreSilver:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSilver;
+                            break;
+
+                        case (ushort)BlockId.OreSulfur:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSulfur;
+                            break;
+
+                        case (ushort)BlockId.OreTin:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackTin;
+                            break;
+
+                        case (ushort)BlockId.Dirt:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.Sand:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackSand;
+                            break;
+
+                        case (ushort)BlockId.Gravel:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackGravel;
+                            break;
+
+                        case (ushort)BlockId.Cobblestone:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackCobblestone;
+                            break;
+
+                        case (ushort)BlockId.Clay:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackClay;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockClay:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackClay;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockCompost:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockDesert:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockForest:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockHills:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockJungle:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+
+                        case (ushort)BlockId.GrassBlockPlains:
+                            chunk.SolidBlocks[yy]=0;
+                            chunk.BackBlocks[yy]=(ushort)BlockId.BackDirt;
+                            break;
+                    }
+
+                    if (chunk.SolidBlocks[yy-1]!=0) {
+                        ushort idTop=chunk.TopBlocks[yy-1];
+                        if (idTop!=0) {
+                            switch (idTop) {
+                                case (ushort)BlockId.GrassDesert:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassForest:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassHills:    chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassJungle:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.GrassPlains:   chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Heather:       chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Dandelion:     chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Violet:        chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Rose:          chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchALittle1:chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchALittle2:chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchFull:    chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.BranchWithout: chunk.TopBlocks[yy-1]=0; break;
+                                case (ushort)BlockId.Alore:         chunk.TopBlocks[yy-1]=0; break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         class BiomeExt{
@@ -6519,7 +6677,7 @@ namespace rabcrClient {
 
         public List<byte>
             Plants = new List<byte>(),
-            Mobs   = new List<byte>();
+            Mobs   = new();
 
         public unsafe void AddPlant(ushort id, byte height) {
             #if DEBUG
@@ -6530,7 +6688,7 @@ namespace rabcrClient {
             Plants.Add(ids[1]);
             Plants.Add(ids[0]);
             Plants.Add(height);
-            Rabcr.random.Byte(Plants);
+            FastRandom.Byte(Plants);
             PlantsCount++;
         }
 
@@ -6538,7 +6696,7 @@ namespace rabcrClient {
             Plants.Add(byteWheat1);
             Plants.Add(byteWheat0);
             Plants.Add(height);
-            Rabcr.random.Byte(Plants);
+            FastRandom.Byte(Plants);
             PlantsCount++;
         }
 
@@ -6546,7 +6704,7 @@ namespace rabcrClient {
             Plants.Add(byteCarrot1);
             Plants.Add(byteCarrot0);
             Plants.Add(height);
-            Rabcr.random.Byte(Plants);
+            FastRandom.Byte(Plants);
             PlantsCount++;
         }
 
@@ -6554,7 +6712,7 @@ namespace rabcrClient {
             Plants.Add(byteFlax1);
             Plants.Add(byteFlax0);
             Plants.Add(height);
-            Rabcr.random.Byte(Plants);
+            FastRandom.Byte(Plants);
             PlantsCount++;
         }
 
@@ -6574,7 +6732,7 @@ namespace rabcrClient {
 
             byteRabbit0=(byte)(ushort)BlockId.Rabbit,
             byteRabbit1=(byte)(ushort)(((ushort)BlockId.Rabbit)>>8),
-            
+
             byteParrot0=(byte)(ushort)BlockId.MobParrot,
             byteParrot1=(byte)(ushort)(((ushort)BlockId.MobParrot)>>8),
 
@@ -6585,7 +6743,7 @@ namespace rabcrClient {
             Mobs.Add(byteFish1);
             Mobs.Add(byteFish0);
             Mobs.Add(height);
-            Rabcr.random.Byte2(Mobs);
+            FastRandom.Byte2(Mobs);
             MobsCount++;
         }
 
@@ -6593,7 +6751,7 @@ namespace rabcrClient {
             Mobs.Add(byteRabbit1);
             Mobs.Add(byteRabbit0);
             Mobs.Add(height);
-            Rabcr.random.Byte2(Mobs);
+            FastRandom.Byte2(Mobs);
             MobsCount++;
         }
 
@@ -6601,7 +6759,7 @@ namespace rabcrClient {
             Mobs.Add(byteChicken1);
             Mobs.Add(byteChicken0);
             Mobs.Add(height);
-            Rabcr.random.Byte2(Mobs);
+            FastRandom.Byte2(Mobs);
             MobsCount++;
         }
 
@@ -6613,7 +6771,7 @@ namespace rabcrClient {
             Mobs.Add(0);
 
             Mobs.Add(height);
-            Rabcr.random.Byte2(Mobs);
+            FastRandom.Byte2(Mobs);
 
             MobsCount++;
         }
@@ -6624,6 +6782,7 @@ namespace rabcrClient {
         public byte LightPosHalf;
         public bool SetLightPosHalf;
         public byte Half;
+
     }
 
     public class GPreChunk {

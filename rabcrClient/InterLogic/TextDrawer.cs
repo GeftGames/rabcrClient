@@ -24,11 +24,11 @@ namespace rabcrClient {
             font=f;
             X=x;
             Y=y;
-            if (IsDevanagari(txt)){ 
+            if (IsDevanagari(txt)) {
                 BuildTextDevanagari(txt);
                 return;
             }
-            if (IsArabic(txt)){ 
+            if (IsArabic(txt)) {
                 BuildTextArabic(txt);
                 return;
             }
@@ -37,57 +37,57 @@ namespace rabcrClient {
         }
 
         #region Devanagari
-        static bool IsDevanagari(string input) { 
-            foreach (char i in input) { 
+        static bool IsDevanagari(string input) {
+            foreach (char i in input) {
                 if (IsDevanagariChar(i)) return true;
-            }
-            return false;
-        } 
-
-        static bool IsDevanagariChar(char input) { 
-            switch (input) { 
-                case 'क': return true;
-                case 'ख': return true;
-                case 'ग': return true;
-                case 'घ': return true;
-                case 'ङ': return true;
-                case 'च': return true;
-                case 'छ': return true;
-                case 'ज': return true;
-                case 'झ': return true;
-                case 'ञ': return true;
-                case 'ट': return true;
-                case 'ठ': return true;
-                case 'ड': return true;
-                case 'ढ': return true;
-                case 'ण': return true;
-                case 'त': return true;
-                case 'थ': return true;
-                case 'द': return true;
-                case 'ध': return true;
-                case 'न': return true;
-                case 'प': return true;
-                case 'फ': return true;
-                case 'ब': return true;
-                case 'भ': return true;
-                case 'म': return true;
-                case 'य': return true;
-                case 'र': return true;
-                case 'ल': return true;
-                case 'व': return true;
-                case 'श': return true;
-                case 'ष': return true;
-                case 'स': return true;
-                case 'ह': return true;
             }
             return false;
         }
 
-        void BuildTextDevanagari(string txt){ 
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+        static bool IsDevanagariChar(char input) {
+            return input switch {
+                'क' => true,
+                'ख' => true,
+                'ग' => true,
+                'घ' => true,
+                'ङ' => true,
+                'च' => true,
+                'छ' => true,
+                'ज' => true,
+                'झ' => true,
+                'ञ' => true,
+                'ट' => true,
+                'ठ' => true,
+                'ड' => true,
+                'ढ' => true,
+                'ण' => true,
+                'त' => true,
+                'थ' => true,
+                'द' => true,
+                'ध' => true,
+                'न' => true,
+                'प' => true,
+                'फ' => true,
+                'ब' => true,
+                'भ' => true,
+                'म' => true,
+                'य' => true,
+                'र' => true,
+                'ल' => true,
+                'व' => true,
+                'श' => true,
+                'ष' => true,
+                'स' => true,
+                'ह' => true,
+                _ => false,
+            };
+        }
+
+        void BuildTextDevanagari(string txt){
+            List<DrawingChar> tmpChs=new();
             char[] chs=new RenderEnngineDevanagari(txt).Output.ToCharArray();
             int posx=X;
-          
+
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
 
@@ -96,8 +96,9 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
-                        Debug.Write(chs[ch]+" ");
+                    if (chs[ch] == font.Glyphs[gg].Char) {
+                        g=font.Glyphs[gg];
+                   
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -108,8 +109,7 @@ namespace rabcrClient {
                             posx+=g.DrawRectangle.Width+g.X+g.W-3;
 
                             // Devanagari special character
-                            if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
-                            // if (chs[ch]=='媪') {posx-=14-3/*+3+3*/; }  //ि
+                            if (chs[ch]=='媪') { posx-=14-3; }  //ि
                         } else {
                             posx+=g.W;
                         }
@@ -119,12 +119,14 @@ namespace rabcrClient {
                         break;
                     }
                 }
-           
+
                 // Unknown char
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�' == font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
+
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, Y+g.Y),
@@ -135,11 +137,10 @@ namespace rabcrClient {
                             Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
                             break;
                         }
-                    } 
+                    }
                 }
                 #endif
             }
-            Debug.WriteLine("");
             Chars=tmpChs.ToArray();
 
             Length=Chars.Length;
@@ -147,79 +148,76 @@ namespace rabcrClient {
         #endregion
 
         #region Arabic
-        static bool IsArabic(string input) { 
-            foreach (char i in input) { 
+        static bool IsArabic(string input) {
+            foreach (char i in input) {
                 if (IsArabicChar(i)) return true;
             }
             return false;
         }
 
-        static bool IsArabicChar(char ch){ 
-            switch (ch){ 
-                case 'ا': return true; 
-                case 'ب': return true; 
-                case 'ت': return true; 
-                case 'ث': return true; 
-                case 'ج': return true; 
-                case 'ح': return true; 
-                case 'خ': return true; 
-                case 'د': return true; 
-                case 'ذ': return true; 
-                case 'ر': return true; 
-                case 'ز': return true; 
-                case 'س': return true; 
-                case 'ش': return true; 
-                case 'ص': return true; 
-                case 'ض': return true; 
-                case 'ط': return true; 
-                case 'ظ': return true; 
-                case 'ع': return true; 
-                case 'غ': return true; 
-                case 'ف': return true; 
-                case 'ق': return true; 
-                case 'ك': return true; 
-                case 'ل': return true; 
-                case 'م': return true; 
-                case 'ه': return true; 
-                case 'ي': return true; 
-                case 'و': return true; 
-                case 'أ': return true; 
-                case 'إ': return true; 
-                case 'ؤ': return true; 
-                case 'ئ': return true; 
-                case 'آ': return true; 
-                case 'ى': return true; 
-                case 'ة': return true; 
-                case 'ﻻ': return true; 
-                case 'ن': return true; 
-                case 'ﻹ': return true; 
-                case 'ڭ': return true; 
-                case 'ە': return true; 
-                case 'ۇ': return true; 
-                case 'چ': return true; 
-                case 'ۈ': return true;  
-                case 'ھ': return true;    
-                case 'ک': return true;  
-                case 'ی': return true;   
-                case 'ہ': return true; 
-                case 'ڑ': return true;  
-                case 'ے': return true; 
-                case 'ې': return true;
-                case 'ۆ': return true;
-                case 'ں': return true;
-                case 'گ': return true;
-              //  case 'ﻢ': return true; 
-              //  case 'ء': return true; 
-            }
-         //   Debug.WriteLine(ch+" is not arabic");
-            return false;
+        static bool IsArabicChar(char ch){
+            return ch switch {
+                'ا' => true,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => true,
+                'ذ' => true,
+                'ر' => true,
+                'ز' => true,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => true,
+                'أ' => true,
+                'إ' => true,
+                'ؤ' => true,
+                'ئ' => true,
+                'آ' => true,
+                'ى' => true,
+                'ة' => true,
+                'ﻻ' => true,
+                'ن' => true,
+                'ﻹ' => true,
+                'ڭ' => true,
+                'ە' => true,
+                'ۇ' => true,
+                'چ' => true,
+                'ۈ' => true,
+                'ھ' => true,
+                'ک' => true,
+                'ی' => true,
+                'ہ' => true,
+                'ڑ' => true,
+                'ے' => true,
+                'ې' => true,
+                'ۆ' => true,
+                'ں' => true,
+                'گ' => true,
+                _ => false,
+            };
         }
 
-        void BuildTextArabic(string txt){ 
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+        void BuildTextArabic(string txt){
+            List<DrawingChar> tmpChs=new();
             char[] chs=BuildArabicText(txt);
             int posx=X;
-          
+
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 #if DEBUG
@@ -227,8 +225,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
-                    
+                    if (chs[ch]==font.Glyphs[gg].Char) {
+                        g = font.Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -246,12 +244,13 @@ namespace rabcrClient {
                         break;
                     }
                 }
-           
+
                 // Unknown char
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�'==font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, Y+g.Y),
@@ -262,280 +261,275 @@ namespace rabcrClient {
                             Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
                             break;
                         }
-                    } 
+                    }
                 }
                 #endif
-            } 
-            //Debug.WriteLine(" ");
+            }
             Chars=tmpChs.ToArray();
-            //X=x;
-            //Y=y;
 
             Length=Chars.Length;
         }
 
         static int ArabicFinalFormConventer(int s){
-            switch (s){
-                case 1609: return 65264;
-                case 1577: return 65172;
-                case 1570: return 65154;
-                case 1610: return 65266;
-                case 1578: return 65174;
-                case 1594: return 65230;
-                case 1576: return 65168;
-                case 1604: return 65246;
-                case 1583: return 65193;
-                case 1601: return 65234;
-                case 1606: return 65254;
-                case 1593: return 65226;
-                case 1605: return 65250;
-                case 1585: return 65198;
-                case 1603: return 65242;
-                case 1749: return 65258;//?
-                case 1574: return 65162;
-                case 1735: return 64472;
-                case 1670: return 64379;
-                case 1575: return 65166;
-                case 1579: return 65178;
-                case 1580: return 65182;
-                case 1581: return 65186;
-                case 1582: return 65190;
-                case 1584: return 65196;
-                case 1586: return 65200;
-                case 1587: return 65202;
-                case 1588: return 65206;
-                case 1589: return 65210;
-                case 1590: return 65214;
-                case 1591: return 65218;
-                case 1592: return 65222;
-                case 1602: return 65238;
-                case 1607: return 65258;
-                case 1608: return 65262;
-                case 1571: return 65156;
-                case 1573: return 65160;
-                case 1572: return 65158;
-                case 1709: return 64468;
-                case 1736: return 64476;
-                case 1726: return 64427;
-                case 1711: return 64403;
-            }
-            return s;
+            return s switch {
+                1609 => 65264,
+                1577 => 65172,
+                1570 => 65154,
+                1610 => 65266,
+                1578 => 65174,
+                1594 => 65230,
+                1576 => 65168,
+                1604 => 65246,
+                1583 => 65193,
+                1601 => 65234,
+                1606 => 65254,
+                1593 => 65226,
+                1605 => 65250,
+                1585 => 65198,
+                1603 => 65242,
+                1749 => 65258,//?
+                1574 => 65162,
+                1735 => 64472,
+                1670 => 64379,
+                1575 => 65166,
+                1579 => 65178,
+                1580 => 65182,
+                1581 => 65186,
+                1582 => 65190,
+                1584 => 65196,
+                1586 => 65200,
+                1587 => 65202,
+                1588 => 65206,
+                1589 => 65210,
+                1590 => 65214,
+                1591 => 65218,
+                1592 => 65222,
+                1602 => 65238,
+                1607 => 65258,
+                1608 => 65262,
+                1571 => 65156,
+                1573 => 65160,
+                1572 => 65158,
+                1709 => 64468,
+                1736 => 64476,
+                1726 => 64427,
+                1711 => 64403,
+                _ => s,
+            };
         }
 
         static int ArabicInitialFormConventer(int s){
-            switch (s){
-                case 1578: return 65175;
-                case 1594: return 65231;
-                case 1574: return 65163;
-                case 1610: return 65267;
-                case 1576: return 65169;
-                case 1601: return 65235;
-                case 1606: return 65255;
-                case 1593: return 65227;
-                case 1605: return 65251;
-                case 1603: return 65243;
-                case 1670: return 64380;
-                case 1579: return 65179;
-                case 1580: return 65183;
-                case 1581: return 65187;
-                case 1582: return 65191;
-                case 1587: return 65203;
-                case 1588: return 65207;
-                case 1589: return 65211;
-                case 1590: return 65215;
-                case 1591: return 65219;
-                case 1592: return 65223;
-                case 1602: return 65239;
-                case 1604: return 65247;
-                case 1607: return 65259;
-                case 1709: return 64469;
-                case 1609: return 64488;
-                case 1726: return 64428;
-                case 1711: return 64404;
-            }
-            return s;
+            return s switch {
+                1578 => 65175,
+                1594 => 65231,
+                1574 => 65163,
+                1610 => 65267,
+                1576 => 65169,
+                1601 => 65235,
+                1606 => 65255,
+                1593 => 65227,
+                1605 => 65251,
+                1603 => 65243,
+                1670 => 64380,
+                1579 => 65179,
+                1580 => 65183,
+                1581 => 65187,
+                1582 => 65191,
+                1587 => 65203,
+                1588 => 65207,
+                1589 => 65211,
+                1590 => 65215,
+                1591 => 65219,
+                1592 => 65223,
+                1602 => 65239,
+                1604 => 65247,
+                1607 => 65259,
+                1709 => 64469,
+                1609 => 64488,
+                1726 => 64428,
+                1711 => 64404,
+                _ => s,
+            };
         }
 
         static int ArabicMedialFormConventer(int s){
-            switch (s){
-                case 1610: return 65268;
-                case 1578: return 65176;
-                case 1604: return 65248;
-                case 1594: return 65232;
-                case 1609: return 64489;
-                case 1576: return 65170;
-                case 1601: return 65236;
-                case 1606: return 65256;
-                case 1593: return 65228;
-                case 1605: return 65252;
-                case 1603: return 65244;
-                case 1574: return 65164;
-                case 1670: return 64381;
-                case 1575: return 65166;
-                case 1579: return 65180;
-                case 1580: return 65184;
-                case 1581: return 65188;
-                case 1582: return 65192;
-                case 1583: return 65193;
-                case 1584: return 65196;
-                case 1585: return 65198;
-                case 1586: return 65200;
-                case 1587: return 65204;
-                case 1588: return 65208;
-                case 1589: return 65212;
-                case 1590: return 65216;
-                case 1591: return 65220;
-                case 1592: return 65224;
-                case 1602: return 65240;
-                case 1607: return 65260;
-                case 1608: return 65262;
-                case 1571: return 65156;
-                case 1573: return 65160;
-                case 1572: return 65158;
-                case 1570: return 65154;
-                case 1735: return 64472;
-                case 1749: return 65258;//?
-                case 1709: return 64470;
-                case 1736: return 64476;
-                case 1726: return 64429;
-                case 1711: return 64405;
-            }
-            return s;
+            return s switch {
+                1610 => 65268,
+                1578 => 65176,
+                1604 => 65248,
+                1594 => 65232,
+                1609 => 64489,
+                1576 => 65170,
+                1601 => 65236,
+                1606 => 65256,
+                1593 => 65228,
+                1605 => 65252,
+                1603 => 65244,
+                1574 => 65164,
+                1670 => 64381,
+                1575 => 65166,
+                1579 => 65180,
+                1580 => 65184,
+                1581 => 65188,
+                1582 => 65192,
+                1583 => 65193,
+                1584 => 65196,
+                1585 => 65198,
+                1586 => 65200,
+                1587 => 65204,
+                1588 => 65208,
+                1589 => 65212,
+                1590 => 65216,
+                1591 => 65220,
+                1592 => 65224,
+                1602 => 65240,
+                1607 => 65260,
+                1608 => 65262,
+                1571 => 65156,
+                1573 => 65160,
+                1572 => 65158,
+                1570 => 65154,
+                1735 => 64472,
+                1749 => 65258,//?
+                1709 => 64470,
+                1736 => 64476,
+                1726 => 64429,
+                1711 => 64405,
+                _ => s,
+            };
         }
 
-        static bool HaveInitialForm(char ch){ 
-            switch (ch){ 
-                case 'ا': return false; 
-                case 'ب': return true; 
-                case 'ت': return true; 
-                case 'ث': return true; 
-                case 'ج': return true; 
-                case 'ح': return true; 
-                case 'خ': return true; 
-                case 'د': return false; 
-                case 'ذ': return false; 
-                case 'ر': return false; 
-                case 'ز': return false; 
-                case 'س': return true; 
-                case 'ش': return true; 
-                case 'ص': return true; 
-                case 'ض': return true; 
-                case 'ط': return true; 
-                case 'ظ': return true; 
-                case 'ع': return true; 
-                case 'غ': return true; 
-                case 'ف': return true; 
-                case 'ق': return true; 
-                case 'ك': return true; 
-                case 'ل': return true; 
-                case 'م': return true; 
-                case 'ه': return true; 
-                case 'ي': return true; 
-                case 'و': return false;
-                case 'ۇ': return false; 
-                case 'ۈ': return false; 
-                case 'أ': return false; 
-                case 'إ': return false; 
-                case 'ؤ': return false; 
-                case 'ئ': return true; 
-                case 'آ': return false; 
-                case 'ن': return true; 
-                case 'ﻹ': return false; 
-                case 'ﻻ': return false; 
-                case 'چ': return true; 
-                case 'ڭ': return true; 
-                case 'ک': return true;   
-                case 'ڑ': return false;  
-                case 'ی': return true;
-                case 'گ': return true;
-                case 'ې': return true;  
-                case 'ۆ': return false;
+        static bool HaveInitialForm(char ch){
+            return ch switch {
+                'ا' => false,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => false,
+                'ذ' => false,
+                'ر' => false,
+                'ز' => false,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => false,
+                'ۇ' => false,
+                'ۈ' => false,
+                'أ' => false,
+                'إ' => false,
+                'ؤ' => false,
+                'ئ' => true,
+                'آ' => false,
+                'ن' => true,
+                'ﻹ' => false,
+                'ﻻ' => false,
+                'چ' => true,
+                'ڭ' => true,
+                'ک' => true,
+                'ڑ' => false,
+                'ی' => true,
+                'گ' => true,
+                'ې' => true,
+                'ۆ' => false,
                 //?
-                case 'ى': return true; 
-                case 'ة': return true; 
-                case 'ە': return false; 
-                case 'ہ': return true;
-                case 'ھ': return true;
-                    case 'ں': return false; 
-                    case 'ے': return false; 
-            }
-#if DEBUG
-            throw new Exception("Missing arabic letter "+ch);
-            #else
-            return true;
-#endif
+                'ى' => true,
+                'ة' => true,
+                'ە' => false,
+                'ہ' => true,
+                'ھ' => true,
+                'ں' => false,
+                'ے' => false,
+                #if DEBUG
+                _ => throw new Exception("Missing arabic letter " + ch),
+                #else
+                _=> true
+                #endif
+            };
         }
 
-        static bool HaveFinalForm(char ch){ 
-            switch (ch){ 
-                case 'ا': return true; 
-                case 'ب': return true; 
-                case 'ت': return true; 
-                case 'ث': return true; 
-                case 'ج': return true; 
-                case 'ح': return true; 
-                case 'خ': return true; 
-                case 'د': return true; 
-                case 'ذ': return true; 
-                case 'ر': return true; 
-                case 'ز': return true; 
-                case 'س': return true; 
-                case 'ش': return true; 
-                case 'ص': return true; 
-                case 'ض': return true; 
-                case 'ط': return true; 
-                case 'ظ': return true; 
-                case 'ع': return true; 
-                case 'غ': return true; 
-                case 'ف': return true; 
-                case 'ق': return true; 
-                case 'ك': return true; 
-                case 'ل': return true; 
-                case 'م': return true; 
-                case 'ه': return true; 
-                case 'ي': return true; 
-                case 'و': return true;  
-                case 'ۇ': return true; 
-                case 'أ': return true; 
-                case 'إ': return true; 
-                case 'ؤ': return true; 
-                case 'ئ': return true; 
-                case 'آ': return true; 
-                case 'ن': return true;  
-                case 'ڭ': return true; 
-                case 'ﻹ': return false; 
-                case 'ﻻ': return false;  
-                case 'چ': return true; 
-                case 'ھ' : return true;
-                case 'ۈ' : return true;
-                case 'ک' : return true;  
-                case 'ڑ' : return true; 
-                case 'ہ' : return true;
-                case 'ی' : return true;
-                case 'ے' : return true;
-                case 'ۆ' : return true;
-                case 'گ' : return true;
-                case 'ې' : return true;
-
+        static bool HaveFinalForm(char ch){
+            return ch switch {
+                'ا' => true,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => true,
+                'ذ' => true,
+                'ر' => true,
+                'ز' => true,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => true,
+                'ۇ' => true,
+                'أ' => true,
+                'إ' => true,
+                'ؤ' => true,
+                'ئ' => true,
+                'آ' => true,
+                'ن' => true,
+                'ڭ' => true,
+                'ﻹ' => false,
+                'ﻻ' => false,
+                'چ' => true,
+                'ھ' => true,
+                'ۈ' => true,
+                'ک' => true,
+                'ڑ' => true,
+                'ہ' => true,
+                'ی' => true,
+                'ے' => true,
+                'ۆ' => true,
+                'گ' => true,
+                'ې' => true,
                 //?
-                case 'ى': return true; 
-                case 'ة': return true;  
-                case 'ە': return true; 
-            }
-
-            #if DEBUG
-            throw new Exception("Missing arabic letter "+ch);
-            #else
-            return true;
-            #endif
+                'ى' => true,
+                'ة' => true,
+                'ە' => true,
+                #if DEBUG
+                _ => throw new Exception("Missing arabic letter " + ch),
+                #else
+                _ => true
+                #endif
+            };
         }
 
         public static char[] BuildArabicText(string txt) {
 
             // Detect if is arabic
             bool isArabic=false;
-            foreach (char c in txt) { 
-                if (IsArabicChar(c)){ 
+            foreach (char c in txt) {
+                if (IsArabicChar(c)) {
                     isArabic=true;
                     break;
                 }
@@ -550,57 +544,46 @@ namespace rabcrClient {
             txt=txt.Replace(((char)1575).ToString()+((char)1604).ToString(),"\uFEFB");
             txt=txt.Replace(((char)1573).ToString()+((char)1604).ToString(),"\uFEF9"); //ل ا  ء <- ل إ
 
-        //    Debug.WriteLine(txt);
             char[] chs=txt.ToCharArray();
             char[] _out=new char[chs.Length];
-            
+
             if (chs.Length<2) return txt.ToCharArray();
 
             // start
-            int ch /*= 0*/;
+            int ch;
             if (IsArabicChar(chs[1])) {
                 if (HaveInitialForm(chs[1])) _out[0]=(char)ArabicFinalFormConventer((int)chs[0]);
                 else _out[0]=chs[0];
             } else _out[0]=chs[0];
 
             for (ch = 1; ch<chs.Length-1; ch++) {
-                //bool start=IsArabicLetter(chs[ch+1]); // if starts with arabic letter
-                //bool end=IsArabicLetter(chs[ch-1]); // if ends with arabic letter
-                                      
-                //bool e=end ? HaveFinalForm(chs[ch-1]) : false;
-                //bool s=start ? HaveInitialForm(chs[ch+1]) : false; 
-
-                                  
                 bool e=IsArabicChar(chs[ch-1])&&HaveFinalForm(chs[ch-1]);
-                bool s=IsArabicChar(chs[ch+1])&&HaveInitialForm(chs[ch+1]); 
+                bool s=IsArabicChar(chs[ch+1])&&HaveInitialForm(chs[ch+1]);
 
-                //if (e) e=;
-                //if (s) s=;
-               // char old=chs[ch];
                 if (s && e) _out[ch]=(char)ArabicMedialFormConventer((int)chs[ch]);
                 else if (s && !e) _out[ch]=(char)ArabicFinalFormConventer((int)chs[ch]);
                 else if (!s && e) _out[ch]=(char)ArabicInitialFormConventer((int)chs[ch]);
                 else _out[ch]=chs[ch];
-
-            //    Debug.WriteLine(old+" -> "+chs[ch]+" s:"+s+" e:"+e);
-            } 
+            }
             ch=chs.Length-1;
+
             // end
             if (IsArabicChar(chs[chs.Length-1-1])) {
                 if (HaveFinalForm(chs[chs.Length-1-1])) _out[ch]=(char)ArabicInitialFormConventer((int)chs[ch]);
                 else _out[ch]=chs[ch];
             }else _out[ch]=chs[ch];
 
-            return /*new string(*/_out/*)*/;
+            return _out;
         }
         #endregion
 
         #region Normal
-        void BuildTextNormal(string txt){ 
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
+        void BuildTextNormal(string txt){
+            List<DrawingChar> tmpChs=new();
             char[] chs=txt.ToArray();
-            int posx=X, posY=Y;
-          
+            int posx=X, 
+                posY=Y;
+
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 #if DEBUG
@@ -608,8 +591,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = font.Glyphs[gg]).Code) {  
-                    
+                    if (chs[ch]==font.Glyphs[gg].Char) {
+                        g = font.Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -628,7 +611,7 @@ namespace rabcrClient {
                     }
                 }
 
-                if (chs[ch]=='\n') { 
+                if (chs[ch]=='\n') {
                     posx=X;
                     posY+=30;
                     #if DEBUG
@@ -636,12 +619,13 @@ namespace rabcrClient {
                     #endif
                     continue;
                 }
-           
+
                 // Unknown char
                 #if DEBUG
                 if (!add){
                     for (int gg = 0; gg<font.Glyphs.Length; gg++) {
-                        if ('�'==(char)(g = font.Glyphs[gg]).Code) {
+                        if ('�' == font.Glyphs[gg].Char) {
+                            g = font.Glyphs[gg];
                             tmpChs.Add(
                                 new DrawingChar {
                                     Pos=new Vector2(posx+g.X, posY+g.Y),
@@ -652,10 +636,10 @@ namespace rabcrClient {
                             Debug.WriteLine("Nonsuported char '"+(int)chs[ch]+"', font: "+Lang.Languages[Setting.CurrentLanguage].FontFile);
                             break;
                         }
-                    } 
+                    }
                 }
                 #endif
-            } 
+            }
             Chars=tmpChs.ToArray();
             Length=Chars.Length;
         }
@@ -691,14 +675,13 @@ namespace rabcrClient {
                 DrawingChar dch=Chars[Length-1];
                 return dch.Pos.X-Chars[0].Pos.X+dch.Rectangle.Width;
             }
-            if (/*Chars.*/Length==1) return Chars[0].Rectangle.Width;
+            if (Length==1) return Chars[0].Rectangle.Width;
             return 0;
         }
         #endregion
 
         #region Change Pos
         public void ChangePosition(int newX, int newY) {
-        //    if (newX!=X || newY!=Y) {
             int deltaX=newX-X,
                 deltaY=newY-Y;
 
@@ -789,24 +772,27 @@ namespace rabcrClient {
         //}
     }
 
-    public class TextWithMeasure{
+    public class TextWithMeasure {
         public DrawingChar[] Chars;
         readonly Texture2D Bitmap;
-        public int X, NewLines;
+        public int MeasureX, NewLines;
         readonly int len;
+        int X, Y;
 
+        public const int MeasureY =30;
 
-        public TextWithMeasure(string txt, int x, int y/*, BitmapFont f*/){
-            if (txt==null){
+        public TextWithMeasure(string txt, int x, int y) {
+            if (txt==null) {
                 Chars=new DrawingChar[0];
                 return;
             }
             Glyph[] Glyphs=BitmapFont.bitmapFont18.Glyphs;
             Bitmap=BitmapFont.bitmapFont18.Bitmap;
-           // font=f;
-            List<DrawingChar> tmpChs=new List<DrawingChar>();
-         //   txt=
-            char[] chs=Text.BuildArabicText(txt);//txt.ToCharArray();
+            X=y;
+            Y=y;
+            List<DrawingChar> tmpChs=new();
+
+            char[] chs=Text.BuildArabicText(txt);
             int posx=x;
             Glyph g;
             NewLines=1;
@@ -816,7 +802,8 @@ namespace rabcrClient {
             int glyphsLen=Glyphs.Length;
             for (int i = 0; i<chs.Length; i++) {
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if (chs[i]==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                    if (chs[i] == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
                             tmpChs.Add(
                                 new DrawingChar{
@@ -826,13 +813,7 @@ namespace rabcrClient {
                             );
                             posx+=g.DrawRectangle.Width+g.X+g.W;
                         } else {
-                            if (chs[i]=='\n')NewLines++;
-                            //tmpChs.Add(
-                            //    new DrawingChar{
-                            //        //Pos=new Vector2(posx+g.X,y+g.Y),
-                            //        //Rectangle=g.DrawRectangle,
-                            //    }
-                            //);
+                            if (chs[i]=='\n') NewLines++;
                             posx+=g.W;
                         }
 
@@ -845,10 +826,11 @@ namespace rabcrClient {
 
 #if DEBUG
                 // Unknown char
-                if (add)continue;
-                if (chs[i]=='\r')continue;
-                for (int gg = 0; gg</*font.*/Glyphs.Length; gg++) {
-                    if ('�'==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                if (add) continue;
+                if (chs[i]=='\r') continue;
+                for (int gg = 0; gg<Glyphs.Length; gg++) {
+                    if ('�' == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         tmpChs.Add(
                             new DrawingChar {
                                 Pos=new Vector2(posx+g.X, y+g.Y),
@@ -863,65 +845,83 @@ namespace rabcrClient {
             }
 
             Chars=tmpChs.ToArray();
-            X=posx-x;
+            MeasureX=posx-x;
             len=Chars.Length;
         }
 
         public void Draw(SpriteBatch sb) {
+            DrawingChar ch;
             for (int i=0; i<len; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap, ch.Pos, ch.Rectangle, Color.Black);
+                ch=Chars[i];
+                sb.Draw(Bitmap, ch.Pos, ch.Rectangle, Color.Black);
             }
         }
 
         public void Draw(SpriteBatch sb, Color c) {
+            DrawingChar ch;
             for (int i=0; i<len; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap,ch.Pos,ch.Rectangle,c);
+                ch=Chars[i];
+                sb.Draw(Bitmap, ch.Pos, ch.Rectangle, c);
             }
         }
 
         public void Draw(SpriteBatch sb, Color c, int start, int end) {
+            DrawingChar ch;
             for (int i=start; i<len && i<end; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap,ch.Pos,ch.Rectangle,c);
+                ch=Chars[i];
+                sb.Draw(Bitmap,ch.Pos,ch.Rectangle,c);
             }
         }
 
         public void DrawBold(SpriteBatch sb, Color c) {
+            DrawingChar ch;
             for (int i=0; i<len; i++){
-                DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap,ch.Pos,ch.Rectangle,c);
+                ch=Chars[i];
+                sb.Draw(Bitmap,ch.Pos,ch.Rectangle,c);
                 ch.Pos.X--;
-                sb.Draw(/*font.*/Bitmap,ch.Pos,ch.Rectangle,c);
+                sb.Draw(Bitmap,ch.Pos,ch.Rectangle,c);
                 ch.Pos.X++;
             }
         }
 
         public void DrawItalic(SpriteBatch sb, Color c) {
+            DrawingChar ch;
             for (int i=0; i<len; i++) {
-                DrawingChar ch=Chars[i];
-                sb.Draw(/*font.*/Bitmap,ch.Pos, ch.Rectangle,c,0.2f,new Vector2(),1,SpriteEffects.None,1);
+                ch=Chars[i];
+                sb.Draw(Bitmap, ch.Pos, ch.Rectangle, c, 0.2f, Vector2.Zero, 1, SpriteEffects.None, 1);
             }
+        }
+
+         public void ChangePosition(int newX, int newY) {
+            int deltaX=newX-X,
+                deltaY=newY-Y;
+
+            foreach (DrawingChar ch in Chars) {
+                ch.Pos.X+=deltaX;
+                ch.Pos.Y+=deltaY;
+            }
+
+            X=newX;
+            Y=newY;
         }
     }
 
     class DynamicText{
         readonly Glyph[] Chars;
-        //readonly BitmapFont font;
         public int X=0, Y=0;
         readonly Texture2D Bitmap;
-        public DynamicText(string txt, int x, int y/*, BitmapFont f*/){
+
+        public DynamicText(string txt, int x, int y) {
             if (txt==null) {
                 Chars=new Glyph[0];
                 return;
             }
+
             Glyph[] Glyphs=BitmapFont.bitmapFont34.Glyphs;
             Bitmap=BitmapFont.bitmapFont34.Bitmap;
-           // font=f;
-        //   txt=
-            List<Glyph> tmpChs=new List<Glyph>();
-            char[] chs=Text.BuildArabicText(txt);//txt.ToCharArray();
+
+            List<Glyph> tmpChs=new();
+            char[] chs=Text.BuildArabicText(txt);
             int posx=x;
 
             Glyph g;
@@ -934,8 +934,8 @@ namespace rabcrClient {
                 #endif
 
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if (chs[i]==(char)/*font.*/Glyphs[gg].Code){
-                        g = /*font.*/Glyphs[gg];
+                    if (chs[i]==Glyphs[gg].Char){
+                        g = Glyphs[gg];
 
                         if (g.visible) {
                             tmpChs.Add(
@@ -955,11 +955,7 @@ namespace rabcrClient {
                         } else {
                              tmpChs.Add(
                                 new Glyph{
-                                   // X=g.X,
-                                   // Y=g.Y,
                                     W=g.W,
-                                   // H=g.H,
-                                  //  DrawRectangle=g.DrawRectangle,
                                     visible=false
                                 }
                             );
@@ -978,7 +974,8 @@ namespace rabcrClient {
                 // Unknown char
                 if (add) continue;
                 for (int gg = 0; gg<glyphsLen; gg++) {
-                    if ('�'==(char)(g = /*font.*/Glyphs[gg]).Code) {
+                    if ('�' == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         tmpChs.Add(
                             new Glyph {
                                 X=g.X,
@@ -986,7 +983,8 @@ namespace rabcrClient {
                                 W=g.W,
                                 H=g.H,
                                 DrawRectangle=g.DrawRectangle,
-                                visible=g.visible
+                                visible=g.visible,
+                                
                             }
                         );
                         posx+=g.DrawRectangle.Width+g.X+g.W;
@@ -1043,24 +1041,24 @@ namespace rabcrClient {
 
         public BitmapFont(int size, byte[] bytes) {
             Size=size;
-            List<Glyph> tmpGlyphs=new List<Glyph>();
+            List<Glyph> tmpGlyphs=new();
 
             for (int i=0; i<bytes.Length; ) {
-                Glyph g = new Glyph {
-                    Code=(int)(uint)(bytes[i+3] | bytes[i+2]<<8 | bytes[i+1]<<16 | bytes[i]<<24),
-                };
-                if (g.visible=bytes[i+4]==1){
+                int code=(int)(uint)(bytes[i+3] | bytes[i+2]<<8 | bytes[i+1]<<16 | bytes[i]<<24);
+                Glyph g = new();
+                g.Char=(char)code;
+                if (g.visible=bytes[i+4]==1) {
 
                     g.DrawRectangle=new Rectangle(
                         (ushort)(bytes[i+5+1] | bytes[i+4+1]<<8),
                         (ushort)(bytes[i+7+1] | bytes[i+6+1]<<8),
-                        bytes[i+8+1]/*-1*//*+1*/,//
-                        bytes[i+9+1]/*-1*//*+1*///
+                        bytes[i+8+1],
+                        bytes[i+9+1]
                     );
 
                     g.X=bytes[i+10+1]-128;
                     g.Y=bytes[i+11+1]-128;
-                    g.W=bytes[i+12+1];//?-1
+                    g.W=bytes[i+12+1];
                     g.H=bytes[i+13+1];
                     i+=15;
                 } else {
@@ -1074,177 +1072,85 @@ namespace rabcrClient {
             }
 
             Glyphs=tmpGlyphs.ToArray();
-            //bytes=null;
-       //     if (Environment.GetCommandLineArgs().Length>2){ 
-       //         if (Environment.GetCommandLineArgs()[1]=="/Message"){ 
-       //                using (FileStream fileStream = new FileStream(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"/RabcrData/Default/Fonts/Font latin 18.png", FileMode.Open)){
-       ////    Bitmap=Rabcr.Game.Content.Load<Texture2D>("Default/Fonts/font"+size);
-       //         /*BitmapFont.bitmapFont16.*/Bitmap=Texture2D.FromStream(Rabcr.Game.GraphicsDevice, fileStream);
 
-       //    // fileStream.Dispose();
-       //    }  //
-       //             }
-       //     }else{
-            using (FileStream fileStream = new FileStream(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"/RabcrData/Default/Fonts/Font "+Lang.Languages[Setting.CurrentLanguage].FontFile+" "+size+".png", FileMode.Open)){
-       //    Bitmap=Rabcr.Game.Content.Load<Texture2D>("Default/Fonts/font"+size);
-                /*BitmapFont.bitmapFont16.*/Bitmap=Texture2D.FromStream(Rabcr.Game.GraphicsDevice, fileStream);
-
-           // fileStream.Dispose();
-           }// } // GC.Collect();
-            //GC.WaitForPendingFinalizers();
-        //    string[] lines = strs/*((string)Properties.Resources.ResourceManager.GetObject("FontInfo"+size+".txt"))*/./*; .FontInfo.*/Split('*');
-        ////    string[] lines=Properties.Resources.ResourceManager.GetString("FontInfo"+size+".txt")./*; .FontInfo.*/Split('*');
-        //    foreach (string line in lines){
-        //        if (line=="")break;
-        //        string[] info=line.Split('|');
-        //        if (info.Length==3) {
-        //            Glyphs.Add(
-        //                new Glyph{
-        //                    Code=int.Parse(info[0]),
-        //                  //  DrawRectangle=new Rectangle(int.Parse(info[1]),int.Parse(info[2]),int.Parse(info[3]),int.Parse(info[4])),
-        //                   // X=int.Parse(info[5]),
-        //                    //Y=int.Parse(info[6]),
-        //                    W=int.Parse(info[1]),
-        //                    H=int.Parse(info[2]),
-        //                    visible=false,
-        //                }
-        //            );
-        //        } else {
-        //            Glyphs.Add(
-        //                new Glyph{
-        //                    Code=int.Parse(info[0]),
-        //                    DrawRectangle=new Rectangle(int.Parse(info[1]),int.Parse(info[2]),int.Parse(info[3]),int.Parse(info[4])),
-        //                    X=int.Parse(info[5]),
-        //                    Y=int.Parse(info[6]),
-        //                    W=int.Parse(info[7]),
-        //                    H=int.Parse(info[8]),
-        //                    visible=true,
-        //                }
-        //            );
-        //        }
-        //    }
-        w3dots=MeasureTextSingleLineX("...");
+            using (FileStream fileStream = new(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"/RabcrData/Default/Fonts/Font "+Lang.Languages[Setting.CurrentLanguage].FontFile+" "+size+".png", FileMode.Open)){
+                Bitmap=Texture2D.FromStream(Rabcr.Game.GraphicsDevice, fileStream);
+            }
+            w3dots=MeasureTextSingleLineX("...");
         }
 
-#region Measure Width and Height
-        //public DInt MeasureText(string txt){
-        //    if (txt==null)// {
-        //        //X=0;
-        //        //Y=0;
-        //        return new DInt{ X=0, Y=0 };
-        //    //}
-
-        //    char[] chs=txt.ToCharArray();
-
-        //    if (txt.Contains('\n')){
-        //        int maxX=0;
-        //        int X=0;
-
-        //        for (int i = 0; i<chs.Length; i++) {
-        //            if (chs[i]=='\n') {
-        //                if (maxX<X)maxX=X;
-        //                X=0;
-        //            } else {
-        //                foreach (Glyph g in Glyphs) {
-        //                    if (chs[i]==(char)g.Code) {
-        //                       // if (g.visible) {
-        //                            X+=g.DrawRectangle.Width+g.X;
-        //                        //} else {
-        //                        //    X+=/*g.DrawRectangle.Width+*/g.W;
-        //                        //}
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        return new DInt{X=maxX, Y=MeasureTextSingleLineY*(txt.Count(c=>c=='\n')+1) }/*(maxX,MeasureTextSingleLineY*(txt.Count(c=>c=='\n')+1))*/;
-        //    } else {
-        //        int X= 0, Y = 0;
-        //        for (int i = 0; i<chs.Length; i++) {
-        //                foreach (Glyph g in Glyphs) {
-        //                    if (chs[i]==(char)g.Code) {
-        //                       // if (g.visible) {
-        //                            X+=g.DrawRectangle.Width+g.X;
-        //                            if (Y<g.DrawRectangle.Height+g.H+g.Y) Y=g.DrawRectangle.Height+g.H+g.Y;
-        //                        //}
-        //                        break;
-        //                    }
-        //                }
-        //        }
-        //        return new DInt{X=X, Y=Y }/*(X, Y/*Size/)*/;
-        //    }
-        //}
-
+        #region Measure Width and Height
         public DInt MeasureTextSingleLineWithPresision(string txt) {
-            if (txt==null) return new DInt{X=0, Y=0 }/*(0,0)*/;
+            if (txt==null) return new DInt{ X=0, Y=0 };
 
             char[] chs=txt.ToCharArray();
-
+            Glyph g;
             int X=0, Y = 0;
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         X+=g.DrawRectangle.Width+g.X;
                         if (Y<g.DrawRectangle.Height+g.H+g.Y) Y=g.DrawRectangle.Height+g.H+g.Y;
                         break;
                     }
                 }
             }
-            return new DInt{X=X, Y=Y }/*(X, Y)*/;
+            return new DInt{ X=X, Y=Y };
         }
 
         public DInt MeasureTextSingleLine(string txt) {
-            if (txt==null) return new DInt{X=0, Y=0 }/*(0,0)*/;
+            if (txt==null) return new DInt{ X=0, Y=0 };
 
             char[] chs=txt.ToCharArray();
-
+            Glyph g;
             int X=0;
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         X+=g.DrawRectangle.Width+g.X;
                         break;
                     }
                 }
             }
-            return new DInt{X=X, Y=MeasureTextSingleLineY }/*(X, MeasureTextSingleLineY)*/;
+            return new DInt{ X=X, Y=MeasureTextSingleLineY };
         }
-#endregion
+        #endregion
 
-#region Measure Width
-        public int MeasureTextSingleLineX(string txt){
+        #region Measure Width
+        public int MeasureTextSingleLineX(string txt) {
             if (txt==null) return 0;
             int X=0;
 
             char[] chs=txt.ToCharArray();
+            Glyph g;
 
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
-                        if (g.visible) {
-                            X+=g.DrawRectangle.Width+g.X+g.W;
-                        } else X+=g.W;
+                    if (chs[i]==Glyphs[ii].Char) {
+                        g = Glyphs[ii];
+                        if (g.visible) X+=g.DrawRectangle.Width+g.X+g.W;
+                        else X+=g.W;
                         break;
                     }
                 }
             }
             return X;
         }
-#endregion
+        #endregion
 
-#region Measure Height
+        #region Measure Height
         public int MeasureTextSingleLineYWithPresision(string txt) {
             if (txt==null) return 0;
             char[] chs=txt.ToCharArray();
             int Y = 0;
+            Glyph g;
 
             for (int i = 0; i<chs.Length; i++) {
                 for (int ii = 0; ii<Glyphs.Length; ii++) {
-                    if (chs[i]==(char)Glyphs[ii].Code) {
-                        Glyph g = Glyphs[ii];
+                    if (chs[i] == Glyphs[ii].Char) {
+                        g = Glyphs[ii];
                         if (Y<g.DrawRectangle.Height+g.H+g.Y) Y=g.DrawRectangle.Height+g.H+g.Y;
                         break;
                     }
@@ -1258,9 +1164,9 @@ namespace rabcrClient {
         public const int MeasureTextY=20;
 
         public int MeasureTextMultiLineY(string txt)=> MeasureTextSingleLineY*(txt.Count(c=>c=='\n')+1);
-#endregion
+        #endregion
 
-#region Draw text
+        #region Draw text
         public void DrawText(SpriteBatch sb, string str, int x, int y) {
             if (str==null) return;
 
@@ -1270,9 +1176,10 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch]==Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
-                            sb.Draw(Bitmap,new Vector2(posx,y+g.Y), g.DrawRectangle,Color.White);
+                            sb.Draw(Bitmap, new Vector2(posx, y+g.Y), g.DrawRectangle, Color.White);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
                         } else {
                             posx+=g.W;
@@ -1292,44 +1199,17 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch]==Glyphs[gg].Char) {
+                        g = Glyphs[gg];
                         if (g.visible) {
                             sb.Draw(Bitmap,new Vector2(posx,y+g.Y), g.DrawRectangle,color);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
-                        } else// {
-                            posx+=g.W;
-                        //}
+                        } else posx+=g.W;
                         break;
                     }
                 }
             }
         }
-
-        //public void DrawTextMultiline(SpriteBatch sb, string str, int x, int y) {
-        //    if (str==null) return;
-
-        //    char[] chs=str.ToCharArray();
-        //    int posx=x, posy=0;
-
-        //    Glyph g;
-        //    for (int ch = 0; ch<chs.Length; ch++) {
-        //        if (chs[ch]=='\n'){
-        //            posx=0;
-        //            posy+=30;
-        //        }else{
-        //        for (int gg = 0; gg<Glyphs.Length; gg++) {
-        //            if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
-        //                if (g.visible) {
-        //                    sb.Draw(Bitmap,new Vector2(posx,y+g.Y+posy), g.DrawRectangle,Color.White);
-        //                    posx+=g.DrawRectangle.Width+g.X+g.W;
-        //                } else// {
-        //                    posx+=g.W;
-        //                //}
-        //                break;
-        //            }
-        //        }  }
-        //    }
-        //}
 
         public void DrawTextItalic(SpriteBatch sb, string str, int x, int y, Color color) {
             if (str==null) return;
@@ -1340,9 +1220,11 @@ namespace rabcrClient {
             Glyph g;
             for (int ch = 0; ch<chs.Length; ch++) {
                 for (int gg = 0; gg<Glyphs.Length; gg++) {
-                    if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                    if (chs[ch] == Glyphs[gg].Char) {
+                        g = Glyphs[gg];
+
                         if (g.visible) {
-                            sb.Draw(Bitmap,new Vector2(posx,y/*+g.Y*/), g.DrawRectangle,color,0.2f,new Vector2(-g.X, -g.Y),1,SpriteEffects.None,1);
+                            sb.Draw(Bitmap, new Vector2(posx, y), g.DrawRectangle, color, 0.2f, new Vector2(-g.X, -g.Y), 1f, SpriteEffects.None, 1f);
                             posx+=g.DrawRectangle.Width+g.X+g.W;
                         } else {
                             posx+=g.W;
@@ -1352,28 +1234,23 @@ namespace rabcrClient {
                 }
             }
         }
-#endregion
+        #endregion
 
         public string MaxSizeOfString(string s, int w) {
-          //  System.Diagnostics.Debug.WriteLine("Shorting: "+s);
             int ww=w-w3dots;
             int x=MeasureTextSingleLineX(s);
             if (x>ww) {
-                //if (s.StartsWith("Ma")){
-                //    Console.WriteLine(w);
-                //    }
-
-                // string need to be smaller
-             //   int w2=0;
                 char[] chs=s.ToCharArray();
-                int ch/*=-1*/;
+                int ch;
                 Glyph g;
 
 
                 for (ch = 0; ch<chs.Length; ch++) {
-                    if (ww<=/*w2*/0)break;
+                    if (ww<=0)break;
                     for (int gg = 0; gg<Glyphs.Length; gg++) {
-                        if (chs[ch]==(char)(g = Glyphs[gg]).Code) {
+                        if (chs[ch]==Glyphs[gg].Char) {
+                            g = Glyphs[gg];
+
                             if (g.visible) {
                                 ww-=g.DrawRectangle.Width+g.X+g.W;
                             } else {
@@ -1383,37 +1260,19 @@ namespace rabcrClient {
                         }
                     }
                 }
-            //    if (ch==-1)return s;
-                if (ch==0)return"";
-             //   if (ch!=chs.Length) {
-                    // String need to be smller
-                   //if (x<MeasureTextSingleLineX(s.Substring(0,ch-1)+"...")){
-                   // Console.WriteLine("!");
-                   // }
-                   //if (s.Contains('\u8206')) System.Diagnostics.Debug.WriteLine("..."+s.Substring(0,ch-1));
-                 //else
 
-                //if (isArabic(s)) {
-                //    System.Diagnostics.Debug.WriteLine("..."+s.Substring(0,ch-1));
-                //    return "..."+s.Substring(0,ch-1);
-                //}else{
-                  //  System.Diagnostics.Debug.WriteLine(s.Substring(0,ch-1)+"...");
-                    return s.Substring(0,ch-1)+"...";
-             //   }
-
-                //}
-              //  else return s;
+                if (ch==0) return"";
+           
+                return s.Substring(0, ch-1)+"...";
             }
 
             return s;
-
         }
 
-        public bool IsUjgur(string s){
+        public bool IsUjgur(string s) {
             if (Lang.IsUjgur){
-
                 return true;
-            }else{
+            } else {
                 foreach (char ch in s) {
                     switch (ch) {
                         case 'ى': return true;
@@ -1425,10 +1284,9 @@ namespace rabcrClient {
         }
 
         public bool IsArabic(string s){
-            if (Lang.IsArabic){
-
+            if (Lang.IsArabic) {
                 return true;
-            }else{
+            } else {
                 foreach (char ch in s) {
                     switch (ch) {
                         case 'ى': return true;
@@ -1442,7 +1300,8 @@ namespace rabcrClient {
 
     public class Glyph {
         public Rectangle DrawRectangle;
-        public int Code;
+        // public int Code;
+        public char Char;
         public int X, Y, W, H;
         public bool visible;
     }
@@ -1453,16 +1312,16 @@ namespace rabcrClient {
     }
 
     class RenderEnngineDevanagari {
-        readonly char[] Consonants ={'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
-        readonly char[] DevandariPreCh ={ 'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई', };
+        readonly char[] Consonants = {'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह' };
+        readonly char[] DevandariPreCh = {'ँ','ऻ','ः','ं', 'े','ा','ि','ी','्','ो','़','ए','इ','ॉ','आ','ू','ू','ै','ई', };
 
 
-        public char[][] tableMoveBack = new char[][]{
+        public char[][] tableMoveBack = new char[][] {
             new char[]{'य', (char)2369},
         };
         public string Output;
 
-        readonly (char[],char)[] Replacements=new (char[],char)[]{ 
+        readonly (char[],char)[] Replacements=new (char[], char)[] {
             // Nukta...
             (new char[]{ 'क', '़'}, 'क़'),
             (new char[]{ 'फ', '़'}, 'फ़'),
@@ -1485,58 +1344,56 @@ namespace rabcrClient {
             (new char[]{ 'ए', 'े'}, 'ऐ'),
         };
 
-        bool IdDevanagariChar(char ch){ 
-            foreach (char i in Consonants) { if (ch==i) return true;}
-            foreach (char i in DevandariPreCh) { if (ch==i) return true;}
+        bool IdDevanagariChar(char ch) {
+            foreach (char i in Consonants) { if (ch==i) return true; }
+            foreach (char i in DevandariPreCh) { if (ch==i) return true; }
             return false;
         }
 
         public RenderEnngineDevanagari(string input) {
             // Split text by Devanagari and other font text (combined text->noncombined parts)
-            List<(bool,string)> DevanagariWords=new List<(bool, string)>();
+            List<(bool,string)> DevanagariWords=new();
             bool WasLastDevanagari=false;
             int lastpos=-1;
-            
-            for (int i=0; i<input.Length; i++) { 
+
+            for (int i=0; i<input.Length; i++) {
                 char ch=input[i];
                 bool nowDev=IdDevanagariChar(ch);
-                if (lastpos==-1) { 
+                if (lastpos==-1) {
                     WasLastDevanagari=nowDev;
                     lastpos=0;
                 }
 
-                if (nowDev == WasLastDevanagari){ 
+                if (nowDev == WasLastDevanagari){
                 //   lastpos++;
-                } else { 
+                } else {
                     DevanagariWords.Add((WasLastDevanagari,input.Substring(lastpos,i-lastpos)));
-                    WasLastDevanagari=nowDev; 
+                    WasLastDevanagari=nowDev;
                     lastpos=i;
-                }     
+                }
             }
             DevanagariWords.Add((WasLastDevanagari,input.Substring(lastpos)));
 
             Output="";
+
             // Parse devanagari words into syllables
             foreach ((bool, string) h in DevanagariWords) {
-                if (h.Item1) { 
+                if (h.Item1) {
                     string[] Syllables=ToSyllables(h.Item2);
 
-                    foreach (string s in Syllables) Output+=/*"s"+*/s/*+"e"*/;
-                } else { 
-                    Output+=/*"S"+*/h.Item2/*+"E"*/;
+                    foreach (string s in Syllables) Output+=s;
+                } else {
+                    Output+=h.Item2;
                 }
             }
 
-            //string LastSyllable="";
-            //bool Devanagari;
-            
-            string[] ToSyllables(string txt){ 
+            string[] ToSyllables(string txt){
                 List<string> Syllables=null;
                 string LastSyllable="";
 
                 for (int i = 0; i<txt.Length; i++) {
                     char ch = txt[i];
-                      
+
                     foreach (char con in Consonants) {
                         if (ch==con) {
                             if (Syllables==null) {
@@ -1555,90 +1412,80 @@ namespace rabcrClient {
                 return Syllables.ToArray();
             }
 
-            string TryReplaceSyllable(string s) { 
+            string TryReplaceSyllable(string s) {
                 if (s.Length>1){
                     foreach ((char[], char) r in Replacements) {
                         bool make=true;
-                        foreach (char x in r.Item1) { 
-                            if (s.Contains(x)){ 
-                            } else { 
+                        foreach (char x in r.Item1) {
+                            if (s.Contains(x)){
+                            } else {
                                 make=false;
                                 break;
                             }
                         }
-                        if (make) { 
-                            string g=s.Replace(r.Item1[0],r.Item2);
-                            g=g.Replace(r.Item1[1].ToString(),"");
+                        if (make) {
+                            string g=s.Replace(r.Item1[0], r.Item2);
+                            g=g.Replace(r.Item1[1].ToString(), "");
                             return r.Item2.ToString();
                         }
                     }
-                    if (s.Contains('ा')){ //f
+                    if (s.Contains('ा')) { //f
                        return s.Replace('ा'.ToString(),"发");
-                    } 
-                    if (s.Contains('ो')){ //T´
+                    }
+                    if (s.Contains('ो')) { //T´
                         return s.Replace('ो'.ToString(),"飞");
                     }
-                    if (s.Contains('ी')){ // o + obraceny f
+                    if (s.Contains('ी')) { // o + obraceny f
                       return s.Replace('ी'.ToString(),"汉");
                     }
-                    if (s.Contains('ु')){ // o + obraceny f
+                    if (s.Contains('ु')) { // o + obraceny f
                       return s.Replace('ु'.ToString(),"习");
                     }
                     if (s.Contains('ू')){ // o + obraceny f
                       return s.Replace('ू'.ToString(),"韦");
                     }
-                    if (s.Contains('्')){ // o + obraceny f
+                    if (s.Contains('्')) { // o + obraceny f
                       return s.Replace('्'.ToString(),"专");
                     }
-                    if (s.Contains('े')){ // o + obraceny f
+                    if (s.Contains('े')) { // o + obraceny f
                       return s.Replace('े'.ToString(),"车");
                     }
-                    if (s.Contains('ं')){ // tečka nad
+                    if (s.Contains('ं')) { // tečka nad
                       return s.Replace('ं'.ToString(),"见");
                     }
-                    if (s.Contains('ै')){ // dvojte carka nad
+                    if (s.Contains('ै')) { // dvojte carka nad
                       return s.Replace('ै'.ToString(),"齿");
                     }
-                     if (s.Contains('ृ')){ //m ृ
+                    if (s.Contains('ृ')) { //m ृ
                       return s.Replace('ृ'.ToString(),"义");
                     }
-                    if (s.Contains('ॄ')){ //m ॄ
+                    if (s.Contains('ॄ')) { //m ॄ
                       return s.Replace('ॄ'.ToString(),"宾");
                     }
-                    if (s.Contains('ॢ')){ //m ॢ
+                    if (s.Contains('ॢ')) { //m ॢ
                       return s.Replace('ॢ'.ToString(),"继");
                     }
-                    if (s.Contains('ॣ')){ // o + obraceny f
+                    if (s.Contains('ॣ')) { // o + obraceny f
                       return s.Replace('ॣ'.ToString(),"历");
                     }
-                    if (s.Contains('ॅ')){ //m ॅ
+                    if (s.Contains('ॅ')) { //m ॅ
                       return s.Replace('ॅ'.ToString(),"妇");
                     }
-                    if (s.Contains('ॉ')){ // o + obraceny f
+                    if (s.Contains('ॉ')) { // o + obraceny f
                       return s.Replace('ॉ'.ToString(),"焕");
                     }
-
-                    if (s.Contains('ौ')){ //m ौ o + obraceny f
+                    if (s.Contains('ौ')) { //m ौ o + obraceny f
                       return s.Replace('ौ'.ToString(),"头");
                     }
                     // f+o
-                    if (s.Contains('ि')){ 
-                        string o=s.Replace('ि'.ToString(),"");
+                    if (s.Contains('ि')) {
+                        string o=s.Replace('ि'.ToString(), "");
                         return '媪'+o;
-                    } 
-                  //   'ि'  
+                    }
                 }
 
                 return s;
             }
         }
-
-
-
-      
-            //class Replace{ 
-            //    public char[] From;
-            //    public char To;
-            //}
-        }
     }
+}

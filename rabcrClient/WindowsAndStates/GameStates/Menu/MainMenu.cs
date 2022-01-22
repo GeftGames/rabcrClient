@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,13 +19,15 @@ namespace rabcrClient {
         const float divider255=1/255f;
 
         public XColor() {
-            if (Rabcr.random.Bool()) dir = 1; else dir = -1;
-            speed=Rabcr.random.Int(3, 10) * 0.0001f;
-            rotation=Rabcr.random.Int(360)*0.0174533f;
+            dir=FastRandom.IntPlusMinusOne();
+         //   Console.WriteLine(dir);
+           // if (Rabcr.random.Bool()) dir = 1; else dir = -1;
+            speed=(FastRandom.Float()*5+5f) * 0.0001f;
+            rotation=FastRandom.Rotatin();//.Int(360)*0.0174533f;
 
-            gR=R=Rabcr.random.Float();
-            gG=G=Rabcr.random.Float();
-            gB=B=Rabcr.random.Float();
+            gR=R=FastRandom.Float();
+            gG=G=FastRandom.Float();
+            gB=B=FastRandom.Float();
 
             change=120;
         }
@@ -38,9 +42,9 @@ namespace rabcrClient {
             change--;
 
             if (change<0) {
-                gR=Rabcr.random.Float();
-                gG=Rabcr.random.Float();
-                gB=Rabcr.random.Float();
+                gR=FastRandom.Float();
+                gG=FastRandom.Float();
+                gB=FastRandom.Float();
 
                 deltaR=(gR-R)*divider255;
                 deltaG=(gG-G)*divider255;
@@ -49,7 +53,7 @@ namespace rabcrClient {
             }
         }
 
-        public Color ToColor() => new Color(R, G, B);
+        public Color ToColor() => new(R, G, B);
     }
 
     class MainMenu :MenuScreen {
@@ -84,8 +88,8 @@ namespace rabcrClient {
                 var buttonSingleplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[6]);
                 buttonSingleplayer.Click+=GoToSingleplayer;
 
-                var buttonMultiplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[7]);
-                buttonMultiplayer.Click+=GoToMultiplayer;
+               // var buttonMultiplayer = new Button(Textures.ButtonLongLeft, Lang.Texts[7]);
+               // buttonMultiplayer.Click+=GoToMultiplayer;
 
                 var buttonSetting = new Button(Textures.ButtonLongLeft, Lang.Texts[8]);
                 buttonSetting.Click+=GoToSettings;
@@ -101,7 +105,11 @@ namespace rabcrClient {
 
                 buttonsSide=new Button[]{
                     buttonSingleplayer,
-                 //   buttonMultiplayer,
+
+                    //#if DEBUG
+                    //buttonMultiplayer,
+                    //#endif
+
                     buttonCharacter,
                     buttonSetting,
                     buttonLanguage,
@@ -121,6 +129,34 @@ namespace rabcrClient {
             //} else {
             //    buttonLogin = new Button(Textures.ButtonRight, Lang.Texts[12]);
             //    buttonLogin.Click+=LogStuff;
+            //}
+
+
+            //if (Setting.FirstRun) { 
+            //    var GraphicsCard = Rabcr.Game.GraphicsDevice;
+
+            //      string usingGPU="";
+            //    int NumberOfAdapters = GraphicsAdapter.Adapters.Count;
+
+            //    List<string> AdapterNames = new();
+
+            //    foreach (GraphicsAdapter EnumeratedAdapter in GraphicsAdapter.Adapters)
+
+            //    {
+
+            //        if (EnumeratedAdapter == GraphicsCard.Adapter)
+
+            //        {
+
+            //            //This is the one being used.
+            //             usingGPU=EnumeratedAdapter.Description;
+            //            break;
+            //        }
+
+            //        AdapterNames.Add(EnumeratedAdapter.Description);
+
+            //    }   
+            //      Debug.WriteLine(AdapterNames);
             //}
 
             SetTexts();
@@ -188,8 +224,9 @@ namespace rabcrClient {
         void GoToInformations(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new Informations());
 
         void GoToSingleplayer(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MenuSingleplayer());
+        #if MULTIPLAYER
         void GoToMultiplayer(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MenuMultiplayer());
-
+        #endif
 
         public override void Update(GameTime gameTime) {
             //mouseState=Mouse.GetState();

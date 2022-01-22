@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 
 namespace rabcrClient {
     class MenuSetting: MenuScreen {
@@ -21,14 +22,15 @@ namespace rabcrClient {
         const int DocumentSize=500;
         int start,end;
         float smoothMouse=0;
-        const int PageHeight=1290+60+70+60+90+90+90+90+90+90;
+        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500;
         #endregion
-
+        bool afterrestart;
         public override void Init() {
             buttonMenu= new Button(Textures.ButtonLongLeft,Lang.Texts[1]);
             buttonMenu.Click+=ClickMenu;
             effectBlur=Effects.BluredTopDownBounds;
 
+         //   PageHeight=1290+settings.Count*90;
             scrollbar=new Scrollbar(GetDataTexture(@"Buttons\Scrollbar\Top"), GetDataTexture(@"Buttons\Scrollbar\Center"), GetDataTexture(@"Buttons\Scrollbar\Bottom")){
                 maxheight=PageHeight/*-Global.WindowHeight+60+60+90+30*/,
                 height=Global.WindowHeight-75-65-2
@@ -40,11 +42,17 @@ namespace rabcrClient {
             movemer = GetDataTexture(@"Buttons\Setting\TrackBar\Movemer");
             scrollbar.PositionY=76;
             header=new Text(Lang.Texts[8],10, 10,BitmapFont.bitmapFont34);
+
             SetTexts();
+
             Resize();
         }
 
-        void ClickMenu(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
+        void ClickMenu(object sender, EventArgs e) {
+            if (afterrestart) System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
+
+            ((Menu)Rabcr.screen).GoToMenu(new MainMenu());
+        }
 
         void Move(object sender, EventArgs e) {
             start=-1;
@@ -116,7 +124,7 @@ namespace rabcrClient {
             #region Settings
             int imax=end+1;
             if (imax>=settings.Count)imax=settings.Count;
-            for (int i=start; i<imax; i++){
+            for (int i=start; i<imax && i>=0; i++){
                 settings[i].Draw(spriteBatch);
             }
             #endregion
@@ -143,6 +151,7 @@ namespace rabcrClient {
         }
 
         public override void Resize() {
+           // PageHeight=settings.Count*90-Global.WindowHeight;
             scrollbar.Scroll(0);
             Move(null,new EventArgs());
             worldsTarget?.Dispose();
@@ -162,11 +171,12 @@ namespace rabcrClient {
 
         void SetTexts() {
             settings=new List<SettingItem> {
-                // Klávesnice
+
+            #region Keyboard
                 new SettingHeader(Lang.Texts[98])
             };
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[100], Setting.KeyLeft);
+                SettingKey button=new(tex, Lang.Texts[100], Setting.KeyLeft);
                 button.Click+=ClickKeyLeft;
                 settings.Add(button);
 
@@ -176,7 +186,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[102], Setting.KeyRight);
+                SettingKey button=new(tex, Lang.Texts[102], Setting.KeyRight);
                 button.Click+=ClickKeyRight;
                 settings.Add(button);
 
@@ -186,7 +196,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[104], Setting.KeyJump);
+                SettingKey button=new(tex, Lang.Texts[104], Setting.KeyJump);
                 button.Click+=ClickKeyJump;
                 settings.Add(button);
 
@@ -196,7 +206,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[106], Setting.KeyRun);
+                SettingKey button=new(tex, Lang.Texts[106], Setting.KeyRun);
                 button.Click+=ClickKeyRun;
                 settings.Add(button);
 
@@ -206,7 +216,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[1513], Setting.KeyFlyMode);
+                SettingKey button=new(tex, Lang.Texts[1513], Setting.KeyFlyMode);
                 button.Click+=ClickKeyRun;
                 settings.Add(button);
 
@@ -216,7 +226,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[108], Setting.KeyInventory);
+                SettingKey button=new(tex, Lang.Texts[108], Setting.KeyInventory);
                 button.Click+=ClickKeyInventory;
                 settings.Add(button);
 
@@ -226,7 +236,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[110], Setting.KeyMessage);
+                SettingKey button=new(tex, Lang.Texts[110], Setting.KeyMessage);
                 button.Click+=ClickKeyMessage;
                 settings.Add(button);
 
@@ -236,7 +246,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[112], Setting.KeyDropItem);
+                SettingKey button=new(tex, Lang.Texts[112], Setting.KeyDropItem);
                 button.Click+=ClickKeyDropItem;
                 settings.Add(button);
 
@@ -246,7 +256,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[114], Setting.KeyExit);
+                SettingKey button=new(tex, Lang.Texts[114], Setting.KeyExit);
                 button.Click+=ClickKeyExit;
                 settings.Add(button);
 
@@ -256,63 +266,43 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingKey button=new SettingKey(tex, Lang.Texts[1514], Setting.KeyShowInfo);
-                button.Click+=ClickKeyRun;
-                settings.Add(button);
-
-                void ClickKeyRun() {
+                SettingKey button=new(tex, Lang.Texts[1514], Setting.KeyShowInfo);
+                button.Click += () => {
                     Setting.KeyShowInfo=button.Key;
                     Global.ChangedSettings=true;
-                }
+                };
+                settings.Add(button);
             }
+            {
+                SettingOnOff button=new(tex, Lang.Texts[1615], Setting.InvertedMouse);
+                button.Click += () => {
+                    Setting.InvertedMouse=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+            #endregion
 
-            // Herních prvky
+            #region Camera options
+            // Camera text
             settings.Add(new SettingHeader(Lang.Texts[123]));
-            {
-                SettingOnOff button = new SettingOnOff(tex, Lang.Texts[124], Constants.AnimationsControls);
-                button.Click+=ClickAnimations;
-                settings.Add(button);
 
-                void ClickAnimations() {
-                    Constants.AnimationsControls=button.ON;
-                    Global.ChangedSettings=true;
-                }
-            }
-            {
-                SettingOnOff button = new SettingOnOff(tex, Lang.Texts[125], Constants.AnimationsGame);
-                button.Click+=ClickAnimations;
-                settings.Add(button);
-
-                void ClickAnimations() {
-                    Constants.AnimationsGame=button.ON;
-                    Global.ChangedSettings=true;
-                }
-            }
-            {
-                SettingMovemer button=new SettingMovemer(Lang.Texts[354], line, movemer) { 
+            //Brightness
+            { 
+                SettingMovemer button=new(Lang.Texts[354], line, movemer) {
                     Scale=Setting.NightBrightness
                 };
-                button.Click+=ClickNightBrightness;
-                settings.Add(button);
-
-                void ClickNightBrightness() {
+                button.Click += () => { 
                     Setting.NightBrightness=button.Scale;
                     Global.ChangedSettings=true;
-                }
-            }
-            //{
-            //    SettingOnOff button = new SettingOnOff(tex, Lang.Texts[339], Constants.Shadow);
-            //    button.Click+=ClickAnimations;
-            //    settings.Add(button);
-
-            //    void ClickAnimations() {
-            //        Constants.Shadow=button.ON;
-            //        Global.ChangedSettings=true;
-            //    }
-            //}
+                };
+                settings.Add(button);
+            }   
+            
+            // Zoom
             {
                 int zoom=4;
-                switch (Setting.Zoom){
+                switch (Setting.Zoom) {
                     case 1: zoom=0; break;
                     case 1.25f: zoom=1; break;
                     case 1.5f:zoom=2; break;
@@ -322,40 +312,37 @@ namespace rabcrClient {
                     case 3: zoom=6; break;
                     case 4: zoom=7; break;
                     case 5: zoom=8; break;
+                    case 6: zoom=9; break;
+                    case 7: zoom=10; break;
                 }
 
-                SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[126], new string[]{ Lang.Texts[272], Lang.Texts[273], Lang.Texts[274], Lang.Texts[275],Lang.Texts[276],Lang.Texts[277],Lang.Texts[278],Lang.Texts[279],Lang.Texts[280]},zoom);
+                SettingSwitcher button=new(tex, Lang.Texts[126], new string[]{ Lang.Texts[272], Lang.Texts[273], Lang.Texts[274], Lang.Texts[275],Lang.Texts[276],Lang.Texts[277],Lang.Texts[278],Lang.Texts[279],Lang.Texts[1595],Lang.Texts[1596],Lang.Texts[280]},zoom);
                 button.Click+=ClickZoom;
                 settings.Add(button);
 
                 void ClickZoom() {
-                    switch (button.selected){
-                        case 0: Setting.Zoom=1; break;
-                        case 1: Setting.Zoom=1.25f; break;
-                        case 2: Setting.Zoom=1.5f; break;
-                        case 3: Setting.Zoom=1.75f; break;
-                        case 4: Setting.Zoom=2; break;
-                        case 5: Setting.Zoom=2.5f; break;
-                        case 6: Setting.Zoom=3f; break;
-                        case 7: Setting.Zoom=4f; break;
-                        case 8: Setting.Zoom=5f; break;
-                    }
+                    Setting.Zoom = button.selected switch {
+                        0 => 1,
+                        1 => 1.25f,
+                        2 => 1.5f,
+                        3 => 1.75f,
+                        4 => 2,
+                        5 => 2.5f,
+                        6 => 3f,
+                        7 => 4f,
+                        8 => 5f,
+                        9 => 6f,
+                        10 => 7f,
+                        _ => throw new NotImplementedException(),
+                    };
                     ((Menu)Rabcr.screen).RefreshBackground();
                     Global.ChangedSettings=true;
                 }
             }
+            
+            // Window scale
             {
-                SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[128], new string[]{ Lang.Texts[148], Lang.Texts[149], Lang.Texts[150]}, (int)Setting.currentScale);
-                button.Click+=ClickScale;
-                settings.Add(button);
-
-                void ClickScale() {
-                    Setting.currentScale=(Setting.Scale)button.selected;
-                    Global.ChangedSettings=true;
-                }
-            }
-            {
-                SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[130], new string[]{ Lang.Texts[151], Lang.Texts[152], Lang.Texts[153]}, (int)Setting.currentWindow);
+                SettingSwitcher button=new(tex, Lang.Texts[130], new string[]{ Lang.Texts[151], Lang.Texts[152], Lang.Texts[153]}, (int)Setting.currentWindow);
                 button.Click+=ClickWindow;
                 settings.Add(button);
 
@@ -365,8 +352,22 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
+
+            //Scale
+            //{
+            //    SettingSwitcher button=new(tex, Lang.Texts[128], new string[]{ Lang.Texts[148], Lang.Texts[149], Lang.Texts[150]}, (int)Setting.currentScale);
+            //    button.Click+=ClickScale;
+            //    settings.Add(button);
+
+            //    void ClickScale() {
+            //        Setting.currentScale=(Setting.Scale)button.selected;
+            //        Global.ChangedSettings=true;
+            //    }
+            //}
+
+            //FPS
             {
-                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[132], Setting.Fps);
+                SettingOnOff button=new(tex, Lang.Texts[132], Setting.Fps);
                 button.Click+=ClickFps;
                 settings.Add(button);
 
@@ -375,6 +376,215 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
+            #endregion
+
+            #region Graphics
+
+            #endregion
+
+            // Animations
+            settings.Add(new SettingHeader(Lang.Texts[1612]));
+          
+            // Vignetting
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1597], Setting.Vignetting);
+                button.Click += () => {
+                    Setting.Vignetting=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // Fog
+            {
+                SettingSwitcher button = new(tex, Lang.Texts[1598], new string[]{Lang.Texts[1602], Lang.Texts[154], Lang.Texts[1603] }, (int)Setting.Fog);
+                button.Click += () => {
+                    Setting.Fog=(Setting.FogTypes)button.selected;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // Waving elements
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1599], Setting.WavingElements);
+                button.Click += () => {
+                    Setting.WavingElements=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // Interaction mess - jump, destroing mess
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1600], Setting.InteractionMess);
+                button.Click += () => {
+                    Setting.InteractionMess=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // Clouds
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1601], Setting.Clouds);
+                button.Click += () => {
+                    Setting.Clouds=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+               
+            // FallingLeaves
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1608], Setting.FallingLeaves);
+                button.Click += () => {
+                    Setting.FallingLeaves=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+             
+            // BackgroundFancy
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1610], Setting.BackgroundFancy);
+                button.Click += () => {
+                    Setting.BackgroundFancy=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+            
+            // BetterSnowAndRain
+            {
+                SettingOnOff button = new(tex, Lang.Texts[1611], Setting.BetterSnowAndRain);
+                button.Click += () => {
+                    Setting.BetterSnowAndRain=button.ON;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // AA
+            settings.Add(new SettingHeader(Lang.Texts[1613]));
+          
+            // MultiSampling
+            {
+                int index=-1;
+                index = (int)Setting.Multisapling switch {
+                    2 => 1,
+                    4 => 2,
+                    8 => 3,
+                    16 => 4,
+                    _ => 0,
+                };
+                SettingSwitcher button = new(tex, Lang.Texts[1609], new string[]{ Lang.Texts[87/*272*/], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]}, index);
+                button.Click += () => {
+                    Setting.Multisapling = button.selected switch {
+                        0 => 1,
+                        1 => 2,
+                        2 => 4,
+                        3 => 8,
+                        4 => 16,
+                        _ => 0
+                    };
+                    Global.ChangedSettings = true;
+                    afterrestart=true;
+                  //  System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
+                };
+                settings.Add(button);
+            }
+
+            // Upscaling
+            {
+                //float maxUpscaling=20f;
+                //if (Graphics.GraphicsProfile==GraphicsProfile.HiDef){
+                //    float scale = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                //    if (scale<maxUpscaling)maxUpscaling=scale;
+
+                //    float scale2 = 8192f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                //    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                //} else { 
+                //    float scale = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                //    if (scale<maxUpscaling) maxUpscaling=scale;
+
+                //    float scale2 = 4096f / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                //    if (scale2<maxUpscaling) maxUpscaling=scale2;
+                //}
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==16) Setting.UpScalingSuperSapling=8;
+                //} 
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==8) Setting.UpScalingSuperSapling=4;
+                //}
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==4) Setting.UpScalingSuperSapling=2;
+                //}
+
+                //if (Setting.UpScalingSuperSapling>maxUpscaling) { 
+                //    if (Setting.UpScalingSuperSapling==2) Setting.UpScalingSuperSapling=1;
+                //}
+               // Setting.UpScalingSuperSapling=1;
+                int index=-1;
+                index = (int)Setting.UpScalingSuperSapling switch {
+                    -1 => 0,
+                    0 => 0,
+                    1 => 1,
+                    2 => 2,
+                    4 => 3,
+                   // 8 => 4,
+                  //  16 => 5,
+                    _ => 0,
+                };
+                string[] res;
+               // if (maxUpscaling>=16) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604], Lang.Texts[1605]};
+              //  else if (maxUpscaling>=8) res=new string[]{ Lang.Texts[1607], Lang.Texts[272], Lang.Texts[276], Lang.Texts[279], Lang.Texts[1604]};
+               // else 
+               /* if (maxUpscaling>=8) */res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]/*, Lang.Texts[1604]*/};
+                //if (maxUpscaling>=4) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276], Lang.Texts[279]};
+                //else if (maxUpscaling>=2) res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87], Lang.Texts[276]};
+                //else res=new string[]{ Lang.Texts[1607], Lang.Texts[/*272*/87]};
+                SettingSwitcher button = new(tex, Lang.Texts[1606], res, index);
+                button.Click += () => {
+                    Setting.UpScalingSuperSapling = button.selected switch {
+                        0 => 0,
+                        1 => 1,
+                        2 => 2,
+                        3 => 4,
+                    //    4 => 8,
+                       // 5 => 16,
+                        _ => -1
+                    };
+                  //  if (Setting.UpScalingSuperSapling>maxUpscaling) Setting.UpScalingSuperSapling=1;
+                    Global.ChangedSettings = true;
+                };
+                settings.Add(button);
+            }
+
+            // Graphics profile
+            {
+                SettingSwitcher button = new(tex, Lang.Texts[319], new string[]{ Lang.Texts[318], Lang.Texts[317] }, (int)Setting.GraphicsProfile);
+                button.Click += () => {
+                    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+                    Global.ChangedSettings=true;
+                    afterrestart=true;
+                    //System.Windows.Forms.MessageBox.Show(Lang.Texts[1616]);
+                };
+                settings.Add(button);
+            }
+
+            //{
+            //    SettingSwitcher button = new(tex, Lang.Texts[125], new string[]{ Lang.Texts[1587], Lang.Texts[1588], Lang.Texts[1589], Lang.Texts[1590]}, (int)Setting.AnimationsGame);
+            //    button.Click+=ClickAnimations;
+            //    settings.Add(button);
+
+            //    void ClickAnimations() {
+            //        Setting.AnimationsGame=(Setting.GameAnimations)button.selected;
+            //        Global.ChangedSettings=true;
+            //    }
+            //}
+
+
             //{
             //    SettingSwitcher button=new SettingSwitcher(tex, Lang.Texts[319], new string[]{ Lang.Texts[317], Lang.Texts[318]},(int)Setting.GraphicsProfile);
             //    button.Click+=ClickGraphicsProfile;
@@ -387,7 +597,7 @@ namespace rabcrClient {
             //    }
             //}
             if (File.Exists(@"C:\Program Files\NVIDIA Corporation\Control Panel Client\nvcplui.exe")){
-                SettingButton button=new SettingButton(tex,Lang.Texts[342]);
+                SettingButton button=new(tex,Lang.Texts[342]);
                 button.Click+=ClickGraphicsProfile;
                 settings.Add(button);
 
@@ -399,26 +609,61 @@ namespace rabcrClient {
                  //   System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
                 }
             } else {
-                SettingMessage button=new SettingMessage(Lang.Texts[340]);
+                SettingMessage button=new(Lang.Texts[340]);
                 settings.Add(button);
             }
+            {
+                try {
+                    List<(string,long)> AdapterNames = new();
+                    using (var searcher = new ManagementObjectSearcher("select * from Win32_VideoController")) {
+                        foreach (ManagementObject obj in searcher.Get()) {
+                            long.TryParse(obj["AdapterRAM"].ToString(), out long u);
+                            AdapterNames.Add(new (obj["Name"].ToString(), u));
+                        }
+                    }
+                    if (AdapterNames.Count>1){ 
+                        var GraphicsCard = Rabcr.Game.GraphicsDevice;
+                        foreach (GraphicsAdapter EnumeratedAdapter in GraphicsAdapter.Adapters) {
 
-           // {
-               // SettingHeader button=new SettingHeader(Lang.Texts[319]);
-                //button.Click+=ClickGraphicsProfile;
-                //settings.Add(button);
+                            if (EnumeratedAdapter == GraphicsCard.Adapter) {
+                                string usingGPU=EnumeratedAdapter.Description;
+                                foreach (var z in AdapterNames) { 
+                                    if (z.Item1==usingGPU) {
+                                        long best=0;
+                                        foreach (var p in AdapterNames) {
+                                            if (p.Item2>best) best=p.Item2;
+                                        }
+                                        if (z.Item2!=best) { 
+                                            settings.Add(new SettingHeader(Lang.Texts[1591]));
+                                            settings.Add(new SettingMessage(Lang.Texts[1592]));
+                                            settings.Add(new SettingMessage(Lang.Texts[1593]));
+                                            settings.Add(new SettingMessage(Lang.Texts[1594]+usingGPU));
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }    
+                    }
+                } catch { }
+            }
+            Move(null, new EventArgs());
+            // {
+            // SettingHeader button=new SettingHeader(Lang.Texts[319]);
+            //button.Click+=ClickGraphicsProfile;
+            //settings.Add(button);
 
-                //void ClickGraphicsProfile() {
-                //    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
-                //    Global.ChangedSettings=true;
-                //    System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
-                //}
-          //  }
+            //void ClickGraphicsProfile() {
+            //    Setting.GraphicsProfile=(GraphicsProfile)button.selected;
+            //    Global.ChangedSettings=true;
+            //    System.Windows.Forms.MessageBox.Show(Lang.Texts[320]);
+            //}
+            //  }
 
-            // Hlasitost
+            #region Volume
             settings.Add(new SettingHeader(Lang.Texts[134]));
             {
-                SettingMovemer button=new SettingMovemer(Lang.Texts[135], line, movemer){ Scale=Setting.VolumeMusic };
+                SettingMovemer button=new(Lang.Texts[135], line, movemer){ Scale=Setting.VolumeMusic };
                 button.Click+=ClickVolumeMusic;
                 settings.Add(button);
 
@@ -428,7 +673,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingMovemer button=new SettingMovemer(Lang.Texts[137], line, movemer){ Scale=Setting.VolumeEffects };
+                SettingMovemer button=new(Lang.Texts[137], line, movemer){ Scale=Setting.VolumeEffects };
                 button.Click+=ClickVolumeEffects;
                 settings.Add(button);
 
@@ -437,11 +682,22 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
+            #endregion
 
-            // Menu
+            #region Menu
             settings.Add(new SettingHeader(Lang.Texts[114]));
             {
-                SettingSwitcher button=new SettingSwitcher(tex,Lang.Texts[139], new string[] { Lang.Texts[148], Lang.Texts[154], Lang.Texts[155],Lang.Texts[156]}, Setting.slideChangeTime==0 ? 0 : (Setting.slideChangeTime==0.1f ? 1 : (Setting.slideChangeTime==0.05f ? 2 : (Setting.slideChangeTime==0.01f ? 3 : 0))));
+                SettingOnOff button = new(tex, Lang.Texts[124], Constants.AnimationsControls);
+                button.Click+=ClickAnimations;
+                settings.Add(button);
+
+                void ClickAnimations() {
+                    Constants.AnimationsControls=button.ON;
+                    Global.ChangedSettings=true;
+                }
+            }
+            {
+                SettingSwitcher button=new(tex,Lang.Texts[139], new string[] { Lang.Texts[148], Lang.Texts[154], Lang.Texts[155],Lang.Texts[156]}, Setting.slideChangeTime==0 ? 0 : (Setting.slideChangeTime==0.1f ? 1 : (Setting.slideChangeTime==0.05f ? 2 : (Setting.slideChangeTime==0.01f ? 3 : 0))));
                 button.Click+=ClickSlideChangeTime;
                 settings.Add(button);
 
@@ -456,7 +712,7 @@ namespace rabcrClient {
                 }
             }
             {
-                SettingOnOff button=new SettingOnOff(tex, Lang.Texts[141], Setting.Background);
+                SettingOnOff button=new(tex, Lang.Texts[141], Setting.Background);
                 button.Click+=ClickBackground;
                 settings.Add(button);
 
@@ -465,19 +721,20 @@ namespace rabcrClient {
                     Global.ChangedSettings=true;
                 }
             }
+            #endregion
 
-            // Hráč
+            #region Player
             //if (!Global.OnlineAccount) {
             settings.Add(new SettingHeader(Lang.Texts[99]));
             {
-                SettingOnOff button = new SettingOnOff(tex, Lang.Texts[143], !Global.YoungPlayer);
+                SettingOnOff button = new(tex, Lang.Texts[143], !Global.YoungPlayer);
                 button.Click+=ClickMaturePlayer;
                 settings.Add(button);
 
                 void ClickMaturePlayer() {
                     button.ON=false;
                     if (Global.YoungPlayer) {
-                        FormTest18Plus formTest = new FormTest18Plus();
+                        FormTest18Plus formTest = new();
                         formTest.ShowDialog();
                         if (formTest.OK) {
                             button.ON=true;
@@ -491,11 +748,13 @@ namespace rabcrClient {
                     }
                 }
             }
-      //  } else {
+            #endregion
+            //  } else {
             //    settings.Add(new SettingHeader(Lang.Texts[145]+" "+(Global.YoungPlayer ? Lang.Texts[146]: Lang.Texts[147])));
-           // }
+            // }
 
-            Move(null, new EventArgs());
+
+        
         }
 
         void SetWindow() {
