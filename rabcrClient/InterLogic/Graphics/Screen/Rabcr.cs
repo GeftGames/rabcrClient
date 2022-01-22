@@ -148,7 +148,8 @@ namespace rabcrClient {
 
             //    Graphics.RasterizerState.MultiSampleAntiAlias=true;
             GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
-            void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
+
+            static void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
                 if (Setting.GraphicsProfile==GraphicsProfile.HiDef) { 
                     try { 
                         e.GraphicsDeviceInformation.GraphicsProfile = Setting.GraphicsProfile;

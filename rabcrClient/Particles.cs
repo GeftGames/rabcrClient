@@ -170,7 +170,7 @@ namespace rabcrClient {
         public float VSpeed;
         public Rectangle srcrec;
 
-        //  public Color Color = ;
+        public Color color = Color.White;
         readonly float size;
         public FallingLeave(int x, int y, /*float size,*/ bool leftWind, bool rain, Rectangle src) {
             
@@ -198,7 +198,7 @@ namespace rabcrClient {
                 position: /*new Vector2(*/Position/*.X, Position.Y)*/,
                 sourceRectangle: srcrec,
                 effects: SpriteEffects.None,
-                color: Color.White*alpha,
+                color: color*alpha,
 				scale: /*1f*/0.5f*size+0.5f,
                 rotation: angle,
                 origin: /*vecOrigin*/Vector2.Zero,

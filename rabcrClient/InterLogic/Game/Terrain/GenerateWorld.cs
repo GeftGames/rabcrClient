@@ -453,7 +453,7 @@ namespace rabcrClient {
 
             GChunk chunk = terrain[x];
 
-            GenCactus cactus = new GenCactus(x, y);
+            GenCactus cactus = new(x, y);
             LiveObjects.Add(cactus);
 
             int to=y-height;
@@ -561,17 +561,18 @@ namespace rabcrClient {
 
             for (int x=0; x<terrain.Count; x++) {
                 GChunk chunk=terrain[x];
-                if (chunk.LightPosFull < 124) {
-                    if (chunk.SolidBlocks[chunk.LightPosFull+1]==0) {
-                        int y=chunk.LightPosFull+1;
-                        for (; y<125; y++) { 
-                            if (chunk.SolidBlocks[y]!=0) {
-                                chunk.LightPosFull=(byte)y;
+                int nLp=0;
+             //   if (chunk.LightPosFull < 124) {
+                 //   if (chunk.SolidBlocks[chunk.LightPosFull-1]==0) {
+                       // int y=chunk.LightPosFull-1;
+                        for (; nLp<125; nLp++) { 
+                            if (chunk.SolidBlocks[nLp]!=0) {
+                                chunk.LightPosFull=(byte)nLp;
                                 break;
                             }
                         } 
-                    }
-                }
+                 //   }
+              //  }
             }
 
             Save("Earth");

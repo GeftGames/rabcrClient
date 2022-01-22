@@ -241,6 +241,7 @@ namespace rabcrClient {
                 case (ushort)Items.SawIron: return new Vector2(10, 6);
                 case (ushort)Items.SawSteel: return new Vector2(10, 6);
                                         
+                case (ushort)Items.AxeStone: return new Vector2(8, 8);
                 case (ushort)Items.AxeAluminium: return new Vector2(8, 8);
                 case (ushort)Items.AxeBronze: return new Vector2(8, 8);
                 case (ushort)Items.AxeCopper: return new Vector2(8, 8);

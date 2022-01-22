@@ -10,8 +10,8 @@ using System.Windows.Forms;
 
 namespace rabcrClient {
     public partial class FormError : Form {
-        Exception exception;
-        DateTime errorTime;
+        readonly Exception exception;
+        readonly DateTime errorTime;
         public FormError(Exception ex, DateTime dt) {
             InitializeComponent();
             exception=ex;
@@ -23,12 +23,12 @@ namespace rabcrClient {
             MessageBox.Show("Error in code appeard. You can save error detail or send anonymously to developers or just close and do nothing.");
         }
 
-        private void button3_Click(object sender, EventArgs e) {
+        private void Button3_Click(object sender, EventArgs e) {
             Close();
             Environment.Exit(0);
         }
 
-        private void buttonSend_Click(object sender, EventArgs e) {
+        private void ButtonSend_Click(object sender, EventArgs e) {
             buttonSend.Enabled=false;
             buttonSend.BackColor=System.Drawing.Color.Gray;
             //   DialogResult dr=MessageBox.Show(text+Environment.NewLine+Environment.NewLine+details+Environment.NewLine+ex.Message, cap, MessageBoxButtons.YesNo, MessageBoxIcon.Error);

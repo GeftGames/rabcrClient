@@ -63,7 +63,7 @@ namespace rabcrClient {
         public static float VolumeMusic=.5f;
         public static float VolumeEffects=1;
         public static int CurrentLanguage;
-        public static float UpScalingSuperSapling=1f;
+        public static float UpScalingSuperSapling=4f;
         public static int Multisapling=1;
         public static bool BackgroundFancy=true;
         public static bool Clouds=true;
