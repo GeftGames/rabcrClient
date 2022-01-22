@@ -9,11 +9,12 @@ using System.Net;
 using System.Net.Sockets;
 
 namespace rabcrClient {
+    #if MULTIPLAYER
     partial class Multiplayer {
         int playerId=-1;
         #region varibles
-        List<ChangeTerrain> terrainChanges = new List<ChangeTerrain>();
-        List<DataToSend> Queue = new List<DataToSend>();
+        List<ChangeTerrain> terrainChanges = new();
+        List<DataToSend> Queue = new();
         const string toServer = "{Server}";
         const string toEveryone = "{Everyone}";
         string SomeoneWantTeleportToYouName;
@@ -49,7 +50,7 @@ namespace rabcrClient {
         DateTime tpPlayerTime;
         string tpPlayerMsgWaiting;
         int safeSpawn = 0;
-        List<Player> players = new List<Player>();
+        List<Player> players = new();
         //   bool UseBackColor;
         //    Color BackColor;
         // bool UseGedo;
@@ -237,9 +238,9 @@ namespace rabcrClient {
 
             if (ipAddress.ToString()==IPAddress.Any.ToString()) { ipAddress=IPAddress.Loopback; ip=IPAddress.Loopback; }
 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
+            IPEndPoint ipEndPoint = new(ipAddress, port);
 
-            Console.WriteLine("Připojování: "+ipAddress.ToString()+":"+port);
+            Debug.WriteLine("Připojování: "+ipAddress.ToString()+":"+port);
 
             clientSocket.BeginConnect(ipEndPoint, new AsyncCallback(OnCheck), null);
         }
@@ -252,9 +253,9 @@ namespace rabcrClient {
 
             if (ipAddress.ToString()==IPAddress.Any.ToString()) ipAddress=IPAddress.Loopback;
 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
+            IPEndPoint ipEndPoint = new(ipAddress, port);
 
-            Console.WriteLine("Znovupřipojování: "+ipAddress.ToString()+":"+port);
+            Debug.WriteLine("Znovupřipojování: "+ipAddress.ToString()+":"+port);
 
             clientSocket.BeginConnect(ipEndPoint, new AsyncCallback(OnCheck), null);
         }
@@ -271,8 +272,9 @@ namespace rabcrClient {
                 //    Message = ""
                 //};
 
-                List<byte> bytesToSend=new List<byte>();
-                bytesToSend.Add((byte)Command.Check);
+                List<byte> bytesToSend = new() {
+                    (byte)Command.Check
+                };
                 AddStringToByteList(bytesToSend, Setting.Name);
 
                 byteData = bytesToSend.ToArray();
@@ -1010,13 +1012,13 @@ namespace rabcrClient {
                         if (success) {
                             playerId = byteData[3] | (byteData[4]>>8) | (byteData[5]>>16) | (byteData[6]>>24);
 
-                            //PlayerX = (byteData[7] | (byteData[8]>>8));
-                            //PlayerY = byteData[9];
+                        //PlayerX = (byteData[7] | (byteData[8]>>8));
+                        //PlayerY = byteData[9];
 
-                            List<byte> bytesToSend = new List<byte>();
-                            bytesToSend.Add((byte)Command.PlayerPosition);
-                           // bytesToSend.Add((byte)LoginType.BasicLogin);
-                            AddStringToByteList(bytesToSend, Setting.Name);
+                        List<byte> bytesToSend = new() { (byte)Command.PlayerPosition
+                        };
+                        // bytesToSend.Add((byte)LoginType.BasicLogin);
+                        AddStringToByteList(bytesToSend, Setting.Name);
 
                             Queue.Add(new DataToSend {
                                 Bytes = bytesToSend.ToArray(),
@@ -1148,26 +1150,26 @@ namespace rabcrClient {
 
                             case LoginType.FirstConnectPassword:
                                 {
-                                    using (Password p = new Password()) {
-                                        p.ShowDialog();
-                                        if (p.Output!=null) {
-                                            //Data msg = new Data {
-                                            //    Cmd=Command.SetPassword,
-                                            //    //    From=Setting.Name,
-                                            //    To=toServer,
-                                            //    Message=p.Output
-                                            //};
+                            using Password p = new();
+                            p.ShowDialog();
+                            if (p.Output != null) {
+                                //Data msg = new Data {
+                                //    Cmd=Command.SetPassword,
+                                //    //    From=Setting.Name,
+                                //    To=toServer,
+                                //    Message=p.Output
+                                //};
 
-                                            //Queue.Add(new DataToSend {
-                                            //    Bytes=msg.ToByte(),
-                                            //    Importance=Importance.VeryImportant
-                                            //});
-                                            //clientSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
-                                        } else {
-                                            clientSocket.Disconnect(false);
-                                        }
-                                    }
-                                }
+                                //Queue.Add(new DataToSend {
+                                //    Bytes=msg.ToByte(),
+                                //    Importance=Importance.VeryImportant
+                                //});
+                                //clientSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
+                            }
+                            else {
+                                clientSocket.Disconnect(false);
+                            }
+                        }
                                 break;
 
                             case LoginType.LoginWithPassword:
@@ -1203,10 +1205,10 @@ namespace rabcrClient {
                             //    To=toServer,
                             //    Message=""
                             //};
-                                List<byte> bytesToSend = new List<byte>();
-                                bytesToSend.Add((byte)Command.Login);
-                                bytesToSend.Add((byte)LoginType.BasicLogin);
-                                AddStringToByteList(bytesToSend, Setting.Name);
+                            List<byte> bytesToSend = new() { (byte)Command.Login,
+                                (byte)LoginType.BasicLogin
+                            };
+                            AddStringToByteList(bytesToSend, Setting.Name);
 
                                 Queue.Add(new DataToSend {
                                     Bytes = bytesToSend.ToArray(),
@@ -1226,7 +1228,7 @@ namespace rabcrClient {
                                     //    To = toServer,
                                     //    Message = ""
                                     //};
-                                    List<byte> bytesToSend = new List<byte>();
+                                    List<byte> bytesToSend = new();
                                     bytesToSend.Add((byte)Command.Login);
                                     bytesToSend.Add((byte)LoginType.FirstConnect);
                                     AddStringToByteList(bytesToSend, Setting.Name);
@@ -1453,7 +1455,7 @@ namespace rabcrClient {
                             Debug.WriteLine("G|"+version+'|'+serverMessage+'|'+joinedPlayers+'|'+maxplayers);
 
                             // Ask server what I need to join server
-                            List<byte> bytesToSend=new List<byte>();
+                            List<byte> bytesToSend=new();
                             bytesToSend.Add((byte)Command.GetStatus);
 
                             Queue.Add(new DataToSend {
@@ -1567,15 +1569,16 @@ namespace rabcrClient {
 
             if (Queue.Count == 0) {
                 // if (cmd==Command.Blank)
-                 //   System.Threading.Thread.Sleep(10);
-               //  else System.Threading.Thread.Sleep(5);
+                //   System.Threading.Thread.Sleep(10);
+                //  else System.Threading.Thread.Sleep(5);
                 //Data data = new Data {
                 //    //   From=Setting.Name,
                 //    To = toServer,
                 //    Cmd = Command.Blank
                 //};
-                List<byte>bytesToSend=new List<byte>();
-                bytesToSend.Add((byte)Command.Blank);
+                List<byte> bytesToSend = new() {
+                    (byte)Command.Blank
+                };
                 try {
                     byte[] bytes = bytesToSend.ToArray();
                     clientSocket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
@@ -1797,8 +1800,9 @@ namespace rabcrClient {
                 //    To=toServer,
                 //    Message=""
                 //};
-                List<byte> bytesToSend=new List<byte>();
-                bytesToSend.Add((byte)Command.ConnectDuringGame);
+                List<byte> bytesToSend = new() {
+                    (byte)Command.ConnectDuringGame
+                };
                 AddStringToByteList(bytesToSend,Setting.Name);
 
                 byteData=bytesToSend.ToArray();
@@ -1930,4 +1934,5 @@ namespace rabcrClient {
         }
 
     }
+    #endif
 }

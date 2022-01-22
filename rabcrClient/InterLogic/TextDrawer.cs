@@ -156,61 +156,61 @@ namespace rabcrClient {
         }
 
         static bool IsArabicChar(char ch){
-            switch (ch){
-                case 'ا': return true;
-                case 'ب': return true;
-                case 'ت': return true;
-                case 'ث': return true;
-                case 'ج': return true;
-                case 'ح': return true;
-                case 'خ': return true;
-                case 'د': return true;
-                case 'ذ': return true;
-                case 'ر': return true;
-                case 'ز': return true;
-                case 'س': return true;
-                case 'ش': return true;
-                case 'ص': return true;
-                case 'ض': return true;
-                case 'ط': return true;
-                case 'ظ': return true;
-                case 'ع': return true;
-                case 'غ': return true;
-                case 'ف': return true;
-                case 'ق': return true;
-                case 'ك': return true;
-                case 'ل': return true;
-                case 'م': return true;
-                case 'ه': return true;
-                case 'ي': return true;
-                case 'و': return true;
-                case 'أ': return true;
-                case 'إ': return true;
-                case 'ؤ': return true;
-                case 'ئ': return true;
-                case 'آ': return true;
-                case 'ى': return true;
-                case 'ة': return true;
-                case 'ﻻ': return true;
-                case 'ن': return true;
-                case 'ﻹ': return true;
-                case 'ڭ': return true;
-                case 'ە': return true;
-                case 'ۇ': return true;
-                case 'چ': return true;
-                case 'ۈ': return true;
-                case 'ھ': return true;
-                case 'ک': return true;
-                case 'ی': return true;
-                case 'ہ': return true;
-                case 'ڑ': return true;
-                case 'ے': return true;
-                case 'ې': return true;
-                case 'ۆ': return true;
-                case 'ں': return true;
-                case 'گ': return true;
-            }
-            return false;
+            return ch switch {
+                'ا' => true,
+                'ب' => true,
+                'ت' => true,
+                'ث' => true,
+                'ج' => true,
+                'ح' => true,
+                'خ' => true,
+                'د' => true,
+                'ذ' => true,
+                'ر' => true,
+                'ز' => true,
+                'س' => true,
+                'ش' => true,
+                'ص' => true,
+                'ض' => true,
+                'ط' => true,
+                'ظ' => true,
+                'ع' => true,
+                'غ' => true,
+                'ف' => true,
+                'ق' => true,
+                'ك' => true,
+                'ل' => true,
+                'م' => true,
+                'ه' => true,
+                'ي' => true,
+                'و' => true,
+                'أ' => true,
+                'إ' => true,
+                'ؤ' => true,
+                'ئ' => true,
+                'آ' => true,
+                'ى' => true,
+                'ة' => true,
+                'ﻻ' => true,
+                'ن' => true,
+                'ﻹ' => true,
+                'ڭ' => true,
+                'ە' => true,
+                'ۇ' => true,
+                'چ' => true,
+                'ۈ' => true,
+                'ھ' => true,
+                'ک' => true,
+                'ی' => true,
+                'ہ' => true,
+                'ڑ' => true,
+                'ے' => true,
+                'ې' => true,
+                'ۆ' => true,
+                'ں' => true,
+                'گ' => true,
+                _ => false,
+            };
         }
 
         void BuildTextArabic(string txt){
@@ -456,13 +456,10 @@ namespace rabcrClient {
                 'ے' => false,
                 #if DEBUG
                 _ => throw new Exception("Missing arabic letter " + ch),
+                #else
+                _=> true
                 #endif
             };
-
-#if DEBUG
-#else
-            return true;
-#endif
         }
 
         static bool HaveFinalForm(char ch){
@@ -521,12 +518,10 @@ namespace rabcrClient {
                 'ە' => true,
                 #if DEBUG
                 _ => throw new Exception("Missing arabic letter " + ch),
+                #else
+                _ => true
                 #endif
             };
-
-#if !DEBUG
-            return true;
-#endif
         }
 
         public static char[] BuildArabicText(string txt) {
@@ -1493,4 +1488,4 @@ namespace rabcrClient {
             }
         }
     }
- }
+}

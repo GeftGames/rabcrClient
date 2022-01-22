@@ -237,7 +237,7 @@ namespace rabcrClient {
             };
             // Sex
             {
-                SettingSwitcher button=new SettingSwitcher(tex,Lang.Texts[83], new string[]{ Lang.Texts[85], Lang.Texts[88] }, (int)Setting.sex);
+                SettingSwitcher button=new(tex,Lang.Texts[83], new string[]{ Lang.Texts[85], Lang.Texts[88] }, (int)Setting.sex);
                 button.Click+=ClickChangeSex;
                 settings.Add(button);
 
@@ -249,7 +249,7 @@ namespace rabcrClient {
             }
             // Mature
             {
-                SettingSwitcher button=new SettingSwitcher(tex,Lang.Texts[89], new string[]{Lang.Texts[336],Lang.Texts[337],Lang.Texts[338] },Setting.MaturePlayer);
+                SettingSwitcher button=new(tex,Lang.Texts[89], new string[]{Lang.Texts[336],Lang.Texts[337],Lang.Texts[338] },Setting.MaturePlayer);
                 button.Click+=ClickMaturePlayer;
                 settings.Add(button);
 
@@ -261,7 +261,7 @@ namespace rabcrClient {
             }
             //SkinColor
             {
-                SettingColor button=new SettingColor(tex,Lang.Texts[325],
+                SettingColor button=new(tex,Lang.Texts[325],
                     new Color[] {
                         // yellow
                         new Color(248, 235, 184),
@@ -302,7 +302,7 @@ namespace rabcrClient {
 
             //type
             {
-                SettingSwitcherTexture button=new SettingSwitcherTexture(tex, Lang.Texts[327],
+                SettingSwitcherTexture button=new(tex, Lang.Texts[327],
                     new Texture2D[]{
                         GetDataTexture(@"ClothesAnimations\InMenu\Hair\0"),
                         GetDataTexture(@"ClothesAnimations\InMenu\Hair\1"),
@@ -324,7 +324,7 @@ namespace rabcrClient {
             }
             //Color
             {
-                SettingColor button=new SettingColor(tex, Lang.Texts[328],
+                SettingColor button=new(tex, Lang.Texts[328],
                     new Color[]{
                         // Brown
                         new Color(15,3,1),
@@ -386,7 +386,7 @@ namespace rabcrClient {
             settings.Add(new SettingHeader(Lang.Texts[329]));
             // type
             {
-                SettingSwitcherTexture button=new SettingSwitcherTexture(tex, Lang.Texts[330], new Texture2D[]{
+                SettingSwitcherTexture button=new(tex, Lang.Texts[330], new Texture2D[]{
                     GetDataTexture(@"ClothesAnimations\InMenu\Eyes\0"),
                     GetDataTexture(@"ClothesAnimations\InMenu\Eyes\1"),
                     GetDataTexture(@"ClothesAnimations\InMenu\Eyes\2"),
@@ -403,7 +403,7 @@ namespace rabcrClient {
             }
             //color
             {
-                SettingColor button=new SettingColor(tex, Lang.Texts[331],
+                SettingColor button=new(tex, Lang.Texts[331],
                     new Color[]{
                         // blue
                         new Color(140,182,211),
@@ -452,7 +452,7 @@ namespace rabcrClient {
             settings.Add(new SettingHeader(Lang.Texts[332]));
             //type
             {
-                SettingSwitcherTexture button=new SettingSwitcherTexture(tex, Lang.Texts[333],
+                SettingSwitcherTexture button=new(tex, Lang.Texts[333],
                     new Texture2D[]{
                         GetDataTexture(@"ClothesAnimations\InMenu\Moustage\0"),
                         GetDataTexture(@"ClothesAnimations\InMenu\Moustage\1"),
@@ -476,7 +476,7 @@ namespace rabcrClient {
             }
             //color
             {
-                SettingColor button=new SettingColor(tex, Lang.Texts[334], new Color[]{
+                SettingColor button=new(tex, Lang.Texts[334], new Color[]{
                      // Brown
                         new Color(15,3,1),
                         new Color(65,17,5),
@@ -818,7 +818,7 @@ GraphicsDevice Graphics;
                 {
                     float scaleDown=1f, scaleUp=1f;
                     // Pozice bodu ramena
-                    Vector2 rameno=new Vector2(x-11+2+1,y-39/2+12-1);
+                    Vector2 rameno=new(x-11+2+1,y-39/2+12-1);
 
                     // velikost ruky
                     int maxdistance=6*2;
@@ -851,7 +851,7 @@ GraphicsDevice Graphics;
                     } else {
                         Vector2 z=center-rameno;
                          // Vektor na kterém leží loket
-                        Vector2 loket=new Vector2(-z.Y,z.X);
+                        Vector2 loket=new(-z.Y,z.X);
 
                         // Vzdálenost loket a bod střed
                         float toloket=(float)Math.Sqrt(6*6-dis*dis/4);
@@ -926,7 +926,7 @@ GraphicsDevice Graphics;
                     int add=16;
                     float scaleDown=1f, scaleUp=1f;
                     // Pozice bodu ramena
-                    Vector2 rameno=new Vector2(x-11+2+1+add,y-39/2+12-1);
+                    Vector2 rameno=new(x-11+2+1+add,y-39/2+12-1);
 
                     // velikost ruky
                     int maxdistance=6*2;

@@ -122,7 +122,7 @@ namespace rabcrClient {
             }
         }
     }
-
+    #if MULTIPLAYER
     class MChicken :MMob{
 
         public byte Frame;
@@ -132,7 +132,7 @@ namespace rabcrClient {
 
         public bool move;
         public byte moveCount;
-        public short lastChunkID;
+       // public short lastChunkID;
         public bool needToChangeChunk;
         public MoveType moveType;
 
@@ -243,4 +243,5 @@ namespace rabcrClient {
             }
         }
     }
+    #endif
 }

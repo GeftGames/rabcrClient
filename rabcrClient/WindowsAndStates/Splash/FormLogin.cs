@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace rabcrClient {
+    #if MULTIPLAYER
     public partial class FormLogin : Form {
 
         //  bool offline=false;
@@ -210,4 +211,5 @@ namespace rabcrClient {
     //        return w;
     //    }
     //}
+    #endif
 }

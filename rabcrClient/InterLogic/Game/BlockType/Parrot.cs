@@ -122,7 +122,7 @@ namespace rabcrClient {
             } else Rabcr.spriteBatch.Draw(TextureStill, new Vector2(Position.X+5,Position.Y-10), Color.White);
         }
     }
-
+    #if MULTIPLAYER
     class MParrot:MMob {
 
         #region Varibles
@@ -242,4 +242,5 @@ namespace rabcrClient {
             } else Rabcr.spriteBatch.Draw(TextureStill, new Vector2(Position.X+5,Position.Y-10), Color.White);
         }
     }
+    #endif
 }

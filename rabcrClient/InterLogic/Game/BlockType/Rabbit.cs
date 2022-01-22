@@ -135,12 +135,12 @@ namespace rabcrClient {
             else Rabcr.spriteBatch.Draw(thisTexture, Position, rec/*new Rectangle((int)(Frame/16f)*16,0,16,16)*/, Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
         }
     }
-
+    #if MULTIPLAYER
     class MRabbit:MMob {
         public byte Frame;
         public bool needToChangeChunk;
         public bool move;
-        public short lastChunkID;
+     //   public short lastChunkID;
         public byte moveCount;
         public bool switchtoWalk;
         public MoveType moveType;
@@ -265,4 +265,5 @@ namespace rabcrClient {
             else Rabcr.spriteBatch.Draw(thisTexture, Position, new Rectangle((int)(Frame/16f)*16,0,16,16), Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
         }
     }
+    #endif
 }

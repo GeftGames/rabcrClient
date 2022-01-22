@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 namespace rabcrClient {
+    #if MULTIPLAYER
     class MFish :MMob{
      //   public bool IsLeft;
         public float speed;
@@ -72,26 +73,5 @@ namespace rabcrClient {
 
         }
     }
+    #endif
 }
-/*
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace rabcrClient {
-    public class Mob {
-        //public bool Dir;
-        public byte Height;
-        public byte Id;
-        public Vector2 position;
-
-        public Mob() { }
-
-        public Mob(byte id, byte height, Vector2 pos) {
-            Id=id;
-            Height=height;
-            position=pos;
-        }
-
-        public void Draw(SpriteBatch s){ }
-    }
-}*/

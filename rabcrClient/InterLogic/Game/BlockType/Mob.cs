@@ -23,6 +23,7 @@ namespace rabcrClient {
         public virtual void Draw() { }
     }
 
+    #if MULTIPLAYER
     public abstract class MMob {
         public byte Height {
             get { return (byte)(Position.Y/16); }
@@ -42,4 +43,5 @@ namespace rabcrClient {
 
         public virtual void Draw() { }
     }
+    #endif
 }

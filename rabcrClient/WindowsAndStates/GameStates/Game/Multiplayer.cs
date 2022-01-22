@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
+    #if MULTIPLAYER
     partial class Multiplayer : Screen {
         int animationInvBack=0;
         #region Multiplayer
@@ -27078,4 +27079,5 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 		}
     }
+    #endif
 }

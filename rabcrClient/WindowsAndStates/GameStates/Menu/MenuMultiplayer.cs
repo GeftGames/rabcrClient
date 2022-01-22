@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading;
 
 namespace rabcrClient {
+    #if MULTIPLAYER
     class MenuMultiplayer : MenuScreen {
 
         #region Varibles
@@ -747,4 +748,5 @@ namespace rabcrClient {
         }
         public Connection currentConnection = Connection.NotStarted;
     }
+    #endif
 }

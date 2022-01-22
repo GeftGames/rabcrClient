@@ -224,8 +224,9 @@ namespace rabcrClient {
         void GoToInformations(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new Informations());
 
         void GoToSingleplayer(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MenuSingleplayer());
+        #if MULTIPLAYER
         void GoToMultiplayer(object sender, EventArgs e) => ((Menu)Rabcr.screen).GoToMenu(new MenuMultiplayer());
-
+        #endif
 
         public override void Update(GameTime gameTime) {
             //mouseState=Mouse.GetState();

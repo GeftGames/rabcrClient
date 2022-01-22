@@ -1,4 +1,5 @@
 ﻿namespace rabcrClient {
+    #if MULTIPLAYER
     partial class FormLogin {
         /// <summary>
         /// Required designer variable.
@@ -215,4 +216,5 @@
         private GTextPanel textPanel4;
         public GeDoPanel geDoPanel1;
     }
+    #endif
 }

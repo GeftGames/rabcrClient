@@ -100,13 +100,28 @@ namespace rabcrClient {
                     //if (File.Exists(Path.GetTempPath()+"\\rabcrLastPassword.txt")) File.Delete(Path.GetTempPath()+"\\rabcrLastPassword.txt");
                 }
 
-                if (!Directory.Exists(Setting.Path))Directory.CreateDirectory(Setting.Path);
-           //     if (!Directory.Exists(Setting.Path+"\\Logs"))Directory.CreateDirectory(Setting.Path+"\\Logs");
-                if (!Directory.Exists(Setting.Path+"\\Worlds"))Directory.CreateDirectory(Setting.Path+"\\Worlds");
-          
+                if (!Directory.Exists(Setting.Path)) {
+                    try {
+                        Directory.CreateDirectory(Setting.Path);
+                    } catch (UnauthorizedAccessException) { 
+                        MessageBox.Show("Settings cannot be saved. This application does not have permissions to manipulate folders/files. Try run as administrator.");
+                    } catch (Exception ex) { 
+                        throw ex;
+                    }
+                }
+
+                if (!Directory.Exists(Setting.Path+"\\Worlds")){
+                    try {
+                        Directory.CreateDirectory(Setting.Path+"\\Worlds");
+                    } catch (UnauthorizedAccessException) { 
+                        MessageBox.Show("Folder for worlds cannot be created. This application does not have permissions to manipulate folders/files. Try run as administrator.");
+                    } catch (Exception ex) { 
+                        throw ex;
+                    }
+                }
 
                 if (!Directory.Exists(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName+"\\RabcrData")) {
-                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName){
+                    switch (System.Globalization.CultureInfo.CurrentCulture.EnglishName) {
                          default:
                             MessageBox.Show("Game data not found, game was probably runned from archive"
                             #if DEBUG
@@ -143,8 +158,8 @@ namespace rabcrClient {
             GraphicsManager = new GraphicsDeviceManager(this);
             Graphics=GraphicsManager.GraphicsDevice;
 
-            GraphicsManager.PreferredBackBufferHeight =(int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
-            GraphicsManager.PreferredBackBufferWidth = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width*0.6667f);
+            GraphicsManager.PreferredBackBufferHeight = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height*0.6667f);
+            GraphicsManager.PreferredBackBufferWidth  = (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width *0.6667f);
 
             //    Graphics.RasterizerState.MultiSampleAntiAlias=true;
             GraphicsManager.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
@@ -174,13 +189,13 @@ namespace rabcrClient {
             Content = new ContentManager(Services, "RabcrData");
             content=Content;
 
-            (Pixel = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
+            (Pixel  = new Texture2D(GraphicsDevice, 1, 1)).SetData(new[] { Color.White });
             (Pixel2 = new Texture2D(GraphicsDevice, 2, 2)).SetData(new[] { Color.White, Color.White, Color.White, Color.White });
 
             Window.Position=new Microsoft.Xna.Framework.Point(
-                    (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f), 
-                    (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f)
-                );
+                (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width/6f), 
+                (int)(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height/7f)
+            );
             {
                 Form MyGameForm = (Form)Control.FromHandle(Window.Handle);
                 MyGameForm.LocationChanged+=Window_ClientSizeChanged;
@@ -274,7 +289,9 @@ namespace rabcrClient {
         }
 
         void MyGameForm_FormClosing(object sender, FormClosingEventArgs e) {
+            #if DEBUG
             Debug.WriteLine("Closing screen");
+            #endif
             exiting=true;
             screen.Shutdown();
 
@@ -313,7 +330,7 @@ namespace rabcrClient {
 
             if (resize) {
                 GraphicsManager.ApplyChanges();
-                if (screen!=null) screen.Resize();
+                screen?.Resize();
             }
         }
 

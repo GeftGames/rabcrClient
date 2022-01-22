@@ -5783,7 +5783,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 				if (timer5==2) {
 					UpdateLiquid((ushort)BlockId.WaterBlock);
-					if (wind){if (Global.WindowWidth>1000) WaveGrassDuringWind(); }
+					//UpdateLiquid((ushort)BlockId.Oil);
+					if (wind){
+						if (Global.WindowWidth>1000) WaveGrassDuringWind(); 
+					}
 				}
 				////
 				if (timer5==4) {
@@ -15709,7 +15712,7 @@ rameno.X -= 17;
 								Tree tree=new(
 
 									// Root
-									*current++ | (*current++<<8),
+									(ushort)(*current++ | (*current++<<8)),
 									*current++
 								);
 								LiveObjects[i]=tree;
@@ -15827,17 +15830,17 @@ rameno.X -= 17;
 		}
 
 
-		void CheckTerrain(string method) { 
-			for (int x=0; x<TerrainLength; x++) { 
-				Terrain chunk=terrain[x];
+		//void CheckTerrain(string method) { 
+		//	for (int x=0; x<TerrainLength; x++) { 
+		//		Terrain chunk=terrain[x];
 
-				for (int y=0; y<125; y++) { 
-					if ((chunk.Background[y]!=null) != chunk.IsBackground[y]) throw new Exception(method+", Background at x: "+x+", y: "+y+" is wrong");
-					if ((chunk.SolidBlocks[y]!=null) != chunk.IsSolidBlocks[y]) throw new Exception(method+", SolidBlock at x: "+x+", y: "+y+" is wrong");
-					if ((chunk.TopBlocks[y]!=null) != chunk.IsTopBlocks[y]) throw new Exception(method+", TopBlock at x: "+x+", y: "+y+" is wrong");
-				}
-			}	
-		}
+		//		for (int y=0; y<125; y++) { 
+		//			if ((chunk.Background[y]!=null) != chunk.IsBackground[y]) throw new Exception(method+", Background at x: "+x+", y: "+y+" is wrong");
+		//			if ((chunk.SolidBlocks[y]!=null) != chunk.IsSolidBlocks[y]) throw new Exception(method+", SolidBlock at x: "+x+", y: "+y+" is wrong");
+		//			if ((chunk.TopBlocks[y]!=null) != chunk.IsTopBlocks[y]) throw new Exception(method+", TopBlock at x: "+x+", y: "+y+" is wrong");
+		//		}
+		//	}	
+		//}
 		//void RefreshLightingRemoveSolid(int pos, int y) {
 		//	Terrain chunk=terrain[pos];
 
@@ -23684,17 +23687,18 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x-1, y-9, (ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
 			TerrainSetTopBlockNormal(x,   y-10,(ushort)BlockId.RubberTreeLeaves, TextureRubberTreeLeaves);
 
-			  Terrain chunk0=terrain[x ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			  Terrain 
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
-			if (chunkM2.StartSomething>y-6) chunkM2.StartSomething=y-6;
-			if (chunkM1.StartSomething>y-9) chunkM1.StartSomething=y-9;
+			if (chunkM2.StartSomething>y-6)  chunkM2.StartSomething=y-6;
+			if (chunkM1.StartSomething>y-9)  chunkM1.StartSomething=y-9;
 			if (chunk0. StartSomething>y-10) chunk0. StartSomething=y-10;
-			if (chunkP1.StartSomething>y-9) chunkP1.StartSomething=y-9;
-			if (chunkP2.StartSomething>y-6) chunkP2.StartSomething=y-6;
+			if (chunkP1.StartSomething>y-9)  chunkP1.StartSomething=y-9;
+			if (chunkP2.StartSomething>y-6)  chunkP2.StartSomething=y-6;
 		}
 
 		void TreeAcacia(int x, int y) {
@@ -23734,13 +23738,13 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x,   y-6, (ushort)BlockId.AcaciaLeaves, TextureAcaciaLeaves);
 
 			Terrain
-				chunk0= terrain[x   ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkM3=terrain[x- 3],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2],
-				chunkP3=terrain[x+ 3];
+				chunk0= terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkM3=terrain[x-3],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2],
+				chunkP3=terrain[x+3];
 
 			if (chunkM3.StartSomething>y-5) chunkM3.StartSomething=y-5;
 			if (chunkM2.StartSomething>y-5) chunkM2.StartSomething=y-5;
@@ -23769,9 +23773,9 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x,   y-5, (ushort)BlockId.MangroveLeaves, TextureMangroveLeaves);
 
 			Terrain
-				chunkM1=terrain[x- 1],
-				chunk0= terrain[x   ],
-				chunkP1=terrain[x+ 1];
+				chunkM1=terrain[x-1],
+				chunk0= terrain[x  ],
+				chunkP1=terrain[x+1];
 
 			if (chunkM1.StartSomething>y-4) chunkM1.StartSomething=y-4;
 			if (chunk0. StartSomething>y-5) chunk0. StartSomething=y-5;
@@ -23823,11 +23827,11 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x+1, y-5, (ushort)BlockId.WillowLeaves, TextureWillowLeaves);
 
 			Terrain
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-4) chunkM2.StartSomething=y-4;
 			if (chunkM1.StartSomething>y-5) chunkM1.StartSomething=y-5;
@@ -23884,11 +23888,11 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x+1, y-7, (ushort)BlockId.EucalyptusLeaves, TextureEucalyptusLeaves);
 
 			Terrain
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0= terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0= terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-6) chunkM2.StartSomething=y-6;
 			if (chunkM1.StartSomething>y-7) chunkM1.StartSomething=y-7;
@@ -23931,11 +23935,11 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x+1, y-6, (ushort)BlockId.OliveLeaves, TextureOliveLeaves);
 
 			Terrain
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-8) chunkM2.StartSomething=y-5;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -23946,13 +23950,13 @@ rameno.X -= 17;
 
 		void TreeKapok(int x, int y) {
 
-			TerrainSetBackground(x, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
-			TerrainSetBackground(x+1, y-1,(ushort)BlockId.KapokWood, TextureKapokWood);
-			TerrainSetBackground(x-1, y-1,(ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x,   y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x+1, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
+			TerrainSetBackground(x-1, y-1, (ushort)BlockId.KapokWood, TextureKapokWood);
 
 			if (FastRandom.Bool()) {
-				TerrainSetBackground(x+1, y-2,(ushort)BlockId.KapokWood, TextureKapokWood);
-				TerrainSetBackground(x-1, y-2,(ushort)BlockId.KapokWood, TextureKapokWood);
+				TerrainSetBackground(x+1, y-2, (ushort)BlockId.KapokWood, TextureKapokWood);
+				TerrainSetBackground(x-1, y-2, (ushort)BlockId.KapokWood, TextureKapokWood);
 			}
 
 			TerrainSetBackground(x,   y-2,  (ushort)BlockId.KapokWood, TextureKapokWood);
@@ -24047,11 +24051,11 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x,   y-6,(ushort)BlockId.AppleLeaves, TextureAppleLeaves);
 
 			Terrain
-				chunk0 =terrain[x   ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-4) chunkM2.StartSomething=y-4;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -24146,11 +24150,11 @@ rameno.X -= 17;
 
 
 			Terrain
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-5) chunkM2.StartSomething=y-5;
 			if (chunkM1.StartSomething>y-6) chunkM1.StartSomething=y-6;
@@ -24323,11 +24327,12 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x-1, y-10, (ushort)BlockId.PineLeaves, pineLeavesTexture);
 			TerrainSetTopBlockNormal(x+1, y-10, (ushort)BlockId.PineLeaves, pineLeavesTexture);
 
-			Terrain chunk0=terrain[x ],
-				chunkM1=terrain[x- 1],
-				chunkM2=terrain[x- 2],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+			Terrain 
+				chunk0 =terrain[x  ],
+				chunkM1=terrain[x-1],
+				chunkM2=terrain[x-2],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-8 ) chunkM2.StartSomething=y-8;
 			if (chunkM1.StartSomething>y-10) chunkM1.StartSomething=y-10;
@@ -24434,11 +24439,11 @@ rameno.X -= 17;
 			TerrainSetTopBlockNormal(x,   y-10,(ushort)BlockId.LindenLeaves, TextureLindenLeaves);
 
 			Terrain
-				chunkM2=terrain[x- 2],
-				chunkM1=terrain[x- 1],
-				chunk0 =terrain[x   ],
-				chunkP1=terrain[x+ 1],
-				chunkP2=terrain[x+ 2];
+				chunkM2=terrain[x-2],
+				chunkM1=terrain[x-1],
+				chunk0 =terrain[x  ],
+				chunkP1=terrain[x+1],
+				chunkP2=terrain[x+2];
 
 			if (chunkM2.StartSomething>y-7 ) chunkM2.StartSomething=y-7;
 			if (chunkM1.StartSomething>y-9 ) chunkM1.StartSomething=y-9;
@@ -24507,13 +24512,12 @@ rameno.X -= 17;
                 1 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
                 2 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
                 3 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+				#if DEBUG
                 _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+				#else
+				_ => new DInt(0,0)
+				#endif
             };
-
-#if DEBUG
-#else
-			return null;
-#endif
         }
 
 		static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
@@ -24522,13 +24526,12 @@ rameno.X -= 17;
                 1 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
                 2 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
                 3 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+				#if DEBUG
                 _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+				#else
+				_=> Vector2.Zero
+				#endif
             };
-
-#if DEBUG
-#else
-			return Vector2.Zero;
-#endif
         }
 
 		static Vector2 InventoryGetPosClothesVector2(int ix) {
@@ -24542,8 +24545,7 @@ rameno.X -= 17;
 			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
 				if (i>maxInvCount) break;
 
-				if (ix==i) 
-					return new DInt{X= Global.WindowWidthHalf-300+4+200+4+4+xx+4,Y=Global.WindowHeightHalf-200+2+4+yh+4 };
+				if (ix==i) return new DInt{ X= Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
 
 				xx+=40;
 
@@ -26354,13 +26356,12 @@ AddShake(d.to.X*16, d.to.Y*16);
                 Biome.Jungle => TemperatureFromTo(32, 24, 29, 23),
                 Biome.TropicalRainforest => TemperatureFromTo(32, 24, 29, 23),
                 Biome.None => 0,
+				#if DEBUG
                 _ => throw new Exception("Missing biome color"),
+				#else
+				_ => 0
+				#endif
             };
-
-#if DEBUG
-#else
-			return 0;
-#endif
         }
 
 		/// <param name="temperatureSpeedChange">From 0 to 1, 0=fastly after sun rise, 1 late in time when sun fall</param>

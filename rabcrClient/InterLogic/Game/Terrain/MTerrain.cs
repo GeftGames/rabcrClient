@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace rabcrClient {
+	#if MULTIPLAYER
     public enum MChunkState:byte{
         NotDownloaded,
         SendRequest,
@@ -37,8 +38,8 @@ namespace rabcrClient {
       //  public bool TopBlocksExists(int h) => IsTopBlocks[h]==MBlockState.Exist;//((int)IsTopBlocks[h] & 1)==1;
 
 
-        public List<MMob> Mobs=new List<MMob>();
-        public List<Plant> Plants=new List<Plant>();
+        public List<MMob> Mobs=new();
+        public List<Plant> Plants=new();
 
         public Vector2 LightVec;
 
@@ -223,6 +224,6 @@ namespace rabcrClient {
 
         public int SelectedInv;
     }
-
+	#endif
 
 }
