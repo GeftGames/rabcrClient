@@ -201,7 +201,98 @@ namespace rabcrClient {
     }
 
     static class GameMethods {
+        public static Vector2 EditMouseItemPos(ushort id){ 
+            switch (id) { 
+                case (ushort)Items.PickaxeAluminium: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeBronze: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeCopper: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeGold: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeIron: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeSteel: return new Vector2(8, 8);
+                case (ushort)Items.PickaxeStone: return new Vector2(8, 8);
 
+                case (ushort)Items.ShovelAluminium: return new Vector2(8, 8);
+                case (ushort)Items.ShovelBronze: return new Vector2(8, 8);
+                case (ushort)Items.ShovelCopper: return new Vector2(8, 8);
+                case (ushort)Items.ShovelGold: return new Vector2(8, 8);
+                case (ushort)Items.ShovelIron: return new Vector2(8, 8);
+                case (ushort)Items.ShovelSteel: return new Vector2(8, 8);
+                case (ushort)Items.ShovelStone: return new Vector2(8, 8);
+
+                case (ushort)Items.HoeAluminium: return new Vector2(8, 8);
+                case (ushort)Items.HoeBronze: return new Vector2(8, 8);
+                case (ushort)Items.HoeCopper: return new Vector2(8, 8);
+                case (ushort)Items.HoeGold: return new Vector2(8, 8);
+                case (ushort)Items.HoeIron: return new Vector2(8, 8);
+                case (ushort)Items.HoeSteel: return new Vector2(8, 8);
+                case (ushort)Items.HoeStone: return new Vector2(8, 8);
+
+                case (ushort)Items.KnifeAluminium: return new Vector2(8, 8);
+                case (ushort)Items.KnifeBronze: return new Vector2(8, 8);
+                case (ushort)Items.KnifeCopper: return new Vector2(8, 8);
+                case (ushort)Items.KnifeGold: return new Vector2(8, 8);
+                case (ushort)Items.KnifeIron: return new Vector2(8, 8);
+                case (ushort)Items.KnifeSteel: return new Vector2(8, 8);
+
+                case (ushort)Items.SawAluminium: return new Vector2(10, 6);
+                case (ushort)Items.SawBronze: return new Vector2(10, 6);
+                case (ushort)Items.SawCopper: return new Vector2(10, 6);
+                case (ushort)Items.SawGold: return new Vector2(10, 6);
+                case (ushort)Items.SawIron: return new Vector2(10, 6);
+                case (ushort)Items.SawSteel: return new Vector2(10, 6);
+                                        
+                case (ushort)Items.AxeAluminium: return new Vector2(8, 8);
+                case (ushort)Items.AxeBronze: return new Vector2(8, 8);
+                case (ushort)Items.AxeCopper: return new Vector2(8, 8);
+                case (ushort)Items.AxeGold: return new Vector2(8, 8);
+                case (ushort)Items.AxeIron: return new Vector2(8, 8);
+                case (ushort)Items.AxeSteel: return new Vector2(8, 8);
+
+                                            
+                case (ushort)Items.HammerAluminium: return new Vector2(8, 8);
+                case (ushort)Items.HammerBronze: return new Vector2(8, 8);
+                case (ushort)Items.HammerCopper: return new Vector2(8, 8);
+                case (ushort)Items.HammerGold: return new Vector2(8, 8);
+                case (ushort)Items.HammerIron: return new Vector2(8, 8);
+                case (ushort)Items.HammerSteel: return new Vector2(8, 8);
+
+                case (ushort)Items.ElectricDrill: return new Vector2(9, 9);
+                case (ushort)Items.ElectricDrillOff: return new Vector2(9, 9);
+                case (ushort)Items.ElectricSaw: return new Vector2(9, 9);
+                case (ushort)Items.ElectricSawOff: return new Vector2(9, 9);
+                case (ushort)Items.Gun: return new Vector2(3, 3);
+                case (ushort)Items.TorchElectricON: return new Vector2(3, 3);
+
+                case (ushort)Items.ShearsAluminium: return new Vector2(6, 4);
+                case (ushort)Items.ShearsBronze:    return new Vector2(6, 4);
+                case (ushort)Items.ShearsCopper:    return new Vector2(6, 4);
+                case (ushort)Items.ShearsGold:      return new Vector2(6, 4);
+                case (ushort)Items.ShearsIron:      return new Vector2(6, 4);
+                case (ushort)Items.ShearsSteel:     return new Vector2(6, 4);
+            }
+            return Vector2.Zero;
+        }
+
+        public static float EditMouseItemScale(ushort id){ 
+            switch (id) { 
+                case (ushort)Items.Gun: return 0.35f;
+                case (ushort)Items.TorchElectricON: return 0.35f;
+            }
+            return 0.5f;
+        }
+
+        public static bool EditMouseItemFlip(ushort id){ 
+            switch (id) { 
+                case (ushort)Items.HammerAluminium: return true;
+                case (ushort)Items.HammerBronze: return true;
+                case (ushort)Items.HammerCopper: return true;
+                case (ushort)Items.HammerGold: return true;
+                case (ushort)Items.HammerIron: return true;
+                case (ushort)Items.HammerSteel: return true;
+                case (ushort)Items.Gun: return true;
+            }
+            return false;
+        }
 
         public static bool IsHalfShadowBlock(ushort id) 
             => id switch {
@@ -1392,7 +1483,8 @@ namespace rabcrClient {
             (ushort)BlockId.GrassBlockPlains,
             (ushort)BlockId.RedSand,
             (ushort)BlockId.Regolite,
-            (ushort)BlockId.Cobblestone
+            (ushort)BlockId.Cobblestone,
+            (ushort)BlockId.Compost
         };
 
         public static bool IsFallingBlock(ushort blockId) {
