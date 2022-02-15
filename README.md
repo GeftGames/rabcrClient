@@ -28,3 +28,10 @@ A 2D game written with MonoGame that targets Win.
 - Optional - something for syntax highlight .fx shader files
 ### Other projects
 - Font creator https://github.com/GeftGames/FontTextureCreator
+### Old expoerimental dev version made in Game Maker 8 (6 parts)
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part1.rar
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part2.rar
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part3.rar
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part4.rar
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part5.rar
+- http://geftgames0.sweb.cz/Sources/RabCrExp.part6.rar
