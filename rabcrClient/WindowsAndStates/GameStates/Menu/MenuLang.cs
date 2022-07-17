@@ -646,7 +646,7 @@ namespace rabcrClient {
 
                 }
                 #if DEBUG
-                throw new Exception("Missing translation of category");
+                throw new Exception("Unknown category '"+name+"'");
                 #else
                 return name;
                 #endif
