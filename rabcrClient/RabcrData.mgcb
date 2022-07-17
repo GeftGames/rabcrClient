@@ -53,6 +53,12 @@
 /processorParam:DebugMode=Auto
 /build:Default/Effects/Neon.fx
 
+#begin Default/Effects/TestSunShadow.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Default/Effects/TestSunShadow.fx
+
 #begin Default/Effects/Vignetting.fx
 /importer:EffectImporter
 /processor:EffectProcessor

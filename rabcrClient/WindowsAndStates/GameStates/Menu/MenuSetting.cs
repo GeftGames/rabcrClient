@@ -22,7 +22,7 @@ namespace rabcrClient {
         const int DocumentSize=500;
         int start,end;
         float smoothMouse=0;
-        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500;
+        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500+90;
         #endregion
         bool afterrestart;
         public override void Init() {
@@ -353,18 +353,6 @@ namespace rabcrClient {
                 }
             }
 
-            //Scale
-            //{
-            //    SettingSwitcher button=new(tex, Lang.Texts[128], new string[]{ Lang.Texts[148], Lang.Texts[149], Lang.Texts[150]}, (int)Setting.currentScale);
-            //    button.Click+=ClickScale;
-            //    settings.Add(button);
-
-            //    void ClickScale() {
-            //        Setting.currentScale=(Setting.Scale)button.selected;
-            //        Global.ChangedSettings=true;
-            //    }
-            //}
-
             //FPS
             {
                 SettingOnOff button=new(tex, Lang.Texts[132], Setting.Fps);
@@ -400,6 +388,16 @@ namespace rabcrClient {
                 SettingSwitcher button = new(tex, Lang.Texts[1598], new string[]{Lang.Texts[1602], Lang.Texts[154], Lang.Texts[1603] }, (int)Setting.Fog);
                 button.Click += () => {
                     Setting.Fog=(Setting.FogTypes)button.selected;
+                    Global.ChangedSettings=true;
+                };
+                settings.Add(button);
+            }
+
+            // Half shadows / polo stin
+            {
+                SettingOnOff button = new(tex, Lang.Texts[366], Setting.HalfShadows);
+                button.Click += () => {
+                    Setting.HalfShadows=button.ON;
                     Global.ChangedSettings=true;
                 };
                 settings.Add(button);

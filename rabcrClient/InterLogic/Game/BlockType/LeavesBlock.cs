@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace rabcrClient {
     public class LeavesBlock:Block{
@@ -10,6 +11,19 @@ namespace rabcrClient {
         public Tree tree;
 
         Vector2 vecOrigin;
+
+        public Vector4 GetRealSquare(){
+         //   float len=(float)vecOrigin.Length();
+            float sin=(float)Math.Sin(tree.angle);
+            float cos=(float)Math.Cos(tree.angle);
+
+            Vector4 rect=new Vector4();
+            rect.X=Position.X+vecOrigin.X+cos*(-vecOrigin.X)-sin*(-vecOrigin.Y);
+            rect.Y=Position.Y+vecOrigin.Y+sin*(-vecOrigin.X)+cos*(-vecOrigin.Y);
+            rect.Z=Position.X+16/*-16*/+vecOrigin.X+16/*-16*/+cos*(-vecOrigin.X-16)-sin*(-vecOrigin.Y-16);
+            rect.W=Position.Y+16/*-16*/+vecOrigin.Y+16/*-16*/+sin*(-vecOrigin.X-16)+cos*(-vecOrigin.Y-16);
+            return rect;
+        }
 
         // Autumn color
         public Color Color;

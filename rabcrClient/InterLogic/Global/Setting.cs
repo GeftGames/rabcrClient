@@ -14,11 +14,8 @@ namespace rabcrClient {
     }
 
     struct Setting {  
-        //public enum Scale :byte{
-        //    Without,
-        //    Proportions,
-        //    Fill,
-        //} 
+        // Set values are default setting / Nastaveny hodnotê só véchozi nastaveni
+
         public enum Window:byte {
             Normal,
             Maxi,
@@ -56,9 +53,8 @@ namespace rabcrClient {
         // Settings
         public static bool Background=true;
         public static bool Fps=false;
-      public static Window currentWindow;
+        public static Window currentWindow;
         public static bool Vignetting=true;
-     //   public static Scale currentScale;
         public static float Zoom=3;
         public static float VolumeMusic=.5f;
         public static float VolumeEffects=1;
@@ -73,6 +69,8 @@ namespace rabcrClient {
         public static FogTypes Fog=FogTypes.Fancy;
         public static bool BetterSnowAndRain=true;
         public static float SlideChangeTimeInTicks => 0.006f/slideChangeTime;
+
+        public static bool HalfShadows=true;
 
         public static GraphicsProfile GraphicsProfile =GraphicsProfile.HiDef;
 
