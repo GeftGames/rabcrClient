@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XMLFile>
   <Langs>
-    <Lang EnglishName="British english" Quality="5" NativeName="British english" Name="eng" Flag="GB" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
-    <Lang EnglishName="Czech" Quality="5" NativeName="Čeština (Spisovná)" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
+    <Lang EnglishName="British english" Quality="4" NativeName="British english" Name="eng" Flag="GB" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
+    <Lang EnglishName="Czech" Quality="5" NativeName="Čeština (Spisovná)" Name="ces" Flag="CZ" Base="eng" TranslationQuality="6" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="Slovak" Quality="4" NativeName="Slovenčina" Flag="SK" Name="slk" Base="ces" Category="European&gt;Slavic" alphabet="AÁÄBCČDĎDzDžEÉFGHChIÍJKLĹĽaáäbcčdďdzdžeéfghchiíjklĺľMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽmnňoóôpqrŕsštťuúvwxyýzž" FontFile="latin" />
     <Lang EnglishName="Moravian" Quality="3" NativeName="Moravština" Name="mor" Flag="mor" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="Silezian" Quality="0" NativeName="Ślůński" Name="slu" Flag="slu" Base="pol" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
-    <Lang EnglishName="Po nasymu" Quality="0" NativeName="Po nasymu" Name="slu-pna" Flag="slu" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="Polish" Quality="3" NativeName="Polski" Flag="PL" Name="pol" Base="eng" alphabet="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzĄĆĘŁŃÓŚŹŻąćęłńóśźż" Category="European&gt;Slavic" FontFile="latin" />
     <Lang EnglishName="German" Quality="3" NativeName="Deutsch" Name="deu" Flag="DE,AT,CH,LI,BE,LU" Base="eng" alphabet="AÄBCDEFGHIJKLMNOÖPQRSTUÜVWXYZaäbcdefghijklmnoöpqrstuüvwxyzß" Category="Worldwide;European&gt;Germanic" FontFile="latin" />
     <Lang EnglishName="Japanese" Quality="3" NativeName="日本語 (標準語)" Name="jpn" Flag="JP" Base="enu" Category="Asian&gt;Japanese" FontFile="japanese" />
@@ -100,11 +99,13 @@
     <Lang EnglishName="Welsh" Quality="2" NativeName="Cymraeg" Name="cym" Base="eng" UseBase="true" Category="European&gt;Celtic" FontFile="latin" />
     <Lang EnglishName="Tongan" Quality="2" NativeName="lea faka-Tonga" Name="ton" Category="Oceanic" FontFile="latin" info="https://www.elanlanguages.com/eng/free-translation" />
     <Lang EnglishName="Tahitian" Quality="2" NativeName="Reo Tahiti" Name="tah" Category="Oceanic" FontFile="latin" />
-    <Lang EnglishName="Haná dialect" Quality="2" NativeName="Hanácke" Name="mor-ha" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
-    <Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácky" Name="mor-sl" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
-    <Lang EnglishName="Valašsko dialect" Quality="1" NativeName="Valašsky" Name="mor-va" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
-    <Lang EnglishName="Hantec slang" Quality="1" NativeName="Brněnský hantec" Name="mor-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
-    <Lang EnglishName="Central Bohemian interdialect" quality="2" NativeName="Středočeská mluva" Name="ces-ce" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech-Moravian" FontFile="latin" />
+    <Lang EnglishName="Haná dialect/e,o/" Quality="3" NativeName="Hanácke" Name="mor-hax" Base="mor" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Haná dialect/ê,ô/" Quality="3" NativeName="Hanáckê" Name="mor-ha" Base="mor" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Slovacko dialect" Quality="1" NativeName="Slovácky" Name="mor-sl" Base="mor" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Valašsko dialect" Quality="2" NativeName="Valašsky" Name="mor-va" Base="mor" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Hantec slang" Quality="1" NativeName="Brněnský hantec" Name="mor-han" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Central Bohemian interdialect" quality="1" NativeName="Středočeská mluva" Name="ces-ce" Base="ces" UseBase="true" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
+    <Lang EnglishName="Po nasymu" Quality="0" NativeName="Po nasymu" Name="slu-pna" Flag="slu" Base="ces" TranslationQuality="1" alphabet="AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž" Category="European&gt;Slavic&gt;Czech" FontFile="latin" />
     <Lang EnglishName="Korean" Quality="2" NativeName="한국어" Name="kor" Base="eng" Flag="KO" Category="Asian" FontFile="korean" />
     <Lang EnglishName="Traditional Chinese" Quality="2" NativeName="繁體字" Name="zch" Base="eng" Flag="TW" Category="Asian" FontFile="traditionalChinese" />
     <Lang EnglishName="Hindi" NativeName="हिन्दी" Name="hin" Base="eng" Flag="IN" Category="Asian" FontFile="devanagari" Quality="1" />
@@ -116,14 +117,16 @@
   <Data>
     <a id="0">
       <eng>Generated in</eng>
-      <oto>Generated in</oto>
       <ces>Vygenerováno za</ces>
-      <mor-ha>Vegenerovány za</mor-ha>
       <ces-ce>Vygenerový za</ces-ce>
+      <mor>Vygenerováné za</mor>
+      <mor-ha>Vêgenerováné za</mor-ha>
+      <mor-hax>Vegenerováné za</mor-hax>
       <slk>Vygenerované za</slk>
       <deu>Generiert in</deu>
       <ita>Generato in</ita>
       <spa>Generado eng</spa>
+      <oto>Generated in</oto>
       <fra>Généré eng</fra>
       <por>Gerado em</por>
       <eo>Ĝenerala eng</eo>
@@ -204,9 +207,10 @@
     <a id="1">
       <eng>Back</eng>
       <ces>Zpět</ces>
-      <mor-ha>Zpátke</mor-ha>
-      <hsb>Wrócić</hsb>
       <mor>Zpátky</mor>
+      <mor-hax>Zpátke</mor-hax>
+      <mor-ha>Zpátkê</mor-ha>
+      <hsb>Wrócić</hsb>
       <deu>Zurück</deu>
       <jpn>バック</jpn>
       <slk>Späť</slk>
@@ -290,10 +294,11 @@
     <a id="2">
       <eng>Main</eng>
       <ces>Obecné</ces>
-      <hsb>Powšitkowne</hsb>
       <ces-ce>Vobecné</ces-ce>
       <mor>Všeobecné</mor>
+      <mor-hax>Všeobecny</mor-hax>
       <mor-ha>Všeobecny</mor-ha>
+      <hsb>Powšitkowne</hsb>
       <deu>Allgemein</deu>
       <jpn>全般</jpn>
       <spa>General</spa>
@@ -372,8 +377,11 @@
     </a>
     <a id="3">
       <eng>Keyboard</eng>
-      <ces>Klávesy</ces>
-      <mor-ha>Klávese</mor-ha>
+      <ces>Klávesnice</ces>
+      <mor>Klávesnica</mor>
+      <mor-va>Klávesnica</mor-va>
+      <mor-ha>Klávesnica</mor-ha>
+      <mor-hax>Klávesnica</mor-hax>
       <hsb>Tastatura</hsb>
       <deu>Tastatur</deu>
       <jpn>キーボード</jpn>
@@ -452,10 +460,13 @@
     <a id="4">
       <eng>How to play</eng>
       <ces>Jak hrát</ces>
-      <mor-ha>Jak hrát</mor-ha>
+      <mor>Jag hrát</mor>
+      <mor-ha>Jag hrát</mor-ha>
+      <mor-hax>Jag hrát</mor-hax>
+      <mor-va>Jag hráť</mor-va>
+      <slk>Ako hrať</slk>
       <hsb>Kak hrać</hsb>
       <deu>Wie man spielt</deu>
-      <slk>Ako hrať</slk>
       <jpn>遊び方</jpn>
       <pol>Jak grać</pol>
       <nld>Hoe te spelen</nld>
@@ -536,11 +547,11 @@
     <a id="5">
       <eng>Information</eng>
       <ces>Informace</ces>
-      <mor-ha>Informace</mor-ha>
+      <mor>Informace</mor>
+      <slk>Informácie</slk>
       <hsb>Informacije</hsb>
       <deu>Informationen</deu>
       <jpn>情報</jpn>
-      <slk>Informácie</slk>
       <spa>Información</spa>
       <pol>Informacja</pol>
       <ita>Informazione</ita>
@@ -618,11 +629,12 @@
     <a id="6">
       <eng>Singleplayer</eng>
       <ces>Hra pro jednoho</ces>
-      <hsb>Hra za jednoho</hsb>
-      <mor>Hra pro jedneho</mor>
+      <mor>Hra pro jedného</mor>
       <mor-ha>Hra pro jednyho</mor-ha>
+      <mor-hax>Hra pro jednyho</mor-hax>
       <mor-va>Hra pro jedného</mor-va>
       <slk>Hra pre jedného</slk>
+      <hsb>Hra za jednoho</hsb>
       <deu>Einzelspieler</deu>
       <jpn>シングルプレーヤー</jpn>
       <pol>Jednoosobowy</pol>
@@ -696,17 +708,20 @@
     <a id="7">
       <eng>Multiplayer</eng>
       <ces>Hra více hráčů</ces>
-      <mor-ha>Hra vic hráču</mor-ha>
-      <mor>Hra víc hráčů</mor>
+      <mor>Hra pro víc hráčú</mor>
+      <mor-ha>Hra pro vic hráču</mor-ha>
+      <mor-hax>Hra pro vic hráču</mor-hax>
     </a>
     <a id="8">
       <eng>Settings</eng>
       <ces>Nastavení</ces>
-      <hsb>Nastajenja</hsb>
+      <mor>Nastavení</mor>
       <mor-ha>Nastaveni</mor-ha>
+      <mor-hax>Nastaveni</mor-hax>
+      <slk>Nastavenie</slk>
+      <hsb>Nastajenja</hsb>
       <deu>Optionen</deu>
       <jpn>設定</jpn>
-      <slk>Nastavenie</slk>
       <fra>Options</fra>
       <ita>Opzioni</ita>
       <pol>Opcje</pol>
@@ -790,10 +805,13 @@
     <a id="10">
       <eng>Close</eng>
       <ces>Ukončit</ces>
-      <hsb>Začinić</hsb>
-      <mor-ha>Okončet</mor-ha>
-      <deu>Schließen</deu>
+      <mor>Ukončit</mor>
+      <mor-hax>Okončet</mor-hax>
+      <mor-ha>Ôkončêt</mor-ha>
+      <mor-va>Ukončiť</mor-va>
       <slk>Ukončiť</slk>
+      <deu>Schließen</deu>
+      <hsb>Začinić</hsb>
       <fra>Quitter le jeu</fra>
       <ita>Esci dal gioco</ita>
       <pol>Wyjdž</pol>
@@ -898,10 +916,13 @@
     <a id="16">
       <eng>Add</eng>
       <ces>Přidat</ces>
-      <mor-ha>Předat</mor-ha>
+      <mor>Přidat</mor>
+      <mor-ha>Přêdat</mor-ha>
+      <mor-hax>Předat</mor-hax>
+      <mor-va>Přidať</mor-va>
+      <slk>Pridať</slk>
       <hsb>Aděrować</hsb>
       <deu>Hinzufügen</deu>
-      <slk>Pridať</slk>
       <spa>Crear</spa>
       <ita>Crea</ita>
       <pol>Twórz</pol>
@@ -986,12 +1007,15 @@
     <a id="17">
       <eng>New world</eng>
       <ces>Nový svět</ces>
-      <hsb>Nowy swět</hsb>
-      <mor-ha>Nové svět</mor-ha>
       <ces-ce>Novej svět</ces-ce>
+      <mor>Nový svjet</mor>
+      <mor-ha>Nové sfět</mor-ha>
+      <mor-hax>Nové sfět</mor-hax>
+      <mor-va>Nový svjet</mor-va>
+      <slk>Nový svet</slk>
       <deu>Neue Welt erstellen</deu>
       <jpn>新世界</jpn>
-      <slk>Nový svet</slk>
+      <hsb>Nowy swět</hsb>
       <spa>Nuevo mundo</spa>
       <fra>Nouveau monde</fra>
       <ita>Nuovo mondo</ita>
@@ -1072,10 +1096,11 @@
     <a id="18">
       <eng>Folder</eng>
       <ces>Složka</ces>
-      <hsb>Rjadowak</hsb>
+      <mor>Složka</mor>
+      <slk>Zložka</slk>
       <deu>Ordner</deu>
       <jpn>フォルダ</jpn>
-      <slk>Zložka</slk>
+      <hsb>Rjadowak</hsb>
       <spa>Carpeta</spa>
       <fra>Ouvrir le dossier</fra>
       <por>Pasta</por>
@@ -1151,7 +1176,9 @@
     <a id="20">
       <eng>Error during loading</eng>
       <ces>Neproběhlo správné načtení</ces>
-      <mor-ha>Mélka počas načteni</mor-ha>
+      <mor>Neproběhlé správné načítání</mor>
+      <mor-ha>Mélka počas načtétáni</mor-ha>
+      <mor-hax>Mélka počas načtétáni</mor-hax>
       <slk>Neprebehlo správne načítanie</slk>
       <pol>Ładunek nie został poprawnie załadowany</pol>
       <jpn>ロード中のエラー</jpn>
@@ -1233,9 +1260,11 @@
     <a id="21">
       <eng>Checked</eng>
       <ces>Zkontrolováno</ces>
-      <slk>Skontrolované</slk>
       <mor>Skontrolované</mor>
-      <mor-ha>Skontrolovany</mor-ha>
+      <mor-ha>Skontrolované</mor-ha>
+      <mor-hax>Skontrolované</mor-hax>
+      <mor-va>Skontrolírované</mor-va>
+      <slk>Skontrolované</slk>
       <eo>Kontrolita</eo>
       <pol>Sprawdzone</pol>
       <jpn>チェック済み</jpn>
@@ -1316,9 +1345,12 @@
     <a id="22">
       <eng>The folder RabcrData has corrupted or missing content</eng>
       <ces>Složka RabcrData má požkozený nebo chybějící obsah</ces>
-      <ces-ce>Složka RabcrData má požkozenej nebo chybějící obsah</ces-ce>
+      <ces-ce>Složka RabcrData má požkozenej nebo chejbějící obsah</ces-ce>
+      <mor>Složka RabcrData má požkozený nebo chybějící obsah</mor>
       <mor-ha>Složka RabcrData má požkozeny data nebo s chebnym obsahem</mor-ha>
-      <slk>Zložka RabcrData má pożkodenia alebo chýbajúci obsah</slk>
+      <mor-hax>Složka RabcrData má požkozeny data nebo s chebnym obsahem</mor-hax>
+      <mor-va>Složka RabcrData má vykazené data nebo s chybným obsažem</mor-va>
+      <slk>Zložka RabcrData má poškodený alebo chýbajúci obsah</slk>
       <pol>Folder RabcrData ma uszkodzoną lub brakującą zawartość</pol>
       <jpn>フォルダーRabcrDataのコンテンツが破損しているか欠落しています</jpn>
       <deu>Der Ordner RabcrData hat beschädigten oder fehlenden Inhalt</deu>
@@ -1479,11 +1511,13 @@
     <a id="24">
       <eng>Open</eng>
       <ces>Otevřít</ces>
-      <mor-ha>Otevř</mor-ha>
-      <hsb>Wočinić</hsb>
       <ces-ce>Votevřít</ces-ce>
-      <jpn>オープン</jpn>
+      <mor>Otevřít</mor>
+      <mor-ha>Otevř</mor-ha>
+      <mor-va>Rozglábiť</mor-va>
       <slk>Otvoriť</slk>
+      <jpn>オープン</jpn>
+      <hsb>Wočinić</hsb>
       <spa>Abrir</spa>
       <fra>Ouvrir</fra>
       <por>Abrir</por>
@@ -1562,11 +1596,13 @@
     <a id="25">
       <eng>Fly</eng>
       <ces>Odletět</ces>
-      <mor-ha>Odlitnót</mor-ha>
-      <mor>Odlétnout</mor>
-      <hsb>Lećeć</hsb>
       <ces-ce>Vodletět</ces-ce>
+      <mor>Odlitnout</mor>
+      <mor-ha>Otlitnót</mor-ha>
+      <mor-hax>Otlitnót</mor-hax>
+      <mor-va>Odlétúť</mor-va>
       <slk>Odletieť</slk>
+      <hsb>Lećeć</hsb>
       <spa>Volar lejos</spa>
       <por>Voar</por>
       <eo>Flugu</eo>
@@ -1646,9 +1682,11 @@
     <a id="26">
       <eng>Go to the menu</eng>
       <ces>Zpět do menu</ces>
-      <mor-ha>Zpátke do meno</mor-ha>
-      <hsb>Chodźić do menu</hsb>
+      <mor>Zpátky do menu</mor>
+      <mor-ha>Zpátkê do menô</mor-ha>
+      <mor-hax>Zpátke do meno</mor-hax>
       <slk>Späť do menu</slk>
+      <hsb>Chodźić do menu</hsb>
       <por>Vá para o menu</por>
       <ukr>Перейдіть до меню</ukr>
       <srp>Идите на мени</srp>
@@ -1734,12 +1772,13 @@
     </a>
     <a id="28">
       <eng>You died</eng>
-      <hsb>Šěsć morwy</hsb>
       <ces>Zrovna jsi zemřel(a)</ces>
-      <mor>Právě si umřel(a)</mor>
-      <mor-ha>Zrovna si zemřel(a)</mor-ha>
+      <mor>Právě si skonal(a)</mor>
+      <mor-ha>Zrovna si skonal(a)</mor-ha>
+      <mor-hax>Zrovna si skonal(a)</mor-hax>
       <mor-va>Prám sa zminúł(a)</mor-va>
       <slk>Práve si zomrel(a)</slk>
+      <hsb>Šěsć morwy</hsb>
       <por>Você morreu</por>
       <eo>Vi mortis</eo>
       <ukr>Ти помер</ukr>
@@ -1839,7 +1878,9 @@
     <a id="29">
       <eng>Respawn in</eng>
       <ces>Znovuzrodíš se za</ces>
-      <mor-ha>Znovo se narodiš za</mor-ha>
+      <mor-ha>Znovô se narodiš za</mor-ha>
+      <mor-hax>Znovo se narodiš za</mor-hax>
+      <mor-va>Zaséj sa přimnožíš za</mor-va>
       <slk>Znovuzrodíš sa za</slk>
       <pol>Odrodzenie w</pol>
       <eo>Malaperigita eng</eo>
@@ -1941,6 +1982,7 @@
     <a id="38">
       <eng>Use</eng>
       <ces>Použití</ces>
+      <mor>Použití</mor>
       <mor-ha>Póžeti</mor-ha>
       <slk>Použitie</slk>
       <pol>Posługiwać się</pol>
@@ -2022,9 +2064,10 @@
     <a id="39">
       <eng>is number</eng>
       <ces>je číslo</ces>
+      <mor>je číslo</mor>
       <mor-ha>je čislo</mor-ha>
-      <slk>Je číslo</slk>
-      <pol>To liczba</pol>
+      <slk>je číslo</slk>
+      <pol>to liczba</pol>
       <jpn>数です</jpn>
       <deu>Ist Nummer</deu>
       <spa>Es número</spa>
@@ -2106,7 +2149,8 @@
       <eng>Adjusting</eng>
       <ces>Nastavuji</ces>
       <mor>Nastavuju</mor>
-      <mor-ha>Nastavojo</mor-ha>
+      <mor-ha>Nastavôjô</mor-ha>
+      <mor-hax>Nastavojo</mor-hax>
       <slk>Nastavujem</slk>
       <pol>Naregulowanie</pol>
       <jpn>調整中</jpn>
@@ -2203,6 +2247,7 @@
     <a id="46">
       <eng>Unknown error</eng>
       <ces>Neznámá chyba</ces>
+      <mor>Neznámá chyba</mor>
       <mor-ha>Neznámá mélka</mor-ha>
       <spa>Error desconocido</spa>
       <slk>Neznáma chyba</slk>
@@ -2314,10 +2359,13 @@
     <a id="57">
       <eng>Cancel</eng>
       <ces>Zrušit</ces>
+      <mor>Zrušit</mor>
       <mor-ha>Anolovat</mor-ha>
+      <mor-hax>Anolovat</mor-hax>
+      <mor-va>Zpáčiť</mor-va>
+      <slk>Zrušiť</slk>
       <hsb>Přetorhnyć</hsb>
       <deu>Abbrechen</deu>
-      <slk>Zrušiť</slk>
       <spa>Cancelar</spa>
       <fra>Annuler</fra>
       <ita>Annulla</ita>
@@ -2399,15 +2447,18 @@
     <a id="58">
       <eng>Apply</eng>
       <ces>Použít</ces>
+      <mor>Použít</mor>
       <mor-ha>Póžet</mor-ha>
+      <mor-hax>Póžet</mor-hax>
+      <mor-va>Užiť</mor-va>
+      <slk>Použiť</slk>
+      <pol>Zastosuj</pol>
       <hsb>Wužiwać</hsb>
       <deu>Übernehmen</deu>
       <jpn>アプライ</jpn>
-      <slk>Použiť</slk>
       <spa>Aplicar</spa>
       <fra>Appliquer</fra>
       <ita>Applica</ita>
-      <pol>Zastosuj</pol>
       <por>Aplique</por>
       <ukr>Застосувати</ukr>
       <srp>Применити</srp>
@@ -2483,7 +2534,11 @@
     <a id="59">
       <eng>Name of the world</eng>
       <ces>Název světa</ces>
+      <ces-ce>Meno světa</ces-ce>
+      <mor>Méno světa</mor>
       <mor-ha>Méno sfěta</mor-ha>
+      <mor-hax>Méno sfěta</mor-hax>
+      <mor-va>Méno svjeta</mor-va>
       <slk>Názov sveta</slk>
       <pol>Nazwa świata</pol>
       <deu>Der Name der Welt</deu>
@@ -2571,8 +2626,12 @@
     <a id="60">
       <eng>Show spoiler</eng>
       <ces>Zobrazit náhled</ces>
-      <hsb>Spoiler pokazać</hsb>
+      <mor>Ukázat náhled</mor>
+      <mor-ha>Ôkázat náhled</mor-ha>
+      <mor-hax>Okázat náhled</mor-hax>
+      <mor-va>Ukázať náhled</mor-va>
       <slk>Zobraziť náhľad</slk>
+      <hsb>Spoiler pokazać</hsb>
       <pol>Pokaż podgląd</pol>
       <por>Mostrar spoiler</por>
       <nor>Vis spoiler</nor>
@@ -2662,11 +2721,15 @@
     <a id="61">
       <eng>Difficulty in the World</eng>
       <ces>Obtížnost ve světě</ces>
-      <hsb>Ćežkósć w swěće</hsb>
       <ces-ce>Vobtížnost ve světě</ces-ce>
-      <mor-ha>Obťéžnost ve sfětě</mor-ha>
-      <deu>Schwierigkeit</deu>
+      <mor>Obtížnost ve světě</mor>
+      <mor-ha>Obťéžnost ve sfetě</mor-ha>
+      <mor-hax>Obťéžnost ve sfetě</mor-hax>
+      <mor-va>Obtížnosť ve svjetě</mor-va>
       <slk>Obtiažnosť vo svete</slk>
+      <pol>Trudności na świecie</pol>
+      <hsb>Ćežkósć w swěće</hsb>
+      <deu>Schwierigkeit</deu>
       <por>Dificuldade no mundo</por>
       <nor>Vanskelighetsgrad i verden</nor>
       <alb>Vështirësia në botë</alb>
@@ -2675,7 +2738,6 @@
       <gla>Duilgheadas san t-saoghal</gla>
       <cat>Dificultat al món</cat>
       <spa>Dificultad eng el mundo</spa>
-      <pol>Trudności na świecie</pol>
       <fra>Difficulté dans le monde</fra>
       <fin>Vaikeus maailmassa</fin>
       <ita>Difficoltà nel mondo</ita>
@@ -2755,10 +2817,13 @@
     <a id="62">
       <eng>The size of the world</eng>
       <ces>Velikost světa</ces>
-      <hsb>Wulkósć swěta</hsb>
-      <mor-ha>Velikosť sfěta</mor-ha>
+      <mor>Velikosť světa</mor>
+      <mor-ha>Vêlêkosť sfěta</mor-ha>
+      <mor-hax>Velekosť sfěta</mor-hax>
+      <mor-va>Velkosť svjeta</mor-va>
       <slk>Veľkosť sveta</slk>
       <pol>Wielkość świata</pol>
+      <hsb>Wulkósć swěta</hsb>
       <por>O tamanho do mundo</por>
       <spa>El tamaño del mundo</spa>
       <nor>Størrelsen på verden</nor>
@@ -2846,10 +2911,13 @@
     <a id="63">
       <eng>Load world from file</eng>
       <ces>Načíst svět ze souboru</ces>
-      <hsb>Swět wobchadźeć wot dataja</hsb>
-      <mor-ha>Načést sfět ze sóboro</mor-ha>
+      <mor>Načíst svět ze soubora</mor>
+      <mor-ha>Načést svjet ze sóbora</mor-ha>
+      <mor-hax>Načést svjet ze sóbora</mor-hax>
+      <mor-va>Načíst svjet ze súbora</mor-va>
       <slk>Načítať svet zo súboru</slk>
       <pol>Załaduj świat z pliku</pol>
+      <hsb>Swět wobchadźeć wot dataja</hsb>
       <por>Carregar mundo do arquivo</por>
       <alb>Ngarkoni botën nga skedari</alb>
       <eo>Ŝarĝi mondon de dosiero</eo>
@@ -2960,14 +3028,17 @@
     <a id="71">
       <eng>Edit world</eng>
       <ces>Upravit svět</ces>
-      <mor-ha>Opravit sfět</mor-ha>
+      <mor>Upravit svět</mor>
+      <mor-ha>Ôpravit sfět</mor-ha>
+      <mor-hax>Opravit sfět</mor-hax>
+      <mor-va>Upraviť svjet</mor-va>
+      <slk>Upraviť svet</slk>
+      <pol>Edytuj świat</pol>
       <hsb>Wobdźěłać swět</hsb>
       <deu>Bearbeiten</deu>
-      <slk>Upraviť svet</slk>
       <spa>Editar</spa>
       <fra>Modifier</fra>
       <ita>Modifica</ita>
-      <pol>Edytuj świat</pol>
       <por>Editar mundo</por>
       <ukr>Редагувати світ</ukr>
       <srp>Уреди свет</srp>
@@ -3051,7 +3122,10 @@
     <a id="72">
       <eng>You can use GeDo tags</eng>
       <ces>Můžete použít GeDo značky</ces>
-      <mor-ha>Mužete póžit GeDo značke</mor-ha>
+      <mor>Můžete použít GeDo značky</mor>
+      <mor-ha>Mužete póžévat GeDo značkê</mor-ha>
+      <mor-hax>Mužete póžévat GeDo značke</mor-hax>
+      <mor-va>Možete užiť GeDo značení</mor-va>
       <slk>Môžete použiť GeDo značky</slk>
       <pol>Możesz użyć tagów GeDo</pol>
       <nld>U kunt GeDo-tags gebruiken</nld>
@@ -3149,7 +3223,10 @@
     <a id="73">
       <eng>Remove world</eng>
       <ces>Smazat svět</ces>
-      <mor-ha>Smazat sfět</mor-ha>
+      <mor>Zmazat svět</mor>
+      <mor-ha>Zmazat sfět</mor-ha>
+      <mor-hax>Zmazat sfět</mor-hax>
+      <mor-va>Zmazať svjet</mor-va>
       <deu>Löschen</deu>
       <slk>Zmazať svet</slk>
       <spa>Eliminar</spa>
@@ -3241,8 +3318,10 @@
     <a id="74">
       <eng>Export</eng>
       <ces>Exportovat</ces>
-      <deu>Exportieren</deu>
+      <mor>Exportovat</mor>
+      <mor-va>Exportovať</mor-va>
       <slk>Exportovať</slk>
+      <deu>Exportieren</deu>
       <spa>Exportar</spa>
       <ita>Esportazione</ita>
       <pol>Eksportuj</pol>
@@ -3322,9 +3401,12 @@
     <a id="75">
       <eng>Clean</eng>
       <ces>Vyčistit</ces>
-      <mor-ha>Večestit</mor-ha>
-      <deu>Putzen</deu>
+      <mor>Vyčistit</mor>
+      <mor-ha>Vêčêstět</mor-ha>
+      <mor-hax>Večestět</mor-hax>
+      <mor-va>Vypucovať</mor-va>
       <slk>Vyčistiť</slk>
+      <deu>Putzen</deu>
       <spa>Limpio</spa>
       <por>Limpio</por>
       <ukr>Чисто</ukr>
@@ -3421,6 +3503,8 @@
     <a id="77">
       <eng>Confirm</eng>
       <ces>Potvrdit</ces>
+      <mor>Potvrdit</mor>
+      <mor-va>Potvŕdiť</mor-va>
       <slk>Potvrdiť</slk>
       <spa>Confirmar</spa>
       <pol>Potwierdź</pol>
@@ -3503,9 +3587,10 @@
     <a id="78">
       <eng>Notes</eng>
       <ces>Poznámky</ces>
-      <mor-ha>Poznámke</mor-ha>
+      <mor>Poznámky</mor>
+      <mor-ha>Poznámkê</mor-ha>
+      <mor-hax>Poznámke</mor-hax>
       <pol>Notatki</pol>
-      <jpn>ノート</jpn>
       <deu>Anmerkungen</deu>
       <spa>Notas</spa>
       <ita>Appunti</ita>
@@ -3528,6 +3613,7 @@
       <mkd>Белешки</mkd>
       <bul>Бележки</bul>
       <eo>Notoj</eo>
+      <jpn>ノート</jpn>
       <ltz>Notizen</ltz>
       <alb>Shënime</alb>
       <swa>Vidokezo</swa>
@@ -3578,15 +3664,16 @@
       <fij>IDusidusi</fij>
       <por-br>Anotações</por-br>
       <glg>NOTAS</glg>
-      <fra-ca>Remarques :</fra-ca>
+      <fra-ca>Remarques</fra-ca>
       <oto>Notas</oto>
     </a>
     <a id="79">
       <eng>Zip Archive</eng>
       <ces>Zip Archiv</ces>
-      <hsb>Zip Archiw</hsb>
+      <mor>Zip Archiv</mor>
       <slk>Zip Archív</slk>
       <pol>Archiwum Zip</pol>
+      <hsb>Zip Archiw</hsb>
       <nld>Zip-archief</nld>
       <eo>Zip Arkivo</eo>
       <ukr>Архів Zip</ukr>
@@ -3660,12 +3747,14 @@
     <a id="80">
       <eng>Play</eng>
       <ces>Hrát</ces>
+      <mor>Hrát</mor>
+      <mor-va>Hráť</mor-va>
+      <slk>Hrať</slk>
+      <pol>Graj</pol>
       <hsb>Hrać</hsb>
       <deu>Spiel</deu>
       <jpn>プレー</jpn>
-      <slk>Hrať</slk>
       <fr-Fr>Jouer</fr-Fr>
-      <pol>Graj</pol>
       <ita>Gioco</ita>
       <spa>Juega</spa>
       <por>Tocar</por>
@@ -3744,10 +3833,14 @@
     <a id="81">
       <eng>Generate</eng>
       <ces>Vygenerovat</ces>
-      <deu>Generieren</deu>
-      <jpn>うむ</jpn>
+      <mor>Vygenerovat</mor>
+      <mor-ha>Vêgenerovat</mor-ha>
+      <mor-hax>Vegenerovat</mor-hax>
+      <mor-va>Vygenerovať</mor-va>
       <slk>Vygenerovať</slk>
       <pol>Generuj</pol>
+      <deu>Generieren</deu>
+      <jpn>うむ</jpn>
       <spa>Generar</spa>
       <fra>Générer</fra>
       <ita>Generare</ita>
@@ -3825,9 +3918,11 @@
     <a id="82">
       <eng>Player</eng>
       <ces>Postavička</ces>
-      <mor-ha>Postavečka</mor-ha>
-      <jpn>プレーヤー</jpn>
+      <mor>Postavička</mor>
+      <mor-ha>Postavêčka</mor-ha>
+      <mor-hax>Postavečka</mor-hax>
       <pol>Charakter</pol>
+      <jpn>プレーヤー</jpn>
       <spa>Jugador</spa>
       <ita>Giocatore</ita>
       <deu>Spieler</deu>
@@ -3907,7 +4002,9 @@
     <a id="83">
       <eng>Gender</eng>
       <ces>Pohlaví</ces>
+      <mor>Pohlaví</mor>
       <mor-ha>Pohlavi</mor-ha>
+      <mor-hax>Pohlavi</mor-hax>
       <hsb>Splah</hsb>
       <deu>Sex</deu>
       <jpn>性別</jpn>
@@ -3990,7 +4087,9 @@
     <a id="84">
       <eng>Depending on sex will be generated clothes</eng>
       <ces>Podle pohlaví bude vygenerováno oblečení</ces>
-      <mor-ha>Podli pohlavi bode vegenerovana obšata</mor-ha>
+      <mor>Podle pohlaví bude vygenerováné oblečení</mor>
+      <mor-ha>Podli pohlavi bôde vêgenerovaná obšata</mor-ha>
+      <mor-hax>Podli pohlavi bode vegenerovaná obšata</mor-hax>
       <slk>Podľa pohlavia bude vygenerované oblečenie</slk>
       <pol>Odzież będzie generowana według płci</pol>
       <jpn>性別によって生成される服</jpn>
@@ -4072,7 +4171,10 @@
     <a id="85">
       <eng>Man</eng>
       <ces>Muž</ces>
-      <mor-ha>Mož</mor-ha>
+      <mor>Chlap</mor>
+      <mor-ha>Chlap</mor-ha>
+      <mor-hax>Chlap</mor-hax>
+      <mor-va>Chlap</mor-va>
       <hsb>Muž</hsb>
       <deu>Mann</deu>
       <jpn>男</jpn>
@@ -4152,14 +4254,16 @@
     <a id="86">
       <eng>Enabled</eng>
       <ces>Zapnuto</ces>
+      <mor>Zapnuté</mor>
       <mor-ha>Zapnoté</mor-ha>
+      <mor-hax>Zapnôté</mor-hax>
+      <slk>Zapnuté</slk>
+      <pol>Włączone</pol>
       <deu>Aktiviert</deu>
       <jpn>有効化</jpn>
-      <slk>Zapnuté</slk>
       <fra>Oui</fra>
       <ita>Sì</ita>
       <spa>Si</spa>
-      <pol>Włączone</pol>
       <por>Habilitado</por>
       <hun>Bekapcsolt</hun>
       <nld>Ingeschakeld</nld>
@@ -4233,7 +4337,9 @@
     <a id="87">
       <eng>Disabled</eng>
       <ces>Vypnuto</ces>
+      <mor>Vypnuté</mor>
       <mor-ha>Vepnoté</mor-ha>
+      <mor-hax>Vêpnôté</mor-hax>
       <deu>Deaktiviert</deu>
       <jpn>無効</jpn>
       <slk>Vypnuté</slk>
@@ -4316,6 +4422,7 @@
     <a id="88">
       <eng>Woman</eng>
       <ces>Žena</ces>
+      <mor>Žena</mor>
       <hsb>Žona</hsb>
       <deu>Frau</deu>
       <jpn>女</jpn>
@@ -4397,7 +4504,9 @@
     <a id="89">
       <eng>Mature player</eng>
       <ces>Věk postavičky</ces>
+      <mor>Věk postavičky</mor>
       <mor-ha>Leta postavečke</mor-ha>
+      <mor-hax>Lêta postavečkê</mor-hax>
       <pol>Dojrzały gracz</pol>
       <fra>Joueur mature</fra>
       <ita>Giocatore maturo</ita>
@@ -4479,7 +4588,9 @@
       <eng>Hair colour</eng>
       <enu>Hair color</enu>
       <ces>Barva vlasů</ces>
-      <mor-ha>Barva pačesů</mor-ha>
+      <mor>Barva vlasú</mor>
+      <mor-ha>Barva pačesu</mor-ha>
+      <mor-hax>Barva pačesu</mor-hax>
       <deu>Haarfarbe</deu>
       <pol>Kolor włosów</pol>
       <slk>Farba vlasov</slk>
@@ -4569,13 +4680,15 @@
     <a id="93">
       <eng>White</eng>
       <ces>Bílé</ces>
+      <mor>Bílé</mor>
       <mor-ha>Bily</mor-ha>
+      <mor-hax>Bily</mor-hax>
+      <slk>Biele</slk>
+      <pol>Białe</pol>
       <hsb>Běl</hsb>
       <deu>Weiß</deu>
       <jpn>白毛</jpn>
-      <slk>Biele</slk>
       <spa>Blanco</spa>
-      <pol>Białe</pol>
       <ita>Bianchi</ita>
       <por>Branco</por>
       <la>Album</la>
@@ -4651,7 +4764,9 @@
     </a>
     <a id="94">
       <eng>Blond</eng>
+      <mor>Blonďaté</mor>
       <mor-ha>Blonďaty</mor-ha>
+      <mor-hax>Blonďaty</mor-hax>
       <jpn>ブロンド毛</jpn>
       <spa>Rubio</spa>
       <ita>Biondo</ita>
@@ -4716,8 +4831,10 @@
     </a>
     <a id="95">
       <eng>Ginger</eng>
-      <ces>Zrzavé</ces>
+      <ces>Ryšavé</ces>
+      <mor>Zrzavé</mor>
       <mor-ha>Zrzavy</mor-ha>
+      <mor-hax>Zrzavy</mor-hax>
       <deu>Rot</deu>
       <jpn>赤毛</jpn>
       <slk>Ryšavé</slk>
@@ -4795,7 +4912,10 @@
     <a id="96">
       <eng>Brown</eng>
       <ces>Hnědé</ces>
+      <ces-ce>Hnědý</ces-ce>
+      <mor>Hnědé</mor>
       <mor-ha>Hnědy</mor-ha>
+      <mor-hax>Hnědy</mor-hax>
       <hsb>Bruny</hsb>
       <deu>Braun</deu>
       <jpn>褐毛</jpn>
@@ -4877,15 +4997,19 @@
     <a id="97">
       <eng>Black</eng>
       <ces>Černé</ces>
+      <ces-ce>Černý</ces-ce>
+      <mor>Černé</mor>
       <mor-ha>Černy</mor-ha>
+      <mor-hax>Černy</mor-hax>
+      <mor-va>Čérné</mor-va>
+      <slk>Čierne</slk>
+      <pol>Czarne</pol>
       <hsb>Čorny</hsb>
       <deu>Schwarz</deu>
       <jpn>黒毛</jpn>
-      <slk>Čierne</slk>
       <spa>Negro</spa>
       <fra>Noirs</fra>
       <ita>Neri</ita>
-      <pol>Czarne</pol>
       <por>Preto</por>
       <la>Nigreos</la>
       <eo>Nigra</eo>
@@ -4961,13 +5085,14 @@
     <a id="98">
       <eng>Keyboard</eng>
       <ces>Klávesnice</ces>
-      <mor-ha>Klávesnica</mor-ha>
       <mor>Klávesnica</mor>
+      <mor-ha>Klávesnica</mor-ha>
+      <mor-hax>Klávesnica</mor-hax>
       <mor-va>Klávesnica</mor-va>
       <mor-sl>Klávesnica</mor-sl>
+      <slk>Klávesnica</slk>
       <deu>Tastatur</deu>
       <jpn>キーボード</jpn>
-      <slk>Klávesnica</slk>
       <fra>Clavier</fra>
       <spa>Teclado</spa>
       <pol>Klawiatura</pol>
@@ -5041,10 +5166,11 @@
     <a id="99">
       <eng>Player</eng>
       <ces>Hráč</ces>
+      <mor>Hráč</mor>
+      <pol>Gracz</pol>
       <deu>Spieler</deu>
       <jpn>プレーヤー</jpn>
       <fra>Joueur</fra>
-      <pol>Gracz</pol>
       <ita>Giocatore</ita>
       <spa>Jugador</spa>
       <por>Jogador</por>
@@ -5121,11 +5247,13 @@
     <a id="100">
       <eng>Move left</eng>
       <ces>Pohyb doleva</ces>
+      <mor>Pohyb doleva</mor>
       <mor-ha>Pohnóti se doleva</mor-ha>
-      <deu>Links</deu>
+      <mor-hax>Pohnóti se doleva</mor-hax>
       <slk>Pohyb doľava</slk>
-      <fra>Aller à gauche</fra>
       <pol>Przejdź w lewo</pol>
+      <deu>Links</deu>
+      <fra>Aller à gauche</fra>
       <ita>Sposta a sinistra</ita>
       <spa>Mover hacia la izquierda</spa>
       <por>Vire à esquerda</por>
@@ -5207,7 +5335,9 @@
     <a id="102">
       <eng>Move right</eng>
       <ces>Pohyb doprava</ces>
+      <mor>Pohyb doprava</mor>
       <mor-ha>Pohnóti se doprava</mor-ha>
+      <mor-hax>Pohnóti se doprava</mor-hax>
       <deu>Rechts</deu>
       <fra>Aller à droite</fra>
       <ita>Cammina verso destra</ita>
@@ -5293,7 +5423,9 @@
     <a id="104">
       <eng>Jumping</eng>
       <ces>Skákání</ces>
-      <mor-ha>Veskákováni</mor-ha>
+      <mor>Skákání</mor>
+      <mor-ha>Vêskákováni</mor-ha>
+      <mor-hax>Veskákováni</mor-hax>
       <deu>Springen</deu>
       <jpn>ジャンプ</jpn>
       <slk>Skákanie</slk>
@@ -5375,7 +5507,11 @@
     <a id="106">
       <eng>Accelerate</eng>
       <ces>Zrychlení</ces>
-      <mor-ha>Rechléši poheb</mor-ha>
+      <mor>Zrychlení</mor>
+      <mor-ha>Rêchléši pohêb</mor-ha>
+      <mor-hax>Rechléši poheb</mor-hax>
+      <slk>Urýchliť</slk>
+      <pol>Przyśpieszyć</pol>
       <srp>Убрзати</srp>
       <swa>Kuharakisha</swa>
       <ltz>Beschleunegen</ltz>
@@ -5384,8 +5520,6 @@
       <hin>में तेजी लाने</hin>
       <mar>गती द्या</mar>
       <nep>द्रुत गर्नुहोस्</nep>
-      <slk>Urýchliť</slk>
-      <pol>Przyśpieszyć</pol>
       <deu>Beschleunigen</deu>
       <jpn>加速する</jpn>
       <spa>Acelerar</spa>
@@ -5454,8 +5588,9 @@
     <a id="108">
       <eng>Inventory</eng>
       <ces>Inventář</ces>
-      <deu>Inventar</deu>
+      <mor>Inventář</mor>
       <slk>Inventár</slk>
+      <deu>Inventar</deu>
       <fra>Inventaire</fra>
       <ita>Inventario</ita>
       <spa>Inventario</spa>
@@ -5534,7 +5669,10 @@
     <a id="110">
       <eng>Message</eng>
       <ces>Zpráva</ces>
+      <mor>Zpráva</mor>
       <mor-ha>Správa</mor-ha>
+      <mor-hax>Správa</mor-hax>
+      <mor-va>Vjeďmo</mor-va>
       <deu>Nachricht</deu>
       <slk>Správa</slk>
       <spa>Mensaje</spa>
@@ -5616,8 +5754,11 @@
     <a id="111">
       <eng>Open bubble and write some text</eng>
       <ces>Otevřít bublinu ke psaní</ces>
-      <mor-ha>Otevř žboleno ke psani</mor-ha>
-      <ces-ce>Votevřít bublinu ke psaní</ces-ce>
+      <ces-ce>Votevřít bublinu k psaní</ces-ce>
+      <mor>Otevřít žbulinu na psaní</mor>
+      <mor-ha>Otevřê žbolenê na psani</mor-ha>
+      <mor-hax>Otevře žboleno na psani</mor-hax>
+      <mor-va>Rozglábiť žbluňku na psaní</mor-va>
       <slk>Otvoriť bublinu na písanie</slk>
       <deu>Chat</deu>
       <pol>Otwórz dymek do pisania</pol>
@@ -5699,7 +5840,9 @@
     <a id="112">
       <eng>Drop item</eng>
       <ces>Vyhození itemu</ces>
-      <mor-ha>Vehozeni itemo</mor-ha>
+      <mor>Vyhození itema</mor>
+      <mor-ha>Vêhozeni itema</mor-ha>
+      <mor-hax>Vehozeni itema</mor-hax>
       <slk>Vyhodenie itema</slk>
       <pol>Upuść przedmiot</pol>
       <spa>Descarta un objeto</spa>
@@ -5788,6 +5931,8 @@
     </a>
     <a id="114">
       <eng>Menu</eng>
+      <mor-ha>Menô</mor-ha>
+      <mor-hax>Meno</mor-hax>
       <deu>Spielmenü</deu>
       <fra>Menu du jeu</fra>
       <jpn>ゲームメニュー</jpn>
@@ -5863,7 +6008,9 @@
     <a id="115">
       <eng>Go from game to the menu</eng>
       <ces>Ze hry do menu</ces>
-      <mor-ha>Ze hre do meno</mor-ha>
+      <mor>Ze hry do menu</mor>
+      <mor-ha>Ze hrê do menô</mor-ha>
+      <mor-hax>Ze hre do meno</mor-hax>
       <pol>Od gry do menu</pol>
       <jpn>ゲームからメニューへ</jpn>
       <deu>Gehe vom Spiel zum Menü</deu>
@@ -5945,7 +6092,9 @@
     <a id="121">
       <eng>Language</eng>
       <ces>Jazyk</ces>
-      <mor-ha>Jazek</mor-ha>
+      <mor>Jazyk</mor>
+      <mor-ha>Jazêk</mor-ha>
+      <mor-hax>Jazek</mor-hax>
       <hsb>Rěč</hsb>
       <deu>Sprache</deu>
       <jpn>言語</jpn>
@@ -6029,7 +6178,9 @@
     <a id="123">
       <eng>Game elements</eng>
       <ces>Herní prvky</ces>
-      <mor-ha>Herni prvke</mor-ha>
+      <mor>Herní prvky</mor>
+      <mor-ha>Herni prvkê</mor-ha>
+      <mor-hax>Herni prvke</mor-hax>
       <slk>Herné prvky</slk>
       <jpn>ゲーム要素</jpn>
       <spa>Elementos del juego</spa>
@@ -6111,13 +6262,15 @@
     <a id="124">
       <eng>Controls animations</eng>
       <ces>Animace tlačítek, polí</ces>
+      <mor>Animace tlačítek, polí</mor>
       <mor-ha>Animace sklačidel, poli</mor-ha>
+      <mor-hax>Animace sklačidel, poli</mor-hax>
+      <slk>Animácia tlačidiel, polí</slk>
+      <pol>Steruje animacjami</pol>
       <fra>Contrôle les animations</fra>
       <dan>Kontrollerer animationer</dan>
       <por>Animações de controles</por>
       <cat>Controla les animacions</cat>
-      <pol>Steruje animacjami</pol>
-      <slk>Animácia tlačidiel, polí</slk>
       <jpn>アニメーションを制御します</jpn>
       <ukr>Керує анімацією</ukr>
       <ita>Controlla le animazioni</ita>
@@ -6193,6 +6346,7 @@
     <a id="125">
       <eng>Game graphics quality</eng>
       <ces>Kvalita obrazu hry</ces>
+      <mor>Kvalita obrazu hry</mor>
       <slk>Kvalita grafiky</slk>
       <pol>Gra Graphics Quality</pol>
       <deu>Game Graphics Qualität</deu>
@@ -6267,11 +6421,14 @@
     <a id="126">
       <eng>Zoom</eng>
       <ces>Přiblížení</ces>
-      <mor-ha>Přebléženi</mor-ha>
-      <deu>Vergrößern</deu>
+      <mor>Zvětšení</mor>
+      <mor-ha>Zvěčeni</mor-ha>
+      <mor-hax>Zvěčeni</mor-hax>
+      <mor-va>Zvječení</mor-va>
       <slk>Priblíženie</slk>
-      <jpn>ズーム</jpn>
+      <deu>Vergrößern</deu>
       <pol>Wielkość</pol>
+      <jpn>ズーム</jpn>
       <spa>Enfocar</spa>
       <fra>Zoom avant</fra>
       <ita>Ingrandisci</ita>
@@ -6339,7 +6496,9 @@
     <a id="128">
       <eng>Type of scale</eng>
       <ces>Typ roztáhnoutí</ces>
-      <mor-ha>Tep roztáhnóti</mor-ha>
+      <mor>Typ roztáhnutí</mor>
+      <mor-ha>Têp roztaženi</mor-ha>
+      <mor-hax>Tep roztaženi</mor-hax>
       <deu>Stretch-Tipp</deu>
       <slk>Typ roztiahnutia</slk>
       <ita>Tipo di stiramento</ita>
@@ -6429,12 +6588,13 @@
     <a id="130">
       <eng>Window</eng>
       <ces>Obrazovka</ces>
-      <hsb>Wokno</hsb>
       <ces-ce>Vobrazovka</ces-ce>
+      <mor>Obrazovka</mor>
       <mor-han>Špizlampa</mor-han>
+      <hsb>Wokno</hsb>
+      <pol>Okno</pol>
       <deu>Fenster</deu>
       <jpn>窓</jpn>
-      <pol>Okno</pol>
       <spa>Ventana</spa>
       <fra>Fenêtre</fra>
       <eo>Fenestro</eo>
@@ -6564,9 +6724,12 @@
     <a id="134">
       <eng>Loudness</eng>
       <ces>Hlasitost</ces>
-      <mor-ha>Hlasetost</mor-ha>
-      <deu>Lautstärke</deu>
+      <mor>Hlasitost</mor>
+      <mor-ha>Hlasêtost</mor-ha>
+      <mor-hax>Hlasetost</mor-hax>
+      <mor-va>Hłasitosť</mor-va>
       <slk>Hlasitosť</slk>
+      <deu>Lautstärke</deu>
       <jpn>ボリューム</jpn>
       <fra>Le volume</fra>
       <pol>Głośność</pol>
@@ -6645,10 +6808,12 @@
       <eng>Music</eng>
       <hsb>Hudźba</hsb>
       <ces>Hlasitost písní</ces>
-      <mor-ha>Hlasetost vebřenkováni mozeke</mor-ha>
-      <deu>Musik</deu>
+      <mor-ha>Hlasêtost vêbřenkováni môzêkê</mor-ha>
+      <mor-hax>Hlasetost vebřenkováni mozeke</mor-hax>
+      <mor-va>Hłasitosť spívánek</mor-va>
       <slk>Hlasitosť piesní</slk>
       <pol>Muzyka</pol>
+      <deu>Musik</deu>
       <fra>Musique</fra>
       <ita>Musica</ita>
       <jpn>音楽</jpn>
@@ -6726,7 +6891,10 @@
     <a id="137">
       <eng>Effects</eng>
       <ces>Hlasitost efektů</ces>
-      <mor-ha>Hlasetost vebřenkováni efektu</mor-ha>
+      <mor>Hlasitost efektú</mor>
+      <mor-ha>Hlasêtost vêebřenkováni efektu</mor-ha>
+      <mor-hax>Hlasetost vebřenkováni efektu</mor-hax>
+      <mor-va>Hłasitosť efektov</mor-va>
       <slk>Hlasitosť efektov</slk>
       <jpn>音響効果</jpn>
       <pol>Efekty</pol>
@@ -6807,7 +6975,10 @@
     <a id="139">
       <eng>Length of transition</eng>
       <ces>Rychlost přechodu</ces>
-      <mor-ha>Rechlosť přechodo</mor-ha>
+      <mor>Rychlost přechoda</mor>
+      <mor-ha>Rêchlosť přechoda</mor-ha>
+      <mor-hax>Rechlosť přechoda</mor-hax>
+      <mor-va>Rýchlosť přechoda</mor-va>
       <slk>Rýchlosť prechodu</slk>
       <spa>Duración de la transición</spa>
       <ita>Lunghezza della transizione</ita>
@@ -6898,11 +7069,12 @@
     <a id="141">
       <eng>Background</eng>
       <ces>Pozadí</ces>
+      <mor>Pozadí</mor>
       <mor-ha>Pozadi</mor-ha>
-      <deu>Hintergrund</deu>
       <slk>Pozadie</slk>
-      <jpn>背景</jpn>
       <pol>Tło</pol>
+      <deu>Hintergrund</deu>
+      <jpn>背景</jpn>
       <fra>Contexte</fra>
       <ita>Sfondo</ita>
       <spa>Antecedentes</spa>
@@ -6980,7 +7152,9 @@
     <a id="142">
       <eng>Enter text</eng>
       <ces>Zadejte text</ces>
+      <mor>Zadejte text</mor>
       <mor-ha>Zadéte text</mor-ha>
+      <mor-hax>Zadéte text</mor-hax>
       <pol>Wpisz tekst</pol>
       <fra>Entrez du texte</fra>
       <spa>Ingrese texto</spa>
@@ -7083,13 +7257,16 @@
     <a id="144">
       <eng>I've had 18 years</eng>
       <ces>Dosáhl jsem 18 let</ces>
+      <ces-ce>Sem starej 18 let a více</ces-ce>
       <mor>Su starší 18 let</mor>
-      <mor-ha>So starši 18 let</mor-ha>
+      <mor-ha>Sô starši 18 let</mor-ha>
+      <mor-hax>So starši 18 let</mor-hax>
+      <mor-va>Su starší 18 rokú</mor-va>
       <slk>Dosiahol som 18 rokov</slk>
+      <pol>Mam 18 lat</pol>
       <eo>Mi havis 18 jarojn</eo>
       <ukr>У мене було 18 років</ukr>
       <spa>He tenido 18 años</spa>
-      <pol>Mam 18 lat</pol>
       <fra>J'ai 18 ans</fra>
       <ita>Ho avuto 18 anni</ita>
       <por>Eu tive 18 anos</por>
@@ -7184,6 +7361,7 @@
     <a id="145">
       <eng>According to GG account</eng>
       <ces>Dle Vášeho GG účtu</ces>
+      <mor>Dle Vášeho GG účtu</mor>
       <slk>Podľa Vášho GG účtu</slk>
       <spa>Según tu cuenta de GG</spa>
       <fra>Selon votre compte GG</fra>
@@ -7274,6 +7452,7 @@
       <ces-ce>jste nezletilej</ces-ce>
       <mor>ste nezletilý</mor>
       <mor-ha>ste nezletilé</mor-ha>
+      <mor-hax>ste nezletilé</mor-hax>
       <slk>ste maloletý</slk>
       <deu>du bist minderjährig</deu>
       <pol>jesteś nieletni</pol>
@@ -7375,6 +7554,7 @@
       <ces-ce>jste zletilej</ces-ce>
       <mor>ste zletilý</mor>
       <mor-ha>ste zletilé</mor-ha>
+      <mor-hax>ste zletilé</mor-hax>
       <slk>ste plnoletý</slk>
       <ita>sei adulto</ita>
       <fra>tu es adulte</fra>
@@ -7474,6 +7654,7 @@
     <a id="148">
       <eng>Without</eng>
       <ces>Bez</ces>
+      <mor>Bez</mor>
       <mor-ha>Bes</mor-ha>
       <deu>Ohne</deu>
       <fra>Sans</fra>
@@ -7555,6 +7736,7 @@
     <a id="149">
       <eng>Proportion</eng>
       <ces>Dle poměru</ces>
+      <mor>Pole poměra</mor>
       <mor-ha>Podli poměro</mor-ha>
       <mor-va>Podla poměru</mor-va>
       <mor-sl>Podla poměru</mor-sl>
@@ -7638,9 +7820,11 @@
     <a id="150">
       <eng>Fill</eng>
       <ces>Vyplnit</ces>
-      <mor-ha>Veplnit</mor-ha>
-      <deu>Ausfüllen</deu>
+      <mor>Vyplnit</mor>
+      <mor-hax>Veplnit</mor-hax>
+      <mor-ha>Vêplnit</mor-ha>
       <slk>Vyplniť</slk>
+      <deu>Ausfüllen</deu>
       <pol>Wypełnij</pol>
       <fra>Remplissez</fra>
       <ita>Compila</ita>
@@ -7728,11 +7912,13 @@
     <a id="151">
       <eng>Window</eng>
       <ces>Okenní</ces>
-      <mor-ha>Okenni</mor-ha>
       <ces-ce>Vokenní</ces-ce>
-      <deu>Fenster</deu>
+      <mor>Okenní</mor>
+      <mor-ha>Okenni</mor-ha>
+      <mor-hax>Okenni</mor-hax>
       <slk>Okenné</slk>
       <pol>Okno</pol>
+      <deu>Fenster</deu>
       <spa>Ventana</spa>
       <ita>Finestra</ita>
       <fra>Fenêtre</fra>
@@ -7809,10 +7995,12 @@
     <a id="152">
       <eng>Maximized</eng>
       <ces>Zvětšené</ces>
-      <mor-ha>Zvětšeny</mor-ha>
-      <deu>Maximalisiert</deu>
+      <mor>Zvěčené</mor>
+      <mor-ha>Zvěčeny</mor-ha>
+      <mor-hax>Zvěčeny</mor-hax>
       <slk>Zväčšené</slk>
       <pol>Zmaksymalizowane</pol>
+      <deu>Maximalisiert</deu>
       <fra>Maximisé</fra>
       <ita>Massima</ita>
       <spa>Maximizada</spa>
@@ -7889,9 +8077,11 @@
     <a id="153">
       <eng>Fullscreen</eng>
       <ces>Celoobrazovkové</ces>
+      <mor>Celoobrazovkové</mor>
       <mor-ha>Celoobrazovkovy</mor-ha>
-      <deu>Vollbild</deu>
+      <mor-hax>Celoobrazovkovy</mor-hax>
       <pol>Pełny ekran</pol>
+      <deu>Vollbild</deu>
       <fra>Plein écran</fra>
       <ita>A schermo intero</ita>
       <spa>Pantalla completa</spa>
@@ -7966,9 +8156,12 @@
     <a id="154">
       <eng>Fast</eng>
       <ces>Rychlé</ces>
+      <mor>Rychlé</mor>
       <mor-ha>Spichavé</mor-ha>
-      <deu>Schnell</deu>
+      <mor-hax>Spichavé</mor-hax>
+      <mor-va>Ražno</mor-va>
       <slk>Rýchle</slk>
+      <deu>Schnell</deu>
       <pol>Szybki</pol>
       <spa>Rápido</spa>
       <ita>Veloce</ita>
@@ -8066,11 +8259,12 @@
     <a id="155">
       <eng>Medium</eng>
       <ces>Střední</ces>
+      <mor>Střední</mor>
       <mor-ha>Středni</mor-ha>
-      <deu>Mittlere</deu>
       <slk>Stredná</slk>
-      <jpn>ミディアム</jpn>
       <pol>Średni</pol>
+      <deu>Mittlere</deu>
+      <jpn>ミディアム</jpn>
       <ita>Medio</ita>
       <spa>Medio</spa>
       <eo>Meza</eo>
@@ -8142,9 +8336,12 @@
     <a id="156">
       <eng>Slow</eng>
       <ces>Pomalé</ces>
+      <mor>Pomalé</mor>
       <mor-ha>Pomaly</mor-ha>
-      <deu>Langsam</deu>
+      <mor-hax>Pomaly</mor-hax>
+      <mor-va>Táhavé</mor-va>
       <pol>Powolny</pol>
+      <deu>Langsam</deu>
       <ita>Lento</ita>
       <spa>Lento</spa>
       <fra>Lent</fra>
@@ -8229,9 +8426,12 @@
     <a id="157">
       <eng>Clothes and crafting</eng>
       <ces>Oblečení a vyrábění</ces>
-      <mor-ha>Obšata a veráběni</mor-ha>
-      <deu>Bekleidung und Fertigung</deu>
+      <mor>Oblečení a vyrábění</mor>
+      <mor-ha>Obšata a vêráběni</mor-ha>
+      <mor-hax>Obšata a veráběni</mor-hax>
+      <mor-va>Zaoďétí a stvářaní</mor-va>
       <slk>Oblečenie a vyrábanie</slk>
+      <deu>Bekleidung und Fertigung</deu>
       <spa>Prendas de vestir y la fabricación</spa>
       <pol>Odzież i produkcja</pol>
       <ita>Abbigliamento e produzione</ita>
@@ -8313,11 +8513,14 @@
     <a id="158">
       <eng>Desk</eng>
       <ces>Stůl</ces>
+      <mor>Stúl</mor>
       <mor-ha>Stul</mor-ha>
-      <deu>Tisch</deu>
+      <mor-hax>Stul</mor-hax>
+      <mor-va>Stúł</mor-va>
       <slk>Stôl</slk>
-      <jpn>クラフトデスク</jpn>
       <pol>Biurko</pol>
+      <deu>Tisch</deu>
+      <jpn>クラフトデスク</jpn>
       <fra>Table</fra>
       <eo>Skribtablo</eo>
       <cat>Escriptori</cat>
@@ -8392,9 +8595,10 @@
     <a id="159">
       <eng>Furnace</eng>
       <ces>Pec</ces>
+      <mor>Pec</mor>
+      <pol>Piec</pol>
       <deu>Ofen</deu>
       <jpn>炉</jpn>
-      <pol>Piec</pol>
       <fra>Fourneau</fra>
       <eo>Forno</eo>
       <cat>Forn</cat>
@@ -8473,12 +8677,14 @@
     <a id="160">
       <eng>Choose an item</eng>
       <ces>Vyberte item</ces>
-      <mor-ha>Veberte item</mor-ha>
-      <fij>Digitaka e dua na ka</fij>
+      <mor>Vyberte item</mor>
+      <mor-ha>Vêberte item</mor-ha>
+      <mor-hax>Veberte item</mor-hax>
+      <slk>Vyberte položku</slk>
       <pol>Wybierz przedmiot </pol>
+      <fij>Digitaka e dua na ka</fij>
       <deu>Wähle einen Gegenstand</deu>
       <jpn>アイテムを選択してください</jpn>
-      <slk>Vyberte položku</slk>
       <spa>Elige un artículo</spa>
       <ita>Scegli un oggetto</ita>
       <fra>Choisir un élément</fra>
@@ -8546,7 +8752,10 @@
     <a id="161">
       <eng>You can't breathe water</eng>
       <ces>Nemůžeš dýchat vodu</ces>
-      <mor-ha>Nemužeš déchat vodo</mor-ha>
+      <mor>Nemúžeš dýchat vodu</mor>
+      <mor-ha>Nemužeš déchat vodô</mor-ha>
+      <mor-hax>Nemužeš déchat vodo</mor-hax>
+      <mor-va>Nemožeš dýchať vodu</mor-va>
       <slk>Nemôžeš dýchať vodu</slk>
       <eo>Vi ne povas spiri akvon</eo>
       <spa>No puedes respirar agua</spa>
@@ -8643,9 +8852,11 @@
     </a>
     <a id="162">
       <eng>You should eat and drink</eng>
-      <ces>Měl bys jíst a pít</ces>
-      <mor>Měl bys něco sníst a pít se</mor>
-      <mor-ha>Měl bes něco snist a napit se</mor-ha>
+      <ces>Měl by si jíst a pít</ces>
+      <mor>Měl bys neco sníst a napit se</mor>
+      <mor-ha>Měl bês neco snist a napit se</mor-ha>
+      <mor-hax>Měl bes neco snist a napit se</mor-hax>
+      <mor-va>Mňéł bys neco zesť a napiť sa</mor-va>
       <slk>Mal by si jesť a piť</slk>
       <eo>Vi devas manĝi kaj trinki</eo>
       <spa>Deberías comer y beber</spa>
@@ -8743,7 +8954,9 @@
     <a id="163">
       <eng>Pay attention! Lava...</eng>
       <ces>Dávej pozor! Láva...</ces>
+      <mor>Dávej pozor! Láva...</mor>
       <mor-ha>Dávé bacha! Láva...</mor-ha>
+      <mor-hax>Dávé bacha! Láva...</mor-hax>
       <slk>Dávaj pozor! Láva...</slk>
       <spa>¡Presta atención! Lava...</spa>
       <deu>Passt auf! Lava...</deu>
@@ -8834,9 +9047,10 @@
     <a id="164">
       <eng>You were drawn to death</eng>
       <ces>Byl jsi utahán k smrti</ces>
-      <mor>Byls utahán ke smrti</mor>
-      <mor-ha>Bels otahán ke smrti</mor-ha>
       <ces-ce>Byl si utahan ke smrti</ces-ce>
+      <mor>Byls utahán ke smrti</mor>
+      <mor-ha>Bêls ôtaháné ke smrti</mor-ha>
+      <mor-hax>Bels otaháné ke smrti</mor-hax>
       <slk>Bol si uťahaný na smrť</slk>
       <jpn>死に疲れていました</jpn>
       <jpn-oita>死に疲れちょった</jpn-oita>
@@ -8935,7 +9149,10 @@
     <a id="165">
       <eng>Toadstool is poisonous</eng>
       <ces>Muchomůrka je jedovatá</ces>
-      <mor-ha>Mochomurka se dá jist jen jednó</mor-ha>
+      <mor>Muchomúrka se dá jist jenom jednou</mor>
+      <mor-ha>Mochomurka se dá jist jenom jednó</mor-ha>
+      <mor-hax>Mochomurka se dá jist jenom jednó</mor-hax>
+      <mor-va>Mochomúrka se dá ist enem jednú</mor-va>
       <slk>Muchotrávka je jedovatá</slk>
       <eo>Toadstool estas venena</eo>
       <spa>Toadstool es venenoso</spa>
@@ -9035,9 +9252,10 @@
     <a id="166">
       <eng>Fly</eng>
       <ces>Přiletět</ces>
-      <mor-ha>Přelitnót</mor-ha>
-      <deu>Fliege</deu>
+      <mor-ha>Přêlitnót</mor-ha>
+      <mor-hax>Přelitnót</mor-hax>
       <slk>Priletieť</slk>
+      <deu>Fliege</deu>
       <eo>Flugu</eo>
       <cat>Volar</cat>
       <spa>Volar</spa>
@@ -9117,7 +9335,9 @@
     <a id="167">
       <eng>Create</eng>
       <ces>Vytvořit</ces>
+      <mor>Vytvořit</mor>
       <mor-ha>Vetvořit</mor-ha>
+      <mor-hax>Vêtvořit</mor-hax>
       <deu>Erstellen</deu>
       <slk>Vytvoriť</slk>
       <pol>Stwórz</pol>
@@ -9204,7 +9424,8 @@
     <a id="168">
       <eng>Sewing machine</eng>
       <ces>Šicí stroj</ces>
-      <mor-ha>Šeci stroj</mor-ha>
+      <mor-ha>Šêci stroj</mor-ha>
+      <mor-hax>Šeci stroj</mor-hax>
       <slk>Šijací stroj</slk>
       <eo>Kudromaŝino</eo>
       <cat>Màquina de cosir</cat>
@@ -9284,7 +9505,9 @@
     <a id="169">
       <eng>Macerator</eng>
       <ces>Drtič</ces>
-      <mor-ha>Krošedlo</mor-ha>
+      <mor>Drtič</mor>
+      <mor-ha>Krôšêdlo</mor-ha>
+      <mor-hax>Krošedlo</mor-hax>
       <deu>Mazerator</deu>
       <slk>Drvič</slk>
       <spa>Macerador</spa>
@@ -9347,6 +9570,7 @@
     <a id="170">
       <eng>Stone furnace</eng>
       <ces>Kamenná pec</ces>
+      <mor>Kamenná pec</mor>
       <deu>Steinofen</deu>
       <eo>Ŝtona forno</eo>
       <cat>Forn de pedra</cat>
@@ -9427,7 +9651,9 @@
     <a id="171">
       <eng>Items</eng>
       <ces>Itemy</ces>
-      <mor-ha>Iteme</mor-ha>
+      <mor>Itemy</mor>
+      <mor-ha>Itemê</mor-ha>
+      <mor-hax>Iteme</mor-hax>
       <deu>Gegenstände</deu>
       <pol>Przedmioty</pol>
       <eo>Eroj</eo>
@@ -9507,12 +9733,13 @@
     <a id="172">
       <eng>Wooden box</eng>
       <ces>Dřevěná truhlice</ces>
-      <mor-ha>Dřevěná trohleca</mor-ha>
+      <mor>Dřevěná truhla</mor>
+      <mor-ha>Dřevěná trohlêca</mor-ha>
+      <mor-hax>Dřevěná trohleca</mor-hax>
       <mor-sl>Dřevěná kostna</mor-sl>
       <mor-va>Dřevěná truhła</mor-va>
-      <mor>Dřevěná truhla</mor>
-      <deu>Holztruhe</deu>
       <slk>Drevená truhlica</slk>
+      <deu>Holztruhe</deu>
       <pol>Drewniana skrzynia</pol>
       <eo>Ligno-skatolo</eo>
       <cat>Caixa de fusta</cat>
@@ -9591,7 +9818,9 @@
     <a id="173">
       <eng>Box</eng>
       <ces>Truhlice</ces>
-      <mor-ha>Trohleca</mor-ha>
+      <mor>Truhla</mor>
+      <mor-hax>Trohleca</mor-hax>
+      <mor-ha>Trôhlêca</mor-ha>
       <mor-va>Truhła</mor-va>
       <mor-sl>Žigla</mor-sl>
       <deu>Truhe</deu>
@@ -9673,6 +9902,7 @@
     <a id="174">
       <eng>Mobile phone</eng>
       <ces>Mobil</ces>
+      <mor>Mobil</mor>
       <deu>Handy</deu>
       <enu>Cell phone</enu>
       <ena>Mobile</ena>
@@ -9758,8 +9988,12 @@
     <a id="175">
       <eng>Rocket</eng>
       <ces>Raketa</ces>
-      <deu>Rakete</deu>
+      <mor>Raketa</mor>
+      <mor-va>Rachejta</mor-va>
+      <mor-ha>Rachéta</mor-ha>
+      <mor-hax>Rachéta</mor-hax>
       <pol>Rakieta</pol>
+      <deu>Rakete</deu>
       <fra>Fusée</fra>
       <eo>Raketo</eo>
       <cat>Coet</cat>
@@ -9838,6 +10072,8 @@
       <eng>Charger</eng>
       <ces>Nabíječka</ces>
       <mor-ha>Nabiječka</mor-ha>
+      <mor-hax>Nabiječka</mor-hax>
+      <mor-va>Nabíjačka</mor-va>
       <slk>Nabíjačka</slk>
       <deu>Ladegerät</deu>
       <pol>Ładowarka</pol>
@@ -9915,7 +10151,9 @@
     <a id="177">
       <eng>Mining machine</eng>
       <ces>Vrták</ces>
+      <mor>Vrták</mor>
       <mor-ha>Těžebné stroj</mor-ha>
+      <mor-hax>Těžebné stroj</mor-hax>
       <slk>Ťažobný stroj</slk>
       <pol>Wiertło</pol>
       <cat>Miner</cat>
@@ -9996,6 +10234,7 @@
     <a id="178">
       <eng>Radio</eng>
       <ces>Rádio</ces>
+      <mor>Rádio</mor>
       <cat>Ràdio</cat>
       <jpn>無線</jpn>
       <por>Rádio</por>
@@ -10050,6 +10289,7 @@
     <a id="179">
       <eng>Folder with music</eng>
       <ces>Složka s hudbou</ces>
+      <mor>Složka s hudbou</mor>
       <mor-ha>Složka s mozekó</mor-ha>
       <slk>Zložka s hudbou</slk>
       <eo>Dosierujo kun muziko</eo>
@@ -10131,7 +10371,9 @@
     <a id="180">
       <eng>Shelf</eng>
       <ces>Polička</ces>
+      <mor>Polička</mor>
       <mor-ha>Polečka</mor-ha>
+      <mor-hax>Polečka</mor-hax>
       <deu>Gestell</deu>
       <slk>Polica</slk>
       <pol>Półka</pol>
@@ -10211,6 +10453,7 @@
     <a id="181">
       <eng>Composter</eng>
       <ces>Kompostér</ces>
+      <mor>Kompostér</mor>
       <deu>Komposter</deu>
       <jpn>コンポスター</jpn>
       <pol>Kompostownik</pol>
@@ -10285,7 +10528,9 @@
       <eng>Rabigoncraft - The Most of My World</eng>
       <ces>Rabigoncraft - To nej z mého světa</ces>
       <ces-ce>Rabigoncraft - To nej z mýho světa</ces-ce>
+      <mor>Rabigoncraft - To nej z mojeho světa</mor>
       <mor-ha>Rabigoncraft - To né z myho sfěta</mor-ha>
+      <mor-hax>Rabigoncraft - To né z myho sfěta</mor-hax>
       <mor-va>Rabigoncraft - To náj z mojeho svjeta</mor-va>
       <deu>Rabigoncraft - Das meiste von meiner Welt</deu>
       <slk>Rabigoncraft - To naj z môjho sveta</slk>
@@ -10382,11 +10627,13 @@
     <a id="183">
       <eng>Creative</eng>
       <ces>Tvořivá</ces>
-      <mor-ha>Tvořevá</mor-ha>
-      <deu>Kreativ</deu>
+      <mor>Tvořivá</mor>
+      <mor-ha>Tvořêvá</mor-ha>
+      <mor-hax>Tvořevá</mor-hax>
       <slk>Tvorivá</slk>
-      <jpn>クリエイティブ</jpn>
       <pol>Kreatywny</pol>
+      <deu>Kreativ</deu>
+      <jpn>クリエイティブ</jpn>
       <eo>Kreema</eo>
       <cat>Creatiu</cat>
       <spa>Creativo</spa>
@@ -10464,7 +10711,9 @@
     <a id="188">
       <eng>Add new world</eng>
       <ces>Přidat nový svět</ces>
-      <mor-ha>Předat nové sfět</mor-ha>
+      <mor-ha>Přêdat nové sfět</mor-ha>
+      <mor-hax>Předat nové sfět</mor-hax>
+      <mor-va>Přidať nový svjet</mor-va>
       <ces-ce>Přidat novej svět</ces-ce>
       <slk>Pridať nový svět</slk>
       <pol>Dodaj nowy świat</pol>
@@ -10548,9 +10797,10 @@
     <a id="189">
       <eng>Hide spoiler</eng>
       <ces>Skrýt náhled</ces>
-      <mor-ha>Skovat náhled</mor-ha>
-      <mor>Skovat náhled</mor>
       <ces-ce>Skrejt náhled</ces-ce>
+      <mor>Skovat náhled</mor>
+      <mor-ha>Skovat náhled</mor-ha>
+      <mor-va>Ukryť náhled</mor-va>
       <slk>Skryť náhľad</slk>
       <eo>Kaŝi spoiler</eo>
       <spa>Ocultar spoiler</spa>
@@ -10642,7 +10892,9 @@
     <a id="190">
       <eng>Create portable world</eng>
       <ces>Zabalit svět do archivu</ces>
-      <mor-ha>Zabalet sfět do archivo</mor-ha>
+      <mor>Zabalit svět do archivu</mor>
+      <mor-ha>Zabalet sfět do archêvô</mor-ha>
+      <mor-hax>Zabalet sfět do archevo</mor-hax>
       <mor-va>Zabaliť svjet do archivu</mor-va>
       <mor-sl>Zabaliť svjet do archivu</mor-sl>
       <slk>Zabaliť svet do archívu</slk>
@@ -10738,6 +10990,7 @@
       <eng>Deletes the whole world</eng>
       <ces>Smazat celý svět</ces>
       <ces-ce>Smazat celej svět</ces-ce>
+      <mor>Smazat celý svět</mor>
       <mor-ha>Smazat celé sfět</mor-ha>
       <mor-va>Smazať cełý svjet</mor-va>
       <mor-sl>Smazať cełý svjet</mor-sl>
@@ -10930,8 +11183,10 @@
     <a id="193">
       <eng>Remove</eng>
       <ces>Smazat</ces>
-      <deu>Löschen</deu>
+      <mor>Zmazat</mor>
+      <mor-va>Zmazať</mor-va>
       <slk>Zmazať</slk>
+      <deu>Löschen</deu>
       <pol>Usuń</pol>
       <fra>Éliminer</fra>
       <eo>Forigi</eo>
@@ -11016,6 +11271,9 @@
     <a id="194">
       <eng>Help with GeDo</eng>
       <ces>Pomoc s GeDo</ces>
+      <mor>Pomoct s GeDo</mor>
+      <mor-va>Pomocť s GeDo</mor-va>
+      <slk>Pomoc s Gedo</slk>
       <eo>Helpu kun GeDo</eo>
       <spa>Ayuda con GeDo</spa>
       <pol>Pomoc z GeDo</pol>
@@ -11045,7 +11303,6 @@
       <urd>GeDo میں مدد کریں</urd>
       <srp>Помоћ око ГеДо-а</srp>
       <kur>Alîkarî bi GeDo re</kur>
-      <slk>Pomoc s Gedo</slk>
       <svl>Pomoč pri GeDo</svl>
       <mkd>Помогнете со GeDo</mkd>
       <bul>Помощ за GeDo</bul>
@@ -11449,6 +11706,7 @@
     <a id="199">
       <eng>Author</eng>
       <ces>Autor</ces>
+      <mor>Autor</mor>
       <jpn>著者</jpn>
       <fra>Auteur</fra>
       <eo>Aŭtoro</eo>
@@ -11527,6 +11785,8 @@
     <a id="200">
       <eng>Company</eng>
       <ces>Společnost</ces>
+      <mor>Komunita</mor>
+      <mor-ha>Komonita</mor-ha>
       <deu>Organization</deu>
       <jpn>会社</jpn>
       <slk>Spoločnosť</slk>
@@ -11608,9 +11868,10 @@
     <a id="201">
       <eng>Version</eng>
       <ces>Verze</ces>
+      <mor>Verzija</mor>
       <slk>Verzia</slk>
-      <jpn>バージョン</jpn>
       <pol>Wersja</pol>
+      <jpn>バージョン</jpn>
       <eo>Versio</eo>
       <spa>Versión</spa>
       <ita>Versione</ita>
@@ -11683,6 +11944,8 @@
     </a>
     <a id="202">
       <eng>Licence</eng>
+      <mor>Licenca</mor>
+      <mor-ha>Licenca</mor-ha>
       <enu>License</enu>
       <deu>Lizenz</deu>
       <jpn>ライセンス</jpn>
@@ -11763,6 +12026,7 @@
     <a id="203">
       <eng>Website</eng>
       <ces>Web</ces>
+      <mor>Web</mor>
       <jpn>ウェブサイト</jpn>
       <ton>Uepisaiti</ton>
       <spa>Sitio web</spa>
@@ -11841,6 +12105,7 @@
     <a id="204">
       <eng>Author's email</eng>
       <ces>E-mail na autora</ces>
+      <mor>E-mail na autora</mor>
       <deu>E-Mail des Autors</deu>
       <eo>Retpoŝto de aŭtoro</eo>
       <spa>Email del autor</spa>
@@ -11930,7 +12195,9 @@
     <a id="205">
       <eng>Date of publication</eng>
       <ces>Datum publikace</ces>
-      <mor-ha>Datôm pôblikace</mor-ha>
+      <mor>Datum publikování</mor>
+      <mor-ha>Datôm pôblêkovani</mor-ha>
+      <mor-hax>Datom poblekovani</mor-hax>
       <deu>Das Datum der Veröffentlichung</deu>
       <slk>Dátum publikácie</slk>
       <eo>Dato de publikigo</eo>
@@ -12094,7 +12361,9 @@
     <a id="207">
       <eng>With the help of MonoGame</eng>
       <ces>Za pomocí MonoGame</ces>
+      <mor>Za pomocí MonoGame</mor>
       <mor-ha>pomuhlo MonoGame</mor-ha>
+      <mor-hax>pomuhlo MonoGame</mor-hax>
       <deu>Mit Hilfe von MonoGame</deu>
       <slk>Prostredníctvom MonoGame</slk>
       <eo>Kun la helpo de MonoGame</eo>
@@ -12192,6 +12461,7 @@
     <a id="208">
       <eng>Public domain</eng>
       <ces>Volné dílo</ces>
+      <mor-ha>Volny dilo</mor-ha>
       <slk>Verejná doména</slk>
       <pol>Domena publiczna</pol>
       <deu>Öffentliche Domäne</deu>
@@ -13006,7 +13276,8 @@
     <a id="219">
       <eng>Prepare for regeneration</eng>
       <ces>Připravit k přegenerování</ces>
-      <mor-ha>Přepravit k přegenerováni</mor-ha>
+      <mor-ha>Přêpravit k přegenerováni</mor-ha>
+      <mor-hax>Přepravit k přegenerováni</mor-hax>
       <mor-va>Připraviť k přegenerování</mor-va>
       <mor-sl>Připraviť k přegenerování</mor-sl>
       <slk>Pripraviť k pregenerovanie</slk>
@@ -13098,7 +13369,7 @@
       <eng>The following settings cannot be changed</eng>
       <ces>Následující nelze změnit v nastavení</ces>
       <mor>Následující nemůžet změnit v nastavení</mor>
-      <mor-ha>Následôjici nemužete změnit v nastaveni</mor-ha>
+      <mor-ha>Následné nemužete změnit v nastaveni</mor-ha>
       <slk>Nasledujúce nemôžete zmeniť v nastavení</slk>
       <spa>Las siguientes configuraciones no se pueden cambiar</spa>
       <deu>Die folgenden Einstellungen können nicht geändert werden</deu>
@@ -13197,7 +13468,8 @@
     <a id="221">
       <eng>Left mouse button</eng>
       <ces>Levé tlačítko myši</ces>
-      <mor-ha>Levy stlačêdlo na mêši</mor-ha>
+      <mor-ha>Levy stlačedlo na mêši</mor-ha>
+      <mor-hax>Levy stlačedlo na meši</mor-hax>
       <ces-ce>Levý tlačítko myši</ces-ce>
       <slk>Ľavé tlačidlo myši</slk>
       <fra>Clic gauche</fra>
@@ -13291,6 +13563,7 @@
       <ces>Pravé tlačítko myši</ces>
       <ces-ce>Pravý tlačítko myši</ces-ce>
       <mor-ha>Pravy stačêdlo mêši</mor-ha>
+      <mor-hax>Pravy stačedlo meši</mor-hax>
       <slk>Pravé tlačidlo myši</slk>
       <pol>Prawy przycisk myszy</pol>
       <fra>Clic droit</fra>
@@ -13465,8 +13738,8 @@
     <a id="224">
       <eng>Hides/shows player</eng>
       <ces>Skryje/zobrazí hráče</ces>
-      <mor-ha>Sková/zobrazi hráče</mor-ha>
-      <mor>Schová/zobrazí hráče</mor>
+      <mor-ha>Sková/zobrazi hráča</mor-ha>
+      <mor>Sková/zobrazí hráča</mor>
       <slk>Skryje/zobrazí hráča</slk>
       <eo>Kaŝas/montras ludanton</eo>
       <spa>Oculta/muestra al jugador</spa>
@@ -13747,7 +14020,8 @@
     <a id="227">
       <eng>The following settings can be changed</eng>
       <ces>Následující lze změnit v nastavení</ces>
-      <mor-ha>Tož toto lze změnit v nastaveni</mor-ha>
+      <mor>Následující můžete změnit v nastavení</mor>
+      <mor-ha>Tož toto de změnit f nastaveni</mor-ha>
       <slk>Nasledujúce môžete zmeniť v nastavení</slk>
       <spa>Se pueden cambiar las siguientes configuraciones</spa>
       <deu>Die folgenden Einstellungen können geändert werden</deu>
@@ -17970,46 +18244,57 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
 &lt;Purple&gt;Raise the flag on the Moon and Mars&lt;/Purple&gt;
 &lt;/Spoiler&gt;</eng>
       <ces>&lt;Italic&gt;Toto je jen doporučený postup, nemusíte se podle něj úplně řídit!&lt;/Italic&gt;
-&lt;Article|wrap=true&gt;Doporučuji si prvně posbírat kamínky, rostlinky (pšenice, len) a jídlo. Poté pokácet nějaký strom. (Kamínkem se těží nepatrně rychleji.) Ze dřeva a kamínku vyrobit stůl, ve kterém můžete vyrobit kamenné krumpáče, sekery, lopaty. Kámenné věci jsou však pravěké a k posunu do budoucnosti potřebujete kammenou pec, ve které si můžete odlít hlavice železných nástrojů. Stanete se na čas horníkem, dřevorubcem, stavitelem i zemědělcem. Možná objevíte sílu elektrických nástrojů. Nakonec asi sestavíte raketu a vzletíte do kosmu na růzdné planety a jejich měsíce, kde si možná uděláte vesmírné základny.&lt;/Article&gt;
+&lt;Article|wrap=true&gt;Doporučuji si nejdříve posbírat kamínky, rostlinky (pšenice, len) a jídlo. Poté pokácet nějaký strom. (Kamínkem se těží nepatrně rychleji.) Ze dřeva a kamínku vyrobit stůl, ve kterém můžete vyrobit kamenné krumpáče, sekery, lopaty. Kámenné věci jsou však pravěké a k posunu do budoucnosti potřebujete kammenou pec, ve které si můžete odlít hlavice železných nástrojů. Stanete se na čas horníkem, dřevorubcem, stavitelem i zemědělcem. Možná objevíte sílu elektrických nástrojů. Nakonec asi sestavíte raketu a vzletíte do kosmu na růzdné planety a jejich měsíce, kde si možná uděláte vesmírné základny.&lt;/Article&gt;
 &lt;Spoiler|show=Došli Vám nápady co postavit?|hide=Skrýt návrhy&gt;
 &lt;Gold&gt;Šicí stroj Vám umožní vytvoření módního studia&lt;/Gold&gt;
-&lt;Brown&gt;Kompostované pole = 2x rychlejší úroda&lt;/Brown&gt;
+&lt;Brown&gt;Kompostované pole = 2x rychlejší ouroda&lt;/Brown&gt;
 &lt;DarkGreen&gt;Botanická zahrada&lt;/DarkGreen&gt;
 &lt;Gray&gt;Metro k rychlé přepravě&lt;/Gray&gt;
 &lt;Green&gt;Ovocný sad&lt;/Green&gt;
-&lt;Blue&gt;Domeček na stromě&lt;/Blue&gt;
+&lt;Blue&gt;Domeček na stromu&lt;/Blue&gt;
 &lt;Red&gt;Vesmírná základna&lt;/Red&gt;
 &lt;Pink&gt;Muzeum&lt;/Pink&gt;
 &lt;Purple&gt;Vztyčit vlajku na Měsíci a Marsu&lt;/Purple&gt;
 &lt;/Spoiler&gt;</ces>
-      <mor-sl>&lt;Italic&gt;Toto je jen doporučený postup, nemusíte se podle něj úplně řídit!&lt;/Italic&gt;
-&lt;Article|wrap=true&gt;Doporučuji si prvně posbírat kamínky, rostlinky (pšenice, len) a jídlo. Poté pokácet nějaký strom. (Kamínkem se těží nepatrně rychleji.) Ze dřeva a kamínku vyrobit stůl, ve kterém můžete vyrobit kamenné krumpáče, sekery, lopaty. Kámenné věci sú však pravěké a k posunu do budúcnosti potřebujete kammenú pec, ve které si můžete odlít hlavice železných nástrojů. Stanete se na čas horníkem, dřevorubcem, stavitelem i zemědělcem. Možná objevíte sílu elektrických nástrojů. Nakonec asi sestavíte raketu a vzletíte do kosmu na růzdné planety a jejich měsíce, kde si možná uděláte vesmírné základny.&lt;/Article&gt;
-&lt;Spoiler|show=Došli Vám nápady co postavit?|hide=Skrýt návrhy&gt;
+      <mor>&lt;Italic&gt;Toto je jen doporučený postup, nemusíte se podli něho úplně řídit!&lt;/Italic&gt;
+&lt;Article|wrap=true&gt;Doporučuji si nejdřív nasbírat kaménky, rostlinky (žito, len) a jídlo. Potom pokácet nejaký strom. (Kaménkem se těží nepatrně rychleji.) Ze dřeva a kameně vyrobit stůl, ve kerém můžete vyrobit kamenné krumpáče, sekery, lopaty. Kámenné věci jsou však pravěké a k posunu do budoucnosti potřebujete kammenou pec, ve keré si můžete odlít hlavice železných nástrojů. Stanete se na čas horníkem, drvařem, stavitelem aji zemědělcem. Možná objevíte sílu elektrických nástrojů. Nakonec asi sestavíte raketu a poletíte do kosmu na různé planety a jejich mjesíce, gde si možná uděláte vesmírné základny.&lt;/Article&gt;
+&lt;Spoiler|show=Došli Vám nápady co postavit?|hide=Skovat návrhy&gt;
 &lt;Gold&gt;Šicí stroj Vám umožní vytvoření módního studia&lt;/Gold&gt;
 &lt;Brown&gt;Kompostované pole = 2x rychlejší úroda&lt;/Brown&gt;
-&lt;DarkGreen&gt;Botanická zahrada&lt;/DarkGreen&gt;
-&lt;Gray&gt;Metro k rychlé přepravě&lt;/Gray&gt;
-&lt;Green&gt;Ovocný sad&lt;/Green&gt;
-&lt;Blue&gt;Domeček na stromě&lt;/Blue&gt;
-&lt;Red&gt;Vesmírná základna&lt;/Red&gt;
-&lt;Pink&gt;Muzeum&lt;/Pink&gt;
-&lt;Purple&gt;Vztyčit vlajku na Měsíci a Marsu&lt;/Purple&gt;
-&lt;/Spoiler&gt;
-			</mor-sl>
-      <mor>&lt;Italic&gt;Toto je jen doporučený postup, nemusíte se podle něho úplně řídit!&lt;/Italic&gt;
-&lt;Article|wrap=true&gt;Doporučuji si nejprve nasbírat kamínky, rostlinky (pšenice, len) a jídlo. Poté pokácet nějaký strom. (Kamínkem se těží nepatrně rychleji.) Ze dřeva a kameňe vyrobit stůl, ve kterém můžete vyrobit kamenné krumpáče, sekery, lopaty. Kámenné věci jsou však pravěké a k posunu do budoucnosti potřebujete kammenou pec, ve které si můžete odlít hlavice železných nástrojů. Stanete se na čas horníkem, dřevorubcem, stavitelem i zemědělcem. Možná objevíte sílu elektrických nástrojů. Nakonec asi sestavíte raketu a vzletíte do kosmu na růzdné planety a jejich měsíce, kde si možná uděláte vesmírné základny.&lt;/Article&gt;
-&lt;Spoiler|show=Došli Vám nápady co postavit?|hide=Schovat návrhy&gt;
-&lt;Gold&gt;Šicí stroj Vám umožní vytvoření módního studia&lt;/Gold&gt;
-&lt;Brown&gt;Kompostované pole = 2x rychlejší ouroda&lt;/Brown&gt;
 &lt;DarkGreen&gt;Botanická zahrada&lt;/DarkGreen&gt;
 &lt;Gray&gt;Podzemka k rychlé přepravě&lt;/Gray&gt;
 &lt;Green&gt;Ovocný sad&lt;/Green&gt;
 &lt;Blue&gt;Domeček na stromě&lt;/Blue&gt;
 &lt;Red&gt;Vesmírná základna&lt;/Red&gt;
 &lt;Pink&gt;Museum&lt;/Pink&gt;
-&lt;Purple&gt;Vztyčit vlajku na Měsíci a Marsu&lt;/Purple&gt;
-&lt;/Spoiler&gt;
-			</mor>
+&lt;Purple&gt;Vztyčit fanu na Měsícu a Marsu&lt;/Purple&gt;
+&lt;/Spoiler&gt;</mor>
+<mor-hax>&lt;Italic&gt;Tož toto je jenom doporočené postop, nemosite se podli něho sebe rétovat!&lt;/Italic&gt;
+&lt;Article|wrap=true&gt;Doporočojo si nédřif nazbirat kaménke, zeleny (žito, len) a idlo. Potom zkosit nejaké strom. (Kaménkem se těži nepatrně rechléš.) Ze dřeva a kameňe verobite stul, v kerym mužete verobit kamenny krompáče, sekere, lopate. Kámenny vece só fšak pravěky a k posono do bodócnostě potřebojete kammenó picko, v keré si mužete odlit hlavice železnéch nástroju. Stanete se na čas hornikem, drvařem, stavitelem aji agrarnikem. Možná objevite selo elektryckéch nástroju. No a nakonec ase sestavite rachétlo a bodete litat po fšeckéch planetkách a jejich mjesicu f celym kosmo, gde si možná oděláte vesmirny základne.&lt;/Article&gt;
+&lt;Spoiler|show=Došle Vám nápade co postavit?|hide=Skovat návrhe&gt;
+&lt;Gold&gt;Šeci stroj Vám omožni vetvořeni módniho stodia&lt;/Gold&gt;
+&lt;Brown&gt;Kompostované pole = 2x rechléši uroda&lt;/Brown&gt;
+&lt;DarkGreen&gt;Botanická zahrada&lt;/DarkGreen&gt;
+&lt;Gray&gt;Podzemka k rychlé přepravě&lt;/Gray&gt;
+&lt;Green&gt;Ovocné sad&lt;/Green&gt;
+&lt;Blue&gt;Domeček na stromě&lt;/Blue&gt;
+&lt;Red&gt;Vesmirné grunt&lt;/Red&gt;
+&lt;Pink&gt;Moseom&lt;/Pink&gt;
+&lt;Purple&gt;Zabóchnót fano na Mjesico a Marso&lt;/Purple&gt;
+&lt;/Spoiler&gt;</mor-hax>
+<mor-ha>&lt;Italic&gt;Tož toto je jenom doporôčené postôp, nemôsite se podli něho sebe rétovat!&lt;/Italic&gt;
+&lt;Article|wrap=true&gt;Doporočôjô si nédřif nazbirat kaménkê, zeleny (žito, len) a idlo. Potom zkosit nejaké strom. (Kaménkem se těži nepatrně rychléš.) Ze dřeva a kameňe vêrobite stul, v kerym mužete vêrobit kamenny krômpáče, sekerê, lopatê. Kámenny vecê só fšak pravěky a k posônô do bôdócnostě potřebojete kammenó picko, v keré si mužete odlit hlavice železnéch nástroju. Stanete se na čas hornikem, drvařem, stavitelem aji agrarnikem. Možná objevite selo elektryckéch nástroju. No a nakonec ase sestavite rachétlo a bôdete litat po fšeckéch planetkách a jejich mjesicu f celym kosmô, gde si možná ôděláte vesmirny základnê.&lt;/Article&gt;
+&lt;Spoiler|show=Dôšle Vám nápadê co postavit?|hide=Skovat návrhê&gt;
+&lt;Gold&gt;Šêci stroj Vám ômožni vêtvořeni módniho stôdia&lt;/Gold&gt;
+&lt;Brown&gt;Kompostované pole = 2x rychléši uroda&lt;/Brown&gt;
+&lt;DarkGreen&gt;Botanická zahrada&lt;/DarkGreen&gt;
+&lt;Gray&gt;Podzemka k rychlé přepravě&lt;/Gray&gt;
+&lt;Green&gt;Ovocné sad&lt;/Green&gt;
+&lt;Blue&gt;Domeček na stromě&lt;/Blue&gt;
+&lt;Red&gt;Vesmirné grunt&lt;/Red&gt;
+&lt;Pink&gt;Môseôm&lt;/Pink&gt;
+&lt;Purple&gt;Zabóchnót fanô na Mjesicô a Marsô&lt;/Purple&gt;
+&lt;/Spoiler&gt;</mor-ha>
       <ces-ce>&lt;Italic&gt;Toto je jen doporučenej postup, nemusíte se podle něj úplně řídit!&lt;/Italic&gt;
 &lt;Article|wrap=true&gt;Doporučuji si nejprv posbírat kamínky, rostlinky (pšenice, len) a jídlo. Poté pokácet nějakej ten strom. (Kamínkem se těží nepatrně rychlejc.) Ze dřeva a kamenu vyrobit stůl, ve kterém můžete vyrobit kamenný krumpáče, sekery, lopaty. Kámenný věci jsou však pravěký a k posunu do budoucnosti potřebujete kammenou pec, ve které si můžete vodlít hlavice železných nástrojů. Stanete se na čas horníkem, dřevorubcem, stavitelem i zemědělcem. Možná vobjevíte sílu elektrickejch nástrojů. Nakonec asi sestavíte raketu a vzletíte do kosmu na růzdné planety a jejich měsíce, kde si možná uděláte vesmírný základny.&lt;/Article&gt;
 &lt;Spoiler|show=Došli Vám nápady co postavit?|hide=Skrejt návrhy&gt;
@@ -22445,6 +22730,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="354">
       <eng>Brightness at night</eng>
       <ces>Jas v noci</ces>
+      <mor-ha>Jas v nocê</mor-ha>
+      <mor-hax>Jas v noce</mor-hax>
       <dan>Lysstyrke om natten</dan>
       <slk>Jas v noci</slk>
       <spa>Brillo de noche</spa>
@@ -22629,8 +22916,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="357">
       <eng>Czech-Moravian</eng>
-      <ces>Českomoravské</ces>
-      <nld>Tsjechisch</nld>
+      <ces>Česko-moravské</ces>
+      <mor-ha>Česko-moravsky</mor-ha>
+      <mor-hax>Česko-moravsky</mor-hax>
       <fij>Czech-Moraso</fij>
       <por-br>Tcheco-Morávio</por-br>
       <slk>Česko-moravský</slk>
@@ -22847,7 +23135,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Užité písma</ces>
       <mor>Použité písma</mor>
       <ces-ce>Použitý písma</ces-ce>
-      <mor-ha>Póžity pisma</mor-ha>
+      <mor-ha>Póžêty pisma</mor-ha>
+      <mor-hax>Póžety pisma</mor-hax>
       <ara>الخطوط المستخدمة</ara>
       <uig>ئىشلىتىلگەن خەت نۇسخىسى</uig>
       <urd>استعمال شدہ فونٹس</urd>
@@ -22928,6 +23217,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="361">
       <eng>Korean</eng>
       <ces>Korejština</ces>
+      <mor-ha>Koréštěna</mor-ha>
+      <mor-hax>Koréštěna</mor-hax>
       <ara>الكورية</ara>
       <uig>كورېيە</uig>
       <urd>کورین</urd>
@@ -23005,6 +23296,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="362">
       <eng>Traditional Chinese</eng>
       <ces>Tradiční čínština</ces>
+      <mor-ha>Tradični činštěna</mor-ha>
       <ara>الصينية التقليدية</ara>
       <uig>خەنزۇچە ئەنئەنىۋى</uig>
       <urd>روایتی چینی</urd>
@@ -23084,6 +23376,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="363">
       <eng>Japanese</eng>
       <ces>Japonština</ces>
+      <mor-ha>Japonštěna</mor-ha>
+      <mor-hax>Japonštěna</mor-hax>
       <slk>Japončina</slk>
       <pol>Język japoński</pol>
       <deu>Japanisch</deu>
@@ -23162,6 +23456,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="364">
       <eng>&lt; Go to the category</eng>
       <ces>&lt; Zpět na kategorie jazyků</ces>
+      <mor>&lt; Zpátky na kategorie jazyků</mor>
+      <mor-ha>&lt; Zpátkê na kategórije jazêku</mor-ha>
+      <mor-hax>&lt; Zpátke na kategórije jazeku</mor-hax>
       <uig>&lt;كاتېگورىيەگە بېرىڭ</uig>
       <urd>&lt;زمرہ میں جائیں</urd>
       <srp>&lt;Идите у категорију</srp>
@@ -23317,6 +23614,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <fij>Arapea</fij>
       <ibo>Onye anabik</ibo>
       <oto>Árabe</oto>
+    </a>
+    <a id="366">
+      <eng>Half shadows</eng>
+      <ces>Polostín</ces>
+      
     </a>
     <a id="999">
       <eng>Unknown item</eng>
@@ -25617,7 +25919,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1028">
       <eng>Stone hoe</eng>
       <ces>Kamenná motyka</ces>
-      <mor-ha>Kamenná moteka</mor-ha>
+      <mor-ha>Kamenná motêka</mor-ha>
+      <mor-hax>Kamenná moteka</mor-hax>
       <pol>Kamienna motyka</pol>
       <slk>Kamenná motyka</slk>
       <jpn>石鍬</jpn>
@@ -25699,7 +26002,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1029">
       <eng>Copper hoe</eng>
       <ces>Měděná motyka</ces>
-      <mor-ha>Měděná moteka</mor-ha>
+      <mor-ha>Měděná motêka</mor-ha>
+      <mor-hax>Měděná moteka</mor-hax>
       <pol>Miedziana motyka</pol>
       <slk>Medená motyka</slk>
       <jpn>銅の鍬</jpn>
@@ -25780,7 +26084,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1030">
       <eng>Bronze hoe</eng>
       <ces>Bronzová motyka</ces>
-      <mor-ha>Bronzová moteka</mor-ha>
+      <mor-ha>Bronzová motêka</mor-ha>
+      <mor-hax>Bronzová moteka</mor-hax>
       <pol>Motyka z brązu</pol>
       <slk>Bronzová motyka</slk>
       <jpn>ブロンズ鍬</jpn>
@@ -25861,7 +26166,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1031">
       <eng>Iron hoe</eng>
       <ces>Železná motyka</ces>
-      <mor-ha>Železná moteka</mor-ha>
+      <mor-ha>Železná motêka</mor-ha>
+      <mor-hax>Železná moteka</mor-hax>
       <pol>Żelazna motyka</pol>
       <slk>Železná motyka</slk>
       <jpn>鉄の鍬</jpn>
@@ -26102,6 +26408,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1034">
       <eng>Air tank</eng>
       <ces>Nádrž vzduchu</ces>
+      <mor-ha>Nádrž na luft</mor-ha>
+      <mor-hax>Nádrž na luft</mor-hax>
+      <mor-va>Žížmonádrž</mor-va>
+      <mor>Nádrž na luft</mor>
       <deu>Lufttank</deu>
       <pol>Zbiornik powietrza</pol>
       <slk>Nádrž vzduchu</slk>
@@ -26183,6 +26493,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1035">
       <eng>Double air tank</eng>
       <ces>Dvojitá nádrž vzduchu</ces>
+      <mor-ha>Dvojaká nádrž na luft</mor-ha>
+      <mor-hax>Dvojaká nádrž na luft</mor-hax>
       <deu>Doppelter Lufttank</deu>
       <pol>Podwójny zbiornik powietrza</pol>
       <slk>Dvojitá nádrž vzduchu</slk>
@@ -26992,9 +27304,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1047">
       <eng>Few sticks</eng>
       <ces>Klacíky</ces>
-      <jpn>スティックが少ない</jpn>
+      <mor>Halouzky</mor>
+      <mor-ha>Halózky</mor-ha>
+      <mor-hax>Halózky</mor-hax>
+      <mor-va>Halúzky</mor-va>
       <slk>Konáriky</slk>
       <pol>Kije</pol>
+      <jpn>スティックが少ない</jpn>
       <deu>Nur wenige Stöcke</deu>
       <spa>Pocos palos</spa>
       <ita>Pochi bastoncini</ita>
@@ -27483,9 +27799,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1053">
       <eng>Hand axe</eng>
-      <enu>Hand ax</enu>
       <ces>Pěstní klín</ces>
+      <mor>Pěstní klín</mor>
+      <mor-ha>Pěstni klén</mor-ha>
+      <mor-hax>Pěstni klén</mor-hax>
+      <mor-va>Pjesťní klín</mor-va>
       <slk>Pästný klin</slk>
+      <enu>Hand ax</enu>
       <jpn>石器</jpn>
       <pol>Klin pięści</pol>
       <deu>Faustkeil</deu>
@@ -27952,6 +28272,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1059">
       <eng>Sulfur dust</eng>
       <ces>Sirný prach</ces>
+      <mor-ha>Serné prach</mor-ha>
       <slk>Sírny prach</slk>
       <pol>Pył siarkowy</pol>
       <jpn>硫黄ダスト</jpn>
@@ -28033,6 +28354,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1060">
       <eng>Gunpowder</eng>
       <ces>Střelný prach</ces>
+      <mor-ha>Střelné prach</mor-ha>
       <slk>Strelný prach</slk>
       <pol>Proch strzelniczy</pol>
       <jpn>火薬</jpn>
@@ -28181,6 +28503,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1062">
       <eng>Sulfur ore</eng>
       <ces>Ruda síry</ces>
+      <mor-ha>Ruda sire</mor-ha>
+      <mor-va>Pať síry</mor-va>
       <slk>Ruda síry</slk>
       <pol>Ruda siarki</pol>
       <jpn>硫黄鉱石</jpn>
@@ -28260,6 +28584,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1063">
       <eng>Saltpeter ore</eng>
       <ces>Ruda ledku</ces>
+      <mor-ha>Nalezisko ledkô</mor-ha>
+      <mor-hax>Nalezisko ledko</mor-hax>
+      <mor-va>Pať sanytru</mor-va>
       <slk>Ruda liadku</slk>
       <pol>Ruda saletry</pol>
       <jpn>硝石鉱石</jpn>
@@ -28602,6 +28929,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1068">
       <eng>Gneiss</eng>
       <ces>Rula</ces>
+      <mor-ha>Rôla</mor-ha>
+      <mor-hax>Rola</mor-hax>
       <slk>Rula</slk>
       <pol>Gnejs</pol>
       <jpn>片麻岩</jpn>
@@ -28655,6 +28984,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1069">
       <eng>Sandstone</eng>
       <ces>Pískovec</ces>
+      <mor-va>Písečný kameň</mor-va>
+      <mor-ha>Piskovec</mor-ha>
       <slk>Pieskovec</slk>
       <pol>Piaskowiec</pol>
       <jpn>砂岩</jpn>
@@ -28732,6 +29063,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1070">
       <eng>Schist</eng>
       <ces>Břidlice</ces>
+      <mor>Šifr</mor>
+      <mor-va>Křidła</mor-va>
+      <mor-ha>Šifr</mor-ha>
       <slk>Bridlica</slk>
       <pol>Łupek</pol>
       <jpn>片岩</jpn>
@@ -28949,6 +29283,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1074">
       <eng>Mudstone</eng>
       <ces>Bahenní hornina</ces>
+      <mor>Blato jak kameň</mor>
+      <mor-ha>Blato jak kameň</mor-ha>
+      <mor-va>Blato jak kameň</mor-va>
       <slk>Bahenné hornina</slk>
       <pol>Skała błotna</pol>
       <jpn>泥岩</jpn>
@@ -29020,6 +29357,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1075">
       <eng>Flint</eng>
       <ces>Křemen</ces>
+      <mor-va>Křemel</mor-va>
       <slk>Kremeň</slk>
       <pol>Krzemień</pol>
       <jpn>フリント</jpn>
@@ -29087,6 +29425,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1076">
       <eng>Olive</eng>
       <ces>Olivy</ces>
+      <mor-ha>Oleve</mor-ha>
       <slk>Olivy</slk>
       <pol>Oliwki</pol>
       <jpn>オリーブ</jpn>
@@ -29161,7 +29500,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1077">
       <eng>Dirt</eng>
       <ces>Hlína</ces>
-      <mor-ha>Hlena</mor-ha>
+      <mor>Hlina</mor>
+      <mor-ha>Hlêna</mor-ha>
+      <mor-hax>Hlena</mor-hax>
       <pol>Brud</pol>
       <slk>Hlina</slk>
       <spa>Suciedad</spa>
@@ -29242,6 +29583,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1078">
       <eng>Sand</eng>
       <ces>Písek</ces>
+      <mor-ha>Pisek</mor-ha>
       <slk>Piesok</slk>
       <spa>Arena</spa>
       <jpn>砂</jpn>
@@ -29318,6 +29660,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1079">
       <eng>Lava</eng>
       <ces>Láva</ces>
+      <mor-ha>Láva</mor-ha>
       <pol>Lawa</pol>
       <jpn>溶岩</jpn>
       <uig>لاۋا</uig>
@@ -29368,6 +29711,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1080">
       <eng>Stone rubble</eng>
       <ces>Kamenná suť</ces>
+      <ces-ce>Kamenný šutráky</ces-ce>
+      <mor-hax>Kamenná soť</mor-hax>
+      <mor-ha>Kamenná sôť</mor-ha>
       <pol>Kamienny gruz</pol>
       <slk>Kamenná suť</slk>
       <jpn>石瓦礫</jpn>
@@ -30503,6 +30849,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1094">
       <eng>Snow layer</eng>
       <ces>Sněhový pokryv</ces>
+      <ces-ce>Sněhovej pokryv</ces-ce>
+      <mor>Sněhová pokrývka</mor>
+      <mor-ha>Snihová pokrêvka</mor-ha>
+      <mor-hax>Snihová pokrevka</mor-hax>
+      <mor-va>Sněhová pokrývka</mor-va>
       <slk>Snehový pokryv</slk>
       <jpn>雪層</jpn>
       <pol>Śnieżna pokrywa</pol>
@@ -30663,7 +31014,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1096">
       <eng>Apple leaves</eng>
       <ces>Jabloňové listí</ces>
-      <mor>Jablečné listí</mor>
+      <mor-ha>Jabloňovy lêsti</mor-ha>
+      <mor-hax>Jabloňovy lesti</mor-hax>
+      <mor-va>Jabukové listy</mor-va>
       <slk>Jablkové lístie</slk>
       <jpn>リンゴの葉</jpn>
       <pol>Liście jabłka</pol>
@@ -30744,7 +31097,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1097">
       <eng>Lemon leaves with lemons</eng>
-      <ces>Citrónové listí s citróny</ces>
+      <ces>Citronové listí s citrony</ces>
+      <mor>Citrónové listí s citróny</mor>
+      <mor-ha>Citrónovy lêsti s citrónê</mor-ha>
+      <mor-hax>Citrónovy lesti s citróne</mor-hax>
       <slk>Citrónové lístie s citróny</slk>
       <jpn>レモンの葉とレモン</jpn>
       <pol>Liście cytryny z cytrynami</pol>
@@ -30826,6 +31182,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1098">
       <eng>Linden leaves</eng>
       <ces>Lipové listí</ces>
+      <ces-ce>Lipový listí</ces-ce>
+      <mor-ha>Lipovy lêsti</mor-ha>
+      <mor-hax>Lipovy lesti</mor-hax>
+      <mor-va>Lipí</mor-va>
       <slk>Lipové lístie</slk>
       <jpn>リンデンの葉</jpn>
       <pol>Liście lipy</pol>
@@ -30907,6 +31267,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1099">
       <eng>Oak leaves</eng>
       <ces>Dubové listí</ces>
+      <mor-ha>Dôbovy lêsti</mor-ha>
+      <mor-hax>Dobovy lesti</mor-hax>
+      <mor-va>Dubové listy</mor-va>
       <slk>Dubové lístie</slk>
       <jpn>オークの葉</jpn>
       <pol>Liście dębu</pol>
@@ -30987,6 +31350,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1100">
       <eng>Orange leaves</eng>
       <ces>Pomerančové listí</ces>
+      <mor-ha>Pomerančovy lêsti</mor-ha>
+      <mor-hax>Pomerančovy lesti</mor-hax>
       <slk>Pomarančové lístie</slk>
       <jpn>オレンジの葉</jpn>
       <pol>Liście pomarańczy</pol>
@@ -31150,10 +31515,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1102">
       <eng>Plum leaves with plums</eng>
       <ces>Slivoňové listí se slívami</ces>
-      <mor>Kadlátovové listí s kadlátky</mor>
-      <mor-ha>Kadlátovové listi s kadlátky</mor-ha>
-      <mor-va>Karlátovové listí s kadlátky</mor-va>
-      <mor-sl>Kadlátovové listí s kadlátky</mor-sl>
+      <mor>Kadlátovové listí s kadlátkama</mor>
+      <mor-ha>Kadlátovovy lêsti s kadlátkama</mor-ha>
+      <mor-hax>Kadlátovovy lesti s kadlátkama</mor-hax>
+      <mor-va>Trnkové listí s trnkama</mor-va>
       <slk>Slivkové lístie sa slivky</slk>
       <jpn>梅の葉と梅</jpn>
       <pol>Liście śliwki ze śliwkami</pol>
@@ -31236,9 +31601,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Plum leaves</eng>
       <ces>Slivoňové listí</ces>
       <mor>Kadlátovové listí</mor>
-      <mor-ha>Kadlátovové listi</mor-ha>
-      <mor-sl>Kadlátovové listí</mor-sl>
-      <mor-va>Karlátovové listí</mor-va>
+      <mor-ha>Kadlátovovy lêsti</mor-ha>
+      <mor-hax>Kadlátovovy lesti</mor-hax>
+      <mor-va>Trnkové listy</mor-va>
       <slk>Slivkové lístie</slk>
       <jpn>梅の葉</jpn>
       <pol>Liście śliwki</pol>
@@ -31320,6 +31685,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1104">
       <eng>Pine leaves</eng>
       <ces>Palmové listí</ces>
+      <ces-ce>Palmový listí</ces-ce>
+      <mor-ha>Palmovy lêsti</mor-ha>
+      <mor-hax>Palmovy lesti</mor-hax>
+      <mor-va>Palmové listy</mor-va>
       <slk>Palmové lístie</slk>
       <jpn>松の葉</jpn>
       <pol>Liście palmowe</pol>
@@ -32618,6 +32987,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1120">
       <eng>Rubber tree leaves</eng>
       <ces>Gumovníkové listí</ces>
+      <mor-hax>Gomovnikovy lesti</mor-hax>
+      <mor-ha>Gômovnikovy lêsti</mor-ha>
       <slk>Gumovníkové lístie</slk>
       <jpn>ゴムノキの葉</jpn>
       <pol>Gumowe liście</pol>
@@ -33810,7 +34181,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1135">
       <eng>Desert grass with dirt</eng>
       <ces>Pouštní tráva s hlínou</ces>
-      <mor-ha>Póštní tráva s hlenó</mor-ha>
+      <mor-hax>Póštní tráva s hlenó</mor-hax>
+      <mor-ha>Póštní tráva s hlênó</mor-ha>
       <slk>Púštna tráva s hlinou</slk>
       <jpn>土と砂漠の草</jpn>
       <pol>Trawa pustynna z gliną</pol>
@@ -33892,7 +34264,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1136">
       <eng>Forest grass with dirt</eng>
       <ces>Lesní tráva s hlínou</ces>
-      <mor-ha>Lesni tráva se hlenó</mor-ha>
+      <mor>Lesní tráva s hlinou</mor>
+      <mor-va>Chabasta se hlinú</mor-va>
+      <mor-ha>Lesni tráva se hlênó</mor-ha>
+      <mor-hax>Lesni tráva se hlenó</mor-hax>
       <slk>Lesná tráva s hlinou</slk>
       <jpn>土と森の草</jpn>
       <pol>Trawa leśna z gliną</pol>
@@ -33975,7 +34350,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1137">
       <eng>Hills grass with dirt</eng>
       <ces>Horská tráva s hlínou</ces>
-      <mor-ha>Horská tráva se hlenó</mor-ha>
+      <mor-ha>Horská tráva se hlênó</mor-ha>
+      <mor-hax>Horská tráva se hlenó</mor-hax>
+      <mor-va>Skřať se hlinú</mor-va>
       <slk>Horská tráva s hlinou</slk>
       <jpn>土と丘の草</jpn>
       <pol>Trawa górska z gliną</pol>
@@ -34058,7 +34435,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1138">
       <eng>Jungle grass with dirt</eng>
       <ces>Tropická tráva s hlínou</ces>
-      <mor-ha>Tropická tráva s hlenó</mor-ha>
+      <mor-ha>Tropická tráva s hlênó</mor-ha>
+      <mor-hax>Tropická tráva s hlenó</mor-hax>
+      <mor-va>Tropické travsko s hlinú</mor-va>
       <slk>Tropická tráva s hlinou</slk>
       <jpn>土と密林の草</jpn>
       <pol>Tropikalna trawa z gliną</pol>
@@ -34140,7 +34519,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1139">
       <eng>Plains grass with dirt</eng>
       <ces>Stepní tráva s hlínou</ces>
-      <mor-ha>Stepni tráva se hlenó</mor-ha>
+      <mor>Stepní tráva s hlinou</mor>
+      <mor-ha>Stepni tráva se hlênó</mor-ha>
+      <mor-hax>Stepni tráva se hlenó</mor-hax>
+      <mor-va>Stepní podkłasek s hlinú</mor-va>
       <slk>Stepná tráva s hlinou</slk>
       <jpn>土と平野草</jpn>
       <pol>Trawa stepowa z gliną</pol>
@@ -34222,6 +34604,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1140">
       <eng>Clay grass with clay</eng>
       <ces>Tráva žijící na jílu</ces>
+      <mor>Tráva rostouci na jílu</mor>
+      <mor-va>Tráva rostúci na slínu</mor-va>
+      <mor-hax>Tráva rostóci na jilo</mor-hax>
+      <mor-ha>Tráva rostóci na jilô</mor-ha>
       <slk>Tráva žijúci na ílu</slk>
       <jpn>粘土と粘土草</jpn>
       <pol>Trawa żyjąca na glinie</pol>
@@ -34303,6 +34689,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1141">
       <eng>Compost grass</eng>
       <ces>Tráva na kompostu</ces>
+      <mor-ha>Tráva na kompostô</mor-ha>
+      <mor-hax>Tráva na komposto</mor-hax>
       <slk>Tráva na kompostu</slk>
       <jpn>堆肥草</jpn>
       <pol>Trawa na kompoście</pol>
@@ -34385,6 +34773,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1142">
       <eng>Gravel background</eng>
       <ces>Štěrkové pozadí</ces>
+      <ces-ce>Štěrkový pozadí</ces-ce>
+      <mor-ha>Ščerkovy pozadi</mor-ha>
+      <mor-hax>Ščerkovy pozadi</mor-hax>
+      <mor-va>Ščŕchové pozadí</mor-va>
       <slk>Štrkové pozadie</slk>
       <jpn>砂利の背景</jpn>
       <pol>Tło żwiru</pol>
@@ -34624,6 +35016,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1145">
       <eng>Clay background</eng>
       <ces>Jílové pozadí</ces>
+      <mor-ha>Jilovy pozadi</mor-ha>
       <jpn>粘土の背景</jpn>
       <slk>Ílové pozadia</slk>
       <pol>Tło gliny</pol>
@@ -34704,6 +35097,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1146">
       <eng>Diorit background</eng>
       <ces>Dioritové pozadí</ces>
+      <mor-ha>Dioritové pozadi</mor-ha>
       <jpn>ディオリットの背景</jpn>
       <slk>Dioritovej pozadia</slk>
       <pol>Tło diorytu</pol>
@@ -36867,6 +37261,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Bricks</eng>
       <jpn>レンガ</jpn>
       <ces>Cihly</ces>
+      <mor-ha>Cêhlê</mor-ha>
+      <mor-hax>Cehle</mor-hax>
       <slk>Tehly</slk>
       <pol>Cegły</pol>
       <deu>Ziegel</deu>
@@ -36946,6 +37342,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1174">
       <eng>Plank</eng>
       <ces>Prkno</ces>
+      <mor>Deska</mor>
       <slk>Doska</slk>
       <jpn>板</jpn>
       <pol>Tablica</pol>
@@ -37173,6 +37570,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1177">
       <eng>Ladder</eng>
       <ces>Žebřík</ces>
+      <mor-ha>Žebřék</mor-ha>
+      <mor-hax>Žebřék</mor-hax>
+      <mor-va>Řebřík</mor-va>
       <slk>Rebrík</slk>
       <jpn>はしご</jpn>
       <uig>شوتا</uig>
@@ -37251,6 +37651,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1178">
       <eng>Flag</eng>
       <ces>Vlajka</ces>
+      <mor-ha>Fana</mor-ha>
+      <mor-hax>Fana</mor-hax>
+      <mor-va>Fangla</mor-va>
       <slk>Vlajka</slk>
       <jpn>国旗</jpn>
       <pol>Flaga</pol>
@@ -38366,6 +38769,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1192">
       <eng>Oxygen machine</eng>
       <ces>Vzduchový přístroj</ces>
+      <mor-ha>Luft aparát</mor-ha>
       <slk>Vzduchový prístroj</slk>
       <jpn>酸素マシン</jpn>
       <pol>Urządzenie powietrzne</pol>
@@ -38794,6 +39198,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1198">
       <eng>Rocket</eng>
       <ces>Raketa</ces>
+      <mor-ha>Rachétla</mor-ha>
+      <mor-hax>Rachétla</mor-hax>
+      <mor-va>Rachejtla</mor-va>
       <slk>Raketa</slk>
       <jpn>ロケット</jpn>
       <uig>راكېتا</uig>
@@ -39791,7 +40198,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1211">
       <eng>Rashberry</eng>
       <ces>Malina</ces>
-      <mor-ha>Malena</mor-ha>
+      <mor-ha>Malêna</mor-ha>
+      <mor-hax>Malena</mor-hax>
       <slk>Malina</slk>
       <jpn>ラッシュベリー</jpn>
       <pol>Malina</pol>
@@ -42562,6 +42970,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Coal wood</eng>
       <ces>Dřevěné uhlí</ces>
       <ces-ce>Dřevěný uhlí</ces-ce>
+      <mor-ha>Dřevěny ôhli</mor-ha>
+      <mor-hax>Dřevěny ohli</mor-hax>
+      <mor-va>Sviňa</mor-va>
       <jpn>石炭木</jpn>
       <slk>Drevené uhlie</slk>
       <pol>Węgiel drzewny</pol>
@@ -42882,10 +43293,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1250">
       <eng>Tin ore</eng>
       <ces>Ruda cínu</ces>
-      <jpn>スズ鉱石</jpn>
+      <mor>Ruda cína</mor>
+      <mor-ha>Rôda cina</mor-ha>
+      <mor-hax>Roda cina</mor-hax>
       <slk>Ruda cínu</slk>
       <pol>Ruda cyny</pol>
       <deu>Zinnerz</deu>
+      <jpn>スズ鉱石</jpn>
       <spa>Mineral de estaño</spa>
       <ita>Minerale di stagno</ita>
       <por>Minério de estanho</por>
@@ -43042,9 +43456,12 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1252">
       <eng>Iron ore</eng>
       <ces>Ruda železa</ces>
-      <jpn>鉄鉱石</jpn>
+      <ces>Ruda železa</ces>
+      <mor-ha>Rôda železa</mor-ha>
+      <mor-hax>Roda železa</mor-hax>
       <slk>Ruda železa</slk>
       <pol>Ruda żelaza</pol>
+      <jpn>鉄鉱石</jpn>
       <deu>Eisenerz</deu>
       <spa>Mineral de hierro</spa>
       <ita>Minerale di ferro</ita>
@@ -43199,6 +43616,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1254">
       <eng>Aluminium ore</eng>
       <ces>Ruda hliníku</ces>
+      <mor-hax>Roda hliniko</mor-hax>
+      <mor-ha>Rôda hlinikô</mor-ha>
       <jpn>アルミ鉱石</jpn>
       <slk>Ruda hliníka</slk>
       <pol>Ruda aluminium</pol>
@@ -45188,9 +45607,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1281">
       <eng>Oak sapling</eng>
       <ces>Sazenice dubu</ces>
-      <jpn>オークの苗木</jpn>
+      <mor>Přísada duba</mor>
+      <mor-ha>Přisada dôba</mor-ha>
+      <mor-hax>Přisada doba</mor-hax>
+      <mor-va>Přísada duba</mor-va>
       <slk>Sadenice duba</slk>
       <pol>Sadzonki dębu</pol>
+      <jpn>オークの苗木</jpn>
       <deu>Eichenbaum</deu>
       <spa>Retoño de roble</spa>
       <ita>Alberello di quercia</ita>
@@ -45265,11 +45688,15 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1282">
       <eng>Linden sapling</eng>
       <ces>Sazenice lípy</ces>
-      <jpn>リンデン苗木</jpn>
+      <mor>Přísada lipy</mor>
+      <mor-ha>Přisada lêpê</mor-ha>
+      <mor-hax>Přisada lepe</mor-hax>
+      <mor-va>Přísada lipy</mor-va>
       <slk>Sadenice lipy</slk>
       <pol>Sadzonki lipy</pol>
       <deu>Lindenschössling</deu>
       <spa>Retoño de tilo</spa>
+      <jpn>リンデン苗木</jpn>
       <ita>Alberello di tiglio</ita>
       <por>Muda de tília</por>
       <dan>Linden træ</dan>
@@ -45573,11 +46000,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1286">
       <eng>Cherry sapling</eng>
-      <ces>Sazenice lípy</ces>
-      <jpn>桜の苗木</jpn>
-      <slk>Sadenice lipy</slk>
-      <pol>Sadzonki lipy</pol>
+      <ces>Sazenice třešní</ces>
+      <mor>Přísada střešni</mor>
+      <mor-ha>Přisada střešňi</mor-ha>
+      <mor-hax>Přisada střešňi</mor-hax>
+      <mor-va>Přísada střešňí</mor-va>
       <deu>Kirschbaum</deu>
+      <jpn>桜の苗木</jpn>
       <spa>Retoño de cereza</spa>
       <ita>Alberello di ciliegie</ita>
       <por>Muda de cereja</por>
@@ -46564,10 +46993,12 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1299">
       <eng>Sugar cane</eng>
       <ces>Cukrová třtina</ces>
-      <jpn>サトウキビ</jpn>
+      <mor-ha>Côkrová třtina</mor-ha>
+      <mor-hax>Cokrová třtina</mor-hax>
       <slk>Cukrová trstina</slk>
       <pol>Trzcina cukrowa</pol>
       <deu>Zuckerrohr</deu>
+      <jpn>サトウキビ</jpn>
       <spa>Caña de azúcar</spa>
       <ita>Canna da zucchero</ita>
       <por>Cana de açúcar</por>
@@ -46802,9 +47233,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1302">
       <eng>Carrot plant</eng>
       <ces>Rostlina mrkve</ces>
-      <jpn>植物ニンジン</jpn>
+      <mor-va>Bylina mrkve</mor-va>
       <slk>Rastlina mrkvy</slk>
       <pol>Marchew</pol>
+      <jpn>植物ニンジン</jpn>
       <deu>Karottenpflanze</deu>
       <spa>Planta de zanahoria</spa>
       <ita>Pianta di carota</ita>
@@ -46883,9 +47315,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Carrot</eng>
       <ces>Mrkev</ces>
       <mor>Mrkva</mor>
+      <mor-va>Mrkva</mor-va>
+      <slk>Mrkva</slk>
       <jpn>にんじん</jpn>
       <uig>سەۋزە</uig>
-      <slk>Mrkva</slk>
       <pol>Marchewka</pol>
       <deu>Karotte</deu>
       <spa>Zanahoria</spa>
@@ -48293,11 +48726,14 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1322">
       <eng>Wheat straw</eng>
-      <ces>Obilý klas</ces>
-      <ces-ce>Vobilý klas</ces-ce>
-      <jpn>麦わら</jpn>
+      <ces>Obilný klas</ces>
+      <ces-ce>Vobilnej klas</ces-ce>
+      <mor-ha>Obilné klas</mor-ha>
+      <mor-hax>Obilné klas</mor-hax>
+      <mor-va>Obilná ščica zrna</mor-va>
       <slk>Obilie klas</slk>
       <pol>Kukurydza na kolbie</pol>
+      <jpn>麦わら</jpn>
       <deu>Weizenstroh</deu>
       <spa>Paja de trigo</spa>
       <ita>Paglia di grano</ita>
@@ -49004,9 +49440,12 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1332">
       <eng>Sewing machine</eng>
       <ces>Šicí stroj</ces>
-      <jpn>ミシン</jpn>
+      <mor-ha>Šêci stroj</mor-ha>
+      <mor-hax>Šeci stroj</mor-hax>
+      <mor-va>Šicí stroj</mor-va>
       <slk>Šijací stroj</slk>
       <pol>Maszyna do szycia</pol>
+      <jpn>ミシン</jpn>
       <deu>Nähmaschine</deu>
       <spa>Máquina de coser</spa>
       <ita>Macchina da cucire</ita>
@@ -50153,10 +50592,14 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1350">
       <eng>Spacesuit top</eng>
-      <ces>Vrchní díl skafandru</ces>
-      <jpn>宇宙服の上</jpn>
+      <ces>Horní díl skafandru</ces>
+      <mor>Vrchní díl skafandra</mor>
+      <mor-ha>Vrchni dil skafandra</mor-ha>
+      <mor-hax>Vrchni dil skafandra</mor-hax>
+      <mor-va>Vŕchný díł skafandra</mor-va>
       <slk>Vrchný diel skafandra</slk>
       <pol>Górna część skafandra</pol>
+      <jpn>宇宙服の上</jpn>
       <deu>Raumanzugoberteil</deu>
       <spa>Top de traje espacial</spa>
       <ita>Top della tuta spaziale</ita>
@@ -50317,9 +50760,13 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1353">
       <eng>Shirt</eng>
       <ces>Košile</ces>
-      <jpn>シャツ</jpn>
+      <mor>Košula</mor>
+      <mor-ha>Košôla</mor-ha>
+      <mor-hax>Košola</mor-hax>
+      <mor-va>Košela</mor-va>
       <slk>Košeľa</slk>
       <pol>Koszula</pol>
+      <jpn>シャツ</jpn>
       <deu>Hemd</deu>
       <spa>Camisa</spa>
       <ita>Camicia</ita>
@@ -51147,7 +51594,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1370">
       <eng>Bikini top</eng>
-      <ces>Vršek bikin</ces>
+      <ces>Horní díl bikin</ces>
+      <mor>Vršek bikin</mor>
+      <mor-ha>Vršek bikin</mor-ha>
       <jpn>ビキニトップ</jpn>
       <slk>Vršok bikín</slk>
       <pol>Góra od bikini</pol>
@@ -51226,6 +51675,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1371">
       <eng>Army coat</eng>
       <ces>Vojenská blůza</ces>
+      <mor-ha>Vojenská bluza</mor-ha>
       <jpn>アーミーコート</jpn>
       <slk>Vojenská blúza</slk>
       <pol>Bluza wojskowa</pol>
@@ -51306,6 +51756,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1372">
       <eng>Coat</eng>
       <ces>Kabát</ces>
+      <mor-ha>Kabiš</mor-ha>
       <jpn>コート</jpn>
       <slk>Kabát</slk>
       <pol>Płaszcz</pol>
@@ -51545,6 +51996,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1376">
       <eng>Short jacket</eng>
       <ces>Krátká blůza</ces>
+      <mor-ha>Krátká bluza</mor-ha>
       <jpn>ショートジャケット</jpn>
       <slk>Krátka blúza</slk>
       <pol>Krótka bluzka</pol>
@@ -54507,9 +54959,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Gold knife</eng>
       <ces>Zlatý nůž</ces>
       <ces-ce>Zlatej nůž</ces-ce>
-      <mor-ha>Zlaté nuž</mor-ha>
-      <mor-va>Zlatý nožice</mor-va>
-      <mor-sl>Zlatý nožíce</mor-sl>
+      <mor-ha>Zlaté nožék</mor-ha>
+      <mor-hax>Zlaté nožék</mor-hax>
+      <mor-va>Zlatý núž</mor-va>
+      <mor-sl>Zlatý núž</mor-sl>
       <slk>Zlatý nôž</slk>
       <jpn>金のナイフ</jpn>
       <pol>Złoty nóż</pol>
@@ -54591,7 +55044,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1414">
       <eng>Gold hoe</eng>
       <ces>Zlatá motyka</ces>
-      <mor-ha>Zlatá moteka</mor-ha>
+      <mor-ha>Zlatá motêka</mor-ha>
+      <mor-hax>Zlatá moteka</mor-hax>
       <slk>Zlatá motyka</slk>
       <jpn>金鍬</jpn>
       <pol>Złota motyka</pol>
@@ -54835,13 +55289,15 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Gold shears</eng>
       <ces>Zlaté nůžky</ces>
       <ces-ce>Zlatý nůžky</ces-ce>
+      <mor>Zlaté nožíce</mor>
       <mor-ha>Zlaty nožéce</mor-ha>
+      <mor-hax>Zlaty nožéce</mor-hax>
       <mor-va>Zlaté nožice</mor-va>
       <mor-sl>Zlaté nožíce</mor-sl>
       <slk>Zlaté nožnice</slk>
-      <jpn>金ばさみ</jpn>
       <pol>Złote nożyczki</pol>
       <deu>Goldschere</deu>
+      <jpn>金ばさみ</jpn>
       <spa>Tijeras de oro</spa>
       <ita>Cesoie d'oro</ita>
       <por>Tesouras de ouro</por>
@@ -55163,7 +55619,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Aluminium shears</eng>
       <ces>Hliníkové nůžky</ces>
       <ces-ce>Hliníkový nůžky</ces-ce>
-      <mor-ha>Hliníkové nožéce</mor-ha>
+      <mor>Hliníkové nožíce</mor>
+      <mor-ha>Hlinikové nožéce</mor-ha>
+      <mor-hax>Hlinikové nožéce</mor-hax>
       <mor-va>Hliníkové nožice</mor-va>
       <mor-sl>Hliníkové nožíce</mor-sl>
       <jpn>アルミばさみ</jpn>
@@ -55248,7 +55706,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Aluminium knife</eng>
       <ces>Hliníkový nůž</ces>
       <ces-ce>Hliníkovej nůž</ces-ce>
-      <mor-ha>Hliníkové nuž</mor-ha>
+      <mor-ha>Hlinikové nožék</mor-ha>
+      <mor-hax>Hlinikové nožék</mor-hax>
       <jpn>アルミナイフ</jpn>
       <slk>Hliníkový nôž</slk>
       <pol>Aluminiowy nóż</pol>
@@ -55330,7 +55789,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1423">
       <eng>Aluminium hoe</eng>
       <ces>Hliníková motyka</ces>
-      <mor-ha>Hliníková moteka</mor-ha>
+      <mor-ha>Hliniková motêka</mor-ha>
+      <mor-hax>Hliniková moteka</mor-hax>
       <jpn>アルミ製鍬</jpn>
       <slk>Hliníková motyka</slk>
       <pol>Aluminiowa motyka</pol>
@@ -55412,6 +55872,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1424">
       <eng>Aluminium shovel</eng>
       <ces>Hliníková lopata</ces>
+      <mor-ha>Hliniková lopata</mor-ha>
+      <mor-hax>Hliniková lopata</mor-hax>
       <jpn>アルミシャベル</jpn>
       <slk>Hliníková lopata</slk>
       <pol>Łopata aluminiowa</pol>
@@ -55575,7 +56037,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1426">
       <eng>Steel hoe</eng>
       <ces>Ocelová motyka</ces>
-      <mor-ha>Ocelová moteka</mor-ha>
+      <mor-ha>Ocelová motêka</mor-ha>
+      <mor-hax>Ocelová moteka</mor-hax>
       <ces-ce>Vocelová motyka</ces-ce>
       <jpn>スチール製鍬</jpn>
       <slk>Oceľová motyka</slk>
@@ -58451,10 +58914,12 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1461">
       <eng>Steel hoe head</eng>
       <ces>Hlava ocelové motyky</ces>
-      <ces-ce>Hlava ocelový motyky</ces-ce>
+      <ces-ce>Hlava vfgocelový motyky</ces-ce>
+      <mor-ha>Hlava ocelové moteke</mor-ha>
+      <mor-va>Hłava ocelové motyky</mor-va>
+      <slk>Hlava oceľové motyky</slk>
       <pol>Stalowa głowica motyki</pol>
       <jpn>スチール製ホーヘッド</jpn>
-      <slk>Hlava oceľové motyky</slk>
       <deu>Stahlhackenkopf</deu>
       <spa>Cabeza de azada de acero</spa>
       <ita>Testa di zappa in acciaio</ita>
@@ -58534,6 +58999,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Aluminium hoe head</eng>
       <ces>Hlava hliníkové motyky</ces>
       <ces-ce>Hlava hliníkový motyky</ces-ce>
+      <mor-va>Hłava hliníkové motyky</mor-va>
+      <mor-ha>Hlava hlinikové moteke</mor-ha>
       <pol>Aluminiowa głowica motyki</pol>
       <jpn>アルミ製ホーヘッド</jpn>
       <slk>Hlava hliníkové motyky</slk>
@@ -58617,8 +59084,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <enu>Steel ax</enu>
       <ces>Ocelová sekera</ces>
       <ces-ce>Vocelová sekera</ces-ce>
-      <jpn>鋼の斧</jpn>
+      <mor-va>Ocelová sekyra</mor-va>
+      <mor-ha>Ocelová sekerka</mor-ha>
       <slk>Oceľová sekera</slk>
+      <jpn>鋼の斧</jpn>
       <pol>Stalowy topór</pol>
       <deu>Stahlaxt</deu>
       <spa>Hacha de acero</spa>
@@ -58698,6 +59167,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1464">
       <eng>Bronze shovel</eng>
       <ces>Bronzová lopata</ces>
+      <mor-va>Bronzová łopata</mor-va>
       <jpn>ブロンズシャベル</jpn>
       <slk>Bronzová lopata</slk>
       <pol>Łopata z brązu</pol>
@@ -58779,8 +59249,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1465">
       <eng>Bronze pickaxe</eng>
-      <jpn>ブロンズつるはし</jpn>
       <ces>Bronzový krumpáč</ces>
+      <jpn>ブロンズつるはし</jpn>
       <slk>Bronzový krompáč</slk>
       <pol>Kilof z brązu</pol>
       <deu>Bronze Spitzhacke</deu>
@@ -58858,6 +59328,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1466">
       <eng>Copper knife head</eng>
       <ces>Měděná hlava sekerky</ces>
+      <mor-va>Mjeděná hłava sekyry</mor-va>
+      <mor-ha>Měděná hlava sekere</mor-ha>
       <jpn>銅ナイフヘッド</jpn>
       <slk>Medená hlava sekerky</slk>
       <pol>Miedziana głowa topora</pol>
@@ -58939,6 +59411,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1467">
       <eng>Bronze knife head</eng>
       <ces>Bronzová hlava sekerky</ces>
+      <mor-va>Bronzová hłava sekyry</mor-va>
       <jpn>ブロンズナイフヘッド</jpn>
       <slk>Bronzová hlava sekerky</slk>
       <pol>Topór z brązu</pol>
@@ -59020,6 +59493,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1468">
       <eng>Gold knife head</eng>
       <ces>Zlatá hlava sekerky</ces>
+      <mor-va>Złatá hłava sekyry</mor-va>
+      <mor-ha>Zlatá hlava sekere</mor-ha>
       <jpn>ゴールドナイフヘッド</jpn>
       <slk>Zlatá hlava sekerky</slk>
       <pol>Złoty topór</pol>
@@ -59101,9 +59576,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1469">
       <eng>Iron knife head</eng>
       <ces>Hliníková hlava sekerky</ces>
+      <mor-ha>Hliniková hlava sekere</mor-ha>
+      <mor-va>Hliníková hłava sekyry</mor-va>
+      <slk>Hliníková hlava sekerky</slk>
       <pol>Topór z żelaznym nożem</pol>
       <jpn>アイアンナイフヘッド</jpn>
-      <slk>Hliníková hlava sekerky</slk>
       <deu>Eisenmesserkopf</deu>
       <spa>Cabeza de cuchillo de hierro</spa>
       <ita>Testa di coltello di ferro</ita>
@@ -59183,9 +59660,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Steel knife head</eng>
       <ces>Ocelová hlava sekerky</ces>
       <ces-ce>Vocelová hlava sekerky</ces-ce>
+      <mor-va>Ocelová hłava sekerky</mor-va>
+      <slk>Oceľová hlava sekerky</slk>
       <pol>Stalowy topór do noża</pol>
       <jpn>スチールナイフヘッド</jpn>
-      <slk>Oceľová hlava sekerky</slk>
       <deu>Stahlmesserkopf</deu>
       <spa>Cabeza de cuchillo de acero</spa>
       <ita>Testa di coltello in acciaio</ita>
@@ -59264,6 +59742,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1471">
       <eng>Aluminium knife head</eng>
       <ces>Hliníková hlava sekerky</ces>
+      <mor-va>Hliníková hłava sekyry</mor-va>
+      <mor-ha>Hliniková hlava sekere</mor-ha>
       <pol>Aluminiowy topór do noża</pol>
       <jpn>アルミナイフヘッド</jpn>
       <slk>Hliníková hlava sekerky</slk>
@@ -59345,6 +59825,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1472">
       <eng>Steel ingot</eng>
       <ces>Ocelová cihla</ces>
+      <mor-va>Ocelová tihła</mor-va>
       <ces-ce>Vocelová cihla</ces-ce>
       <cs-kids>Ocelová cihlička</cs-kids>
       <pol>Sztabka stalowa</pol>
@@ -59507,6 +59988,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1474">
       <eng>Continue</eng>
       <ces>Pokračovat</ces>
+      <mor-va>Pokračovať</mor-va>
       <slk>Pokračovať</slk>
       <jpn>継続する</jpn>
       <fra>Continuer</fra>
@@ -59587,6 +60069,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1476">
       <eng>Gift code</eng>
       <ces>Dárkový kód</ces>
+      <mor-ha>Dárkové kód</mor-ha>
       <slk>Darčekový kód</slk>
       <jpn>ギフトコード</jpn>
       <fra>Code cadeau</fra>
@@ -59667,6 +60150,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1477">
       <eng>Acheavements</eng>
       <ces>Ocenění</ces>
+      <mor-ha>Oceněni</mor-ha>
       <ces-ce>Vocenění</ces-ce>
       <slk>Ocenenie</slk>
       <jpn>達成</jpn>
@@ -59748,6 +60232,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1478">
       <eng>Exit</eng>
       <ces>Odejít</ces>
+      <mor-ha>Odejit</mor-ha>
+      <mor-va>Odjíť</mor-va>
       <ces-ce>Vodejít</ces-ce>
       <slk>Odísť</slk>
       <jpn>出口</jpn>
@@ -59910,7 +60396,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1480">
       <eng>Pick up an stone rock</eng>
       <ces>Zvedněte kámen ze země</ces>
-      <mor>Zdvihněte kameň ze země</mor>
+      <mor>Zdvihnite kameň ze zeme</mor>
+      <mor-va>Zvihnite kameň ze zeme</mor-va>
+      <mor-ha>Zvihnite kameň ze zeme</mor-ha>
       <slk>Zdvihnite kameň zo zeme</slk>
       <jpn>石の岩を拾う</jpn>
       <fra>Ramassez un rocher de pierre</fra>
@@ -60073,6 +60561,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1482">
       <eng>Create a bronze ingot</eng>
       <ces>Vytvořte bronzový ingot</ces>
+      <mor-va>Zrob bronzový ingot</mor-va>
       <slk>Vytvorte bronzový ingot</slk>
       <jpn>ブロンズインゴットを作成する</jpn>
       <fra>Créer un lingot de bronze</fra>
@@ -60235,6 +60724,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1484">
       <eng>Create an iron tool</eng>
       <ces>Vytvořte železný nástroj</ces>
+      <mor-ha>Vetvořte železné vercajk</mor-ha>
+      <mor-va>Zrob železný inštrment</mor-va>
       <slk>Vytvorte železný nástroj</slk>
       <jpn>鉄の道具を作る</jpn>
       <fra>Créer un outil en fer</fra>
@@ -60315,6 +60806,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1485">
       <eng>Future age</eng>
       <ces>Doba budoucnosti</ces>
+      <mor-ha>Doba budócnosti</mor-ha>
+      <mor-va>Doba budúcnosti</mor-va>
       <slk>Doba budúcnosti</slk>
       <jpn>未来の時代</jpn>
       <fra>Âge futur</fra>
@@ -60396,6 +60889,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1486">
       <eng>Fly with rocket</eng>
       <ces>Vyleťte raketou</ces>
+      <mor-ha>Velitnite rachétló</mor-ha>
+      <mor-ha>Vylétnite rachejtlú</mor-ha>
       <slk>Výlety raketou</slk>
       <jpn>ロケットで飛ぶ</jpn>
       <fra>Voler avec une fusée</fra>
@@ -60477,6 +60972,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1487">
       <eng>Achievement detail</eng>
       <ces>Detail ocenění</ces>
+      <ces-ce>Detajl vocenění</ces-ce>
+      <mor-ha>Detail oceněni</mor-ha>
+      <mor-va>Detail océnění</mor-va>
       <slk>Detail ocenenie</slk>
       <jpn>実績の詳細</jpn>
       <fra>Détail des réalisations</fra>
@@ -60559,6 +61057,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1488">
       <eng>Game Jolt nick</eng>
       <ces>Přezdívka Game Joltu</ces>
+      <mor-va>Přezvisko Game Jolta</mor-va>
       <slk>Prezývka Game JOLT</slk>
       <jpn>Game Jolt ニック</jpn>
       <fra>Game Jolt nick</fra>
@@ -60715,6 +61214,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1491">
       <eng>Share as Game Jolt Trophy</eng>
       <ces>Sdílet jako Trofej Game Joltu</ces>
+      <mor-ha>Zdilet jako Trofej Game Jolta</mor-ha>
       <slk>Zdieľať ako Trofej Game JOLT</slk>
       <jpn>Game JoltTrophyとして共有する</jpn>
       <fra>Partager en tant que Game Jolt Trophy</fra>
@@ -60796,7 +61296,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1492">
       <eng>Gift is opening...</eng>
-      <ces>Dárek se otvírá...</ces>
+      <ces>Dárek se otevírá...</ces>
+      <ces-ce>Dárek se votvírá...</ces-ce>
+      <mor>Dárek se otvírá...</mor>
+      <mor-ha>Dárek se otvirá...</mor-ha>
+      <mor-va>Dárek sa otvírá...</mor-va>
       <slk>Darček sa otvára...</slk>
       <jpn>ギフトが始まります...</jpn>
       <fra>Le cadeau s'ouvre...</fra>
@@ -60879,6 +61383,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1493">
       <eng>Gift was already opened</eng>
       <ces>Dárek již byl rozbalen</ces>
+      <mor>Dárek už byl rozbalený</mor>
+      <mor-ha>Dárek ož bel rozbalené</mor-ha>
+      <mor-va>Dárek už býł rozbalený</mor-va>
       <slk>Darček už bol rozbalený</slk>
       <jpn>ギフトはすでに開かれています</jpn>
       <fra>Le cadeau était déjà ouvert</fra>
@@ -60960,6 +61467,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1494">
       <eng>Gift was already opened</eng>
       <ces>Dárek již byl rozbalen</ces>
+      <mor>Dárek už byl rozbalený</mor>
+      <mor-ha>Dárek ož bel rozbalené</mor-ha>
+      <mor-va>Dárek už býł rozbalený</mor-va>
       <slk>Darček už bol rozbalený</slk>
       <jpn>ギフトはすでに開かれています</jpn>
       <fra>Le cadeau était déjà ouvert</fra>
@@ -61041,6 +61551,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1495">
       <eng>This version is old, gift code cannot be used</eng>
       <ces>Tato verze hry je stará, dárkový kód nelze použít</ces>
+      <mor>Toť ta verze hry je stará, dárkový kód nelnde použít</mor>
+      <mor-ha>Toť ta verze hre je stará, dárkové kód nende poožet</mor-ha>
+      <mor-va>Táte verze hry je stará, dárkový kód nelza užíť</mor-va>
       <slk>Táto verzia hry je stará, darčekový kód nemožno použiť</slk>
       <jpn>このバージョンは古いため、ギフトコードは使用できません</jpn>
       <fra>Cette version est ancienne, le code cadeau ne peut pas être utilisé</fra>
@@ -61121,6 +61634,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1496">
       <eng>state: acquired</eng>
       <ces>Stav: získáno</ces>
+      <mor>Stav: získáné</mor>
+      <mor-ha>Stav: zéskáné</mor-ha>
+      <mor-va>Stav: získáné</mor-va>
       <slk>Stav: získané</slk>
       <jpn>状態：取得</jpn>
       <fra>État: acquis</fra>
@@ -61202,6 +61718,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1497">
       <eng>state: not acquired</eng>
       <ces>Stav: nezískáno</ces>
+      <mor>Stav: nezískáné</mor>
+      <mor-ha>Stav: nezéskáné</mor-ha>
+      <mor-va>Stav: nezískáné</mor-va>
       <slk>Stav: nezískania</slk>
       <jpn>状態：取得されていません</jpn>
       <fra>État: non acquis</fra>
@@ -61283,6 +61802,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1498">
       <eng>Close</eng>
       <ces>Zavřít</ces>
+      <mor>Zavřít</mor>
+      <mor-ha>Zavřit</mor-ha>
+      <mor-hax>Zavřit</mor-hax>
       <slk>Zavrieť</slk>
       <jpn>閉じる</jpn>
       <fra>Fermer</fra>
@@ -61363,6 +61885,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1499">
       <eng>Trophy is sending...</eng>
       <ces>Ocenění se odesílá</ces>
+      <mor-ha>Oceněni se odesilá</mor-ha>
+      <mor-va>Ocenění se posíłá</mor-va>
       <ces-ce>Vocenění se vodesílá</ces-ce>
       <slk>Ocenenie sa odosiela</slk>
       <jpn>トロフィーが送られています...</jpn>
@@ -61446,6 +61970,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Trophy cannot be send.</eng>
       <ces>Ocenění nelze odeslat</ces>
       <ces-ce>Vocenění nelze vodeslat</ces-ce>
+      <mor>Oceněni nende odeslat</mor>
+      <mor-ha>Oceněni nende odeslat</mor-ha>
+      <mor-va>Ocenění nedá poslať</mor-va>
       <slk>Ocenenie nedá odoslať</slk>
       <jpn>トロフィーを送ることはできません。</jpn>
       <fra>Le trophée ne peut pas être envoyé.</fra>
@@ -61528,7 +62055,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>The award can only be used in adventure mode, otherwise it would be too easy</eng>
       <ces>Ocenění lze používat jen v dobrodružném modu, jinak by to bylo příliš jednoduché</ces>
       <ces-ce>Tak hele vocenění jen v dobrodružným modu, jinak by to bylo příliš jednoduchý</ces-ce>
-      <mor-ha>Tož oceněni jenom v dobrodružnym módo, ináč be to belo opravdo jednodochy</mor-ha>
+      <mor>Tož ocenění jenom v dobrodružném módu, jináč by to bylo opravdu jednoduché</mor>
+      <mor-ha>Tož oceněni jenom v dobrodružnym módo, ináč be to belo zkrátka jednodochy</mor-ha>
+      <mor-va>Tož ocenění enem v dobrodružném módu, ináč by to bylo na ozaj jednoduché</mor-va>
       <slk>Ocenenie je možné používať len v dobrodružnom módu, inak by to bolo príliš jednoduché</slk>
       <jpn>アワードはアドベンチャーモードでのみ使用できます。そうでない場合は簡単すぎます。</jpn>
       <fra>Le prix ne peut être utilisé qu'en mode aventure, sinon ce serait trop facile</fra>
@@ -61612,6 +62141,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Angel hair</eng>
       <ces>Andělské vlasy</ces>
       <ces-ce>Andělský vlasy</ces-ce>
+      <mor-ha>Andělsky vlasê</mor-ha>
+      <mor-hax>Andělsky vlase</mor-hax>
       <slk>Anjelské vlasy</slk>
       <jpn>エンジェルヘア</jpn>
       <fra>Cheveux d'ange</fra>
@@ -61695,6 +62226,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Vánoční koule</ces>
       <mor>Vánoční baňka</mor>
       <mor-ha>Vánočni baňka</mor-ha>
+      <mor-va>Vánoční baňa</mor-va>
       <slk>Vianočné gule</slk>
       <jpn>クリスマスボール</jpn>
       <fra>Boule de Noel</fra>
@@ -61775,9 +62307,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1504">
       <eng>Blue christmas ball</eng>
       <ces>Modrá vánoční koule</ces>
-      <mor>Modrá vánoční baňka</mor>
       <ces-ce>Modrá vánoční koule</ces-ce>
-      <mor-ha>Modrá vánoční baňka</mor-ha>
+      <mor>Modrá vánoční baňka</mor>
+      <mor-ha>Modrá vánočni baňka</mor-ha>
+      <mor-va>Modrá vánoční baňa</mor-va>
       <slk>Modrá vianočné gule</slk>
       <jpn>青いクリスマスボール</jpn>
       <fra>Boule de Noël bleue</fra>
@@ -61862,7 +62395,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Žlutá vánoční koule</ces>
       <ces-ce>Žlutá vánoční koule</ces-ce>
       <mor>Žlutá vánoční baňka</mor>
-      <mor-ha>Žlutá vánoční baňka</mor-ha>
+      <mor-ha>Žlotá vánočni baňka</mor-ha>
+      <mor-va>Žutá vánoční baňa</mor-va>
       <slk>Žltá vianočné gule</slk>
       <jpn>黄色のクリスマスボール</jpn>
       <fra>Boule de Noël jaune</fra>
@@ -61944,9 +62478,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1506">
       <eng>Orange christmas ball</eng>
       <ces>Oranžová vánoční koule</ces>
-      <mor>Oranžová vánoční baňka</mor>
       <ces-ce>Voranžová vánoční koule</ces-ce>
-      <mor-ha>Oranžová vánoční baňka</mor-ha>
+      <mor>Oranžová vánoční baňka</mor>
+      <mor-ha>Oranžová vánočni baňka</mor-ha>
+      <mor-va>Oranžová vánoční baňa</mor-va>
       <slk>Oranžová vianočné gule</slk>
       <jpn>オレンジ色のクリスマスボール</jpn>
       <fra>Boule de Noël orange</fra>
@@ -62030,7 +62565,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Red christmas ball</eng>
       <ces>Červená vánoční koule</ces>
       <mor>Červená vánoční baňka</mor>
-      <mor-ha>Červená vánoční baňka</mor-ha>
+      <mor-ha>Červená vánočni baňka</mor-ha>
+      <mor-va>Červená vánoční baňa</mor-va>
       <slk>Červená vianočné gule</slk>
       <jpn>赤いクリスマスボール</jpn>
       <fra>Boule de Noël rouge</fra>
@@ -62114,7 +62650,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Pink christmas ball</eng>
       <ces>Růžová vánoční koule</ces>
       <mor>Růžová vánoční baňka</mor>
-      <mor-ha>Růžová vánoční baňka</mor-ha>
+      <mor-ha>Ružová vánočni baňka</mor-ha>
+      <mor-va>Rúžová vánoční baňa</mor-va>
       <slk>Ružová vianočné gule</slk>
       <jpn>ピンクのクリスマスボール</jpn>
       <fra>Boule de Noël rose</fra>
@@ -62198,7 +62735,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Purple christmas ball</eng>
       <ces>Fialová vánoční koule</ces>
       <mor>Fialová vánoční baňka</mor>
-      <mor-ha>Fialová vánoční baňka</mor-ha>
+      <mor-ha>Fialová vánočni baňka</mor-ha>
+      <mor-va>Fialová vánoční baňa</mor-va>
       <slk>Fialová vianočné gule</slk>
       <jpn>紫のクリスマスボール</jpn>
       <fra>Boule de Noël violette</fra>
@@ -62282,7 +62820,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Light green christmas ball</eng>
       <ces>Světle zelená vánoční koule</ces>
       <mor>Světle zelená vánoční baňka</mor>
-      <mor-ha>Světle zelená vánoční baňka</mor-ha>
+      <mor-ha>Světle zelená vánočni baňka</mor-ha>
+      <mor-va>Svjetle zelená vánoční baňa</mor-va>
       <slk>Svetlo zelená vianočné gule</slk>
       <jpn>ライトグリーンのクリスマスボール</jpn>
       <fra>Boule de Noël vert clair</fra>
@@ -62366,7 +62905,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Teal christmas ball</eng>
       <ces>Tyrkysová vánoční koule</ces>
       <mor>Tyrkysová vánoční baňka</mor>
-      <mor-ha>Tyrkysová vánoční baňka</mor-ha>
+      <mor-ha>Tyrkysová vánočni baňka</mor-ha>
+      <mor-va>Tyrkysová vánoční baňa</mor-va>
       <slk>Tyrkysová vianočné gule</slk>
       <jpn>ティールクリスマスボール</jpn>
       <fra>Boule de Noël turquoise</fra>
@@ -62451,6 +62991,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Létající mod v kreativním modu</ces>
       <mor>Létající mód v kreativním módu</mor>
       <mor-ha>Litaci mód v kreativnim módo</mor-ha>
+      <mor-va>Létajúcí mód v kreativním módu</mor-va>
       <slk>Lietajúci mód v kreatívnom móde</slk>
       <jpn>クリエイティブのフライモード</jpn>
       <fra>Mode Fly en création</fra>
@@ -62533,9 +63074,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1514">
       <eng>Show/hide dev info</eng>
       <ces>Zobrazit/Skrýt vývojářské info</ces>
-      <mor>Zobrazit/Schovat vývojářské info</mor>
-      <ces-ce>Zobrazit/Skrejt vejvojářský info</ces-ce>
+      <mor>Zobrazit/Skovat vývojářské info</mor>
+      <mor-ha>Zobrazit/Skovat vévojářsky info</mor-ha>
+      <mor-va>Zobraziť/Ukryť vývojářské info</mor-va>
       <slk>Zobraziť/Skryť vývojárske info</slk>
+      <ces-ce>Zobrazit/Skrejt vejvojářský info</ces-ce>
       <jpn>開発情報の表示/非表示</jpn>
       <fra>Afficher/masquer les informations du développeur</fra>
       <pol>Pokaż/ukryj informacje o programistach</pol>
@@ -62615,8 +63158,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Mostrar yá ocultar ungumfädi nte</oto>
     </a>
     <a id="1515">
-      <ces>Nelze rozpoznat ip</ces>
       <eng>Unrecognized ip</eng>
+      <ces>Nelze rozpoznat ip</ces>
+      <mor>Nende rozpoznat ip</mor>
+      <mor-ha>Nende rozpoznat ip</mor-ha>
+      <mor-va>Nelza poznať ip</mor-va>
       <slk>Nemožno rozpoznať ip</slk>
       <jpn>認識されないIP</jpn>
       <fra>IP non reconnue</fra>
@@ -62697,8 +63243,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>IP hindi reconocida</oto>
     </a>
     <a id="1516">
-      <ces>Nelze rozpoznat port</ces>
       <eng>Unable to recognize port</eng>
+      <ces>Nelze rozpoznat port</ces>
+      <mor>Nende rozpoznat port</mor>
+      <mor-ha>Nende rozpoznat port</mor-ha>
+      <mor-va>Nelza poznať port</mor-va>
       <slk>Nemožno rozpoznať port</slk>
       <jpn>ポートを認識できません</jpn>
       <fra>Impossible de reconnaître le port</fra>
@@ -62778,8 +63327,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Hingi ar tsa̲ da reconocer ar puerto</oto>
     </a>
     <a id="1517">
-      <ces>Nelze rozpoznat adresu serveru</ces>
       <eng>Unable to resolve server address</eng>
+      <ces>Nelze rozpoznat adresu serveru</ces>
+      <mor>Nende poznat adresu serveru</mor>
+      <mor-va>Nelza poznať adresu serveru</mor-va>
+      <mor-ha>Nende poznat adreso servero</mor-ha>
       <slk>Nemožno rozpoznať adresu servera</slk>
       <jpn>サーバーアドレスを解決できません</jpn>
       <fra>Impossible de résoudre l'adresse du serveur</fra>
@@ -62859,8 +63411,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Hingi ar tsa̲ da resolver jar 'mui ar servidor</oto>
     </a>
     <a id="1518">
-      <ces>Nelze se připojit</ces>
       <eng>Unable to connect</eng>
+      <ces>Nelze se připojit</ces>
+      <mor-ha>Nende se přepojit</mor-ha>
+      <mor-va>Nelza sa připojiť</mor-va>
       <slk>Nedá sa pripojiť</slk>
       <jpn>接続することができません</jpn>
       <fra>Impossible de se connecter</fra>
@@ -62940,8 +63494,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Hingi ar tsa̲ da conectar</oto>
     </a>
     <a id="1519">
-      <ces>Server nenalezen</ces>
       <eng>Server not found</eng>
+      <ces>Server nenalezen</ces>
+      <mor>Server nebyl nalezený</mor>
+      <mor-va>Server nebýł najítý</mor-va>
+      <mor-ha>Server nebel nalezené</mor-ha>
       <slk>Server nenájdený</slk>
       <jpn>サーバーが見つからない</jpn>
       <fra>Serveur introuvable</fra>
@@ -63020,8 +63577,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Servidor hindi encontrado</oto>
     </a>
     <a id="1520">
-      <ces>Server se nenašel v časovém intervalu</ces>
       <eng>The server was not found in the time interval</eng>
+      <ces>Server se nenašel v časovém intervalu</ces>
+      <mor>Server nebyl nalezený do požadované doby</mor>
+      <mor-ha>Server nebel nalezené do požadované dobe</mor-ha>
+      <mor-va>Server nebýł nájítý do žádané doby</mor-va>
       <slk>Server sa nenašiel v časovom intervale</slk>
       <jpn>サーバーが時間間隔で見つかりませんでした</jpn>
       <fra>Le serveur n'a pas été trouvé dans l'intervalle de temps</fra>
@@ -63101,8 +63661,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Hingi ar bí nthe̲hu̲ ar servidor jar intervalo ya pa</oto>
     </a>
     <a id="1521">
-      <ces>Neplatná adresa serveru</ces>
       <eng>Invalid server address</eng>
+      <ces>Neplatná adresa serveru</ces>
+      <mor-ha>Neplatná adresa servero</mor-ha>
       <slk>Neplatná adresa servera</slk>
       <jpn>無効なサーバーアドレス</jpn>
       <fra>Adresse de serveur invalide</fra>
@@ -63184,6 +63745,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1522">
       <ces>Server není dostupný</ces>
       <mor>Server néni dostupný</mor>
+      <mor-ha>Server néni dostopné</mor-ha>
       <eng>The server is not available</eng>
       <slk>Server nie je dostupný</slk>
       <jpn>サーバーは利用できません</jpn>
@@ -63264,8 +63826,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Ar servidor hingi 'bu̲i disponible</oto>
     </a>
     <a id="1523">
-      <ces>Nelze odeslat k serveru požadavek o odeslání informací</ces>
       <eng>Unable to send information request to server</eng>
+      <ces>Nelze odeslat k serveru požadavek o odeslání dat</ces>
+      <mor-ha>Nende poslat k servero požadavek o posláni dat</mor-ha>
+      <mor-va>Nelza poslať k serveru požadavek o poslání dat</mor-va>
+      <mor>Nende poslat k serveru požadavek o poslání dat</mor>
       <slk>Nemožno odoslať k serveru požiadavku o odoslaní informácií</slk>
       <jpn>サーバーに情報要求を送信できません</jpn>
       <fra>Impossible d'envoyer la demande d'informations au serveur</fra>
@@ -63346,8 +63911,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Hingi ar tsa̲ da pe̲hni zohni 'nehe ungumfädi ja ar servidor</oto>
     </a>
     <a id="1524">
-      <ces>Server byl neočekávaně vypnut</ces>
       <eng>The server shut down unexpectedly</eng>
+      <ces>Server byl neočekávaně vypnut</ces>
+      <mor>Server se akorát vypnul</mor>
+      <mor-ha>Server se akorát vepnol</mor-ha>
+      <mor-va>Server sa akorát vypnúł</mor-va>
       <slk>Server bol neočakávane vypnutý</slk>
       <jpn>サーバーが予期せずシャットダウンしました</jpn>
       <fra>Le serveur s'est arrêté de manière inattendue</fra>
@@ -63428,8 +63996,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Ar servidor ar apagó inesperadamente</oto>
     </a>
     <a id="1525">
-      <ces>Nelze získat data</ces>
       <eng>Unable to get data</eng>
+      <ces>Nelze získat data</ces>
+      <mor>Nende získat data</mor>
+      <mor-ha>Nende zéskat data</mor-ha>
+      <mor-va>Nelza pochytiť data</mor-va>
       <slk>Nemožno získať dáta</slk>
       <jpn>データを取得できません</jpn>
       <fra>Impossible d'obtenir les données</fra>
@@ -63510,6 +64081,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1526">
       <ces>Připojení existuje, ale získané data nemají správný typ</ces>
+      <mor-ha>Přepojeni egzistoje, ale zéskané data nésó recht</mor-ha>
+      <mor-va>Připojení egzistuje, ale vykmítěné data nésú recht</mor-va>
       <ces-ce>Připojení existuje, ale získaný data nemajej správnej typ</ces-ce>
       <eng>The connection exists, but the data obtained is not of the correct type</eng>
       <slk>Pripojenie existuje, ale získané dáta nemajú správny typ</slk>
@@ -63591,9 +64164,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Ar conexión nuna ar dängo, pe ya datos obtenidos hingi ya klase ar na za</oto>
     </a>
     <a id="1527">
-      <ces>Obdrženy vadné data</ces>
-      <ces-ce>Vobdrženy vadný data</ces-ce>
       <eng>Bad data received</eng>
+      <ces>Obdrženy vadné data</ces>
+      <mor-ha>Přeité divné data</mor-ha>
+      <mor-va>Ostehnúty čudné data</mor-va>
+      <ces-ce>Vobdrženy vadný data</ces-ce>
       <slk>Obdržané chybné dáta</slk>
       <jpn>受信した不良データ</jpn>
       <fra>Mauvaises données reçues</fra>
@@ -63673,6 +64248,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1528">
       <ces>Nelze odeslat serveru požadavek o poskytnutí informací</ces>
+      <mor>Nende odeslat serveru žádosť o poskytnutí informací</mor>
+      <mor-ha>Nende odeslat servro žádosť o posketnoti infa</mor-ha>
+      <mor-va>Nelza odeslať servru žádosť o poskytnutí informací</mor-va>
       <eng>Unable to send information request to server</eng>
       <slk>Nemožno odoslať serveru požiadavku o poskytnutie informácií</slk>
       <jpn>サーバーに情報要求を送信できません</jpn>
@@ -63755,6 +64333,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1529">
       <ces>Hra je pro jinou verzi - %name%</ces>
+      <mor-ha>Hra je pro jinó verzo - %name%</mor-ha>
+      <mor-va>Hra je pro inú verzu - %name%</mor-va>
+      <mor>Hra je pro jinou verzu - %name%</mor>
       <eng>The game is for a different version - %name%</eng>
       <slk>Hra je pre inú verziu - %name%</slk>
       <jpn>ゲームは別のバージョン用です- %name%</jpn>
@@ -63836,6 +64417,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1530">
       <ces>Server je plný</ces>
+      <mor-ha>Server je plné</mor-ha>
       <eng>The server is full</eng>
       <jpn>サーバーがいっぱいです</jpn>
       <fra>Le serveur est plein</fra>
@@ -63916,6 +64498,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1531">
       <ces>Neznámá chyba zamezující připojení</ces>
+      <mor-ha>Neznámá mélka zamezojici se přepojet</mor-ha>
       <eng>Unknown connection prevention error</eng>
       <slk>Neznáma chyba zamedzujúci pripojenie</slk>
       <jpn>不明な接続防止エラー</jpn>
@@ -63997,6 +64580,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1532">
       <ces>Postel</ces>
       <mor>Lůžko</mor>
+      <mor-ha>Lužko</mor-ha>
+      <mor-va>Łúžko</mor-va>
       <eng>Bed</eng>
       <slk>Posteľ</slk>
       <jpn>ベッド</jpn>
@@ -64074,6 +64659,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1533">
       <ces>Země</ces>
+      <mor-ha>Zem</mor-ha>
+      <mor-va>Zemňa</mor-va>
       <eng>Earth</eng>
       <slk>Krajina</slk>
       <jpn>地球</jpn>
@@ -64154,6 +64741,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1534">
       <ces>Měsíc</ces>
+      <mor-ha>Mjesic</mor-ha>
+      <mor-va>Mjesíc</mor-va>
+      <mor>Mjesíc</mor>
       <eng>Moon</eng>
       <slk>Mesiac</slk>
       <jpn>月</jpn>
@@ -64277,6 +64867,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1536">
       <ces>Vesmírná stanice</ces>
+      <mor>Vesmírná stanica</mor>
+      <mor-ha>Vesmirná stanica</mor-ha>
       <eng>Space station</eng>
       <slk>Vesmírna stanica</slk>
       <jpn>宇宙ステーション</jpn>
@@ -64359,9 +64951,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1537">
       <ces>Slunce</ces>
       <mor>Slunko</mor>
-      <mor-ha>Slunko</mor-ha>
-      <mor-va>Slunko</mor-va>
-      <mor-sl>Slunko</mor-sl>
+      <mor-ha>Slonko</mor-ha>
+      <mor-va>Słúnko</mor-va>
+      <mor-sl>Słunko</mor-sl>
       <eng>Sun</eng>
       <slk>Slnko</slk>
       <jpn>太陽</jpn>
@@ -64442,6 +65034,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1538">
       <ces>Merkur</ces>
+      <mor-ha>Merkor</mor-ha>
       <eng>Mercury</eng>
       <slk>Merkúr</slk>
       <jpn>水星</jpn>
@@ -64516,6 +65109,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1539">
       <ces>Venuše</ces>
+      <mor-ha>Venoša</mor-ha>
+      <mor-va>Venuša</mor-va>
+      <mor>Venuša</mor>
       <eng>Venus</eng>
       <slk>Venuša</slk>
       <jpn>金星</jpn>
@@ -64566,6 +65162,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1540">
       <ces>"Nemáte dostatek materiálu
 			pro vytvoření"</ces>
+      <ces>"Nemáte dostatek materijálo
+			pro vetvořeni"</ces>
       <eng>"You do not have enough material
 			to create "</eng>
       <slk>"Nemáte dostatok materiálu
@@ -64779,6 +65377,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1542">
       <ces>Jupiter</ces>
+      <mor-ha>Jopiter</mor-ha>
       <eng>Jupiter</eng>
       <jpn>木星</jpn>
       <pol>Jowisz</pol>
@@ -65133,6 +65732,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1549">
       <ces>Uran</ces>
+      <mor-ha>Oran</mor-ha>
       <eng>Uranus</eng>
       <ara>أورانوس</ara>
       <spa>Urano</spa>
@@ -65181,6 +65781,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1550">
       <ces>Titania</ces>
+      <mor-ha>Titanija</mor-ha>
       <eng>Titania</eng>
       <jpn>チタニア</jpn>
       <pol>Tytania</pol>
@@ -65226,6 +65827,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1551">
       <ces>Neptun</ces>
+      <mor-ha>Nepton</mor-ha>
       <eng>Neptune</eng>
       <slk>Neptún</slk>
       <jpn>ネプチューン</jpn>
@@ -65579,6 +66181,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1558">
       <ces>Žádné</ces>
+      <mor-ha>Žádny</mor-ha>
       <eng>None</eng>
       <slk>Žiadne</slk>
       <jpn>無し</jpn>
@@ -65820,6 +66423,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1561">
       <ces>Skrýt informace o tagách</ces>
+      <mor>Skovat informace o tagách</mor>
+      <mor-ha>Skovat info o tagách</mor-ha>
+      <mor-va>Ukryť informace o tagách</mor-va>
       <eng>Hide tag information</eng>
       <fra>Masquer les informations sur les balises</fra>
       <ara>إخفاء معلومات العلامة</ara>
@@ -65902,6 +66508,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1562">
       <ces>za xxx dosaďte typy stylů</ces>
+      <mor-ha>za xxx dosaďte tepe stylu</mor-ha>
       <eng>Substitute xxx style types for xxx</eng>
       <fra>Remplacer les types de style xxx par xxx</fra>
       <ara>استبدل أنواع نمط xxx لـ xxx</ara>
@@ -65984,6 +66591,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1563">
       <ces>Tagy se nesmí překrývat</ces>
+      <mor-ha>Tage se nesmi překrévat</mor-ha>
+      <mor-va>Tagy sa nesmí překrývať</mor-va>
       <eng>Tags must not overlap</eng>
       <fra>Les balises ne doivent pas se chevaucher</fra>
       <ara>يجب ألا تتداخل العلامات</ara>
@@ -66063,7 +66672,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>Ya etiquetas hingi tsa superponer ar</oto>
     </a>
     <a id="1564">
-      <ces>V tagu se nesmí být tag</ces>
+      <ces>V tagu nesmí být tag</ces>
+      <mor>V tagu nesmí byt tag</mor>
+      <mor-ha>V tago nesmi bet tag</mor-ha>
+      <mor-va>V tagu nesmí byť tag</mor-va>
       <eng>There must be no tag in the tag</eng>
       <fra>Il ne doit pas y avoir de balise dans la balise</fra>
       <ara>يجب ألا يكون هناك علامة في العلامة</ara>
@@ -66145,6 +66757,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1565">
       <ces>Text v tagách by neměl obsahovat symboly &amp;l; a &amp;g;, můžete je napsat pomocí &amp;l; nebo &amp;r;</ces>
+      <mor-ha>Text v tagách by neměl obsahovat sembole &amp;l; a &amp;g;, můžete je napsat pomocí &amp;l; nebo &amp;r;</mor-ha>
+      <mor-va>Text v tagách by nemjéł občihnúť symboly &amp;l; a &amp;g;, můžete je napsat pomocí &amp;l; nebo &amp;r;</mor-va>
       <eng>The text in the tags should not contain symbols &amp;l; and &amp;g;, use &amp;l; nebo &amp;r;</eng>
       <srp>Текст у ознакама не би требало да садржи симболе</srp>
       <por>O texto nas tags não deve conter símbolos</por>
@@ -66226,6 +66840,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1566">
       <ces>Všechny typy tagů</ces>
+      <mor>Fšecky typy tagů</mor>
+      <mor-ha>Fšecke tepe tagu</mor-ha>
+      <mor-va>Šecky typy tagú</mor-va>
       <eng>All types of tags</eng>
       <fra>Tous types de balises</fra>
       <ara>جميع أنواع العلامات</ara>
@@ -66389,6 +67006,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1568">
       <ces>Barevné efekty</ces>
+      <mor-ha>Barevny efekte</mor-ha>
       <eng>Color effects</eng>
       <fra>Effets de couleur</fra>
       <ara>تأثيرات اللون</ara>
@@ -66469,6 +67087,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1569">
       <ces>Typ textu</ces>
+      <mor-ha>Tep texto</mor-ha>
       <eng>Text type</eng>
       <fra>Type de texte</fra>
       <ara>إدخال النص</ara>
@@ -66547,6 +67166,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1570">
       <ces>Symboly</ces>
+      <mor-ha>Sembole</mor-ha>
       <eng>Symbols</eng>
       <fra>Symboles</fra>
       <ara>حرف او رمز</ara>
@@ -66625,6 +67245,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1571">
       <ces>Skrýt symboly</ces>
+      <mor>Skovat symboly</mor>
+      <mor-va>Ukryť symboly</mor-va>
+      <mor-ha>Skovat sembole</mor-ha>
       <eng>Hide symbols</eng>
       <fra>Masquer les symboles</fra>
       <ara>إخفاء الرموز</ara>
@@ -66705,6 +67328,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1572">
       <ces>Více o rozšíření Link</ces>
+      <mor>Víc o rozšíření Link</mor>
+      <mor-ha>Vic o rozšéřeni Link</mor-ha>
+      <mor-hax>Vic o rozšéřeni Link</mor-hax>
       <eng>More about the Link extension</eng>
       <fra>En savoir plus sur l'extension Link</fra>
       <ara>المزيد حول امتداد الرابط</ara>
@@ -66787,6 +67413,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1573">
       <ces>Skrýt více o rozšíření Link</ces>
+      <mor>Skovat víc o rozšíření Link</mor>
+      <mor-ha>Skovat vic o rozšéřeni Link</mor-ha>
+      <mor-hax>Skovat vic o rozšéřeni Link</mor-hax>
+      <mor-va>Ukryť víc o rozšíření Link</mor-va>
       <eng>Hide more about the Link extension</eng>
       <fra>Cacher plus sur l'extension Link</fra>
       <ara>إخفاء المزيد عن امتداد الرابط</ara>
@@ -66869,6 +67499,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1574">
       <ces>Nebezpečná url</ces>
+      <mor-va>Nejistá url</mor-va>
       <eng>Dangerous url</eng>
       <fra>URL dangereuse</fra>
       <ara>عنوان url خطير</ara>
@@ -66948,7 +67579,12 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <oto>URL peligrosa</oto>
     </a>
     <a id="1575">
-      <ces>Nebezpečná url se tváří jako odkaz na stránku, ale skutečně není</ces>
+      <ces>Nebezpečná url se tváří jako odkaz na stránku, ale skutečnosti není</ces>
+      <mor>Nebezpečná url vypadá jak odkaz na stránku, ale ve skutečnostě néni</mor>
+      <mor-ha>Nebezpečná url vêpadá jak odkaz na stránkô, ale ve skôtečnostě néni</mor-ha>
+      <mor-hax>Nebezpečná url vepadá jak odkaz na stránko, ale ve skotečnostě néni</mor-hax>
+      <mor-va>Nejistá url vyzerá pjekňe jak odkaz na stránku, ale néni jaksapatřící</mor-va>
+      <slk>Nebezpečná url sa tvári ako odkaz na stránku, ale skutočne nie je</slk>
       <eng>The dangerous url looks like a link to a page, but it really isn't</eng>
       <fra>L'URL dangereuse ressemble à un lien vers une page, mais ce n'est vraiment pas le cas</fra>
       <ara>يبدو عنوان url الخطير كأنه رابط لصفحة ، لكنه في الحقيقة ليس كذلك</ara>
@@ -66961,7 +67597,6 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ukr>Небезпечна URL-адреса схожа на посилання на сторінку, але насправді це не так</ukr>
       <kor>위험한 URL은 페이지 링크처럼 보이지만 실제로는 그렇지 않습니다</kor>
       <zch>危險的 url 看起來像一個頁面鏈接，但實際上不是</zch>
-      <slk>Nebezpečná url sa tvári ako odkaz na stránku, ale skutočne nie je</slk>
       <swe>Den farliga webbadressen ser ut som en länk till en sida, men det är det verkligen inte</swe>
       <cat>L’URL perillosa sembla un enllaç a una pàgina, però realment no ho és</cat>
       <fin>Vaarallinen URL-osoite näyttää linkiltä sivulle, mutta se ei todellakaan ole</fin>
@@ -67031,6 +67666,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1576">
       <ces>Chybně napsaná url (chybí http)</ces>
+      <mor-ha>Kepske napsaná url (chêbi http)</mor-ha>
+      <mor-hax>Kepske napsaná url (chebi http)</mor-hax>
       <eng>Misspelled url (missing http)</eng>
       <fra>URL mal orthographiée (http manquant)</fra>
       <ara>عنوان url به أخطاء إملائية (http مفقود)</ara>
@@ -67112,6 +67749,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1577">
       <ces>Rozšíření tagů</ces>
+      <mor-ha>Rozšéřeni tagu</mor-ha>
+      <mor-hax>Rozšéřeni tagu</mor-hax>
       <eng>Tag extensions</eng>
       <fra>Extensions de balises</fra>
       <ara>امتدادات العلامات</ara>
@@ -67192,6 +67831,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1578">
       <ces>Skrýt rozšíření tagů</ces>
+      <mor>Skovat rozšíření tagů</mor>
+      <mor-ha>Skovat rozšéřeni tagu</mor-ha>
+      <mor-hax>Skovat rozšéřeni tagu</mor-hax>
+      <mor-va>Ukryť rozšíření tagú</mor-va>
       <eng>Hide tag extensions</eng>
       <fra>Masquer les extensions de balise</fra>
       <ara>إخفاء ملحقات العلامة</ara>
@@ -67272,6 +67915,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1579">
       <ces>Červeně označený symbol je svislá čára (pravý Alt + W)</ces>
+      <mor-va>Červeně značený symbol je čmára dołu (pravý Alt + W)</mor-va>
+      <mor-ha>Červeně značené symbol je svislá čára (pravé Alt + W)</mor-ha>
+      <mor-hax>Červeně značené symbol je svislá čára (pravé Alt + W)</mor-hax>
       <eng>The symbol marked in red is a vertical line (right Alt+W)</eng>
       <fra>Le symbole marqué en rouge est une ligne verticale (à droite Alt+W)</fra>
       <ara>الرمز المميز باللون الأحمر هو خط عمودي (Alt W الأيمن)</ara>
@@ -67354,6 +68000,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1580">
       <ces>špatně</ces>
+      <mor-va>zlé</mor-va>
+      <mor-ha>kepskê</mor-ha>
+      <mor-hax>kepske</mor-hax>
       <eng>poorly</eng>
       <fra>Pauvrement</fra>
       <ara>سيء</ara>
@@ -67599,7 +68248,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Hide all types of tags</eng>
       <ces>Skrýt všechny typy tagů</ces>
       <mor>Skovat všecky typy tagů</mor>
-      <mor-ha>Skovat všecke tepe tagu</mor-ha>
+      <mor-hax>Skovat fšecke tepe tago</mor-hax>
+      <mor-ha>Skovat fšeckê têpê tagô</mor-ha>
+      <mor-va>Ukrčiť šecke typy tagú</mor-va>
       <slk>Skryť všetky typy tagov</slk>
       <fra>Masquer tous les types de balises</fra>
       <ara>إخفاء جميع أنواع العلامات</ara>
@@ -67683,6 +68334,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Parrot</eng>
       <mor>Papouch</mor>
       <mor-ha>Papóch</mor-ha>
+      <mor-hax>Papóch</mor-hax>
       <mor-va>Papúch</mor-va>
       <mor-sl>Papúch</mor-sl>
       <slk>Papagáj</slk>
@@ -67856,6 +68508,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Minimal</eng>
       <spa>Mínimo</spa>
       <ces>Minimální</ces>
+      <mor-ha>Mênêmálni</mor-ha>
+      <mor-hax>Menemálni</mor-hax>
       <slk>Minimálny</slk>
       <pol>Minimalny</pol>
       <jpn>最小限の</jpn>
@@ -67912,6 +68566,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1588">
       <eng>Low</eng>
       <ces>Nízká</ces>
+      <mor-ha>Nizká</mor-ha>
+      <mor-hax>Nizká</mor-hax>
       <slk>Nízky</slk>
       <pol>Niski</pol>
       <deu>Niedrig</deu>
@@ -68048,6 +68704,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1590">
       <eng>Best</eng>
       <ces>Skvělá</ces>
+      <mor>Špica</mor>
+      <mor-ha>Špica</mor-ha>
+      <mor-hax>Špica</mor-hax>
+      <mor-va>Špica</mor-va>
       <slk>Najlepší</slk>
       <pol>To, co najlepsze</pol>
       <deu>Am besten</deu>
@@ -68115,7 +68775,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1591">
       <eng>Graphics card note</eng>
       <ces>Poznámka k grafické kartě</ces>
-      <mor-ha>Poznámka ke graficky kartě</mor-ha>
+      <mor-ha>Poznámka ke grafické kartě</mor-ha>
+      <mor-hax>Poznámka ke grafické kartě</mor-hax>
+      <mor-va>Špica ke grafické kartě</mor-va>
       <slk>Poznámka grafickej karty</slk>
       <pol>Uwaga karty graficznej</pol>
       <deu>Grafikkarten-Anmerkung</deu>
@@ -68189,7 +68851,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1592">
       <eng>It looks like you have another more powerful graphics card,</eng>
       <ces>Vypadáto, že máte další lepší grafickou kartu,</ces>
-      <mor-ha>Vepadáto, že máte dalši lepši grafickó karto,</mor-ha>
+      <mor-ha>Vêpadáto, že máte dalši lepši grafickó kartô,</mor-ha>
+      <mor-hax>Vepadáto, že máte dalši lepši grafickó karto,</mor-hax>
       <mor-va>Vyzerá to, že máte další lepší grafickú kartu,</mor-va>
       <slk>Vyzerá to, že máte ďalšiu lepšie grafickú kartu,</slk>
       <pol>Wygląda na to, że masz kolejną mocniejszą kartę graficzną,</pol>
@@ -68261,7 +68924,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1593">
       <eng>but now it is probably used slower.</eng>
       <ces>ale asi používáte tu pomalejší</ces>
-      <mor-ha>ale ase poožéváte to pomaléši</mor-ha>
+      <mor-ha>ale asê póžéváte tô pomaléši</mor-ha>
+      <mor-hax>ale ase póžéváte to pomaléši</mor-hax>
+      <mor-va>ale asy užíváte tu víc pomalú</mor-va>
       <slk>Ale teraz sa pravdepodobne používa pomalšie.</slk>
       <pol>Ale teraz prawdopodobnie jest używany wolniej.</pol>
       <deu>Aber jetzt wird es wahrscheinlich langsamer verwendet.</deu>
@@ -68333,7 +68998,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1594">
       <eng>Currently Using gpu: </eng>
       <ces>Právě používaná gpu: </ces>
-      <mor>Fčilka používaná gpu: </mor>
+      <mor>Fčil používaná gpu: </mor>
+      <mor-ha>Fčêlka póžévaná gpu: </mor-ha>
+      <mor-hax>Fčelka póžévaná gpu: </mor-hax>
       <slk>Práve používané GPU: </slk>
       <pol>Obecnie korzystanie z GPU: </pol>
       <deu>Derzeit mit GPU: </deu>
@@ -68465,6 +69132,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Fog</eng>
       <ces>Mlha</ces>
       <mor-va>Mha</mor-va>
+      <mor-ha>Mhla</mor-ha>
       <slk>Hmla</slk>
       <pol>Mgła</pol>
       <deu>Nebel</deu>
@@ -68534,7 +69202,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1599">
       <eng>Waving elements</eng>
       <ces>Vlnící se objekty</ces>
-      <mor-va>Płápołajucí se objekty</mor-va>
+      <mor-ha>Vlnici se objekte</mor-ha>
+      <mor-hax>Vlnici se objektê</mor-hax>
+      <mor-va>Płápołajucí objekty</mor-va>
       <slk>Mávacie prvky</slk>
       <pol>Macha elementami</pol>
       <deu>Wellenförmige Elemente</deu>
@@ -68607,6 +69277,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1600">
       <eng>Interaction mess</eng>
       <ces>Částice z interakcí</ces>
+      <mor-ha>Drobiska z interakci</mor-ha>
       <slk>Interakcia</slk>
       <pol>Bałagan interakcji</pol>
       <deu>Interaktionsmann</deu>
@@ -68751,6 +69422,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>None</eng>
       <ces>Žádné</ces>
       <mor-ha>Žádny</mor-ha>
+      <mor-hax>Žádny</mor-hax>
       <slk>Nefajčiarsky</slk>
       <pol>Nic</pol>
       <jpn>なし</jpn>
@@ -68823,6 +69495,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Hezké</ces>
       <mor>Pěkné</mor>
       <mor-ha>Pěkny</mor-ha>
+      <mor-hax>Pěkny</mor-hax>
       <mor-va>Pěkné</mor-va>
       <slk>Vymazať</slk>
       <pol>Wymyślny</pol>
@@ -68878,6 +69551,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1604">
       <eng>8×</eng>
+      <jpn>8倍</jpn>
     </a>
     <a id="1605">
       <eng>16×</eng>
@@ -68906,7 +69580,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1608">
       <eng>Falling leaves</eng>
       <ces>Padající listí</ces>
-      <mor-ha>Padajici lesti</mor-ha>
+      <mor-ha>Padajici lêsti</mor-ha>
+      <mor-hax>Padajici lesti</mor-hax>
+      <mor-va>Padajúci listy</mor-va>
       <slk>Padajúce listy</slk>
       <pol>Opadające liście</pol>
       <deu>Fallende Blätter</deu>
@@ -69028,6 +69704,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <ces>Hezké pozadí</ces>
       <mor>Pěkné pozadí</mor>
       <mor-ha>Pěkny pozadi</mor-ha>
+      <mor-hax>Pěkny pozadi</mor-hax>
       <slk>Na pozadí</slk>
       <pol>Fantazyjny tło</pol>
       <deu>Fancy-Hintergrund</deu>
@@ -69306,7 +69983,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1614">
       <eng>Spruce leaves with snow</eng>
       <ces>Smrkové jehličí se sněhem</ces>
-      <mor-ha>Smrkovy jehleči se sněhem</mor-ha>
+      <mor-ha>Smrkovy jehlêči se sněhem</mor-ha>
+      <mor-hax>Smrkovy jehleči se sněhem</mor-hax>
       <mor-va>Smrekové spenčí se sněhem</mor-va>
       <slk>Smrekové listy so snehom</slk>
       <pol>Świerkowe liście ze śniegiem</pol>
@@ -69379,6 +70057,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1615">
       <eng>Invert mouse scroll</eng>
       <ces>Obrátit posun kolečkem</ces>
+      <mor-ha>Kolečko zhurô pácem</mor-ha>
+      <mor-hax>Kolečko zhuro pácem</mor-hax>
       <slk>Invert Mouse Scroll</slk>
       <pol>Odwróć przewijanie myszy</pol>
       <deu>Maus-Bildlauf umkehren</deu>
@@ -69409,7 +70089,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1616">
       <eng>Some settings will be applied after restart.</eng>
       <ces>Některé nastavení bude aplikováno až po znovuspuštění.</ces>
-      <mor-ha>Nekery nastaveni bode aplikováné až po znovospoštěni.</mor-ha>
+      <mor>Nekeré nastavení bude aplikováné až po znovuspuštění.</mor>
+      <mor-ha>Nekery nastaveni bôde aplikováné až po znovôspôštěni.</mor-ha>
+      <mor-hax>Nekery nastaveni bode aplikováné až po znovospoštěni.</mor-hax>
       <slk>Po reštarte sa použijú niektoré nastavenia.</slk>
       <pol>Niektóre ustawienia zostaną zastosowane po ponownym uruchomieniu.</pol>
       <deu>Einige Einstellungen werden nach dem Neustart angewendet.</deu>
