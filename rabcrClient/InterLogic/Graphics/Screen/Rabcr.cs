@@ -312,7 +312,7 @@ namespace rabcrClient {
 
             if (Global.WindowWidth!=befW){
                 Global.WindowWidthHalf=(Global.WindowWidth=befW)/2;
-
+                Global.WindowWidthDiv=1f/Global.WindowWidth;
                 if (Global.WindowWidthHalf!=0){
                     GraphicsManager.PreferredBackBufferWidth = befW;
                     resize=true;
@@ -321,6 +321,7 @@ namespace rabcrClient {
 
             if (Global.WindowHeight!=befH){
                 Global.WindowHeightHalf=(Global.WindowHeight=befH)/2;
+                Global.WindowHeightDiv=1f/Global.WindowHeight;
 
                 if (Global.WindowHeightHalf!=0){
                     GraphicsManager.PreferredBackBufferHeight = befH;

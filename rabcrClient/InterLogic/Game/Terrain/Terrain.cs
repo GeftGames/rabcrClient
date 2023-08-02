@@ -25,6 +25,7 @@ namespace rabcrClient {
         public List<Plant> Plants=new();
 
         public Vector2 LightVec;
+		public BiomeData Biome;
 
 		///<summary> After you removed New Block on Y pos terrain</summary>
         public void RefreshLightingRemoveTop(int newBlockOnY, ushort id) {

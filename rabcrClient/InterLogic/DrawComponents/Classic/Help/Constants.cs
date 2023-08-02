@@ -10,7 +10,7 @@ namespace rabcrClient {
 
         public static float
             TextBlur =.5f,
-            TextTransparentry=.4f;
+            TextTransparentry=.2f;
 
         public static bool AnimationsControls=true;
       

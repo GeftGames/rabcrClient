@@ -1285,7 +1285,7 @@ namespace rabcrClient {
 
                                 case Action.Execute:
                                     {
-                                        System.Windows.Forms.DialogResult dr = System.Windows.Forms.MessageBox.Show("Tento odkaz opouští externí aplikaci nebo soubor.\r\nOdkaz může být nebezpečný. Chcete spustit tento odkaz?\r\n\r\n"+url,"Upozornění",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Information);
+                                        System.Windows.Forms.DialogResult dr = System.Windows.Forms.MessageBox.Show("Tento odkaz spouští externí aplikaci nebo soubor.\r\nOdkaz může být nebezpečný.\r\n\r\n Chcete spustit tento odkaz?\r\n\r\n"+url,"Upozornění / Warling",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Information);
                                             if (dr==System.Windows.Forms.DialogResult.Yes){
                                             try {
                                                 System.Diagnostics.Process.Start(url,args);

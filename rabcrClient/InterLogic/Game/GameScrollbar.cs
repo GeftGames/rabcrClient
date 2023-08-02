@@ -37,7 +37,7 @@ namespace rabcrClient {
             color=Color.White;
         }
 
-        public void ButtonDraw(/*int mouseX, int mouseY, bool down,*/ int posX, int posY) {
+        public void ButtonDraw(/*int , int mouseY, bool down,*/ int posX, int posY) {
             int mouseY=MousePos.mouseRealPosY;
             if (height>maxheight)return;
             if (height<19)return;

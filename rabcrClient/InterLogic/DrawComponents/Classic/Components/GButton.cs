@@ -48,7 +48,7 @@ namespace rabcrClient{
                 Interval=35
             }).Tick+=Timer_Tick;
             buttonSize=new Size(Size.Width-3,Size.Height-4);
-            Size =new Size(Size.Width,36);
+            Size =new Size(Size.Width, 36);
 	    }
 
         void Timer_Tick(object sender, EventArgs e) {
@@ -56,11 +56,11 @@ namespace rabcrClient{
 
             if (need!=alpha) {
                 if (need<alpha) {
-                    alpha-=1+FastMath.Abs(need-alpha)/6;
+                    alpha-=2+FastMath.Abs(need-alpha)/5;
                     Invalidate();
                 }
                 if (need>alpha) {
-                    alpha+=1+FastMath.Abs(need-alpha)/6;
+                    alpha+=2+FastMath.Abs(need-alpha)/5;
                     Invalidate();
                 }
                 if (alpha-need<4 && alpha-need>-4) alpha=need;
@@ -102,7 +102,7 @@ namespace rabcrClient{
 		    base.OnMouseUp(e);
 		    if (currentState!=State.Enter) {
 			    currentState = State.Enter;
-                need=200;
+                need=210;
 		    }
 	    }
 
@@ -110,7 +110,7 @@ namespace rabcrClient{
 		    base.OnMouseEnter(e);
 		    if (currentState!=State.Enter) {
 			    currentState = State.Enter;
-                need=200;
+                need=210;
 		    }
 	    }
 
@@ -126,7 +126,7 @@ namespace rabcrClient{
 		    base.OnMouseDown(mevent);
 		    if (currentState!=State.Click) {
 			    currentState = State.Click;
-                need=150;
+                need=180;
 		    }
 	    }
 
@@ -144,9 +144,9 @@ namespace rabcrClient{
 
             if (disamble) {
                 sb = new Pen(new SolidBrush(Color.DarkGray));
-                b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(alpha-20, alpha-20, alpha-20), Color.FromArgb(alpha-40-20, alpha-40-20, alpha-40-20), 90);
+                b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(alpha-20, alpha-20, alpha-20), Color.FromArgb(alpha-20-20, alpha-20-20, alpha-20-20), 90);
             } else {
-                b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(alpha, alpha, alpha), Color.FromArgb(alpha-40, alpha-40, alpha-40), 90);
+                b = new LinearGradientBrush(ClientRectangle, Color.FromArgb(alpha, alpha, alpha), Color.FromArgb(alpha-20, alpha-20, alpha-20), 90);
                 sb = new Pen(new SolidBrush(Color.Black));
             }
 

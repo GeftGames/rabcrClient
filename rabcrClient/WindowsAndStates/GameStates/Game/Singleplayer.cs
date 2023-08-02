@@ -10,17 +10,18 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace rabcrClient {
-    class SinglePlayer: Screen {
+    partial class SinglePlayer: Screen {
 		float destroyingTime;
 		#region Varibles
-		Color FogColor=Color.Transparent;
+		//Color FogColor=Color.Transparent;
 		RasterizerState rasterizerState;
 		const float noon=(dayEnd-(dayStart+1))*hour;
 		Color black50=new(0,0,0,50);
 		int invertedMouseValue;
         #region Weather changes
-        void StopRaining() {
+        void StopRainSound() {
 			if (Global.HasSoundGraphics) {
+		Debug.WriteLine("stop playing rain");
 				if (SoundRain.IsLooped){
 					SoundRain.IsLooped=false;
 					SoundRain.Stop();
@@ -28,8 +29,9 @@ namespace rabcrClient {
 			}
 		}
 
-		void StartRaining() {
+		void StartRainSound() {
 			if (Global.HasSoundGraphics) {
+			Debug.WriteLine("start playing rain");
 				if (!SoundRain.IsLooped){
 					SoundRain.Play();
 					SoundRain.IsLooped=true;
@@ -41,90 +43,102 @@ namespace rabcrClient {
 
 		}
 
-		void StartSnowing() {
-			for (int i2=0; i2<Global.WindowHeight; i2++){ 
-				if (wind) {
-					for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-						if (windRirectionRight) {
-							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-								if (Setting.BetterSnowAndRain) {
-									if (FastRandom.Bool())
-										snowDotsSmall.Add(
-											new ParticleSnowSmall(gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
-												HSpeed=windForce*0.5f
-										});
-									else 
-										snowDots2.Add(
-											new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
-												HSpeed=windForce*0.5f
-										});
-								} else { 
-									if (FastRandom.Bool()) snowDots2.Add(
-										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10+i2 },
-											HSpeed=windForce*0.5f
-									});
-								}
-							}
-						} else {
-							if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-								if (Setting.BetterSnowAndRain) {
-									if (FastRandom.Bool())
-										snowDotsSmall.Add(
-											new ParticleSnowSmall(gravity+0.2f) {
-												Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
-												HSpeed=-windForce*0.5f
-										});
-									else snowDots2.Add(
-										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
-											HSpeed=-windForce*0.5f
-										});
-								} else { 
-									if (FastRandom.Bool()) snowDots2.Add(
-										new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-											Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10+i2 },
-											HSpeed=-windForce*0.5f
-										});
-								}
-										
-							}
+		void DoPrecipitation() {
+			if (CurrentPrecipitation.Snow)	{
+                float snowHSpeed;
+                if (CurrentPrecipitation.WindForce!=0) {
+                    snowHSpeed=CurrentPrecipitation.WindForce*0.5f;
+
+                    //if (Global.HasSoundGraphics) {
+                    //    SoundWind.Play();
+                    //    SoundWind.IsLooped=true;
+                    //}
+                }
+                else snowHSpeed=CurrentPrecipitation.WindForce*0.5f;
+
+                for (int i = 0; i<snowDots.Count;) {
+                    ParticleSnow r = snowDots[i];
+
+                    if (Global.WindowHeight<r.Position.Y) {
+                        snowDots.RemoveAt(i);
+                    }
+                    else {
+                        r.Update(CurrentPrecipitation.WindForce);
+                        i++;
+                    }
+                }
+
+                //	for (int i2=0; i2<Global.WindowHeight; i2++){ 
+                for (int i=0; i<Global.WindowWidth/300; i++){
+						if ((CurrentPrecipitation.WindForce*0.25f+0.5f) < FastRandom.Float()) {
+							snowDots.Add(
+								new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+									Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth)-Global.WindowHeightHalf, Y=-10/*+i2*/ },
+									HSpeed=snowHSpeed
+								});
 						}
 					}
-					if (Global.HasSoundGraphics) {
-						SoundWind.Play();
-						SoundWind.IsLooped=true;
-					}
-				} else {
-					for (int i=0; i<(weatherWindowWidth+10)/300; i++){
-						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-							if (Setting.BetterSnowAndRain) {
-								if (FastRandom.Bool()) 
-									snowDotsSmall.Add(new ParticleSnowSmall(gravity+0.2f) {
-										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
-										HSpeed=windForce*0.5f
+				//}
+			}
+
+			if (CurrentPrecipitation.Rain) {
+				for (int i = 0; i<rainDots.Count;) {
+                    ParticleRain r = rainDots[i];
+
+                    if (Global.WindowHeight<r.Position.Y) {
+                        rainDots.RemoveAt(i);
+                    }
+                    else {
+                        r.Update(CurrentPrecipitation.WindForce);
+                        i++;
+                    }
+                }
+				if (rainDots.Count<10000) {
+				//	for (int i2=0; i2<Global.WindowHeight; i2++){ 
+						for (int i=0; i<Global.WindowWidth/300; i++){
+						//	if ((0.25f+0.5f)*CurrentPrecipitation.RainForce < FastRandom.Float()) {
+								rainDots.Add(
+									new ParticleRain((FastRandom.Float()*0.8f+0.2f), gravity*20f+0.2f) { 
+										Position=new Vector2{X=FastRandom.Int(Global.WindowWidth)-10, Y=-10/*+i2*/ },
+										//HSpeed=windForce 
 									});
-								else 
-									snowDots2.Add(new ParticleSnow(FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
-										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
-										HSpeed=windForce*0.5f
-									});
-							} else { 
-								snowDots2.Add(new ParticleSnow(FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
-										Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10+i2},
-										HSpeed=windForce*0.5f
-									});
-							}
+							//}
 						}
-					}
-				}	
+				//	}
+				}
+			}
+
+			if (CurrentPrecipitation.Sand){
+				for (int i = 0; i<sandDots.Count;) {
+                    ParticleSand r = sandDots[i];
+
+                    if (Global.WindowHeight<r.Position.Y) {
+                        sandDots.RemoveAt(i);
+                    }
+                    else {
+                        r.Update(CurrentPrecipitation.WindForce);
+                        i++;
+                    }
+                }
+				if (sandDots.Count<10000) {
+				//	for (int i2=0; i2<Global.WindowHeight; i2++){ 
+						for (int i=0; i<Global.WindowWidth/200; i++){
+						//	if ((0.25f+0.5f)*CurrentPrecipitation.SandForce < FastRandom.Float()) {
+								sandDots.Add(
+									new ParticleSand(/*(FastRandom.Float()*8f+2f),*/ gravity/**2f+0.2f*/,/*FastRandom.Float()<0.2 ? TextureRedSand :*/ sandTexture) { 
+										Position=new Vector2{X=FastRandom.Int(Global.WindowWidth)-10, Y=-10 },
+								//		HSpeed=CurrentWindForce*100 
+									});
+						//	}
+						}
+				//	}
+				}
 			}
 		}
 
-		void StopWind() {
+		void StopWindSound() {
 			if (Global.HasSoundGraphics) {
+				Debug.WriteLine("stop playing wind");
 				if (SoundWind.IsLooped){
 					SoundWind.IsLooped=false;
 					SoundWind.Stop();
@@ -132,8 +146,9 @@ namespace rabcrClient {
 			}
 		}
 
-		void StartWind() {
-		if (Global.HasSoundGraphics) {
+		void StartWindSound() {
+			if (Global.HasSoundGraphics) {
+				Debug.WriteLine("start playing wind");
 				if (!SoundWind.IsLooped){
 					SoundWind.Play();
 					SoundWind.IsLooped=true;
@@ -152,20 +167,23 @@ namespace rabcrClient {
 		float SuperSamplingActing=-1;
 		float scrollBuffer=0f;
 		Texture2D TextureGrassBlockSnowCompost;
-		enum Precipitation : byte {
-			None,
-			Snowing,
-			Rain,
-		//	Storm
-		}
-		Precipitation CurrentPrecipitation=Precipitation.None;
+		//enum Precipitation : byte {
+		//	None,
+		//	Snowing,
+		//	Rain,
+		//	Storm,
+		//	RainWithSnow,
+		//	SandStorm,
+		//}
+		Precipitation CurrentPrecipitation;
+	//	int[] BiomePrecipitation;
 		static Color
 			ColorArmy= new(0xff113022), // R 34, G 48, B 17, A 255
 			ColorSpringGreen=new(0xff2cff8f), //R 143, G 225, B 44, A 255
 			ColorRoseQuartz=new(0xffa998aa); //R 170, G 152, B 169
 
-		float actualRainForce=0.75f;
-		float rainWaveForce;
+		//float actualRainForce=0.75f;
+		//float rainWaveForce;
 
 		#region Textures
 		Texture2D
@@ -1100,8 +1118,8 @@ namespace rabcrClient {
 		Vector2 Vector2_2;
 		const float WalkingHandMaxAngle=0.4f;
 		LiveObject[] LiveObjects;
-		bool windRirectionRight;
-		Effect EffectClouds,EffectVignetting, EffectFog/*, EffectTestSunLight*/;
+		//bool windRirectionRight;
+		Effect EffectClouds,EffectVignetting, EffectFog, effectShadows/*, EffectTestSunLight*/;
 	//	Texture2D TextureClouds;
 		readonly List<(Color, float)> Gradient=new() {
 			(Color.CornflowerBlue, 0),
@@ -1286,7 +1304,7 @@ namespace rabcrClient {
 		#endregion
 		Texture2D[] TextureRocks;
 		#region Weather & time (day/night)
-		float windForce;
+		//float windForce;
 		const int dayLenght=24*hour;
 		const int hour=200;
 		readonly List<Rectangle>
@@ -1294,14 +1312,15 @@ namespace rabcrClient {
 			lightsHalf=new();
 
 		// Rain
-		int changeRain = 1250;
-		List<ParticleRain> rainDots, rainDots2;
-		List<ParticleSnow> /*snowDots,*/ snowDots2;
-		List<ParticleSnowSmall> snowDotsSmall;
-		bool wind, precipitation;
-
+		//int changeRain = 1250;
+		List<ParticleRain> rainDots/*, rainDots2*/;
+		List<ParticleSnow> /*snowDots,*/ snowDots;
+		List<ParticleSand> /*snowDots,*/ sandDots;
+	//	List<ParticleSnowSmall> snowDotsSmall;
+		//bool  precipitation;
+		//float CurrentWindForce;
 		//Time
-		int day, timeToChageWind, timer5=1000;
+		int day, /*timeToChageWind,*/ timer5=1000;
 		float time;
 		int _secondTimer=60;
 		int timerDraw60=60;
@@ -1397,7 +1416,7 @@ namespace rabcrClient {
 
 		float WindowXPlayer, WindowYPlayer;
 
-		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2/*, targetGame4*/;
+		RenderTarget2D sunLightTarget, modificatedLightTarget, targetGame, targetGame2, targetShadows/*, targetGame4*/;
 
 		readonly BlendState Multiply = new() {
 			AlphaSourceBlend=Blend.Zero,
@@ -1448,13 +1467,13 @@ namespace rabcrClient {
 		float fpss=0;
 		PerformanceCounter cpu;
 		PerformanceCounter ram;
-		PerformanceCounter cpuUsage;
-		PerformanceCounter freeRam;
+	//	PerformanceCounter cpuUsage;
+		//PerformanceCounter freeRam;
 
 		float usageCpuProcess;
-		float usageCpu;
+		//float usageCpu;
 		float usageRamProcess;
-		float usageRam;
+		//float usageRam;
 
 		bool showInventory=true;
 		bool showPlayer=true;
@@ -1509,6 +1528,7 @@ namespace rabcrClient {
         //  Vector2 vector_x0_y4;
         #endregion
         #endregion
+        Color backMenu=new Color(173,216,230, 200);
         public SinglePlayer(string dir) => pathToWorld=dir+"\\";
 
 		public unsafe override void Init() {
@@ -1538,6 +1558,7 @@ namespace rabcrClient {
 			EffectClouds=Content.Load<Effect>(Setting.StyleName+"/Effects/Clouds");
 			EffectVignetting=Content.Load<Effect>(Setting.StyleName+"/Effects/Vignetting");
 			EffectFog=Content.Load<Effect>(Setting.StyleName+"/Effects/Fog");
+			effectShadows=Content.Load<Effect>(Setting.StyleName+"/Effects/TestSunShadow");
 			//EffectTestSunLight=Content.Load<Effect>(Setting.StyleName+"/Effects/TestSunShadow");
 
 			if (File.Exists(pathToWorld+"LastWorld.txt")) world=File.ReadAllText(pathToWorld+"LastWorld.txt");
@@ -2671,12 +2692,15 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			bucketRubber =new List<ShortAndByte>();
 		  //  Barrels=new List<ShortAndByte>();
 			energy = new List<Energy>();
+			
 			rainDots=new List<ParticleRain>();
+			sandDots=new List<ParticleSand>();
+			snowDots=new List<ParticleSnow>();
+
 			//snowDots=new List<ParticleSnow>();
-			snowDotsSmall=new List<ParticleSnowSmall>();
+			//snowDotsSmall=new List<ParticleSnowSmall>();
 		//	if ((int)Setting.AnimationsGame>=(int)Setting.GameAnimations.NormalQuality) {
-				rainDots2=new List<ParticleRain>();
-				snowDots2=new List<ParticleSnow>();
+				//rainDots2=new List<ParticleRain>();
 			//}
 			lightsLamp=new List<MashineBlockBasic>();
 			#endregion
@@ -2738,20 +2762,20 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								CounterName="Working Set - Private",
 								InstanceName=processName,
 							};
-							cpuUsage=new PerformanceCounter {
-								CategoryName="Processor",
-								CounterName="% Processor Time",
-								InstanceName="_Total",
-							};
-							freeRam=new PerformanceCounter {
-								CategoryName="Memory",
-								CounterName="Available MBytes"
-							};
+							//cpuUsage=new PerformanceCounter {
+							//	CategoryName="Processor",
+							//	CounterName="% Processor Time",
+							//	InstanceName="_Total",
+							//};
+							//freeRam=new PerformanceCounter {
+							//	CategoryName="Memory",
+							//	CounterName="Available MBytes"
+							//};
 
 							usageCpuProcess=cpu.NextValue();
-							usageCpu=cpuUsage.NextValue();
+						//	usageCpu=cpuUsage.NextValue();
 							usageRamProcess=ram.NextValue();
-							usageRam=freeRam.NextValue();
+						//	usageRam=freeRam.NextValue();
 
 							debug=true;
 						} catch {
@@ -2789,16 +2813,16 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					PlayerX = PlayerXInt = int.Parse(sr.ReadLine());
 					PlayerY = PlayerYInt = int.Parse(sr.ReadLine());
 
-					windForce= float.Parse(sr.ReadLine());
-					wind=bool.Parse(sr.ReadLine());
-					if (wind)StartWind();
-					precipitation=bool.Parse(sr.ReadLine());
+					//windForce= float.Parse(sr.ReadLine());
+					//wind=bool.Parse(sr.ReadLine());
+					//if (wind)StartWindSound();
+				//	CurrentPrecipitation=int.Parse(sr.ReadLine());
 					//if (precipitation)StartRain();
 
-					windRirectionRight=bool.Parse(sr.ReadLine());
-					timeToChageWind =int.Parse(sr.ReadLine());
+					//windRirectionRight=bool.Parse(sr.ReadLine());
+					//timeToChageWind =int.Parse(sr.ReadLine());
 
-					changeRain=int.Parse(sr.ReadLine());
+					//changeRain=int.Parse(sr.ReadLine());
 					day=int.Parse(sr.ReadLine());
 					year=int.Parse(sr.ReadLine());
 
@@ -2815,8 +2839,8 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				SetPlayerPos(FastRandom.Int(TerrainLength*16), 600);
 				time=(int)(6.5f*hour);
 
-				precipitation=FastRandom.Bool();
-				changeRain=FastRandom.Int(1250);
+				//precipitation=FastRandom.Bool();
+				//changeRain=FastRandom.Int(1250);
 
 				barEnergy.Value=0;
 				barEat.Value=0;
@@ -3170,7 +3194,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 		
 
 			sunLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
-
+			targetShadows= new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 			modificatedLightTarget = new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight);
 
 		
@@ -3317,7 +3341,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 
 			BiomePlayer=GetBiomeByPos((int)(PlayerXInt*divider_16));
-			BiomeCurrent=BiomePlayer.Name;
+			BiomeCurrent=BiomePlayer.Type;
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
@@ -3374,8 +3398,10 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				
 		//	}
 
-			weatherWindowWidth=(int)(Global.WindowWidth*SuperSamplingActing)+5;
-			weatherWindowHeight=(int)(Global.WindowHeight*SuperSamplingActing)+3;
+			//weatherWindowWidth=(int)(Global.WindowWidth*SuperSamplingActing)+5;
+			//weatherWindowHeight=(int)(Global.WindowHeight*SuperSamplingActing)+3;
+
+			CurrentPrecipitation=GetBiomeByPos(PlayerXInt/16).precipitation;
 		}
 
 		public override void Shutdown() {
@@ -3435,16 +3461,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 			}
 			#endregion
 
-			freeRam?.Dispose();
+			//freeRam?.Dispose();
 			ram?.Dispose();
 			cpu?.Dispose();
-			cpuUsage?.Dispose();
+		//	cpuUsage?.Dispose();
 
 			modificatedLightTarget.Dispose();
 			targetGame?.Dispose();
 			targetGame2?.Dispose();
 			//targetGame4?.Dispose();
-			sunLightTarget.Dispose();
+			sunLightTarget?.Dispose();
+			targetShadows?.Dispose();
 			TextureSunGradient?.Dispose();
 			Debug.WriteLine("EndOf Saving");
 
@@ -3541,39 +3568,39 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							ram.Dispose();
 							ram=null;
 
-							cpuUsage.Close();
-							cpuUsage.Dispose();
-							cpuUsage=null;
+							//cpuUsage.Close();
+							//cpuUsage.Dispose();
+							//cpuUsage=null;
 
-							freeRam.Close();
-							freeRam.Dispose();
-							freeRam=null;
+							//freeRam.Close();
+							//freeRam.Dispose();
+							//freeRam=null;
 						} else{
 							string processName = Process.GetCurrentProcess().ProcessName;
 
 							try{
-								usageCpuProcess=(cpu=new PerformanceCounter {
+								usageRamProcess=(cpu=new PerformanceCounter {
 									CategoryName="Process",
 									CounterName="% Processor Time",
 									InstanceName=processName,
 								}).NextValue();
 
-								usageCpu=(ram=new PerformanceCounter {
+								usageCpuProcess=(ram=new PerformanceCounter {
 									CategoryName="Process",
 									CounterName="Working Set - Private",
 									InstanceName=processName,
 								}).NextValue();
 
-								usageRamProcess=(cpuUsage=new PerformanceCounter {
-									CategoryName="Processor",
-									CounterName="% Processor Time",
-									InstanceName="_Total",
-								}).NextValue();
+								//usageRamProcess=(cpuUsage=new PerformanceCounter {
+								//	CategoryName="Processor",
+								//	CounterName="% Processor Time",
+								//	InstanceName="_Total",
+								//}).NextValue();
 
-								usageRam=(freeRam=new PerformanceCounter {
-									CategoryName="Memory",
-									CounterName="Available MBytes"
-								}).NextValue();
+								//usageRam=(freeRam=new PerformanceCounter {
+								//	CategoryName="Memory",
+								//	CounterName="Available MBytes"
+								//}).NextValue();
 
 								debug = true;
 							} catch {
@@ -3660,19 +3687,19 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				#endregion
 
-				if (precipitation) {
-					float bef=Temperature;
-					Temperature=GetTemperature(BiomePlayer.Name);
-
-					if (Temperature<0 && bef>=0) {
-						StopRaining();
-						StartSnowing();
-					}
-					if (Temperature>0 && bef<=0) {
-						StartRaining();
-						StopSnowing();
-					}
-				}
+				//if (precipitation) {
+				//	float bef=Temperature;
+				//	Temperature=GetTemperature(BiomePlayer.Name);
+					DoPrecipitation();
+				//	//if (Temperature<0 && bef>=0) {
+				//	//	//StopRaining();
+						
+				//	//}
+				//	//if (Temperature>0 && bef<=0) {
+				//	//	//StartRaining();
+				//	//	StopSnowing();
+				//	//}
+				//}
 
 				if (EarthShakeTime>0) { 
 				//	EarthShakeActualSize=EarthShakeSize*(float)Math.Sin(EarthShakeTime/10f);
@@ -4136,38 +4163,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						if (Rabcr.Game.IsActive) {
 							if (mouseRightDown) MouseRightAction();
 							if (mouseRightPress) {
-                            
-								#region open close door
-								int x = mousePosDiv16.X,
-									y = mousePosDiv16.Y;
-
-								if (y<0) return;
-								if (y>125) return;
-
-								Terrain chunk = terrain[x];
-
-								if (chunk.IsTopBlocks[y]) {
-									switch (chunk.TopBlocks[y].Id) {
-										case (ushort)BlockId.DoorOpen:
-											chunk.IsSolidBlocks[y]=true;
-											chunk.SolidBlocks[y]=new NormalBlock(doorCloseTexture, (ushort)BlockId.DoorClose, new Vector2(x*16, y*16));
-											RemoveTopBlock(x,y);
-											return;	
-									}
-								}
-			
-								if (chunk.IsSolidBlocks[y]) {
-									switch (chunk.SolidBlocks[y].Id) {	
-										case (ushort)BlockId.DoorClose:
-											chunk.IsTopBlocks[y]=true;
-											chunk.TopBlocks[y]=new NormalBlock(doorOpenTexture, (ushort)BlockId.DoorOpen, new Vector2(x*16, y*16));
-											chunk.IsSolidBlocks[y]=false;
-											chunk.SolidBlocks[y]=null;
-											chunk.RefreshLightingRemoveSolid(x,y);
-											return;
-									}
-								}
-								#endregion
+								DoorEvent();
 
 								ItemEat();
 							}
@@ -4348,12 +4344,29 @@ destructionTexture = GetDataTexture("Animations/destruction");
 											case BlockType.Solid:
 												{
 													Terrain chunk=terrain[destroyBlockX];
-
+													if (destroingBlockType == (int)BlockId.DoorClose) {
+														chunk.SolidBlocks[destroyBlockY+1]=null;
+														chunk.SolidBlocks[destroyBlockY+2]=null;
+														chunk.IsSolidBlocks[destroyBlockY+1]=false;
+														chunk.IsSolidBlocks[destroyBlockY+2]=false;
+														chunk.RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY+2);
+													}
+													if (destroingBlockType == (int)BlockId.DoorCloseDownPart){
+														int db=((DoorBlock)chunk.SolidBlocks[destroyBlockY]).originalY;
+														chunk.SolidBlocks[db]=null;
+														chunk.SolidBlocks[db+1]=null;
+														chunk.SolidBlocks[db+2]=null;
+														chunk.IsSolidBlocks[db]=false;
+														chunk.IsSolidBlocks[db+1]=false;
+														chunk.IsSolidBlocks[db+2]=false;
+														chunk.RefreshLightingRemoveSolid(destroyBlockX, db+2);
+													}
 													chunk.SolidBlocks[destroyBlockY]=null;
 													chunk.IsSolidBlocks[destroyBlockY]=false;
 
 													chunk.RefreshLightingRemoveSolid(destroyBlockX, destroyBlockY);
-
+													
+															
                                                 if (destroingBlockType == (ushort)BlockId.Dirt
                                                 || destroingBlockType == (ushort)BlockId.GrassBlockDesert
                                                 || destroingBlockType == (ushort)BlockId.GrassBlockForest
@@ -4433,6 +4446,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 														case (ushort)BlockId.CactusSmall:
 															DestroyCactusSmall(destroyBlockX,destroyBlockY);
+															break;
+
+														case (ushort)BlockId.DoorOpen:
+															chunk.TopBlocks[destroyBlockY+1]=null;
+															chunk.TopBlocks[destroyBlockY+2]=null;
+															chunk.IsTopBlocks[destroyBlockY+1]=false;
+															chunk.IsTopBlocks[destroyBlockY+2]=false;
+															chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY+2, id: destroingBlockType);
+															break;
+
+														case (ushort)BlockId.DoorOpenDownPart:
+															{
+																int db=((DoorBlock)chunk.TopBlocks[destroyBlockY]).originalY;
+																chunk.TopBlocks[db+1]=null;
+																chunk.TopBlocks[db+2]=null;
+																chunk.TopBlocks[db]=null;
+																chunk.IsTopBlocks[db+1]=false;
+																chunk.IsTopBlocks[db+2]=false;
+																chunk.IsTopBlocks[db]=false;
+																chunk.RefreshLightingRemoveTop(newBlockOnY: destroyBlockY+2, id: destroingBlockType);
+															}
 															break;
 													}
 
@@ -4754,7 +4788,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 					if (Setting.FallingLeaves) {
 
-						if (wind) {
+						//if (wind) {
 							int rch=terrainStartIndexX+FastRandom.Int(terrainStartIndexW-terrainStartIndexX);
 							Terrain chunk=terrain[rch];
 
@@ -4764,7 +4798,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 								Block block=chunk.TopBlocks[rh];
 								if (block is LeavesBlock lb){
 									if (lb.Id==(ushort)BlockId.SpruceLeaves || lb.Id==(ushort)BlockId.SpruceLeavesWithSnow) {
-										FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), windRirectionRight, precipitation, new Rectangle(0,0,2+FastRandom.Int2(),1)) {
+										FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*windRirectionRight, *//*precipitation,*/ new Rectangle(0,0,2+FastRandom.Int2(),1)) {
 											texture=lb.Texture,
 										};
 										FallingLeaves.Add(fl);
@@ -4806,7 +4840,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										|| lb.Id==(ushort)BlockId.AcaciaLeaves
 
 										) {
-											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), windRirectionRight, precipitation, new Rectangle(0,0,2,2+FastRandom.Int2())){
+											FallingLeave fl=new(rch*16+FastRandom.Int16(), rh*16+FastRandom.Int16(), /*windRirectionRight,*/ /*precipitation,*/ new Rectangle(0,0,2,2+FastRandom.Int2())){
 												texture=lb.Texture,
 												color=lb.Color,
 											};
@@ -4815,7 +4849,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 									}
 								}
 							}
-						}
+						//}
 
 						if (FallingLeaves.Count>0) {
 							for (int i = 0; i<FallingLeaves.Count; ) {
@@ -4829,7 +4863,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 										i++;
 									}
 								} else {
-									l.Update();
+									l.Update(CurrentPrecipitation.WindForce);
 									i++;
 								}
 							}
@@ -5650,108 +5684,114 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				#endregion
 
 				#region Wheather
-				if (actualRainForce>0f) {
-					if (Temperature<0) {
-						if (wind) {
-							for (int i=0; i<(weatherWindowWidth+600)/300; i++){
-								if (windRirectionRight) {
-									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-										if (Setting.BetterSnowAndRain) {
-											if (FastRandom.Bool())
-												snowDotsSmall.Add(
-													new ParticleSnowSmall(gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
-														HSpeed=windForce*0.5f
-												});
-											else 
-												snowDots2.Add(
-													new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
-														HSpeed=windForce*0.5f
-												});
-										} else { 
-											if (FastRandom.Bool()) snowDots2.Add(
-												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf), Y=-10 },
-													HSpeed=windForce*0.5f
-											});
-										}
-									}
-								} else {
-									if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-										if (Setting.BetterSnowAndRain) {
-											if (FastRandom.Bool())
-												snowDotsSmall.Add(
-													new ParticleSnowSmall(gravity+0.2f) {
-														Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
-														HSpeed=-windForce*0.5f
-												});
-											else snowDots2.Add(
-												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
-													HSpeed=-windForce*0.5f
-												});
-										} else { 
-											if (FastRandom.Bool()) snowDots2.Add(
-												new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
-													Position=new Vector2 { X=FastRandom.Int(weatherWindowWidth+Global.WindowHeightHalf)-Global.WindowHeightHalf, Y=-10 },
-													HSpeed=-windForce*0.5f
-												});
-										}
+				//if (actualRainForce>0f) {
+				//	if (Temperature<0) {
+				//		//if (wind) {
+				//			for (int i=0; i<(Global.WindowWidth)/300; i++){
+				//				if (windRirectionRight) {
+				//					if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+				//						//if (Setting.BetterSnowAndRain) {
+				//							//if (FastRandom.Bool())
+				//							//	snowDotsSmall.Add(
+				//							//		new ParticleSnowSmall(gravity+0.2f) {
+				//							//			Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//							//			HSpeed=windForce*0.5f
+				//							//	});
+				//							//else 
+				//								snowDots.Add(
+				//									new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+				//										Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//										HSpeed=windForce*0.5f
+				//								});
+				//						//} else { 
+				//						//	if (FastRandom.Bool()) snowDots2.Add(
+				//						//		new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+				//						//			Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//						//			HSpeed=windForce*0.5f
+				//						//	});
+				//						//}
+				//					}
+				//				} else {
+				//					if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+				//						//if (Setting.BetterSnowAndRain) {
+				//							//if (FastRandom.Bool())
+				//							//	snowDotsSmall.Add(
+				//							//		new ParticleSnowSmall(gravity+0.2f) {
+				//							//			Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//							//			HSpeed=-windForce*0.5f
+				//							//	});
+				//							//else
+				//							snowDots.Add(
+				//								new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+				//									Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//									HSpeed=-windForce*0.5f
+				//								});
+				//						//} else { 
+				//						//	if (FastRandom.Bool()) snowDots2.Add(
+				//						//		new ParticleSnow(FastRandom.Float()*0.5f+0.5f, gravity+0.2f) {
+				//						//			Position=new Vector2 { X=FastRandom.Int(Global.WindowWidth), Y=-10 },
+				//						//			HSpeed=-windForce*0.5f
+				//						//		});
+				//						//}
 										
-									}
-								}
-							}
-							if (Global.HasSoundGraphics) {
-								SoundWind.Play();
-								SoundWind.IsLooped=true;
-							}
-						} else {
-							for (int i=0; i<(weatherWindowWidth+10)/300; i++){
-								if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-									if (Setting.BetterSnowAndRain) {
-										if (FastRandom.Bool()) 
-											snowDotsSmall.Add(new ParticleSnowSmall(gravity+0.2f) {
-												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
-												HSpeed=windForce*0.5f
-											});
-										else 
-											snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
-												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
-												HSpeed=windForce*0.5f
-											});
-									} else { 
-										snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
-												Position=new Vector2 {X=FastRandom.Int(/*Global.WindowWidth*/weatherWindowWidth+10)-5, Y=-10},
-												HSpeed=windForce*0.5f
-											});
-									}
-								}
-							}
-						}
+				//					}
+				//				}
+				//			}
+				//		if (wind){	
+				//		if (Global.HasSoundGraphics) {
+				//				SoundWind.Play();
+				//				SoundWind.IsLooped=true;
+				//			}
+				//			}
+				//		//} else {
+				//		//	for (int i=0; i<(Global.WindowWidth+10)/300; i++){
+				//		//		if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+				//		//			//if (Setting.BetterSnowAndRain) {
+				//		//				if (FastRandom.Bool()) 
+				//		//					snowDotsSmall.Add(new ParticleSnowSmall(gravity+0.2f) {
+				//		//						Position=new Vector2 {X=FastRandom.Int(Global.WindowWidth)-5, Y=-10},
+				//		//						HSpeed=windForce*0.5f
+				//		//					});
+				//		//				else 
+				//		//					snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+				//		//						Position=new Vector2 {X=FastRandom.Int(Global.WindowWidth)-5, Y=-10},
+				//		//						HSpeed=windForce*0.5f
+				//		//					});
+				//		//			//} else { 
+				//		//			//	snowDots2.Add(new ParticleSnow( FastRandom.Float()*0.8f+0.2f, gravity+0.2f) {
+				//		//			//			Position=new Vector2 {X=FastRandom.Int(Global.WindowWidth)-5, Y=-10},
+				//		//			//			HSpeed=windForce*0.5f
+				//		//			//		});
+				//		//			//}
+				//		//		}
+				//		//	}
+				//		//}
 
-					} else {
-						if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
-							for (int i=0; i<(Global.WindowWidth+10)/300; i++) {
-								if (Setting.BetterSnowAndRain) 
-									rainDots.Add(new ParticleRain(FastRandom.Float()*0.8f+0.2f, gravity*20f+0.2f) { 
-										Position=new Vector2{X=FastRandom.Int(weatherWindowWidth+20)-10, Y=-10 },
-										HSpeed=windForce 
-									});
-							}
-						}
-						if (Global.HasSoundGraphics) {
-							if (wind) {
-								SoundWind.Play();
-								SoundWind.IsLooped=true;
-							}
-							if (precipitation) {
-								SoundRain.Play();
-								SoundRain.IsLooped=true;
-							}
-						}
-					}
-				}
+				//	} else {
+				//		if ((actualRainForce*0.25f+0.5f)*rainWaveForce < FastRandom.Float()) {
+				//			for (int i=0; i<(Global.WindowWidth+10)/300; i++) {
+				//				if (Setting.BetterSnowAndRain) 
+				//					rainDots.Add(new ParticleRain(FastRandom.Float()*0.8f+0.2f, gravity*20f+0.2f) { 
+				//						Position=new Vector2{X=FastRandom.Int(Global.WindowWidth)-10, Y=-10 },
+				//						HSpeed=windForce 
+				//					});
+				//			}
+				//		}
+				//		//StartRaining();
+				//		//StartWind();
+
+				//		//if (Global.HasSoundGraphics) {
+				//		//	if (wind) {
+				//		//		SoundWind.Play();
+				//		//		SoundWind.IsLooped=true;
+				//		//	}
+				//		//	if (precipitation) {
+				//		//		SoundRain.Play();
+				//		//		SoundRain.IsLooped=true;
+				//		//	}
+				//		//}
+				//	}
+				//}
 				#endregion
 
 				EnergySystem();
@@ -5788,7 +5828,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 
 					#region Time
-					time+=1/5f;//1hod=3000x zvýšení
+					time+=(float)gameTime.ElapsedGameTime.TotalSeconds*4f/* 1/05f*/;//1hod=3000x zvýšení
 					if (time==dayLenght) {
 						day++;
 
@@ -5825,24 +5865,24 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					}
 
 
-				//	if (rain) {
-						//if (Temperature>0) {
-						float xpler=0;
-						if (Temperature<10f)xpler=-(Temperature-10)/500f;
+				////	if (rain) {
+				//		//if (Temperature>0) {
+				//		float xpler=0;
+				//		if (Temperature<10f)xpler=-(Temperature-10)/500f;
 
-							float otp=dayAlpha*(1-rainWaveForce*0.05f*actualRainForce)*(1f-actualRainForce*0.05f/**0.75f*/)*(1f-xpler);
-					//	Console.WriteLine("r "+otp);
-							colorAlpha=new Color(otp, otp, otp, otp);
-						//} else {
-						//	colorAlpha = new Color(otp, dayAlpha, dayAlpha, dayAlpha);
-						//}
-					//} else {
-					//	float otp=dayAlpha*(1f-actualRainForce*0.1f/**0.75f*/);
-					//		Console.WriteLine("n "+otp);
-					//	colorAlpha=new Color(otp, otp, otp, otp);
+				//			float otp=dayAlpha*(1-rainWaveForce*0.05f*actualRainForce)*(1f-actualRainForce*0.05f/**0.75f*/)*(1f-xpler);
+				//	//	Console.WriteLine("r "+otp);
+				//			colorAlpha=new Color(otp, otp, otp, otp);
+				//		//} else {
+				//		//	colorAlpha = new Color(otp, dayAlpha, dayAlpha, dayAlpha);
+				//		//}
+				//	//} else {
+				//	//	float otp=dayAlpha*(1f-actualRainForce*0.1f/**0.75f*/);
+				//	//		Console.WriteLine("n "+otp);
+				//	//	colorAlpha=new Color(otp, otp, otp, otp);
 
-					//////	colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
-					//}
+				//	//////	colorAlpha= new Color(dayAlpha, dayAlpha, dayAlpha, dayAlpha);
+				//	//}
 
 					moonSpeed += 368f/(7f*dayLenght);
 					if (moonSpeed >= 368) moonSpeed = 0;
@@ -5880,222 +5920,230 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (timer5==2) {
 					UpdateLiquid((ushort)BlockId.WaterBlock);
 					//UpdateLiquid((ushort)BlockId.Oil);
-					if (wind){
+					//if (wind){
 						if (Global.WindowWidth>1000) WaveGrassDuringWind(); 
-					}
+					//}
 				}
 				////
 				if (timer5==4) {
 					UpdateLiquid((ushort)BlockId.WaterSalt);
-					if (wind) WaveGrassDuringWind();
-					if (wind) WaveGrassDuringWind();
+					//if (wind) WaveGrassDuringWind();
+					/*if (wind)*/ WaveGrassDuringWind();
 				}
 
-				if (actualRainForce>0f) {
-					if (Setting.BetterSnowAndRain) {
-						for (int i = 0; i<rainDots.Count; ) {
-							ParticleRain r = rainDots[i];
+				//if (actualRainForce>0f) {
+    //                //if (Setting.BetterSnowAndRain) {
+    //                //for (int i = 0; i<rainDots.Count;) {
+    //                //    ParticleRain r = rainDots[i];
 
-							if (weatherWindowHeight<r.Position.Y) {
-								rainDots.RemoveAt(i);
-							} else {
-								r.Update();
-								i++;
-							}
-						}
-						//for (int i = 0; i<snowDots.Count; ) {
-						//	ParticleSnow r = snowDots[i];
-						//	if (weatherWindowHeight<r.Position.Y) {
-						//		snowDots.RemoveAt(i);
-						//	} else {
-						//		r.Update(windRirectionRight);
-						//		i++;
-						//	}
-						//}
-						for (int i = 0; i<snowDotsSmall.Count; ) {
-							ParticleSnowSmall r = snowDotsSmall[i];
-							if (weatherWindowHeight<r.Position.Y) {
-								snowDotsSmall.RemoveAt(i);
-							} else {
-								r.Update(windRirectionRight);
-								i++;
-							}
-						}
-					}
-					
-					for (int i = 0; i<rainDots2.Count; ) {
-						ParticleRain r = rainDots2[i];
+    //                //    if (Global.WindowHeight<r.Position.Y) {
+    //                //        rainDots.RemoveAt(i);
+    //                //    }
+    //                //    else {
+    //                //        r.Update();
+    //                //        //if (r.Position.X>Global.WindowWidth)r.Position.X-=Global.WindowWidth;
+    //                //        //if (r.Position.X<0)r.Position.X+=Global.WindowWidth;
+    //                //        i++;
+    //                //    }
+    //                //}
+    //                //	//for (int i = 0; i<snowDots.Count; ) {
+    //                //	//	ParticleSnow r = snowDots[i];
+    //                //	//	if (weatherWindowHeight<r.Position.Y) {
+    //                //	//		snowDots.RemoveAt(i);
+    //                //	//	} else {
+    //                //	//		r.Update(windRirectionRight);
+    //                //	//		i++;
+    //                //	//	}
+    //                //	//}
+    //                //	for (int i = 0; i<snowDotsSmall.Count; ) {
+    //                //		ParticleSnowSmall r = snowDotsSmall[i];
+    //                //		if (Global.WindowHeight<r.Position.Y) {
+    //                //			snowDotsSmall.RemoveAt(i);
+    //                //		} else {
+    //                //			r.Update(windRirectionRight);
+    //                //			//if (r.Position.X>Global.WindowWidth)r.Position.X-=Global.WindowWidth;
+    //                //			//if (r.Position.X<0)r.Position.X+=Global.WindowWidth;
+    //                //			i++;
+    //                //		}
+    //                //	}
+    //                //}
 
-						if (weatherWindowHeight<r.Position.Y) {
-							rainDots2.RemoveAt(i);
-						} else {
-							r.Update();
-							i++;
-						}
-					}
-					for (int i = 0; i<snowDots2.Count; ) {
-						ParticleSnow r = snowDots2[i];
-						if (weatherWindowHeight<r.Position.Y) {
-							snowDots2.RemoveAt(i);
-						} else {
-							r.Update(windRirectionRight);
-							i++;
-						}
-					}
+    // //               for (int i = 0; i<rainDots2.Count; ) {
+				//	//	ParticleRain r = rainDots2[i];
+
+				//	//	if (Global.WindowHeight<r.Position.Y) {
+				//	//		rainDots2.RemoveAt(i);
+				//	//	} else {
+				//	//		r.Update();
+				//	//		//if (r.Position.X>Global.WindowWidth)r.Position.X-=Global.WindowWidth;
+				//	//		//if (r.Position.X<0)r.Position.X+=Global.WindowWidth;
+				//	//		i++;
+				//	//	}
+				//	//}
+				//	for (int i = 0; i<snowDots.Count; ) {
+				//		ParticleSnow r = snowDots[i];
+				//		if (Global.WindowHeight<r.Position.Y) {
+				//			snowDots.RemoveAt(i);
+				//		} else {
+				//			r.Update(windRirectionRight);
+				//			//if (r.Position.X>Global.WindowWidth)r.Position.X-=Global.WindowWidth;
+				//			//if (r.Position.X<0)r.Position.X+=Global.WindowWidth;
+				//			i++;
+				//		}
+				//	}
 					
 					
-				}
+				//}
 
 				//text
-				Temperature=GetTemperature(BiomePlayer.Name);
+				Temperature=GetTemperature(BiomePlayer.Type);
 
 				if (timer5<-0.1f) {
-					if (wind) WaveGrassDuringWind();
-								rainWaveForce=((float)Math.Sin(time/600f))*0.5f+0.5f;
+					/*if (wind) */WaveGrassDuringWind();
+								//rainWaveForce=((float)Math.Sin(time/600f))*0.5f+0.5f;
 				//	Console.WriteLine(rainWaveForce);
 					//if (rainWaveForce<0.5f)rainWaveForce+=0.05f;
 					//else if (rainWaveForce>1f)rainWaveForce-=0.05f;
 					//else if (FastRandom.Bool()) rainWaveForce+=0.05f;
 					//else rainWaveForce-=0.05f;
 
-					if (precipitation || changeRain<5f) {
-						if (actualRainForce<1f)actualRainForce+=0.05f;
-					} else if (actualRainForce>0f)actualRainForce-=0.05f;
+					//if (precipitation || changeRain<5f) {
+					//	if (actualRainForce<1f)actualRainForce+=0.05f;
+					//} else if (actualRainForce>0f)actualRainForce-=0.05f;
 
 					// Create ice
 					if (Temperature<0) {
-						{
-							int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
-							if (rid<TerrainLength){
-								Terrain chunk=terrain[rid];
-								int ry=FastRandom.Int(125-chunk.StartSomething)+chunk.StartSomething;
-								if (chunk.IsTopBlocks[ry]) {
-									if (chunk.TopBlocks[ry].Id==(ushort)BlockId.WaterBlock) {
-										if (((Water)chunk.TopBlocks[ry]).GetMass==255) {
-											// Remove water
-											chunk.IsTopBlocks[ry]=false;
-											chunk.TopBlocks[ry]=null;
+						int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
+						if (rid<TerrainLength){
+							Terrain chunk=terrain[rid];
+							int ry=FastRandom.Int(125-chunk.StartSomething)+chunk.StartSomething;
+							if (chunk.IsTopBlocks[ry]) {
+								if (chunk.TopBlocks[ry].Id==(ushort)BlockId.WaterBlock) {
+									if (((Water)chunk.TopBlocks[ry]).GetMass==255) {
+										// Remove water
+										chunk.IsTopBlocks[ry]=false;
+										chunk.TopBlocks[ry]=null;
 
-											// set ice
-											chunk.IsSolidBlocks[ry]=true;
-											chunk.SolidBlocks[ry]=new NormalBlock {
-												Id=(ushort)BlockId.Ice,
-												Position=new Vector2(rid*16,ry*16),
-												Texture=iceTexture
-											};
-										}
+										// set ice
+										chunk.IsSolidBlocks[ry]=true;
+										chunk.SolidBlocks[ry]=new NormalBlock {
+											Id=(ushort)BlockId.Ice,
+											Position=new Vector2(rid*16,ry*16),
+											Texture=iceTexture
+										};
 									}
 								}
 							}
 						}
+					}
+					
+					if (CurrentPrecipitation.Snow){
+						int rid=FastRandom.Int(TerrainLength/*BiomePlayer.End-BiomePlayer.Start*/)/*+BiomePlayer.Start*/;
+							
+						if (rid<TerrainLength){
+							Terrain chunk=terrain[rid];
+							if (chunk.StartSomething>0) {
+								if (chunk.IsSolidBlocks[chunk.LightPosFull]) {
+									switch (chunk.SolidBlocks[chunk.LightPosFull].Id) {
+										case (ushort)BlockId.GrassBlockClay:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowClay, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-						if (precipitation) {
-							int rid=FastRandom.Int(BiomePlayer.End-BiomePlayer.Start)+BiomePlayer.Start;
-							if (rid<TerrainLength){
-								Terrain chunk=terrain[rid];
-								if (chunk.StartSomething>0) {
-									if (chunk.IsSolidBlocks[chunk.LightPosFull]) {
-										switch (chunk.SolidBlocks[chunk.LightPosFull].Id) {
-											case (ushort)BlockId.GrassBlockClay:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowClay, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
+										case (ushort)BlockId.GrassBlockCompost:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnowCompost, (ushort)BlockId.GrassBlockSnowCompost, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-											case (ushort)BlockId.GrassBlockCompost:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnowCompost, (ushort)BlockId.GrassBlockSnowCompost, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
+										case (ushort)BlockId.GrassBlockPlains:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowPlains, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-											case (ushort)BlockId.GrassBlockPlains:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowPlains, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
+										case (ushort)BlockId.GrassBlockForest:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowForest, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-											case (ushort)BlockId.GrassBlockForest:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowForest, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
+										case (ushort)BlockId.GrassBlockHills:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowHills, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-											case (ushort)BlockId.GrassBlockHills:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowHills, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
+										case (ushort)BlockId.GrassBlockDesert:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowDesert, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 
-											case (ushort)BlockId.GrassBlockDesert:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowDesert, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
-
-											case (ushort)BlockId.GrassBlockJungle:
-												chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowJungle, new Vector2(rid*16, chunk.LightPosFull*16));
-												break;
-										}
+										case (ushort)BlockId.GrassBlockJungle:
+											chunk.SolidBlocks[chunk.LightPosFull]=new NormalBlock(TextureGrassBlockSnow, (ushort)BlockId.GrassBlockSnowJungle, new Vector2(rid*16, chunk.LightPosFull*16));
+											break;
 									}
+								}
 
-									for (int u=0; u<2; u++){
-										int rH=FastRandom.Int(125);
-										if (rH>=chunk.StartSomething) { 
-											if (chunk.IsTopBlocks[rH]) {
-												ushort id =chunk.TopBlocks[rH].Id;
-												if (GameMethods.IsLeave(id)) {
-													switch (id) { 
-														case (ushort)BlockId.SpruceLeaves:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=spruceLeavesWithSnowTexture;
-																lb.Id=(ushort)BlockId.SpruceLeavesWithSnow;
-															}
-															break;
-														case (ushort)BlockId.AppleBranches:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=TextureBranchesSnow;
-																lb.Id=(ushort)BlockId.AppleBranchesSnow;
-															}
-															break;
+								for (int u=0; u<2; u++){
+									int rH=FastRandom.Int(125);
+									if (rH>=chunk.StartSomething) { 
+										if (chunk.IsTopBlocks[rH]) {
+											ushort id =chunk.TopBlocks[rH].Id;
+											if (GameMethods.IsLeave(id)) {
+												switch (id) { 
+													case (ushort)BlockId.SpruceLeaves:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=spruceLeavesWithSnowTexture;
+															lb.Id=(ushort)BlockId.SpruceLeavesWithSnow;
+														}
+														break;
+													case (ushort)BlockId.AppleBranches:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=TextureBranchesSnow;
+															lb.Id=(ushort)BlockId.AppleBranchesSnow;
+														}
+														break;
 
-														case (ushort)BlockId.CherryBranches:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=TextureBranchesSnow;
-																lb.Id=(ushort)BlockId.CherryBranchesSnow;
-															}
-															break;
+													case (ushort)BlockId.CherryBranches:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=TextureBranchesSnow;
+															lb.Id=(ushort)BlockId.CherryBranchesSnow;
+														}
+														break;
 
-														case (ushort)BlockId.OakBranches:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=TextureBranchesSnow;
-																lb.Id=(ushort)BlockId.OakBranchesSnow;
-															}
-															break;
+													case (ushort)BlockId.OakBranches:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=TextureBranchesSnow;
+															lb.Id=(ushort)BlockId.OakBranchesSnow;
+														}
+														break;
 
-														case (ushort)BlockId.LindenBranches:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=TextureBranchesSnow;
-																lb.Id=(ushort)BlockId.LindenBranchesSnow;
-															}
-															break;
+													case (ushort)BlockId.LindenBranches:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=TextureBranchesSnow;
+															lb.Id=(ushort)BlockId.LindenBranchesSnow;
+														}
+														break;
 													
-														case (ushort)BlockId.WillowBranches:
-															{
-																LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
-																lb.Texture=TextureBranchesSnow;
-																lb.Id=(ushort)BlockId.WillowBranchesSnow;
-															}
-															break;
+													case (ushort)BlockId.WillowBranches:
+														{
+															LeavesBlock lb = (LeavesBlock)chunk.TopBlocks[rH];
+															lb.Texture=TextureBranchesSnow;
+															lb.Id=(ushort)BlockId.WillowBranchesSnow;
+														}
+														break;
 
-													}
-												//	chunk.StartSomething--;
-													//chunk.IsTopBlocks[chunk.StartSomething]=true;
-													//chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
 												}
+											//	chunk.StartSomething--;
+												//chunk.IsTopBlocks[chunk.StartSomething]=true;
+												//chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
 											}
 										}
-									
-										if (chunk.IsSolidBlocks[chunk.StartSomething]) {
-											chunk.StartSomething--;
-											chunk.IsTopBlocks[chunk.StartSomething]=true;
-											chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
-										}
 									}
-								} 
-							}
+									
+									if (chunk.IsSolidBlocks[chunk.StartSomething]) {
+										chunk.StartSomething--;
+										chunk.IsTopBlocks[chunk.StartSomething]=true;
+										chunk.TopBlocks[chunk.StartSomething]=new NormalBlock(snowTopTexture, (ushort)BlockId.SnowTop, new Vector2(rid*16, chunk.StartSomething*16));
+									}
+								}
+							} 
 						}
 					}
 
@@ -6316,18 +6364,18 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					#endregion
 
 					// Animatable
-					if (wind) {
-						if (windForce<1) {
-							windForce+=.05f;
+					//if (wind) {
+					//	if (windForce<1) {
+					//		windForce+=.05f;
+					//		SetWintableSources();
+					//	}
+					//} else {
+					//	if (windForce>0) {
+					//		windForce-=.05f;
 							SetWintableSources();
-						}
-					} else {
-						if (windForce>0) {
-							windForce-=.05f;
-							SetWintableSources();
-							if (FastRandom.Bool())windRirectionRight=!windRirectionRight;
-						}
-					}
+						//	if (FastRandom.Bool())windRirectionRight=!windRirectionRight;
+						//}
+					//}
 
 					if (terrainStartIndexW-terrainStartIndexX>0) {
 						#region Auto-destroy leaves
@@ -6466,13 +6514,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						}
 					}
 
-					#region Bars
-					if (barEat.Value<5f && barWater.Value<5f) {
-						barHeart.Value-=.06f;
-						if (barHeart.Value<0f) barHeart.Value=0f;
-					}
+                    #region Bars
+                    if (barEat.Value<5f && barWater.Value<5f) {
+                        barHeart.Value-=.06f;
+                        if (barHeart.Value<0f) barHeart.Value=0f;
+                    }
 
-					if (barEat.Value>25 && barWater.Value>25f) {
+                    if (barEat.Value>25 && barWater.Value>25f) {
 						barHeart.Value+=.06f;
 						if (barHeart.Value>32f) Die(Lang.Texts[162]);
 					}
@@ -6493,42 +6541,43 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					if (debug) {
 						if (cpu!=null) {
 							usageCpuProcess=cpu.NextValue();
-							usageCpu=cpuUsage.NextValue();
+						//	usageCpu=cpuUsage.NextValue();
 							usageRamProcess=ram.NextValue();
-							usageRam=freeRam.NextValue();
+						//	usageRam=freeRam.NextValue();
 						}
 					}
 
 					#region Weather
-					if (changeRain<0) {
-						changeRain=100+FastRandom.Int(50);
-						if (precipitation) {
-							precipitation=false;
-							if (CurrentPrecipitation==Precipitation.Rain) StopRaining();
-							if (CurrentPrecipitation==Precipitation.Snowing) StopSnowing();
-							CurrentPrecipitation=Precipitation.None;
-						} else {
-							precipitation=true;
+					//if (changeRain<0) {
+					//	changeRain=100+FastRandom.Int(50);
+					//	if (precipitation) {
+					//		precipitation=false;
+					//		if (CurrentPrecipitation==Precipitation.Rain) StopRainSound();
+					//		if (CurrentPrecipitation==Precipitation.Snowing) StopSnowing();
+					//		CurrentPrecipitation=Precipitation.None;
+					//	} else {
+					//		precipitation=true;
 
-							if (Temperature<0) {
-								CurrentPrecipitation=Precipitation.Snowing;
-								StartSnowing();
-							} else {
-								CurrentPrecipitation=Precipitation.Rain;
-								StartRaining();
-							}
-						}
-					} else changeRain--;
+     //                       if (Temperature<0) {
+     //                           CurrentPrecipitation=Precipitation.Snowing;
+     //                        //   startsnow();
+     //                       }
+     //                       else {
+     //                           CurrentPrecipitation=Precipitation.Rain;
+     //                           StartRainSound();
+     //                       }
+     //                   }
+					//} else changeRain--;
 
-					if (timeToChageWind <0) {
-						WindChange();
-					} else timeToChageWind--;
+					//if (timeToChageWind <0) {
+					//	WindChange();
+					//} else timeToChageWind--;
 
 
 					#endregion
 
 					#region Optimalize
-					if (energy.Count>5000) energy.RemoveRange(5000, energy.Count-5000);
+					if (energy.Count>50000) energy.RemoveRange(50000, energy.Count-50000);
 					#endregion
 
 					switch (InventoryNormal[boxSelected].Id) {
@@ -6560,7 +6609,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							playerLight=false;
 							break;
 					}
-
 
 					foreach (ShortAndByte d in Miners) MinerJob(d);
 
@@ -6624,7 +6672,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				textDie.Draw(spriteBatch);
 
 				int textDieInfom=BitmapFont.bitmapFont18.MeasureTextSingleLineX(diedInfo);
-				textDieInfo=new Text(diedInfo,Global.WindowWidthHalf-textDieInfom/2,Global.WindowHeightHalf,BitmapFont.bitmapFont18);
+				textDieInfo=new Text(diedInfo,Global.WindowWidthHalf-textDieInfom/2, Global.WindowHeightHalf,BitmapFont.bitmapFont18);
 				textDieInfo.Draw(spriteBatch, Color.White*a);
 
 				int respawntextm=BitmapFont.bitmapFont18.MeasureTextSingleLineX(respawntext);
@@ -6640,44 +6688,44 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				// Draw full lights = to terrain
 				Graphics.SetRenderTarget(sunLightTarget);
 				Graphics.Clear(black);
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
 
                 foreach (Rectangle r in lightsFull) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
                 for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
                     spriteBatch.Draw(lightMaskTexture, terrain[x].LightVec, Color.White);
                 }
+
+				Graphics.BlendState = BlendState.AlphaBlend;
+				spriteBatch.Draw(pixel, new Rectangle((int)WindowX,(int)WindowY, Global.WindowWidth,Global.WindowHeight), Color.Black*(1-dayAlpha));
                 spriteBatch.End();
-				//Graphics.Clear(Color.Black);
 
-				// Make more darkner
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-				spriteBatch.Draw(pixel, new Rectangle(0/*(int)WindowX*/,0/*(int)WindowY*/,Global.WindowWidth, Global.WindowHeight), Color.Black*(1-dayAlpha));
-				//spriteBatch.Draw(pixel, Fullscreen, black50);
-				spriteBatch.End();
+                // Make more darkner
+                //spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                //spriteBatch.Draw(pixel, Fullscreen, Color.Black*(1-dayAlpha));
+                //spriteBatch.End();
 
-				//// Draw high light = draw to trees
-				//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
+                //// Draw high light = draw to trees
+                //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, transformMatrix: transformMatrixS);
 
-				////foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
-				
-				//{
-				//	Terrain chunk;
-				//	for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
-				//		chunk=terrain[x];
-				//		spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), Color.White);
-				//	}
-				//}
-				//spriteBatch.End();
+                ////foreach (Rectangle r in lightsHalf) spriteBatch.Draw(lightMaskLineTexture, r, Color.White);
 
-				// Technic's lights
-				//Graphics.SetRenderTarget(modificatedLightTarget);
-				//spriteBatch.Begin();
-				//spriteBatch.Draw(sunLightTarget, Fullscreen, colorAlpha);
-				//spriteBatch.End();
+                //{
+                //	Terrain chunk;
+                //	for (int x = terrainStartIndexX>1 ? terrainStartIndexX-2:terrainStartIndexX; x<terrainStartIndexW; x++) {
+                //		chunk=terrain[x];
+                //		spriteBatch.Draw(lightMaskTexture, new Vector2(chunk.LightVec.X, chunk.LightPosHalf16), Color.White);
+                //	}
+                //}
+                //spriteBatch.End();
 
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, transformMatrixS/*cameraNoOpMultisapling*//*camera*/);
+                // Technic's lights
+                //Graphics.SetRenderTarget(modificatedLightTarget);
+                //spriteBatch.Begin();
+                //spriteBatch.Draw(sunLightTarget, Fullscreen, colorAlpha);
+                //spriteBatch.End();
 
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, transformMatrix: transformMatrixS);
 				foreach (MashineBlockBasic m in lightsLamp) {
 					if (m.Position.X>=terrainStartIndexX*16) {
 						if (m.Position.X<=terrainStartIndexW*16) {
@@ -6702,8 +6750,6 @@ destructionTexture = GetDataTexture("Animations/destruction");
 							if (m.Position.Y>=terrainStartIndexY*16) {
 								if (m.Position.Y<=terrainStartIndexH*16) {
 									if (m.Energy>0) {
-									//	m.Energy-=0.01f;
-										//if (m.Energy<0) m.Energy=0;
 										spriteBatch.Draw(lightMaskRoundTexture, new Rectangle((int)m.Position.X-48*2+8, (int)m.Position.Y-48*2+8, 96*2, 96*2), lampColorLight);
 									}
 								}
@@ -6715,6 +6761,13 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				if (playerLight) spriteBatch.Draw(lightMaskRoundTexture, new Rectangle(PlayerXInt-48*2+8, PlayerYInt-48*2+8, 96*2, 96*2), lampColorLight);
 				spriteBatch.End();
 				#endregion
+				
+				if (Setting.HalfShadows){
+					Graphics.SetRenderTarget(targetShadows);
+					Graphics.Clear(Color.Transparent);
+					SetShadows();
+					DrawShadow();  
+				}
 
 				#region Draw game
 				if (SuperSamplingActing==1f) {
@@ -6727,20 +6780,27 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				//	bool backRain= (precipitation || changeRain<10);
 				//	float back
 				//}
-
-				if (changeRain<10) {
-					if (precipitation) {
-						Graphics.Clear(FastMath.Lerp(GetColorBackNoRain(), GetColorBackRain(), changeRain/10f));
-					} else {
-						Graphics.Clear(FastMath.Lerp(GetColorBackRain(), GetColorBackNoRain(), changeRain/10f));
-					}
-				} else {
-					if (precipitation) {
-						Graphics.Clear(GetColorBackRain());
-					} else {
-						Graphics.Clear(GetColorBackNoRain());
-					}
-				}
+				
+				Color use=GetColorBackNoRain();
+				if (CurrentPrecipitation.Rain) use=Color.Lerp(use, GetColorBackRain(), FastMath.Abs(CurrentPrecipitation.RainForce/2));
+				if (CurrentPrecipitation.Snow) use=Color.Lerp(use, Color.White,  FastMath.Abs(CurrentPrecipitation.SnowForce/2));
+				if (CurrentPrecipitation.Sand) use=Color.Lerp(use, Color.Yellow, FastMath.Abs(CurrentPrecipitation.SandForce/2));
+				Graphics.Clear(use);
+				//if (changeRain<10) {
+				//	if (precipitation) {
+				//		Graphics.Clear(FastMath.Lerp(GetColorBackNoRain(), GetColorBackRain(), changeRain/10f));
+				//	} else {
+				//		Graphics.Clear(FastMath.Lerp(GetColorBackRain(), GetColorBackNoRain(), changeRain/10f));
+				//	}
+				//} else {
+				//	if (CurrentPrecipitation==Precipitation.Rain) Graphics.Clear();
+				//	wlse 
+				//	if (precipitation) {
+						
+				//	} else {
+				//		Graphics.Clear(GetColorBackNoRain());
+				//	}
+				//}
                 //// Day
                 //if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
                 //	Graphics.Clear(Color.LightSkyBlue);
@@ -6796,6 +6856,28 @@ destructionTexture = GetDataTexture("Animations/destruction");
             }
 				}
             #endregion
+	
+			//#region Background weather 
+			//	if (Setting.SnowAndRain) {
+			//		if (actualRainForce>0f) {
+
+			//		if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, transformMatrix: MatrixUpScaling);
+			//		else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+			//			//int cx=0;
+			//			//int cy=0;
+			//		//	Rabcr.spriteBatch=spriteBatch;
+			//			if (Temperature<0) {
+			//				Color c=Color.White*actualRainForce;
+			//				foreach (ParticleSnowSmall r in snowDotsSmall) r.Draw(/*cx, cy,*/ c);
+			//			} else {
+			//				if (Setting.BetterSnowAndRain) 
+			//					foreach (ParticleRain r in rainDots) r.DrawBetterQuality(/*cx, cy,*/ actualRainForce);
+			//				else foreach (ParticleRain r in rainDots) r.Draw(/*cx, cy,*/ actualRainForce);
+			//			}
+			//			spriteBatch.End();
+			//		}
+			//	}
+   //             #endregion
 
 				#region Clouds
 				if (Setting.Clouds) {
@@ -6808,58 +6890,81 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					float TextureCloudsSourcePosY=0;
 				  //  if (time<12) TextureCloudsSourcePosY=((float)time/(12*hour)/*WindowX/(TerrainLength*16f)*/)*(TextureClouds.Height-(int)(CloudsHeight*CloudsSourceScale));
 				   // else TextureCloudsSourcePosY=((float)(24*hour-time)/(12*hour)/*WindowX/(TerrainLength*16f)*/)*(TextureClouds.Height-(int)(CloudsHeight*CloudsSourceScale));
+					Color ColorColorizeDay=Color.White;
+					Color ColorColorizeNight=Color.White;
 					Color ColorColorize=Color.White;
+				//	Color ColorNight, ColorDay;
 
 					// Night
-					if (time<=dayStart*hour || time>=(dayEnd+1)*hour) {
-						if (precipitation) {
-							if (moonSpeed/46<4) ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNightRain, moonSpeed/(46*4));
-							else ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNightRain, 1-moonSpeed/(46*4));
-						} else {
-							if (moonSpeed/46<4) ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNight, moonSpeed/(46*4));
-							else ColorColorize=FastMath.Lerp(Color.DarkGray, ColorNight, 1-moonSpeed/(46*4));
-						}
+					if (time<=(dayStart+1)*hour || time>=(dayEnd)*hour) {
+						ColorColorizeNight=Color.Gray;
+						//if (precipitation) {
+						//	if (moonSpeed/46<4) ColorNight=FastMath.Lerp(Color.DarkGray, ColorNightRain, moonSpeed/(46*4));
+						//else ColorNight=FastMath.Lerp(Color.DarkGray, ColorNightRain, 1-moonSpeed/(46*4));
+						//} else {
+						//	if (moonSpeed/46<4) ColorNight=FastMath.Lerp(Color.DarkGray, ColorNight, moonSpeed/(46*4));
+						//	else ColorNight=FastMath.Lerp(Color.DarkGray, ColorNight, 1-moonSpeed/(46*4));
+						//}
+
+					
+					} 
 
 					// Day
-					} else if (time>=7f*hour && time<=17f*hour) {
-						if (precipitation) {
-							if (changeRain<100) {
-								ColorColorize=FastMath.Lerp(ColorDayRain,ColorDay, changeRain/100f);
-							} else ColorColorize=ColorDayRain;
-						} else {
-							if (changeRain<100) {
-								ColorColorize=FastMath.Lerp(ColorDay, ColorDayRain, changeRain/100f);
-							} else ColorColorize=ColorDay;
-						}
+					if (time>=(dayStart)*hour && time<=(dayEnd+1)*hour) {
+						ColorColorizeDay=ColorDay;
+						if (CurrentPrecipitation.Rain) ColorColorizeDay=Color.Lerp(ColorColorizeDay, ColorDayRain, CurrentPrecipitation.RainForce);
+						if (CurrentPrecipitation.Snow) ColorColorizeDay=Color.Lerp(ColorColorizeDay, Color.White,  CurrentPrecipitation.SnowForce);
+						//if (precipitation) {
+						//	if (changeRain<100) {
+						//		ColorColorize=FastMath.Lerp(ColorDayRain,ColorDay, changeRain/100f);
+						//	} else ColorColorize=ColorDayRain;
+						//} else {
+						//	if (changeRain<100) {
+						//		ColorColorize=FastMath.Lerp(ColorDay, ColorDayRain, changeRain/100f);
+						//	} else ColorColorize=ColorDay;
+						//}
 
+					
+					} 
 					// Sun rise
-					} else if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour){
-						if (precipitation) {
-							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, (time-dayStart*hour)/(hour*2));
-						} else {
-							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, (time-dayStart*hour)/(hour*2));
-						}
+					if (time>=dayStart*hour && time<=(dayStart+0.5f)*hour){
+						ColorColorize=FastMath.Lerp(ColorColorizeDay, ColorColorizeNight, (time-dayStart*hour)/(hour*2));
+						//if (precipitation) {
+						//	 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, (time-dayStart*hour)/(hour*2));
+						//} else {
+						//	 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, (time-dayStart*hour)/(hour*2));
+						//}
 					} else if (time>=(dayStart+0.5f)*hour && time<=(dayStart+1)*hour){
-						if (precipitation) {
-							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
-						} else {
-							 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
-						}
+						ColorColorize=FastMath.Lerp(ColorColorizeDay, ColorColorizeNight, (time-dayStart*hour)/(hour*2));
+						//if (precipitation) {
+						//	 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
+						//} else {
+						//	 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, 1-(time-(dayStart+0.5f)*hour)/(hour*2));
+						//}
 
 					// Sun setting
 					} else if (time>=dayEnd*hour && time<=(dayEnd+0.5f)*hour) {
-						if (precipitation) {
-							 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, (time-dayEnd*hour)/(hour*2));
-						} else {
-							 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, (time-dayEnd*hour)/(hour*2));
-						}
+						ColorColorize=FastMath.Lerp(ColorColorizeDay, ColorColorizeNight, (time-dayStart*hour)/(hour*2));
+						//if (precipitation) {
+						//	 ColorColorize=FastMath.Lerp(ColorDayRain, ColorSunRain, (time-dayEnd*hour)/(hour*2));
+						//} else {
+						//	 ColorColorize=FastMath.Lerp(ColorDay, ColorSun, (time-dayEnd*hour)/(hour*2));
+						//}
 					} else if (time>=(dayEnd+0.5f)*hour && time<=(dayEnd+1)*hour) {
-						if (precipitation) {
-							 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
-						} else {
-							 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
-						}
+						ColorColorize=FastMath.Lerp(ColorColorizeDay, ColorColorizeNight, (time-dayStart*hour)/(hour*2));
+						//if (precipitation) {
+						//	 ColorColorize=FastMath.Lerp(ColorNightRain, ColorSunRain, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
+						//} else {
+						//	 ColorColorize=FastMath.Lerp(ColorNight, ColorSun, 1-(time-(dayEnd+0.5f)*hour)/(hour*2));
+						//}
 					}
+
+				//	Color use=GetColorBackNoRain();
+				//if (BiomePlayer.precipitation.Rain) use=Color.Lerp(use, GetColorBackRain(), BiomePlayer.precipitation.rainForce);
+				//if (BiomePlayer.precipitation.Snow) use=Color.Lerp(use, Color.White,  BiomePlayer.precipitation.rainForce);
+				//if (BiomePlayer.precipitation.Sand) use=Color.Lerp(use, Color.Yellow, BiomePlayer.precipitation.rainForce);
+				//if (BiomePlayer.precipitation.Hail) use=Color.Lerp(use, Color.White,  BiomePlayer.precipitation.rainForce);
+				//Graphics.Clear(use);
 
 					float starty=(float)TextureCloudsSourcePosY/TextureClouds.Height/*CloudsHeight*/;
 					EffectClouds.Parameters["StartY"].SetValue(starty);
@@ -6889,17 +6994,17 @@ destructionTexture = GetDataTexture("Animations/destruction");
 
 					EffectClouds.Parameters["SunAngle"].SetValue(new Vector2((float)Math.Cos(angle)*adder/TextureClouds.Width, (float)Math.Sin(angle)*adder/TextureClouds.Height));
 
-					if (BiomePlayer.Name!=BiomeCurrent || BiomePlayer.Name==Biome.None) {
+					if (BiomePlayer.Type!=BiomeCurrent || BiomePlayer.Type==Biome.None) {
 						ColorLastBiome=ColorBiome;
 						TicksPlayerChangedBiome=60;
-						BiomeCurrent=BiomePlayer.Name;
+						BiomeCurrent=BiomePlayer.Type;
 					}
 
 					if (TicksPlayerChangedBiome>0) {
 						TicksPlayerChangedBiome--;
-						ColorBiome=FastMath.Lerp(BiomeColor(BiomePlayer.Name), ColorLastBiome, TicksPlayerChangedBiome/60f);
+						ColorBiome=FastMath.Lerp(BiomeColor(BiomePlayer.Type), ColorLastBiome, TicksPlayerChangedBiome/60f);
 					}
-					spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, EffectClouds, MatrixUpScaling);
+					spriteBatch.Begin(SpriteSortMode.Deferred, samplerState: SamplerState.AnisotropicClamp, effect: EffectClouds, transformMatrix: MatrixUpScaling);
 					EffectClouds.Techniques[0].Passes[0].Apply();
 
 					spriteBatch.Draw(TextureClouds,
@@ -6922,27 +7027,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 				}
 				#endregion
 
-				#region Background weather 
-				if (Setting.SnowAndRain) {
-					if (actualRainForce>0f) {
-
-					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, transformMatrix: MatrixUpScaling);
-					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-						int cx=0;
-						int cy=0;
-						Rabcr.spriteBatch=spriteBatch;
-						if (Temperature<0) {
-							Color c=Color.White*actualRainForce;
-							foreach (ParticleSnowSmall r in snowDotsSmall)  r.Draw(cx, cy, c);
-						} else {
-							if (Setting.BetterSnowAndRain) 
-								foreach (ParticleRain r in rainDots) r.Draw(cx, cy, actualRainForce);
-							else foreach (ParticleRain r in rainDots) r.DrawBetterQuality(cx, cy, actualRainForce);
-						}
-						spriteBatch.End();
-					}
-				}
-                #endregion
+			
 
                 #region Sun & moon
 				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, rasterizerState, transformMatrix: camera);
@@ -6968,48 +7053,48 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 #endregion
 
                 if (Setting.WavingElements) {
-					if (wind) {
+					//if (wind) {
 						int x=0;
 						int ms=(int)gameTime.TotalGameTime.TotalMilliseconds;
 						foreach (LiveObject lo in LiveObjects) {
 							if (lo.Root.X>terrainStartIndexX-10) {
 								if (lo.Root.X>terrainStartIndexW+10) break;
+								float windForce=terrain[lo.Root.X/*/16*/].Biome.precipitation.WindForce;
+								if (windForce==0) continue;
 
 								if (lo is Tree tree) {
+								//	terrain[tree.Root.X/16].Biome.windForce
 									x+=133;
 
 									float a=((ms+x)/1000f)*2*FastMath.PI;
 									float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4f))*0.5f-1.5f)*0.015f;
 
-									if (windRirectionRight) tree.angle=val;
+									if (windForce>0) tree.angle=val;
 									else tree.angle=-val;
 								} else if (lo is Cactus cactus) {
 									x+=133;
 									float a=((ms+x)/1000f)*2*FastMath.PI;
 									float val=((float)Math.Sin(a)+(float)Math.Sin(a*0.5f+(FastMath.PI/4f))*0.5f-1.5f)*0.015f;
 
-									if (windRirectionRight) cactus.angle=val;
+									if (windForce>0) cactus.angle=val;
 									else cactus.angle=-val;
-
-									// if (cactus.Root.X<terrainStartIndexW+10) break;
-							  //  }
 								}
 							}
 						}
-					}
+					//}
 				}
 				
 				#region Draw blocks
-				int[] starts=new int[terrainStartIndexW];
+				int[] starts=new int[terrainStartIndexW-terrainStartIndexX];
 
 				// Back and solid
 				{
 					Terrain chunk;
 					for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
 						chunk=terrain[x];
-						starts[x]=chunk.StartSomething>terrainStartIndexY ? chunk.StartSomething : terrainStartIndexY;
+						starts[x-terrainStartIndexX]=chunk.StartSomething>terrainStartIndexY ? chunk.StartSomething : terrainStartIndexY;
 
-						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+						for (int y = starts[x-terrainStartIndexX]; y<terrainStartIndexH; y++) {
 							if (chunk.IsBackground[y]) chunk.Background[y].Draw();
 						}
 					}
@@ -7022,7 +7107,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 						chunk=terrain[x];
 						Block[] blocks=chunk.TopBlocks;
 
-						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+						for (int y = starts[x-terrainStartIndexX]; y<terrainStartIndexH; y++) {
 							if (!chunk.IsSolidBlocks[y]) {
 								if (chunk.IsTopBlocks[y]) 
 								blocks[y].Draw(); 
@@ -7045,94 +7130,122 @@ destructionTexture = GetDataTexture("Animations/destruction");
                 #region Fog
                 spriteBatch.End();
                 if (Setting.Fog==Setting.FogTypes.Fancy) {
-					
-					if (precipitation) { 
-						if (Temperature<0){
-							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
-							EffectFog.Parameters["Opacity"].SetValue(1f*actualRainForce);
-						} else {
+						Color FogColor=Color.Transparent;
+					//if (CurrentPrecipitation.Rain || CurrentPrecipitation.Snow || CurrentPrecipitation.Sand) { 
+						if (CurrentPrecipitation.WindForce!=0) { 
+							FogColor=FastMath.Lerp(FogColor, Color.White/*new Color(64, 61, 22)*/,0.5f);
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*FastMath.Abs(CurrentPrecipitation.WindForce));
+							
+							EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*CurrentPrecipitation.WindForce));
+						}
+						if (CurrentPrecipitation.Fog!=0f) { 
+							FogColor=FastMath.Lerp(FogColor, Color.White,0.5f);
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*FastMath.Abs(CurrentPrecipitation.Fog));
+						}
+						if (CurrentPrecipitation.Rain) { 
 							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125),0.1f);
-							EffectFog.Parameters["Opacity"].SetValue(0.5f*actualRainForce);
-						//	EffectFog.Parameters["Color"].SetValue(new Color(69,118,154).ToVector4());
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*FastMath.Abs(CurrentPrecipitation.RainForce));
 						}
-						if (wind) { 
-							if (windRirectionRight) EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*(1f+windForce)));
-							else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*(1f+windForce)));
-						} else { 
-							if (windRirectionRight) EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
-							else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
+						if (CurrentPrecipitation.Snow) { 
+							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
+							EffectFog.Parameters["Opacity"].SetValue(1f*FastMath.Abs(CurrentPrecipitation.SnowForce));
 						}
-					} else { 
-						if (Temperature<0) {
-							EffectFog.Parameters["Opacity"].SetValue(1f*actualRainForce);
-						//	EffectFog.Parameters["Color"].SetValue(new Vector4(1f,1f,1f,1f));
-							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
-						} else {
-							EffectFog.Parameters["Opacity"].SetValue(0.5f*actualRainForce);
-							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
-							//EffectFog.Parameters["Color"].SetValue(new Color(69,118,154).ToVector4());
+						if (CurrentPrecipitation.Sand) { 
+							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125)/*new Color(64, 61, 22)*/,0.5f);
+							EffectFog.Parameters["Opacity"].SetValue(0.5f*FastMath.Abs(CurrentPrecipitation.SandForce));
 						}
-					}
+				//	} 
+					//if (CurrentPrecipitation.WindForce!=0) { 
+						/*if (windRirectionRight)*/ 
+					//	else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/10000f*(1f+windForce)));
+					//} else { 
+					//	if (windRirectionRight) EffectFog.Parameters["Time"].SetValue((float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
+					//	else EffectFog.Parameters["Time"].SetValue(-(float)(gameTime.TotalGameTime.TotalMilliseconds/20000f));
+				//	}
+				
+					//else { 
+					//	if (CurrentPrecipitation==Precipitation.Snowing) { 
+					//		EffectFog.Parameters["Opacity"].SetValue(1f*actualRainForce);
+					//	//	EffectFog.Parameters["Color"].SetValue(new Vector4(1f,1f,1f,1f));
+					//		FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
+					//	}
+					//	if (CurrentPrecipitation==Precipitation.Rain) { 
+					//		EffectFog.Parameters["Opacity"].SetValue(0.5f*actualRainForce);
+					//		FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
+					//		//EffectFog.Parameters["Color"].SetValue(new Color(69,118,154).ToVector4());
+					//	}
+					//}
+					//No wind
+					if (FogColor!=Color.Transparent){
+						EffectFog.Parameters["Color"].SetValue(FogColor.ToVector4());
 
-					EffectFog.Parameters["Color"].SetValue(FogColor.ToVector4());
-
-					if (actualRainForce>0){
-						EffectFog.Parameters["PosX"].SetValue(WindowCenterX/(float)Global.WindowWidth*10);
-						EffectFog.Parameters["PosY"].SetValue(WindowCenterY/(float)Global.WindowHeight*10);
+					//if (actualRainForce>0){
+					//if (CurrentPrecipitation.Rain || CurrentPrecipitation.Snow || CurrentPrecipitation.Sand){
+						EffectFog.Parameters["PosX"].SetValue(WindowCenterX*Global.WindowWidthDiv*10);
+						EffectFog.Parameters["PosY"].SetValue(WindowCenterY*Global.WindowHeightDiv*10);
 					
 						//EffectFog.Parameters["Octaves"].SetValue(3);
 						
-						if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
-						else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
+						//if (SuperSamplingActing==1f) 
+						spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectFog);
+						// No supersampling ! fps lose
+					//	else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, effect: EffectFog, MatrixUpScaling);
 						EffectFog.Techniques[0].Passes[0].Apply();
 
 						spriteBatch.Draw(pixel, Fullscreen, Color.White);
 						spriteBatch.End();
 
 						//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, camera);
+					//}
 					}
                 }else if (Setting.Fog==Setting.FogTypes.Plain) {
-					float oc=0;
-					if (precipitation) {
-						if (Temperature<0){
-							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
-							oc=1f*actualRainForce;
-						} else {
-							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125),0.1f);
-							oc=0.5f*actualRainForce;
-						}
-					} else { 
-						if (Temperature<0) {
-							oc=1f*actualRainForce;
-							FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
-						} else {
-							oc=0.5f*actualRainForce;
-							FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
-						}
-					}
+					Color FogColor=Color.Transparent;
+					if (CurrentPrecipitation.Snow) FastMath.Lerp(FogColor, new Color(255,255,255,125), FastMath.Abs(CurrentPrecipitation.SnowForce)*0.1f);
+					if (CurrentPrecipitation.Rain) FastMath.Lerp(FogColor, new Color(69,118,154,125), FastMath.Abs(CurrentPrecipitation.RainForce)*0.1f);
+					if (CurrentPrecipitation.Sand) FastMath.Lerp(FogColor, new Color(64, 61, 22), FastMath.Abs(CurrentPrecipitation.SandForce)*0.1f);
+					
+					//float oc=0;
+					//if (precipitation) {
+					//	if (Temperature<0){
+					//		FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,125),0.1f);
+					//		oc=1f*actualRainForce;
+					//	} else {
+					//		FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,125),0.1f);
+					//		oc=0.5f*actualRainForce;
+					//	}
+					//} else { 
+					//	if (Temperature<0) {
+					//		oc=1f*actualRainForce;
+					//		FogColor=FastMath.Lerp(FogColor, new Color(255,255,255,10), 0.1f);
+					//	} else {
+					//		oc=0.5f*actualRainForce;
+					//		FogColor=FastMath.Lerp(FogColor, new Color(69,118,154,0), 0.1f);
+					//	}
+					//}
 
 					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, transformMatrix: MatrixUpScaling);
 
-					spriteBatch.Draw(pixel, Fullscreen, FogColor*oc*0.2f);
+					spriteBatch.Draw(pixel, Fullscreen, FogColor/**oc*0.2f*/);
 					spriteBatch.End();
 				}
                 #endregion
 
                 #region Weather Foreground
-				if (actualRainForce>0f) {
-					if (SuperSamplingActing!=1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: MatrixUpScaling);
-					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-					Rabcr.spriteBatch=spriteBatch;
+				if (CurrentPrecipitation.Rain || CurrentPrecipitation.Snow || CurrentPrecipitation.Sand) {
+					if (SuperSamplingActing!=1f) spriteBatch.Begin(transformMatrix: MatrixUpScaling);
+					else spriteBatch.Begin();
 
-					int x=0, y=0;
+					if (CurrentPrecipitation.Rain) {
+						foreach (ParticleRain r in rainDots) r.Draw(1/*CurrentPrecipitation.RainForce*/);
+					}
+					
+					if (CurrentPrecipitation.Snow) {
+						foreach (ParticleSnow r in snowDots) r.Draw(1/*CurrentPrecipitation.SnowForce*/);
+					}
 
-                    if (Temperature<0f) {
-						Color c=Color.White*actualRainForce;
-						foreach (ParticleSnow r in snowDots2) r.Draw(x, y, c);
-					} else {
-						if (Setting.BetterSnowAndRain) foreach (ParticleRain r in rainDots2) r.DrawBetterQuality(x, y, actualRainForce);
-						else foreach (ParticleRain r in rainDots2) r.Draw(x, y, actualRainForce);
+					if (CurrentPrecipitation.Sand) {
+						foreach (ParticleSand r in sandDots) r.Draw(1/*CurrentPrecipitation.SandForce*/);
 					}
 					spriteBatch.End();
 				}
@@ -7146,7 +7259,7 @@ destructionTexture = GetDataTexture("Animations/destruction");
 					Terrain chunk;
 					for (int x = terrainStartIndexX; x<terrainStartIndexW; x++) {
 						chunk=terrain[x];
-						for (int y = starts[x]; y<terrainStartIndexH; y++) {
+						for (int y = starts[x-terrainStartIndexX]; y<terrainStartIndexH; y++) {
 							if (chunk.IsSolidBlocks[y]) chunk.SolidBlocks[y].Draw();
 						}
 					}
@@ -8139,7 +8252,7 @@ rameno.X -= 17;
 
 				if (destroing) spriteBatch.Draw(destructionTexture, mousePosRoundVector, new Rectangle((int)(destroingIndex/destringMaxIndex*336)/16*16,0,16,16), Color.White);
 
-				if (debug) {
+				if (debug && inventory==InventoryType.Normal) {
 					foreach (Energy r in energy) r.Draw();
 					spriteBatch.Draw(pixel, new Rectangle(mousePosRoundX,mousePosRoundY,16,16), null, color_r200_g200_b200_a100);
 				}
@@ -8148,9 +8261,11 @@ rameno.X -= 17;
 				}
 				
 				spriteBatch.End();
-				if (SuperSamplingActing<1f) { 
+
+                #region Solve SuperSampling
+                if (SuperSamplingActing<1f) { 
 					Graphics.SetRenderTarget(null);
-					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointWrap);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.PointWrap);
 					spriteBatch.Draw(targetGame, Fullscreen, color: Color.White);
 					spriteBatch.End();
 				} else if (SuperSamplingActing==2f) { 
@@ -8171,21 +8286,34 @@ rameno.X -= 17;
 					spriteBatch.End();
 				} else if (SuperSamplingActing == 4f) {
 					Graphics.SetRenderTarget(targetGame2);
-					spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+					spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.LinearWrap);
 					spriteBatch.Draw(targetGame, new Rectangle(0,0, Global.WindowWidth*2, Global.WindowHeight*2), color: Color.White);
 					spriteBatch.End();
 
 					Graphics.SetRenderTarget(null);
-                    spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.LinearWrap);
+                    spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.LinearWrap);
                     spriteBatch.Draw(targetGame2, Fullscreen, color: Color.White);
                     spriteBatch.End();
-                } 
-				if (Setting.HalfShadows)SetShadows();
-				if (Setting.HalfShadows) DrawShadow();  
+                }
+                #endregion
+
 
                 // Draw lighting on game
-                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply, samplerState: SamplerState.PointWrap);
-                spriteBatch.Draw(texture: sunLightTarget, Fullscreen, color: Color.White);
+			
+                if (Setting.HalfShadows && vert.Length>0) {
+                    effectShadows.Parameters["angleSin"].SetValue((float)Math.Sin(angleShadow) * Global.WindowHeightDiv);
+                    effectShadows.Parameters["angleCos"].SetValue((float)Math.Cos(angleShadow) * Global.WindowWidthDiv);
+                    effectShadows.Parameters["alpha"].SetValue(shadowAlpha);
+                    effectShadows.Parameters["weight"].SetValue(new float[]{ 0.2270270270f, 0.1945945946f, 0.1216216216f, 0.0540540541f, 0.0162162162f });
+                    spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, effect: effectShadows);
+					effectShadows.Techniques[0].Passes[0].Apply();
+					spriteBatch.Draw(texture: targetShadows, Fullscreen, color: Color.White/**0.2f*/);
+					spriteBatch.End();
+				}
+
+                // Draw lighting on game
+                spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: Multiply/*, samplerState: SamplerState.PointWrap*/);
+                spriteBatch.Draw(sunLightTarget, Fullscreen, color: Color.White);
                 spriteBatch.End();
                 #endregion
 
@@ -8204,7 +8332,7 @@ rameno.X -= 17;
 					EffectVignetting.Parameters["Intensity"].SetValue(0.1f);
 
 					if (SuperSamplingActing==1f) spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, effect: EffectVignetting);
-					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, effect: EffectVignetting);
+					else spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, effect: EffectVignetting);
 
 					EffectVignetting.Techniques[0].Passes[0].Apply();
 
@@ -8349,8 +8477,8 @@ rameno.X -= 17;
 
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -8426,7 +8554,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -8509,7 +8637,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -8611,7 +8739,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -8683,7 +8811,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255 );
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -8755,7 +8883,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2+30,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434+30,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2+30), Color.LightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2+30), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -8844,7 +8972,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -8900,7 +9028,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -8944,7 +9072,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9004,7 +9132,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-234,304,464+2,1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-233,302,464,1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-232,300,34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198,300,430), Color.LightBlue);
+							spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-198,300,430), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -9023,7 +9151,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9060,7 +9188,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9105,7 +9233,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9135,7 +9263,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9179,7 +9307,7 @@ rameno.X -= 17;
 							DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 							DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 							buttonClose.ButtonDraw();
 
@@ -9254,7 +9382,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234, 604, 434+2, 1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233, 602, 434, 1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232, 600, 34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2, 600, 400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9289,7 +9417,7 @@ rameno.X -= 17;
 								DrawFrame(Global.WindowWidthHalf-300-2, Global.WindowHeightHalf-234,604,434+2,1, color_r0_g0_b0_a100);
 								DrawFrame(Global.WindowWidthHalf-300-1, Global.WindowHeightHalf-233,602,434,1, color_r0_g0_b0_a200);
 								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-232,600,34), color_r10_g140_b255);
-								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), Color.LightBlue);
+								spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-300, Global.WindowHeightHalf-200+2,600,400-2), backMenu);
 
 								buttonClose.ButtonDraw();
 
@@ -9487,7 +9615,7 @@ rameno.X -= 17;
 						float hours=(int)((float)time/hour);
 						float minutes=(time-hours*hour)/(float)hour*60f/*/60f*/;
 						if (gameTime.ElapsedGameTime.TotalMilliseconds!=0) {
-							GameDraw.DrawTextShadowMin(5, 5,"< Information for developers > (F1 hide)" + Environment.NewLine +
+							string info="< Information for developers > (F1 hide)" + Environment.NewLine +
 							//"[Player] X: " + (int)PlayerX + ", Y: " +  (int)PlayerY + Environment.NewLine +
 							"[Mouse] X: " + (int)mousePos.X + ", Y: " + (int)mousePos.Y + Environment.NewLine +
 
@@ -9501,16 +9629,23 @@ rameno.X -= 17;
 							"[Drawing surface size] "+((terrainStartIndexW-terrainStartIndexX)*(terrainStartIndexH-terrainStartIndexY))+Environment.NewLine +
 							//Environment.NewLine +
 							"[Items count]: "+DroppedItems.Count +Environment.NewLine+
-							"[Particles count]: E "+energy.Count+/*", S "+snowDots.Count+*/", R "+rainDots.Count+", S2 "+snowDots2.Count+", R2 "+rainDots2.Count+", F "+FallingLeaves.Count+Environment.NewLine+
+							"[Particles count]: E "+energy.Count.ToString("000")+", S "+snowDots.Count.ToString("000")+", R "+rainDots.Count.ToString("000")+", Sa "+sandDots.Count.ToString("000")/*+", R2 "+rainDots2.Count*/+", F "+FallingLeaves.Count.ToString("000")+Environment.NewLine+
 						//	"[Light]: " +dayAlpha+Environment.NewLine +
 						//	"[Moon]: " +(moonSpeed/46)+Environment.NewLine +
-						//	"[Wind]: "+wind+ Environment.NewLine +
+							"[Wind]: "+CurrentPrecipitation.WindForce+ Environment.NewLine +
+							"[Rain]: "+CurrentPrecipitation.Rain+ " "+CurrentPrecipitation.RainForce+ Environment.NewLine +
+							"[Snow]: "+CurrentPrecipitation.Snow+ " "+CurrentPrecipitation.SnowForce+ Environment.NewLine +
+							"[Sand]: "+CurrentPrecipitation.Sand+ " "+CurrentPrecipitation.SandForce+ Environment.NewLine +
 						//	"[Time to change rain]: "+changeRain+ Environment.NewLine +
 							"[Fps]:  "+/*1f / (float)gameTime.ElapsedGameTime.TotalSeconds*/(int)Math.Round(fps, 3)+Environment.NewLine+
-							"[Fps f]:  "+1f/(float)gameTime.ElapsedGameTime.TotalSeconds+Environment.NewLine+
-							"[CPU] Proces: "+(usageCpuProcess/Environment.ProcessorCount).ToString("0.00")+"%, Volné cpu: "+(100-usageCpu).ToString("0.00")+"%"+Environment.NewLine+
-							"[RAM] Proces: "+(usageRamProcess/1048576).ToString("0.00")+"MB, Volná ram: "+usageRam.ToString("0.00")+"MB"+Environment.NewLine, new Color(255,1- dayAlpha*2,1-dayAlpha*2));
+							//"[Fps f]:  "+1f/(float)gameTime.ElapsedGameTime.TotalSeconds+Environment.NewLine+
+							"[CPU] Proces: "+(usageCpuProcess/Environment.ProcessorCount).ToString("0.00")+"%"+/*, Volné cpu: "+(100-usageCpu).ToString("0.00")+"%"+*/Environment.NewLine+
+							"[RAM] Proces: "+(usageRamProcess/1048576).ToString("0.00")+"MB"/*, Volná ram: "+usageRam.ToString("0.00")+"MB"+Environment.NewLine*/;
+							Vector2 infoV =Fonts.Small.MeasureString(info);
 
+							spriteBatch.Draw(pixel,new Rectangle(0,0,(int)infoV.X+10, (int)infoV.Y), Color.White*0.75f/**(1-dayAlpha*2)*0.25f*/);
+
+							GameDraw.DrawTextShadowMin(5, 5, info, Color.Black/*new Color(255,1- dayAlpha*2,1-dayAlpha*2)*/);
 						}
 					} else if (Setting.Fps) {
 						fpss+=1000f/(float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -9551,6 +9686,22 @@ rameno.X -= 17;
 				TranslationNoOpMultisapling=ZoomMatrixNoUpScaling*Matrix.CreateTranslation(new Vector3(Global.WindowWidthHalf, Global.WindowHeightHalf, 0));
 			}
 
+			//if (CurrentPrecipitation==Precipitation.Rain){
+				float scale=(float)Global.WindowWidth/Fullscreen.Width;
+				foreach (ParticleRain rd in rainDots){
+					rd.Position.X*=scale;
+				}
+				foreach (ParticleSnow rd in snowDots){
+					rd.Position.X*=scale;
+				}
+				foreach (ParticleSand rd in sandDots){
+					rd.Position.X*=scale;
+				}
+				//foreach (ParticleSnowSmall rd in snowDotsSmall){
+				//	rd.Position.X*=scale;
+				//}
+			//}
+
 			if (Global.WorldDifficulty==0) {
 				barEat.Resize();
 				barWater.Resize();
@@ -9563,7 +9714,8 @@ rameno.X -= 17;
 			CreateGradientTexture();
 			sunLightTarget?.Dispose();
 			sunLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
-
+			targetShadows?.Dispose();
+			targetShadows=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			modificatedLightTarget?.Dispose();
 			modificatedLightTarget=new RenderTarget2D(Graphics, Global.WindowWidth, Global.WindowHeight/*,true,SurfaceFormat.Color,DepthFormat.Depth16,8,RenderTargetUsage.PlatformContents*/);
 			//if (SuperSamplingActing!=1f) {
@@ -10323,10 +10475,23 @@ rameno.X -= 17;
 						if (blockId!=(ushort)BlockId.None) {
 							Block block = SolidBlockFromId(blockId, mousePosRoundVector);
 
-							if (block!=null) {
+							if (block!=null) {	
+								if (blockId==(int)BlockId.DoorClose) {
+									if (chunk.IsSolidBlocks[y+1] || chunk.IsSolidBlocks[y+2]) goto offNoBack;
+
+									if (y>2) {
+										DoorBlock doorblock=new((ushort)BlockId.DoorCloseDownPart){ originalY=y };
+										chunk.SolidBlocks[y+1]=doorblock;
+										chunk.IsSolidBlocks[y+1]=true;
+										chunk.SolidBlocks[y+2]=doorblock;
+										chunk.IsSolidBlocks[y+2]=true;
+									}
+								}
 								if (chunk.StartSomething>y)chunk.StartSomething=y;
 								chunk.SolidBlocks[y]=block;
 								chunk.IsSolidBlocks[y]=true;
+
+							
 
 
 								chunk.RefreshLightingAddSolid(x, y);
@@ -10467,7 +10632,7 @@ rameno.X -= 17;
 						}
 					//	}
 					}
-
+					offNoBack:
 					if (!chunk.IsBackground[y]) {
 						ushort blockId=GameMethods.BackBlockFromItem(id);
 						if (blockId!=(ushort)BlockId.None) {
@@ -10557,6 +10722,16 @@ rameno.X -= 17;
 									chunk.IsTopBlocks[y]=true;
 									if (chunk.StartSomething>y) chunk.StartSomething=y;
 									terrain[x].RefreshLightingAddTop(y, id: blockId);
+									
+									if (blockId==(int)BlockId.DoorOpen) {
+										if (y>2) {
+											DoorBlock doorblock=new DoorBlock((ushort)BlockId.DoorOpenDownPart){ originalY=y };
+											chunk.TopBlocks[y+1]=doorblock;
+											chunk.IsTopBlocks[y+1]=true;
+											chunk.TopBlocks[y+2]=doorblock;
+											chunk.IsTopBlocks[y+2]=true;
+										}
+									}
 
 									if (blockId<(ushort)BlockId._MoreInLoad) {
 										switch (blockId) {
@@ -10605,12 +10780,12 @@ rameno.X -= 17;
 													if (chunk.Background[y].Id==(ushort)BlockId.RubberTreeWood) {
 														bucketRubber.Add(new ShortAndByte((short)x, (byte)y));
 													}else {
-													ItemDrop(new ItemNonInvBasic((ushort)Items.BucketForRubber,1),x,y);
+													DropItemToPos(new ItemNonInvBasic((ushort)Items.BucketForRubber,1),x,y);
 													chunk.IsBackground[y]=false;
 													/*((AirSolidBlock)chunk.SolidBlocks[y]).Back=*/chunk.Background[y]=null;
 												}
 												} else {
-													ItemDrop(new ItemNonInvBasic((ushort)Items.BucketForRubber,1),x,y);
+													DropItemToPos(new ItemNonInvBasic((ushort)Items.BucketForRubber,1),x,y);
 													chunk.IsBackground[y]=false;
 													/*((AirSolidBlock)chunk.SolidBlocks[y]).Back=*/chunk.Background[y]=null;
 												}
@@ -15861,9 +16036,17 @@ rameno.X -= 17;
 						Biomes=new BiomeData[count];
 						for (int i = 0; i<count; i++) {
 							Biomes[i]=new BiomeData {
-								Name=(Biome)(*current++),
+								Type=(Biome)(*current++),
 								Start=*current++ | (*current++<<8),
 								End=*current++ | (*current++<<8),
+								precipitation=new Precipitation(){
+									Rain=(*current++==1),
+									Snow=(*current++==1),
+									Sand=(*current++==1),
+									WindForce=((*current++)-128)/128f,
+									RainForce=((*current++)-128)/128f,
+									SnowForce=((*current++)-128)/128f,
+								}
 							};
 						}
 					}
@@ -15875,18 +16058,26 @@ rameno.X -= 17;
 			}else{
 				switch (world){
 					case "Moon":
-						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Moon, Start=0, End=TerrainLength } };
+						Biomes=new BiomeData[]{ new BiomeData{ Type=Biome.Moon, Start=0, End=TerrainLength } };
 						break;
 
 					case "Mars":
-						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Mars, Start=0, End=TerrainLength} };
+						Biomes=new BiomeData[]{ new BiomeData{ Type=Biome.Mars, Start=0, End=TerrainLength} };
 						break;
 
 					case "SpaceStation":
-						Biomes=new BiomeData[]{ new BiomeData{ Name=Biome.Mars, Start=0, End=TerrainLength} };
+						Biomes=new BiomeData[]{ new BiomeData{ Type=Biome.Mars, Start=0, End=TerrainLength} };
 						break;
 				}
 
+			}
+
+			for (int i=0; i<Biomes.Length; i++) {
+				BiomeData biome=Biomes[i];
+				Debug.WriteLine("Loaded "+biome.Type.ToString()+" Start: "+biome.Start+" end"+biome.End);
+				for (int x=biome.Start; x<biome.End && x<TerrainLength; x++) {
+					terrain[x].Biome=biome;
+				}
 			}
 		}
 
@@ -16217,6 +16408,7 @@ rameno.X -= 17;
                 (ushort)BlockId.Roof2 => new NormalBlock { Texture = roof2Texture, Id = type, Position = position },
                 (ushort)BlockId.Bricks => new NormalBlock { Texture = bricksTexture, Id = type, Position = position },
                 (ushort)BlockId.DoorClose => new NormalBlock { Texture = doorCloseTexture, Id = type, Position = position },
+                (ushort)BlockId.DoorCloseDownPart => new DoorBlock { Id = type, originalY=FindDoorClosePartY((int)position.X/16, (int)position.Y/16)},
                 (ushort)BlockId.Planks => new NormalBlock { Texture = planksTexture, Id = type, Position = position },
                 (ushort)BlockId.AdvancedSpaceBlock => new NormalBlock { Texture = advancedSpaceBlockTexture, Id = type, Position = position },
                 (ushort)BlockId.AdvancedSpaceFloor => new NormalBlock { Texture = advancedSpaceFloorTexture, Id = type, Position = position },
@@ -16228,6 +16420,25 @@ rameno.X -= 17;
                 _ => null,
             };
         }
+
+		int FindDoorClosePartY(int x, int y) {
+			if (terrain[x].IsSolidBlocks[y+1]) {
+				if (terrain[x].SolidBlocks[y+1].Id==(int)BlockId.DoorClose) return y+1;
+			}
+			if (terrain[x].IsSolidBlocks[y+2]) {
+				if (terrain[x].SolidBlocks[y+2].Id==(int)BlockId.DoorClose) return y+2;
+			}
+			return 0;
+		}
+		int FindDoorOpenPartY(int x, int y) {
+			if (terrain[x].IsTopBlocks[y+1]) {
+				if (terrain[x].TopBlocks[y+1].Id==(int)BlockId.DoorOpen) return y+1;
+			}
+			if (terrain[x].IsTopBlocks[y+2]) {
+				if (terrain[x].TopBlocks[y+2].Id==(int)BlockId.DoorOpen) return y+2;
+			}
+			return 0;
+		}
 
 		Block TopBlockFromId(ushort type, Vector2 position) {
 			switch (type) {
@@ -16345,6 +16556,7 @@ rameno.X -= 17;
 
 				// Artifical Blocks
 				case (ushort)BlockId.DoorOpen: return new NormalBlock{Texture=doorOpenTexture, Id=type, Position=position};
+				case (ushort)BlockId.DoorOpenDownPart: return new DoorBlock{Id=type,originalY=FindDoorOpenPartY((int)position.X/16, (int)position.Y/16)};
 
 				// Mechanical
 				case (ushort)BlockId.Flag: return new AnimatedBlock(flagTexture, position,25,35,type);
@@ -17021,4841 +17233,4843 @@ rameno.X -= 17;
 
 			changePosition=true;
 		}
-		#endregion
-
-		#region Inventory
-		void SetUpInvToNew() {
-			Resize();
-			if (lastMashineType!=inventory) {
-				switch (inventory) {
-					case InventoryType.BasicInv:
-						SetInvCraftingBlocks();
-						break;
-
-					case InventoryType.Desk:
-						SetInvCraftingBlocksA();
-						break;
-
-					case InventoryType.FurnaceStone:
-						SetInvBakeIngots();
-						for (int i=0; i<4; i++) {
-							((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
-						}
-						break;
-
-					case InventoryType.FurnaceElectric:
-						SetInvBakeIngots();
-						break;
-
-					case InventoryType.Macerator:
-						SetInvToDustDusts();
-						break;
-
-					case InventoryType.SewingMachine:
-						SetInvClothesHead();
-						break;
-				}
-			}
-			CurrentDeskCrafting=null;
-
-			SelectedCraftingRecipe=-1;
-			lastMashineType=inventory;
-		}
-
-		void InventoryRemoveSelectedItem() {
-			ItemInv i=InventoryNormal[boxSelected];
-			switch (i) {
-				case ItemInvTool32 s:
-				   // s.SetCount=s.GetCount-1;
-					if (s.GetCount==1) {
-						InventoryNormal[boxSelected]=itemBlank;
-					} else {
-						s.SetCount=s.GetCount-1;
-					}
-					break;
-
-				case ItemInvTool16 s:
-					if (s.GetCount==1) {
-						InventoryNormal[boxSelected]=itemBlank;
-					} else {
-						s.SetCount=s.GetCount-1;
-					}
-					break;
-
-				case ItemInvBasic16 s:
-					if (s.GetCount==1) {
-						InventoryNormal[boxSelected]=itemBlank;
-					} else {
-						s.SetCount=s.GetCount-1;
-					}
-					break;
-
-				case ItemInvBasic32 s:
-					if (s.GetCount==1) {
-						InventoryNormal[boxSelected]=itemBlank;
-					} else {
-						s.SetCount=s.GetCount-1;
-					}
-					break;
-
-				//case ItemInvBasicColoritzed32NonStackable s:
-				//    InventoryNormal[boxSelected]=itemBlank;
-				//    break;
-
-				//case ItemInvNonStackable16 s:
-				//    InventoryNormal[boxSelected]=itemBlank;
-				//    break;
-
-				//case ItemInvNonStackable32 s:
-				//    InventoryNormal[boxSelected]=itemBlank;
-				//    break;
-
-				case ItemInvFood16 s:
-					if (s.GetCount==1) {
-						InventoryNormal[boxSelected]=itemBlank;
-					} else {
-						s.SetCount=s.GetCount-1;
-					}
-					break;
-
-				default:
-					InventoryNormal[boxSelected]=itemBlank;
-					break;
-
-			}
-		}
-
-		void StartItemMove(ItemInv[] inv, int id) {
-			Debug.WriteLine("StartItemMove");
-			if (inv[id].Id!=0) {
-				invMove = true;
-				startMovePos=inv[id].GetPos();
-				mouseItem=inv[id];
-				inv[id]=itemBlank;
-				invStartId=id;
-				invStartInventory=inv;
-				showMouseItemWhileMooving=true;
-				mouseDrawItemTextInfo=false;
-
-				//Console.WriteLine("start: "+id);
-			}
-		}
-
-		void StartItemMoveHalf(ItemInv[] inv, int id) {
-			Debug.WriteLine("StartItemMoveHalf");
-			if (id!=0) {
-				invMove = true;
-				invStartId=id;
-				invStartInventory=inv;
-
-				startMovePos=inv[id].GetPos();
-
-				showMouseItemWhileMooving=true;
-				mouseDrawItemTextInfo=false;
-
-				switch (inv[id]) {
-					case ItemInvBasic16 i:
-						{
-							int c=i.GetCount;
-							if (c==1) {
-								mouseItem=new ItemInvBasic16(i.Texture, i.Id, 1, mouseRealPosX, mouseRealPosY);
-								inv[id]=itemBlank;
-							} else {
-								int stay=c/2;
-								DInt z=GetPosOfItemInInventories(inv,id);
-								inv[id]=new ItemInvBasic16(i.Texture, i.Id, stay, z.X, z.Y);
-								mouseItem=new ItemInvBasic16(i.Texture, i.Id, c-stay, mouseRealPosX, mouseRealPosY);
-							}
-						}
-						return;
-
-					case ItemInvBasic32 i:
-						{
-							int c=i.GetCount;
-							if (c==1) {
-								mouseItem=new ItemInvBasic32(i.Texture, i.Id, 1, mouseRealPosX, mouseRealPosY);
-								inv[id]=itemBlank;
-							} else {
-								int stay=c/2;
-							((ItemInvBasic32)inv[id]).SetCount=stay;
-							//	inv[id]=new ItemInvBasic32(i.Texture, i.Id, stay, mouseRealPosX, mouseRealPosY);
-								mouseItem=new ItemInvBasic32(i.Texture, i.Id, c-stay, mouseRealPosX, mouseRealPosY);
-							}
-						}
-						return;
-
-					case ItemInvFood16 i:
-						{
-							int c=i.GetCount;
-							if (c==1) {
-								mouseItem=new ItemInvFood16(i.Texture, i.Id, 1, i.CountMaximum, i.GetDescay, i.DescayMaximum, mouseRealPosX, mouseRealPosY);
-								inv[id]=itemBlank;
-							} else {
-								int stay=c/2;
-								inv[id]=new ItemInvFood16(i.Texture, i.Id, stay, i.CountMaximum, i.GetDescay, i.DescayMaximum,  mouseRealPosX, mouseRealPosY);
-								mouseItem=new ItemInvFood16(i.Texture, i.Id, c-stay, i.CountMaximum, i.GetDescay, i.DescayMaximum, mouseRealPosX, mouseRealPosY);
-							}
-						}
-						return;
-
-					case ItemInvTool16 i:
-						{
-							mouseItem=new ItemInvTool16(i.Texture, i.Id, 1, i.Maximum, mouseRealPosX, mouseRealPosY);
-							inv[id]=itemBlank;
-						}
-						return;
-
-					case ItemInvTool32 i:
-						{
-							mouseItem=new ItemInvTool32(i.Texture, i.Id, 1, i.Maximum, mouseRealPosX, mouseRealPosY);
-							inv[id]=itemBlank;
-						}
-						return;
-
-					case ItemInvNonStackable16 i:
-						{
-							mouseItem=new ItemInvNonStackable16(i.Texture, i.Id, mouseRealPosX, mouseRealPosY);
-							inv[id]=itemBlank;
-						}
-						return;
-
-					case ItemInvNonStackable32 i:
-						{
-							mouseItem=new ItemInvNonStackable32(i.Texture, i.Id, mouseRealPosX, mouseRealPosY);
-							inv[id]=itemBlank;
-						}
-						return;
-
-					case ItemInvBasicColoritzed32NonStackable i:
-						{
-							mouseItem=new ItemInvBasicColoritzed32NonStackable(i.Texture, i.Id, i.color, mouseRealPosX, mouseRealPosY);
-							inv[id]=itemBlank;
-						}
-						return;
-				}
-			}
-		}
-
-		DInt GetPosOfItemInInventories(ItemInv[] inv, int i) {
-			if (IsSameArray(inv, InventoryNormal)) {
-				DInt p=InventoryGetPosNormal(i);
-				if (p is not null) return p;
-			}
-			if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-				if (IsSameArray(inv, InventoryClothes)) {
-					DInt p=InventoryGetPosClothes(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.BoxWooden) {
-				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosBoxWooden(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.FurnaceStone) {
-				if (IsSameArray(inv, ((MashineBlockBasic )terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosFurnaceStone(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.BoxAdv) {
-				if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosAdvBox(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.Miner) {
-				if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosBoxWooden(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-				if (IsSameArray(inv, ((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosShelf(i);
-					if (p is not null) return p;
-				}
-			}
-			if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-				if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					return new DInt{ X=Global.WindowWidthHalf-300+38+40+4, Y=Global.WindowHeightHalf+20-2+40+25+4 };
-				}
-			}
-			if (inventory==InventoryType.Barrel) {
-				if (IsSameArray(inv, ((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
-					DInt p=InventoryGetPosBarrel(i);
-					if (p is not null) return p;
-				}
-			}
-			#if DEBUG
-			throw new Exception("Unknown move to position");
-			#else
-			return null;
-			#endif
-		}
-
-		void InvMove(ItemInv[] toA, int toI) {
-			Debug.WriteLine("InvMove");
-			showMouseItemWhileMooving=false;
-			mouseDrawItemTextInfo=true;
-			invMove=false;
-			// Debug.WriteLine("dest: "+toI);
-			if (mouseItem.Id==toA[toI].Id) {
-				switch (mouseItem) {
-					case ItemInvBasic16 f:
-						{
-							ItemInvBasic16 t=(ItemInvBasic16)toA[toI];
-							int total=f.GetCount+t.GetCount;
-							if (total>100) {
-								t.SetCount=99;
-								f.SetCount=total-99;
-								invStartInventory[invStartId]=mouseItem;
-							} else {
-								t.SetCount=total;
-							}
-						}
-						return;
-
-					case ItemInvBasic32 f:
-						{
-							ItemInvBasic32 t=(ItemInvBasic32)toA[toI];
-							int total=f.GetCount+t.GetCount;
-
-							if (total>100) {
-								t.SetCount=99;
-								f.SetCount=total-99;
-								invStartInventory[invStartId]=mouseItem;
-							} else {
-								t.SetCount=total;
-							}
-						}
-						return;
-
-					case ItemInvFood16 f:
-						{
-							ItemInvFood16 t=(ItemInvFood16)toA[toI];
-							int max=f.CountMaximum;
-							int total=f.GetCount+t.GetCount;
-
-							if (total>max) {
-								t.SetCount=max;
-								f.SetCount=total-max;
-								invStartInventory[invStartId]=mouseItem;
-							} else {
-								t.SetCount=total;
-							}
-						}
-						return;
-
-					//case ItemInvNonStackable16 f:
-					//    {
-					//        ItemInv t=toA[toI];
-					//        toA[toI]=mouseItem;
-					//        invStartInventory[invStartId]=t;
-					//    }
-					//    return;
-
-					//case ItemInvNonStackable32 f:
-					//    {
-					//        ItemInv t=toA[toI];
-					//        toA[toI]=mouseItem;
-					//        invStartInventory[invStartId]=t;
-					//    }
-					//    return;
-
-					//case ItemInvBasicColoritzed32NonStackable f:
-					//    {
-					//        ItemInv t=toA[toI];
-					//        toA[toI]=mouseItem;
-					//        invStartInventory[invStartId]=t;
-					//    }
-					//    return;
-
-					//case ItemInvTool32 f:
-					//    {
-					//        ItemInv t=toA[toI];
-					//        toA[toI]=mouseItem;
-					//        invStartInventory[invStartId]=t;
-					//    }
-					//    return;
-
-					default:
-						{
-							ItemInv t=toA[toI];
-							toA[toI]=mouseItem;
-							invStartInventory[invStartId]=t;
-						}
-						return;
-				}
-			} else {
-				if (toA[toI].Id==0) {
-
-					//invStartInventory[invStartId]=itemBlank;
-					//DInt p=new DInt(int.MinValue,int.MinValue);
-					//if (toA==InventoryNormal) {
-					//    p=InventoryGetPosNormal(toI);
-					//}
-					//if (inventory==InventoryType.BasicInv) {
-					//    if (toA==InventoryClothes) {
-					//        p=InventoryGetPosClothes(toI);
-					//    }
-					//}
-					//if (inventory==InventoryType.BoxWooden) {
-					//    p=InventoryGetPosBoxWooden();
-					//}
-					//if (inventory==InventoryType.BoxAdv) {
-					//    p=InventoryGetPosAdvBox();
-					//}
-					//#if DEBUG
-					//if (p.X==int.MinValue) throw new Exception("Unknown move to position");
-					//#endif
-					DInt p=GetPosOfItemInInventories(toA,toI);
-					toA[toI]=mouseItem;
-					toA[toI].SetPos(p.X, p.Y);
-					mouseItem=itemBlank;
-					return;
-				} else {
-					ItemInv t=toA[toI];
-					DInt destinationPos=t.GetPos();
-				  //  Vector2 sourcePos=invStartInventory[invStartId].GetPosVector2();
-
-					toA[toI]=mouseItem;
-					mouseItem.SetPos(destinationPos.X, destinationPos.Y);
-					invStartInventory[invStartId]=t;
-					t.SetPos(startMovePos.X, startMovePos.Y);
-				  //  DInt p=null;
-				  ////  if (invStartInventory==InventoryNormal) {
-				  //      p=InventoryGetPosNormal(invStartId);
-				  // // }
-				  //  if (inventory==InventoryType.BasicInv) {
-				  //      if (toA==InventoryClothes) {
-				  //          p=InventoryGetPosClothes(toI);
-				  //      }
-				  //  }
-				  //  if (inventory==InventoryType.BoxWooden) {
-				  //      p=InventoryGetPosBoxWooden();
-				  //  }
-				  //  if (inventory==InventoryType.BoxAdv) {
-				  //      p=InventoryGetPosAdvBox();
-				  //  }
-				  //  #if DEBUG
-				  //  if (p==null) throw new Exception("Unknown move to position");
-				  //  #endif
-				   // DInt p=GetPosOfItemInInventories(toA,toI);
-					mouseItem=itemBlank;
-					return;
-				}
-			}
-		}
-
-		void InvMoveOne(ItemInv[] toA, int toI) {
-			Debug.WriteLine("InvMoveOne");
-			if (mouseItem.Id==toA[toI].Id) {
-				switch (mouseItem) {
-					case ItemInvBasic16 f:
-						{
-							ItemInvBasic16 t=(ItemInvBasic16)toA[toI];
-							if (t.GetCount==99) return;
-
-							if (f.GetCount==1) {
-								t.SetCount=t.GetCount+1;
-								invStartInventory[invStartId]=itemBlank;
-							} else {
-								t.SetCount=t.GetCount+1;
-							//	t.SetCount=t.GetCount-1;
-							}
-							return;
-						}
-
-
-					case ItemInvBasic32 f:
-						{
-							ItemInvBasic32 t=(ItemInvBasic32)toA[toI];
-							if (t.GetCount==99) return;
-
-							if (f.GetCount==1) {
-								t.SetCount=t.GetCount+1;
-								invStartInventory[invStartId]=itemBlank;
-							} else {
-								t.SetCount=t.GetCount+1;
-								//t.SetCount=t.GetCount-1;
-							}
-							return;
-						}
-
-					case ItemInvFood16 f:
-						{
-							ItemInvFood16 t=(ItemInvFood16)toA[toI];
-							int max=t.CountMaximum;
-							if (t.GetCount==max) return;
-
-							if (f.GetCount==1) {
-								t.SetCount=t.GetCount+1;
-								invStartInventory[invStartId]=itemBlank;
-							} else {
-								t.SetCount=t.GetCount+1;
-								t.SetCount=t.GetCount-1;
-							}
-							return;
-						}
-				}
-			} else if (toA[toI].Id==(ushort)BlockId.None) {
-				 switch (mouseItem) {
-					case ItemInvBasic16 f:
-						{
-							if (f.GetCount==1) {
-								DInt p=GetPosOfItemInInventories(toA, toI);
-								toA[toI]=new ItemInvBasic16(f.Texture, f.Id, 1, p.X, p.Y);
-								mouseItem=itemBlank;
-							} else {
-								int half=f.GetCount/2;
-								DInt p=GetPosOfItemInInventories(toA, toI);
-								toA[toI]=new ItemInvBasic16(f.Texture, f.Id, f.GetCount-half, p.X, p.Y);
-								f.SetCount=half;
-							}
-							return;
-						}
-
-					case ItemInvBasic32 f:
-						{
-							if (f.GetCount==1) {
-								DInt p=GetPosOfItemInInventories(toA, toI);
-								toA[toI]=new ItemInvBasic32(f.Texture, f.Id, 1, p.X, p.Y);
-								mouseItem=itemBlank;
-							} else {
-								int half=f.GetCount/2;
-								DInt p=GetPosOfItemInInventories(toA, toI);
-								toA[toI]=new ItemInvBasic32(f.Texture, f.Id, f.GetCount-half, p.X, p.Y);
-								f.SetCount=half;
-							}
-							return;
-						}
-
-					#if DEBUG
-					default: throw new Exception("Missing ItemInv category in switch");
-					#endif
-				}
-			}else{
-				 switch (mouseItem) {
-					case ItemInvBasicColoritzed32NonStackable f:
-						invMove=false;
-						Vector2 toPos=toA[toI].GetPosVector2();
-						invStartInventory[invStartId]=toA[toI];
-						toA[toI]=mouseItem;
-						f.SetPos(toPos);
-						mouseItem=null;
-						invStartInventory[invStartId].SetPos(startMovePos);
-						mouseDrawItemTextInfo=true;
-						showMouseItemWhileMooving=false;
-						return;
-
-					#if DEBUG
-					default: throw new Exception("Missing ItemInv category in switch");
-					#endif
-				}
-			}
-
-			invMove=false;
-		}
-
-		void InvMoveHalf(ItemInv[] toA, int toI) {
-			Debug.WriteLine("InvMoveHalf");
-			//if (fromA[fromI].Id!=0 && toA[toI].Id==0) {
-				switch (invStartInventory[invStartId]) {
-					case ItemInvBasic16 item:
-						{
-							if (item.GetCount>1) {
-								int half=(int)((float)item.GetCount/2);
-								int fromY=item.GetCount-half;
-							   // DInt p=GetPosOfItemInInventories(invStartInventory,invStartId);
-							   // InventoryGetPosNormal(toI);
-								toA[toI]=new ItemInvBasic16(item.Texture,item.Id,half, startMovePos.X, startMovePos.Y);
-								((ItemInvBasic16)invStartInventory[invStartId]).SetCount=fromY;
-								return;
-							}
-						}
-						break;
-
-					case ItemInvBasic32 item:
-						{
-							if (item.GetCount>1) {
-								int half=(int)((float)item.GetCount/2);
-								int fromY=item.GetCount-half;
-								DInt p=InventoryGetPosNormal(toI);
-								toA[toI]=new ItemInvBasic32(item.Texture,item.Id,half, p.X, p.Y);
-								((ItemInvBasic32)invStartInventory[invStartId]).SetCount=fromY;
-								return;
-							}
-						}
-						break;
-				}
-		   // }
-			invMove=false;
-		}
-
-		void InvDrop() {
-			if (mouseRealPosX<Global.WindowWidthHalf){
-				if (terrain[(PlayerXInt-30)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
-				else DropItemToPos(mouseItem.ToNon(), PlayerXInt-30, PlayerYInt);
-			}else{
-				if (terrain[(PlayerXInt+20)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
-				else DropItemToPos(mouseItem.ToNon(), PlayerXInt+20, PlayerYInt);
-			}
-			invMove=false;
-			mouseItem=itemBlank;
-			mouseItemId=0;
-			showMouseItemWhileMooving=false;
-			mouseDrawItemTextInfo=true;
-		}
-
-		void InvRemove() {
-		 //   invStartInventory[invStartId]=itemBlank;
-			invMove=false;
-			showMouseItemWhileMooving=false;
-			mouseItem=itemBlank;
-		}
-
-		bool InventoryAddOne(ushort index) {
-
-			#region Nonstackable
-			if (GameMethods.IsItemInvNonStackable32(index)) {
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == 0) {
-						DInt pos;
-						if (i<5) pos=InventoryGetPosNormal(i);
-						else pos=InventoryGetPosNormalInv(i);
-						InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(index),index,pos.X,pos.Y);
-						return true;
-					}
-				}
-				return false;
-			}
-			if (GameMethods.IsItemInvFood16(index)) {
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == 0) {
-						DInt pos;
-						if (i<5) pos=InventoryGetPosNormal(i);
-						else pos=InventoryGetPosNormalInv(i);
-						InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(index),index,pos.X,pos.Y);
-						return true;
-					}
-				}
-				return false;
-			}
-			if (GameMethods.IsItemInvFood32(index)) {
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == 0) {
-						DInt pos;
-						if (i<5) pos=InventoryGetPosNormal(i);
-						else pos=InventoryGetPosNormalInv(i);
-						InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(index),index,pos.X,pos.Y);
-						return true;
-					}
-				}
-				return false;
-			}
-			#endregion
-
-			#region Stackable
-			if (GameMethods.IsItemInvBasic16(index)) {
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == 0) {
-						DInt pos;
-						if (i<5) pos=InventoryGetPosNormal(i);
-						else pos=InventoryGetPosNormalInv(i);
-						InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
-						return true;
-					}
-				}
-
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == index) {
-						ItemInvBasic16 item=(ItemInvBasic16)InventoryNormal[i];
-						if (item.GetCount<99) {
-							item.SetCount=item.GetCount+1;
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-
-			if (GameMethods.IsItemInvBasic32(index)) {
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == 0) {
-						DInt pos;
-						if (i<5) pos=InventoryGetPosNormal(i);
-						else pos=InventoryGetPosNormalInv(i);
-						InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
-						return true;
-					}
-				}
-
-				for (int i=0; i<maxInvCount; i++) {
-					if (InventoryNormal[i].Id == index) {
-						ItemInvBasic32 item=(ItemInvBasic32)InventoryNormal[i];
-						if (item.GetCount<99) {
-							item.SetCount=item.GetCount+1;
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-			#endregion
-
-			return false;
-		}
-
-		//bool InventoryAddOne(ushort index, Color color) {
-
-		//    #region Nonstackable
-		//    if (GameMethods.IsItemInvNonStackable32(index)) {
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == 0) {
-		//                DInt pos;
-		//                if (i<5) pos=InventoryGetPosNormal(i);
-		//                else pos=InventoryGetPosNormalInv(i);
-		//                InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(index),index,pos.X,pos.Y);
-		//                return true;
-		//            }
-		//        }
-		//        return false;
-		//    }
-
-		//    if (GameMethods.IsItemInvBasicColoritzed32NonStackable(index)) {
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == 0) {
-		//                DInt pos;
-		//                if (i<5) pos=InventoryGetPosNormal(i);
-		//                else pos=InventoryGetPosNormalInv(i);
-		//                InventoryNormal[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(index),index,color,pos.X,pos.Y);
-		//                return true;
-		//            }
-		//        }
-		//        return false;
-		//    }
-		//    #endregion
-
-		//    #region Stackable
-		//    if (GameMethods.IsItemInvBasic16(index)) {
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == 0) {
-		//                DInt pos;
-		//                if (i<5) pos=InventoryGetPosNormal(i);
-		//                else pos=InventoryGetPosNormalInv(i);
-		//                InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
-		//                return true;
-		//            }
-		//        }
-
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == index) {
-		//                ItemInvBasic16 item=(ItemInvBasic16)InventoryNormal[i];
-		//                if (item.GetCount<99) {
-		//                    item.SetCount=item.GetCount+1;
-		//                    return true;
-		//                }
-		//            }
-		//        }
-		//        return false;
-		//    }
-
-		//    if (GameMethods.IsItemInvBasic32(index)) {
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == 0) {
-		//                DInt pos;
-		//                if (i<5) pos=InventoryGetPosNormal(i);
-		//                else pos=InventoryGetPosNormalInv(i);
-		//                InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
-		//                return true;
-		//            }
-		//        }
-
-		//        for (int i=0; i<maxInvCount; i++) {
-		//            if (InventoryNormal[i].Id == index) {
-		//                ItemInvBasic32 item=(ItemInvBasic32)InventoryNormal[i];
-		//                if (item.GetCount<99) {
-		//                    item.SetCount=item.GetCount+1;
-		//                    return true;
-		//                }
-		//            }
-		//        }
-		//        return false;
-		//    }
-		//    #endregion
-
-		//    return false;
-		//}
-
-		ItemNonInv InventoryAdd(ItemNonInv it) {
-
-			switch (it) {
-				#region Nonstackable
-				case ItemNonInvNonStackable item:
-					if (GameMethods.IsItemInvNonStackable32(it.Id)) {
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i].Id == 0) {
-								DInt pos=InventoryGetPosNormal(i);
-								//if (i<5) pos
-								//else pos=InventoryGetPosNormalInv(i);
-								InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(it.Id),it.Id,pos.X,pos.Y);
-								return null;
-							}
-						}
-					} else {
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i].Id == 0) {
-								DInt pos=InventoryGetPosNormal(i);
-								//if (i<5) pos
-								//else pos=InventoryGetPosNormalInv(i);
-								InventoryNormal[i]=new ItemInvNonStackable16(ItemIdToTexture(it.Id),it.Id,pos.X,pos.Y);
-								return null;
-							}
-						}
-					}
-					return it;
-
-				case ItemNonInvBasicColoritzedNonStackable item:
-					if (GameMethods.IsItemInvBasicColoritzed32NonStackable(it.Id)) {
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i].Id == 0) {
-								DInt pos=InventoryGetPosNormal(i);
-								//if (i<5) pos
-								//else pos=InventoryGetPosNormalInv(i);
-								InventoryNormal[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(it.Id),it.Id,item.color,pos.X,pos.Y);
-								return null;
-							}
-						}
-					}
-					return it;
-
-			#endregion
-
-				#region stackable
-				case ItemNonInvBasic item:
-					if (GameMethods.IsItemInvBasic16(it.Id)) {
-						int remain=item.Count;
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i].Id == it.Id) {
-								ItemInvBasic16 item2=(ItemInvBasic16)InventoryNormal[i];
-								if (item2.GetCount<99) {
-									int needToAdd=99-item2.GetCount;
-									if (needToAdd>remain) {
-										item2.SetCount=item2.GetCount+remain;
-										return null;
-									} else if (needToAdd==remain) {
-										item2.SetCount=item2.GetCount+remain;
-										return null;
-									} else {
-										item2.SetCount=99;
-										remain-=needToAdd;
-									}
-								}
-							}
-						}
-
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i].Id == 0) {
-								DInt pos=InventoryGetPosNormal(i);
-								//if (i<5) pos
-								//else pos=InventoryGetPosNormalInv(i);
-								if (remain<=99) {
-									InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
-									return null;
-								} else {
-									InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
-									remain-=99;
-								}
-							}
-						}
-
-						return new ItemNonInvBasic(it.Id,remain);
-					} else {
-						int remain=item.Count;
-
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i]!=null) {
-								if (InventoryNormal[i].Id == it.Id) {
-									ItemInvBasic32 item2=(ItemInvBasic32)InventoryNormal[i];
-									if (item2.GetCount<99) {
-										int needToAdd=99-item2.GetCount;
-										if (needToAdd>remain) {
-											item2.SetCount=item2.GetCount+remain;
-											return null;
-										} else if (needToAdd==remain) {
-											item2.SetCount=item2.GetCount+remain;
-											return null;
-										} else {
-											item2.SetCount=99;
-											remain-=needToAdd;
-										}
-									}
-								}
-							}
-						}
-
-						for (int i=0; i<maxInvCount; i++) {
-							if (InventoryNormal[i]!=null) {
-
-								if (InventoryNormal[i].Id == 0) {
-									DInt pos;
-									if (i<5) pos=InventoryGetPosNormal(i);
-									else pos=InventoryGetPosNormalInv(i);
-									if (remain<=99) {
-										InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
-										return null;
-									} else {
-										InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
-										remain-=99;
-									}
-								}
-							}
-						}
-						return new ItemNonInvBasic(it.Id,remain);
-					}
-
-			case ItemNonInvFood item:
-				if (GameMethods.IsItemInvFood16(it.Id)) {
-					int remain=item.Count;
-					//for (int i=0; i<maxInvCount; i++) {
-					//	if (InventoryNormal[i]!=null) {
-					//		if (InventoryNormal[i].Id == it.Id) {
-					//			ItemInvFood16 item2=(ItemInvFood16)InventoryNormal[i];
-					//			if (item2.GetCount<item2.CountMaximum) {
-					//				int needToAdd=item2.CountMaximum-item2.GetCount;
-					//				if (needToAdd>remain) {
-					//					item2.SetCount=item2.GetCount+remain;
-					//					return null;
-					//				} else if (needToAdd==remain) {
-					//					item2.SetCount=item2.GetCount+remain;
-					//					return null;
-					//				} else {
-					//					item2.SetCount=item2.CountMaximum;
-					//					remain-=needToAdd;
-					//				}
-					//			}
-					//		}
-					//	}
-					//}
-
-					for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
-
-						if (InventoryNormal[i].Id == 0) {
-							DInt pos=InventoryGetPosNormal(i);
-								if (remain<=item.CountMaximum) {
-							InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
-								 //   InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
-									return null;
-								} else {
-							InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
-								  //  InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
-									remain-=item.CountMaximum;
-								}
-							}
-						} }
-					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
-				} else {
-				   int remain=item.Count;
-					//for (int i=0; i<maxInvCount; i++) {
-					//	if (InventoryNormal[i]!=null) {
-
-					//	if (InventoryNormal[i].Id == it.Id) {
-					//		ItemInvFood32 item2=(ItemInvFood32)InventoryNormal[i];
-					//		if (item2.GetCount<item2.CountMaximum) {
-					//			int needToAdd=item2.CountMaximum-item2.GetCount;
-					//			if (needToAdd>remain) {
-					//				item2.SetCount=item2.GetCount+remain;
-					//				return null;
-					//			} else if (needToAdd==remain) {
-					//				item2.SetCount=item2.GetCount+remain;
-					//				return null;
-					//			} else {
-					//				item2.SetCount=item2.CountMaximum;
-					//				remain-=needToAdd;
-					//			}
-					//		}
-					//	}
-					//} }
-
-					for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
-
-						if (InventoryNormal[i].Id == 0) {
-							DInt pos=InventoryGetPosNormal(i);
-								if (remain<=item.CountMaximum) {
-							InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
-								 //   InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
-									return null;
-								} else {
-							InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
-								  //  InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
-									remain-=item.CountMaximum;
-								}
-							}
-						} }
-
-					return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
-				}
-
-			case ItemNonInvTool item:
-				if (GameMethods.IsItemInvTool32(it.Id)) {
-					for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
-
-						if (InventoryNormal[i].Id == 0) {
-							DInt pos;
-							if (i<5) pos=InventoryGetPosNormal(i);
-							else pos=InventoryGetPosNormalInv(i);
-							InventoryNormal[i]=new ItemInvTool32(ItemIdToTexture(it.Id), it.Id, item.Count, item.Maximum, pos.X, pos.Y);
-							return null;
-						}
-					} }
-
-					return item;//new ItemNonInvTool(item.Id, item.Count, item.Maximum);
-				}else{
-				   for (int i=0; i<maxInvCount; i++) {
-						if (InventoryNormal[i]!=null) {
-
-						if (InventoryNormal[i].Id == 0) {
-							DInt pos;
-							if (i<5) pos=InventoryGetPosNormal(i);
-							else pos=InventoryGetPosNormalInv(i);
-							InventoryNormal[i]=new ItemInvTool16(ItemIdToTexture(it.Id), it.Id, item.Count, item.Maximum, pos.X, pos.Y);
-							return null;
-						}
-					} }
-
-					return item;//new ItemNonInvTool(item.Id, item.Count, item.Maximum);
-				}
-				default:
-					#if DEBUG
-					throw new Exception("Missing category");
-					#else
-					return it;
-					#endif
-			}
-			#endregion
-
-			//return it;
-		}
-
-		void ChangeInventoryState() {
-			if (inventory==InventoryType.Normal) {
-
-				if (Global.WorldDifficulty==2) {
-					inventory=InventoryType.Creative;
-					SetCaptionInventory();
-					if (creativeTabCrafting)SetInvCraftingBlocks();
-					else SetInvCreativeBlocks();
-					return;
-				}
-
-				inventory=InventoryType.BasicInv;
-				SetCaptionInventory();
-				SetUpInvToNew();
-				SetNeed();
-				return;
-
-			} else {
-				if (inventory==InventoryType.Typing) {
-
-					return;
-				} else if (inventory==InventoryType.Shelf) {
-
-					ShelfBlock block=(ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
-
-					if (block.Inv[4].Id!=0) {
-						Texture2D tex=ItemIdToTexture(block.Inv[4].Id);
-						if (tex!=null) {
-							block.SmalItemTexture=tex;
-							block.IsSmallItem=true;
-
-							inventory=0;
-							return;
-						}
-					}
-
-					block.IsSmallItem=false;
-					inventory=0;
-					return;
-				}
-
-				SetPlayerClothes();
-				inventory=0;
-				return;
-			}
-		}
-
-		int InvSideMoveId() {
-			// Basic right inventory
-			if (In(Global.WindowWidth-40, Global.WindowHeightHalf-80, Global.WindowWidth, Global.WindowHeightHalf-80+5*40)) {
-			  //  Debug.WriteLine((newMouseState.Y-(Global.WindowHeightHalf-80))/40);
-				return (newMouseState.Y-(Global.WindowHeightHalf-80))/40;
-			}
-			return -1;
-		}
-
-		int InvMoveId() {
-			// Inventory
-			if (In(Global.WindowWidthHalf-300+4+200+4+4, Global.WindowHeightHalf-200+2+4, Global.WindowWidthHalf-300+4+200+4+4+(9*40), Global.WindowHeightHalf-200+2+4+(5*40))) {
-				int row=(mouseRealPosY-(Global.WindowHeightHalf-200+2+4))/40;
-				int col=(mouseRealPosX-(Global.WindowWidthHalf-300+4+200+4+4))/40;
-				// Debug.WriteLine(row*9+" "+col+" "+inventoryScrollbarValue+" "+4);
-				return row*9+col+inventoryScrollbarValue+5;
-			}
-			return -1;
-		}
-
-		int InvShelfMoveId() {
-			// Shelf
-			if (In(Global.WindowWidthHalf-300+38, Global.WindowHeightHalf+20-2+25, Global.WindowWidthHalf-300+38+40*3-1, Global.WindowHeightHalf+20-2+3*40+25-1)) {
-				int row=(mouseRealPosX-(Global.WindowWidthHalf-300+38))/40;
-				int col=(mouseRealPosY-(Global.WindowHeightHalf+20-2+25))/40;
-				return row+col*3;
-			}
-
-			return -1;
-		}
-		
-		int InvFurnaceStoneMoveId() {
-			if (In40(Global.WindowWidthHalf-300+4+1+40,      Global.WindowHeightHalf-200+2+4+60)) return 0;
-			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60)) return 1;
-			if (In40(Global.WindowWidthHalf-300+4+1+40*2+40, Global.WindowHeightHalf-200+2+4+60)) return 2;
-			if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60+40+8)) return 3;
-
-			return -1;
-		}
-		
-		int InvWoodenBoxMoveId() {
-			// Wooden box
-			if (In(Global.WindowWidthHalf-300+59, Global.WindowHeightHalf+59, Global.WindowWidthHalf-300+59+(12*40), Global.WindowHeightHalf+59+40*2)) {
-				int row=(mouseRealPosX-(Global.WindowWidthHalf-300+59))/40;
-				int col=(mouseRealPosY-(Global.WindowHeightHalf+59))/40;
-				//Debug.WriteLine("[wooden] row: "+row+", col:"+col+", id: "+(row+col*12));
-				return row+col*12;
-			}
-
-			return -1;
-		}
-
-		int InvAdvBoxMoveId() {
-			// Adv box
-			if (In(Global.WindowWidthHalf-300+20, Global.WindowHeightHalf+23, Global.WindowWidthHalf-300+20+12*40, Global.WindowHeightHalf+23+40*4)) {
-				int row=(mouseRealPosX-(Global.WindowWidthHalf-300+20))/40;
-				int col=(mouseRealPosY-(Global.WindowHeightHalf+23))/40;
-			  //  Debug.WriteLine("[adv] row: "+row+", col:"+col+", id: "+(row+col*12));
-				return row+col*12;
-			}
-
-			return -1;
-		}
-
-		int InvClothesMoveId() {
-			if (mouseRealPosY>Global.WindowHeightHalf-200+2+4+4+(4*40)) return -1;
-			if (mouseRealPosY<Global.WindowHeightHalf-200+2+4+4) return -1;
-
-			// Clothes
-			if (mouseRealPosX>Global.WindowWidthHalf-300+4+60+4){
-
-				if (mouseRealPosX<Global.WindowWidthHalf-300+4+60+4+40){
-					return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40;
-				}else if (mouseRealPosX<Global.WindowWidthHalf-300+4+60+4+40+40){
-					return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40+4;
-				}
-			}
-			return -1;
-		}
-
-		void ChangeInventory() {
-			if (invMove) {
-				if (leftMove) {
-					if (mouseRightRelease) {
-						int i;
-
-						// Basic right inventory
-						if ((i=InvSideMoveId())>=0) {
-							InvMoveOne(InventoryNormal,i);
-							return;
-						}
-
-						// Inventory
-						if ((i=InvMoveId())>=0) {
-							InvMoveOne(InventoryNormal,i);
-							return;
-						}
-
-						// Clothes
-						if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-							if ((i=InvClothesMoveId())>=0) {
-								InvMoveOne(InventoryClothes, i);
-								return;
-							}
-						}
-
-						// Shelf
-						if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-							if ((i=InvShelfMoveId())>=0) {
-								InvMoveOne(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// FurnaceStone
-						if (inventory==InventoryType.FurnaceStone) {
-							if ((i=InvFurnaceStoneMoveId())>=0) {
-								InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// BoxWooden
-						if (inventory==InventoryType.BoxWooden) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								InvMoveOne(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Adv box
-						if (inventory==InventoryType.BoxAdv) {
-							if ((i=InvAdvBoxMoveId())>=0) {
-								InvMoveOne(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-
-						// Miner
-						if (inventory==InventoryType.Miner) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Charger || OxygenMachine
-						if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-							if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-								InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								return;
-							}
-						}
-
-						if (inventory==InventoryType.Barrel) {
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-								InvMoveOne(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								return;
-							}
-
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-								InvMoveOne(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-								return;
-							}
-						}
-
-						InvDrop();
-
-					} else if (mouseLeftRelease) {
-							int i;
-
-							// Basic right inventory
-							if ((i=InvSideMoveId())>=0) {
-								InvMove(InventoryNormal,i);
-								return;
-							}
-
-							// Inventory
-							if ((i=InvMoveId())>=0) {
-								InvMove(InventoryNormal,i);
-								return;
-							}
-
-							// Clothes
-							if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-								if ((i=InvClothesMoveId())>=0) {
-									InvMove(InventoryClothes,i);
-									return;
-								}
-							}
-
-							// Shelf
-							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-								if ((i=InvShelfMoveId())>=0) {
-									InvMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// FurnaceStone
-							if (inventory==InventoryType.FurnaceStone) {
-								if ((i=InvFurnaceStoneMoveId())>=0) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// BoxWooden
-							if (inventory==InventoryType.BoxWooden) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Adv box
-							if (inventory==InventoryType.BoxAdv) {
-								if ((i=InvAdvBoxMoveId())>=0) {
-									InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Miner
-							if (inventory==InventoryType.Miner) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Charger || OxygenMachine
-							if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-								if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-									return;
-								}
-							}
-
-							if (inventory==InventoryType.Barrel) {
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-									InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-									return;
-								}
-
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-									InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-									return;
-								}
-							}
-
-							//delete
-							if (inventory==InventoryType.Creative) {
-								if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
-									InvRemove();
-									return;
-								}
-							}
-
-							InvDrop();
-
-						}
-				} else {
-					if (mouseLeftRelease) {
-						int i;
-
-						// Basic right inventory
-						if ((i=InvSideMoveId())>=0) {
-							InvMoveHalf(InventoryNormal,i);
-							return;
-						}
-
-						// Inventory
-						if ((i=InvMoveId())>=0) {
-							InvMoveHalf(InventoryNormal,i);
-							return;
-						}
-
-						// Clothes
-						if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-							if ((i=InvClothesMoveId())>=0) {
-								InvMoveHalf(InventoryClothes,i);
-								return;
-							}
-						}
-
-						// FurnaceStone
-						if (inventory==InventoryType.FurnaceStone) {
-							if ((i=InvFurnaceStoneMoveId())>=0) {
-								InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Shelf
-						if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-							if ((i=InvShelfMoveId())>=0) {
-								InvMoveHalf(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// BoxWooden
-						if (inventory==InventoryType.BoxWooden) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								InvMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Adv box
-						if (inventory==InventoryType.BoxAdv) {
-							if ((i=InvAdvBoxMoveId())>=0) {
-								InvMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Miner
-						if (inventory==InventoryType.Miner) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// Charger || OxygenMachine
-						if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-							if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-								InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								return;
-							}
-						}
-
-						if (inventory==InventoryType.Barrel) {
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-								InvMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								return;
-							}
-
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-								InvMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-								return;
-							}
-						}
-
-						//delete
-						if (inventory==InventoryType.Creative) {
-							if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
-								InvRemove();
-								return;
-							}
-						}
-
-						InvDrop();
-
-					} else {
-						if (mouseRightRelease) {
-							int i;
-
-							// Basic right inventory
-							if ((i=InvSideMoveId())>=0) {
-								InvMove(InventoryNormal,i);
-								return;
-							}
-
-							// Inventory
-							if ((i=InvMoveId())>=0) {
-								InvMove(InventoryNormal,i);
-								return;
-							}
-
-							// Clothes
-							if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-								if ((i=InvClothesMoveId())>=0) {
-									InvMove(InventoryClothes,i);
-									return;
-								}
-							}
-
-							// Shelf
-							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-								if ((i=InvShelfMoveId())>=0) {
-									InvMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// FurnaceStone
-							if (inventory==InventoryType.FurnaceStone) {
-								if ((i=InvFurnaceStoneMoveId())>=0) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// BoxWooden
-							if (inventory==InventoryType.BoxWooden) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Adv box
-							if (inventory==InventoryType.BoxAdv) {
-								if ((i=InvAdvBoxMoveId())>=0) {
-									InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Miner
-							if (inventory==InventoryType.Miner) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-									return;
-								}
-							}
-
-							// Charger || OxygenMachine
-							if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-								if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-									InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-									return;
-								}
-							}
-
-							if (inventory==InventoryType.Barrel) {
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-									InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-									return;
-								}
-
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-									InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-									return;
-								}
-							}
-
-							//delete
-							if (inventory==InventoryType.Creative) {
-								if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
-									InvRemove();
-									return;
-								}
-							}
-
-							InvDrop();
-						}
-					}
-				}
-			} else {
-				if (mouseLeftPress) {
-					int i;
-
-					// Basic right inventory
-					if ((i=InvSideMoveId())>=0) {
-						StartItemMove(InventoryNormal, i);
-						leftMove = true;
-						return;
-					}
-
-					// Inventory
-					if ((i=InvMoveId())>=0) {
-						StartItemMove(InventoryNormal, i);
-						leftMove = true;
-						return;
-					}
-
-					// Clothes
-					if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-						if ((i=InvClothesMoveId())>=0) {
-							StartItemMove(InventoryClothes, i);
-							leftMove = true;
-							return;
-						}
-					}
-
-					// Shelf
-					if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-						if ((i=InvShelfMoveId())>=0) {
-							StartItemMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-							leftMove = true;
-							return;
-						}
-					}
-
-					// FurnaceStone
-					if (inventory==InventoryType.FurnaceStone) {
-						if ((i=InvFurnaceStoneMoveId())>=0) {
-							StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-							return;
-						}
-					}
-
-					// BoxWooden
-					if (inventory==InventoryType.BoxWooden) {
-						if ((i=InvWoodenBoxMoveId())>=0) {
-							StartItemMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-							leftMove = true;
-							return;
-						}
-					}
-
-					// Adv box
-					if (inventory==InventoryType.BoxAdv) {
-						if ((i=InvAdvBoxMoveId())>=0) {
-							StartItemMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-							leftMove = true;
-							return;
-						}
-					}
-
-					// Miner
-					if (inventory==InventoryType.Miner) {
-						if ((i=InvWoodenBoxMoveId())>=0) {
-							StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-							leftMove = true;
-							return;
-						}
-					}
-
-					// Charger || OxygenMachine
-					if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-						if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-							StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-							leftMove = true;
-							return;
-						}
-					}
-
-					if (inventory==InventoryType.Barrel) {
-						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-							StartItemMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-							leftMove = true;
-							return;
-						}
-
-						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-							StartItemMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-							leftMove = true;
-							return;
-						}
-					}
-
-				} else {
-					if (mouseRightPress) {
-						int i;
-
-						// Basic right inventory
-						if ((i=InvSideMoveId())>=0) {
-							StartItemMoveHalf(InventoryNormal, i);
-							leftMove = false;
-							return;
-						}
-
-						// Inventory
-						if ((i=InvMoveId())>=0) {
-							StartItemMoveHalf(InventoryNormal, i);
-							leftMove = false;
-							return;
-						}
-
-						// Clothes
-						if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-							if ((i=InvClothesMoveId())>=0) {
-								if (i<8){
-								StartItemMoveHalf(InventoryClothes, i);
-								leftMove = false;
-								return;
-								}
-							}
-						}
-
-						// Shelf
-						if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-							if ((i=InvShelfMoveId())>=0) {
-								StartItemMoveHalf(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								leftMove = false;
-								return;
-							}
-						}
-
-						// FurnaceStone
-						if (inventory==InventoryType.FurnaceStone) {
-							if ((i=InvFurnaceStoneMoveId())>=0) {
-								StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								return;
-							}
-						}
-
-						// BoxWooden
-						if (inventory==InventoryType.BoxWooden) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								StartItemMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								leftMove = false;
-								return;
-							}
-						}
-
-						// Adv box
-						if (inventory==InventoryType.BoxAdv) {
-							if ((i=InvAdvBoxMoveId())>=0) {
-								StartItemMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								leftMove = false;
-								return;
-							}
-						}
-
-						// Miner
-						if (inventory==InventoryType.Miner) {
-							if ((i=InvWoodenBoxMoveId())>=0) {
-								StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
-								leftMove = false;
-								return;
-							}
-						}
-
-						// Charger || OxygenMachine
-						if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-							if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-								StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								leftMove = false;
-								return;
-							}
-						}
-
-						if (inventory==InventoryType.Barrel) {
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-								StartItemMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
-								leftMove = false;
-								return;
-							}
-
-							if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-								StartItemMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
-								leftMove = false;
-								return;
-							}
-						}
-					}else{
-						if (mousePosChanged) {
-							int i;
-							mouseDrawItemTextInfo=false;
-							// Basic right inventory
-							if ((i=InvSideMoveId())>=0) {
-								MouseItemNameEvent(InventoryNormal[i]);
-								return;
-							}
-
-							// Inventory
-							if ((i=InvMoveId())>=0) {
-								MouseItemNameEvent(InventoryNormal[i]);
-								return;
-							}
-
-							// Clothes
-							if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
-								if ((i=InvClothesMoveId())>=0) {
-									if (i<8) MouseItemNameEvent(InventoryClothes[i]);
-									return;
-								}
-							}
-
-							// Shelf
-							if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
-								if ((i=InvShelfMoveId())>=0) {
-									MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
-									return;
-								}
-							}
-
-							// FurnaceStone
-							if (inventory==InventoryType.FurnaceStone) {
-								if ((i=InvFurnaceStoneMoveId())>=0) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
-									return;
-								}
-							}
-
-							// BoxWooden
-							if (inventory==InventoryType.BoxWooden) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
-									return;
-								}
-							}
-
-							// Adv box
-							if (inventory==InventoryType.BoxAdv) {
-								if ((i=InvAdvBoxMoveId())>=0) {
-									MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
-									return;
-								}
-							}
-
-							// Miner
-							if (inventory==InventoryType.Miner) {
-								if ((i=InvWoodenBoxMoveId())>=0) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
-									return;
-								}
-							}
-
-							// Charger || OxygenMachine
-							if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
-								if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
-									MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
-									return;
-								}
-							}
-
-							if (inventory==InventoryType.Barrel) {
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
-									return;
-								}
-
-								if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
-									MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1]);
-									return;
-								}
-							}
-
-							// Creative
-							if (inventory==InventoryType.Creative) {
-								if (!creativeTabCrafting){
-									if ((i=GetInventoryIdCreative())>=0) {
-										MouseItemNameEvent(InventoryCreative[i]);
-										return;
-									}
-								}
-							}
-
-							// crafting
-							if (inventory==InventoryType.BasicInv
-							 || (inventory==InventoryType.Creative && creativeTabCrafting)
-							 || inventory==InventoryType.Desk
-							 || inventory==InventoryType.SewingMachine
-							 || inventory==InventoryType.Macerator
-							 || inventory==InventoryType.FurnaceStone
-							 || inventory==InventoryType.FurnaceElectric) {
-								if ((i=GetCraftingInventoryId())>=0) {
-									MouseItemNameEvent(InventoryCrafting[i]);
-									return;
-								}
-							}
-
-							mouseDrawItemTextInfo=false;
-						}
-					}
-				}
-			}
-		}
-
-		void SelectItemCraft() {
-			if (mouseLeftRelease) {
-				int xx =0, yh=0;
-
-				for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-					if (i>inventoryScrollbarValueCraftingMax) break;
-
-					if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
-						selectedCraftingItem=i;
-						ItemInv itemToCraft=InventoryCrafting[i];
-
-						CurrentDeskCrafting=GameMethods.Craft(itemToCraft.Id);
-						SelectedCraftingRecipe=0;
-						SetNeed();
-						return;
-					}
-					xx+=40;
-
-					if (xx==6*40) {
-						xx=0;
-						yh+=40;
-					}
-				}
-			}
-		}
-
-		void SelectItemCraftPlus() {
-			int AddH=35;
-			if (mouseLeftRelease) {
-				int xx =0, yh=0;
-
-				for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-					if (i>inventoryScrollbarValueCraftingMax) break;
-
-					if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH)) {
-
-						selectedCraftingItem=i;
-
-						ItemInv itemToCraft=InventoryCrafting[i];
-
-						CurrentDeskCrafting=GameMethods.Craft(itemToCraft.Id);
-						SelectedCraftingRecipe=0;
-						SetNeed();
-						return;
-					}
-					xx+=40;
-
-					if (xx==6*40) {
-						xx=0;
-						yh+=40;
-					}
-				}
-			}
-		}
-
-		void SelectItemBake() {
-			if (mouseLeftRelease) {
-				int xx = 0, yh=0;
-
-				for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-					if (i>inventoryScrollbarValueCraftingMax) break;
-
-					if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
-						selectedCraftingItem=i;
-						ItemInv itemToCraft=InventoryCrafting[i];
-
-						CurrentDeskCrafting=GameMethods.Bake(itemToCraft.Id);
-						SelectedCraftingRecipe=0;
-						SetNeed();
-						return;
-					}
-					xx+=40;
-
-					if (xx==6*40) {
-						xx=0;
-						yh+=40;
-					}
-				}
-			}
-		}
-
-		void SelectItemClothes() {
-			if (mouseLeftRelease) {
-				int xx =0, yh=0;
-
-				for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-					if (i>inventoryScrollbarValueCraftingMax) break;
-
-					if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
-						selectedCraftingItem=i;
-
-						ItemInv itemToCraft=InventoryCrafting[i];
-						SelectedCraftingRecipe=0;
-						CurrentDeskCrafting=GameMethods.Clothes(itemToCraft.Id);
-						SetNeed();
-						return;
-					}
-					xx+=40;
-
-					if (xx==6*40) {
-						xx=0;
-						yh+=40;
-					}
-				}
-			}
-		}
-
-		void SelectItemToDust() {
-			if (mouseLeftRelease) {
-				int xx=0, yh=0;
-
-				for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-					if (i>inventoryScrollbarValueCraftingMax) break;
-
-					if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
-
-						selectedCraftingItem=i;
-
-						SelectedCraftingRecipe=0;
-
-						ItemInv itemToCraft=InventoryCrafting[i];
-
-						CurrentDeskCrafting=GameMethods.ToDust(itemToCraft.Id);
-
-						SetNeed();
-						return;
-					}
-
-					xx+=40;
-
-					if (xx==6*40) {
-						xx=0;
-						yh+=40;
-					}
-				}
-			}
-		}
-
-		int TotalItemsInInventoryItemBasic16(ushort id) {
-			int inInv = 0;
-			foreach (ItemInv i in InventoryNormal) {
-				if (id==i.Id) inInv+=(i as ItemInvBasic16).GetCount;
-			}
-			return inInv;
-		}
-
-		int TotalItemsInInventoryForAllTypes(ushort id) {
-			if (GameMethods.IsItemInvBasic16(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv+=(i as ItemInvBasic16).GetCount;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvBasic32(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv+=(i as ItemInvBasic32).GetCount;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvTool32(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv+=(i as ItemInvTool32).GetCount;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvFood16(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv+=(i as ItemInvFood16).GetCount;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvNonStackable32(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv++;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv++;
-				}
-				return inInv;
-			}
-
-			if (GameMethods.IsItemInvTool16(id)) {
-				int inInv = 0;
-				foreach (ItemInv i in InventoryNormal) {
-					if (id==i.Id) inInv+=(i as ItemInvTool16).GetCount;
-				}
-				return inInv;
-			}
-
-			#if DEBUG
-			throw new Exception("Not detectable item '"+(Items)id+"' in categories IsItemInvNonStackable32, IsItemBasicColorized32NonStackable, ...; Add in some category");
-			#else
-			return 0;
-			#endif
-		}
-		#endregion
-
-		#region Inventory draw
-		void InvMouseDraw() {
-			mouseItem.SetPos(mouseRealPosX-16,mouseRealPosY-16);
-			mouseItem.Draw();
-		}
-
-		//void InventoryDrawItems() {
-		//    for (int i=0; i<5; i++) InventoryNormal[i].Draw();
-		//}
-
-		void DrawNeed() {
-			if (CurrentDeskCrafting==null) return;
-			if (selectedCraftingItem==-1) return;
-			if (SelectedCraftingRecipe==-1) return;
-			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8), Color.White);
-			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-
-			int i = 0;
-			for (int y = 0; y<2; y++) {
-				for (int x = 0; x<6; x++) {
-					if (slots.Length==i) break;
-
-					CraftingIn slot=slots[i];
-					ItemNonInv[] item=slot.ItemSlot;
-					if (slot.SelectedItem==-1) {
-						if (!slot.HaveItemInInventory)
-							spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
-
-						/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
-
-						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
-					}else{
-					  //  ItemNonInv selectedSlot=item[slot.SelectedItem];
-
-						if (item.Length==1) {
-							if (!slot.HaveItemInInventory)
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
-
-							if (slot.Texture!=null) /*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
-						} else {
-							if (!slot.HaveItemInInventory)
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
-
-							if (slots[i].SelectedItem==-1) {
-								/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
-							} else {
-								/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture, */item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
-							}
-							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
-						}
-					}
-
-					i++;
-				}
-			}
-
-			if (CurrentDeskCrafting.Length!=1) {
-				 buttonPrev.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				 buttonNext.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-			}
-
-			if (CanCraft(1)) {
-				buttonCraft1x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-
-				if (CanCraft(10)) {
-					buttonCraft10x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-
-					if (CanCraft(100)) buttonCraft100x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-					else buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				} else {
-					buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-					buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				}
-			} else {
-				buttonCraft1x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-			}
-		}
-
-		void DrawNeedNewPlus() {
-			int AddH=35;
-			if (CurrentDeskCrafting==null)return;
-			if (selectedCraftingItem==-1)return;
-			if (SelectedCraftingRecipe==-1)return;
-			spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8+AddH), Color.White);
-			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-
-			int i = 0;
-			for (int y = 0; y<2; y++) {
-				for (int x = 0; x<6; x++) {
-					if (slots.Length==i) break;
-
-					CraftingIn slot=slots[i];
-					ItemNonInv[] item=slot.ItemSlot;
-					if (slot.SelectedItem==-1) {
-						if (!slot.HaveItemInInventory) spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
-
-						DrawItem(item[slot.TmpSelected],Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
-
-					   // GameDraw.DrawItemInInventory(ItemIdToTexture(item[slot.TmpSelected].Id), , Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
-
-						spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
-					}else{
-					 //   ItemNonInv selectedSlot=item[slot.SelectedItem];
-
-						if (item.Length==1) {
-							if (!slot.HaveItemInInventory) spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
-
-							if (slot.Texture!=null) DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
-						} else {
-							if (!slot.HaveItemInInventory)
-								spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
-
-							if (slots[i].SelectedItem==-1) {
-								/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
-							} else {
-								/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
-							}
-							spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
-						}
-					}
-
-					i++;
-				}
-			}
-
-
-			if (CurrentDeskCrafting.Length!=1) {
-				 buttonPrev.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				 buttonNext.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-			}
-
-			if (CanCraft(1)) {
-				buttonCraft1x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-
-				if (CanCraft(10)) {
-					buttonCraft10x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-
-					if (CanCraft(100)) buttonCraft100x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-					else buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				} else {
-					buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-					buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				}
-			} else {
-				buttonCraft1x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-				buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
-			}
-		}
-
-		void DrawItem(ItemNonInv item, int x, int y) {
-			ushort id=item.Id;
-			if (id==0) return;
-			switch (item){
-				case ItemNonInvBasic it:
-					if (GameMethods.IsItemInvBasic16(id)) new ItemInvBasic16(ItemIdToTexture(id), id, it.Count, x, y).Draw();
-					else new ItemInvBasic32(ItemIdToTexture(id), id, it.Count, x, y).Draw();
-					return;
-
-				case ItemNonInvBasicColoritzedNonStackable it:
-					new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, it.color, x, y).Draw();
-					return;
-
-				case ItemNonInvFood it:
-					if (GameMethods.IsItemInvFood32(id)) new ItemInvFood32(ItemIdToTexture(id), id, it.Count, it.CountMaximum, it.Descay, it.DescayMaximum, x, y).Draw();
-					else new ItemInvFood16(ItemIdToTexture(id), id, it.Count, it.CountMaximum, it.Descay, it.DescayMaximum, x, y).Draw();
-					return;
-
-				case ItemNonInvNonStackable it:
-					new ItemInvNonStackable32(ItemIdToTexture(id), id, x, y).Draw();
-					return;
-
-				case ItemNonInvTool it:
-					 if (GameMethods.IsItemInvTool16(id)) new ItemInvTool16(ItemIdToTexture(id), id, it.Count, it.Maximum, x, y).Draw();
-					 else new ItemInvTool32(ItemIdToTexture(id), id, it.Count, it.Maximum, x, y).Draw();
-					 return;
-			}
-
-			#if DEBUG
-			throw new Exception("Item '"+(Items)id+"' is not registrated or missing category up");
-			#endif
-		}
-
-		bool CanCraft(int c) {
-			foreach (CraftingIn n in CurrentDeskCrafting[SelectedCraftingRecipe].Input) {
-				if (n.SelectedItem==-1) return false;
-				ItemNonInv item=n.ItemSlot[n.SelectedItem];
-				switch (item) {
-					case ItemNonInvTool t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
-						break;
-
-					case ItemNonInvNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
-						break;
-
-					case ItemNonInvBasicColoritzedNonStackable t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
-						break;
-
-					case ItemNonInvFood t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
-						break;
-
-					case ItemNonInvBasic t:
-						if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
-						break;
-
-					default:
-						#if DEBUG
-						throw new Exception("Missing type");
-						#else
-						return false;
-						#endif
-				}
-			  //  if (TotalItemsInInventoryForAllTypes(item.Id)<item.Y*c)  return false;
-			}
-			return true;
-		}
-
-		void CraftingEventsCraft() {
-
-			if (buttonCraft1x.Update()) {
-				MakeCrafting(1);
-				return;
-			}
-
-			if (buttonCraft10x.Update()) {
-				MakeCrafting(10);
-				return;
-			}
-
-			if (buttonCraft100x.Update()) {
-				MakeCrafting(100);
-				return;
-			}
-		}
-
-		void CraftingEvents() {
-			if (SelectedCraftingRecipe!=-1) {
-				#if DEBUG
-				if (CurrentDeskCrafting==null) throw new Exception("Pravděpodobně chybí recept - doplň v GameMethods ("+((Items)InventoryCrafting[selectedCraftingItem].Id)+")");
-				#endif
-
-				CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-				if (CurrentDeskCrafting!=null) {
-					if (CurrentDeskCrafting.Length!=1) {
-						if (buttonNext.Update()) {
-							SelectedCraftingRecipe++;
-							if (SelectedCraftingRecipe==CurrentDeskCrafting.Length)SelectedCraftingRecipe=0;
-							SetNeed();
-						}
-
-						if (buttonPrev.Update()) {
-							SelectedCraftingRecipe--;
-							if (SelectedCraftingRecipe==-1)SelectedCraftingRecipe=CurrentDeskCrafting.Length-1;
-							SetNeed();
-						}
-					}
-				}
-
-				int i = 0;
-				for (int y = 0; y<2; y++) {
-					for (int x = 0; x<6; x++) {
-						if (slots.Length==i) break;
-						CraftingIn slot=slots[i];
-						ItemNonInv[] item=slot.ItemSlot;
-						if (item.Length>1) {
-							if (mouseLeftDown) {
-								if (In40(Global.WindowWidthHalf-300+4+200+80+40+8+x*40,y*40+Global.WindowHeightHalf-200+2+4+200+8+8)) {
-									displayPopUpWindow=true;
-									PopUpWindowChoosingPotencialdItem=i;
-									PopUpWindowSelectedItem=-1;
-									ShowPopUpWindow();
-								}
-							}
-						}
-						i++;
-					}
-				}
-			}
-		}
-
-		void CraftingEventsPlus() {
-			int AddH=35;
-			if (SelectedCraftingRecipe!=-1) {
-				#if DEBUG
-				if (CurrentDeskCrafting==null) throw new Exception("Pravděpodobně chybí recept - doplň v GameMethods");
-				#endif
-
-				CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-				if (CurrentDeskCrafting!=null) {
-					if (CurrentDeskCrafting.Length!=1) {
-						if (buttonNext.Update()) {
-							SelectedCraftingRecipe++;
-							if (SelectedCraftingRecipe==CurrentDeskCrafting.Length)SelectedCraftingRecipe=0;
-							SetNeed();
-						}
-
-						if (buttonPrev.Update()) {
-							SelectedCraftingRecipe--;
-							if (SelectedCraftingRecipe==-1)SelectedCraftingRecipe=CurrentDeskCrafting.Length-1;
-							SetNeed();
-						}
-					}
-				}
-
-				int i = 0;
-				for (int y = 0; y<2; y++) {
-					for (int x = 0; x<6; x++) {
-						if (slots.Length==i) break;
-						CraftingIn slot=slots[i];
-						ItemNonInv[] item=slot.ItemSlot;
-						if (item.Length>1) {
-							if (mouseLeftDown) {
-								if (In40(Global.WindowWidthHalf-300+4+200+80+40+8+x*40,y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH)) {
-									displayPopUpWindow=true;
-									PopUpWindowChoosingPotencialdItem=i;
-									PopUpWindowSelectedItem=-1;
-									ShowPopUpWindow();
-								}
-							}
-						}
-						i++;
-					}
-				}
-			}
-		}
-
-		void MakeCrafting(int c) {
-			if (CanCraft(c)) {
-				for (int g=0; g<c; g++) {
-
-					CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;//selectedCraftingItem
-
-					foreach (CraftingIn d in slots) {
-						if (d.SelectedItem==-1) return;
-					}
-
-					foreach (CraftingIn d in slots) {
-						ItemNonInv item=d.ItemSlot[d.SelectedItem];
-						ushort id=item.Id;
-
-						if (id==(ushort)Items.BronzeIngot) AchievementBronzeAge=true;
-						if (id==(ushort)Items.AxeIron) AchievementIronAge=true;
-						if (id==(ushort)Items.AxeIron) AchievementIronAge=true;
-						if (id==(ushort)Items.ShovelIron) AchievementIronAge=true;
-						if (id==(ushort)Items.HammerIron) AchievementIronAge=true;
-						if (id==(ushort)Items.HoeIron) AchievementIronAge=true;
-						if (id==(ushort)Items.KnifeIron) AchievementIronAge=true;
-						if (id==(ushort)Items.SawIron) AchievementIronAge=true;
-
-						switch (item) {
-							case ItemNonInvBasic it:
-								if (GameMethods.IsItemInvBasic16(id)) {
-									int remain=it.Count;
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvBasic16 ininv=(ItemInvBasic16)InventoryNormal[i];
-											if (ininv.GetCount<=remain) {
-												remain-=ininv.GetCount;
-												InventoryNormal[i]=itemBlank;
-											} else {
-												ininv.SetCount=ininv.GetCount-remain;
-												remain=0;
-												break;
-											}
-										}
-									}
-								} else {
-									int remain=it.Count;
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvBasic32 ininv=(ItemInvBasic32)InventoryNormal[i];
-											if (ininv.GetCount<=remain) {
-												remain-=ininv.GetCount;
-												InventoryNormal[i]=itemBlank;
-											} else {
-												ininv.SetCount=ininv.GetCount-remain;
-												remain=0;
-												break;
-											}
-										}
-									}
-								}
-								break;
-
-							case ItemNonInvNonStackable it:
-								if (GameMethods.IsItemInvNonStackable32(id)) {
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvNonStackable32 ininv=(ItemInvNonStackable32)InventoryNormal[i];
-											InventoryNormal[i]=itemBlank;
-										}
-									}
-								}
-								break;
-
-							case ItemNonInvBasicColoritzedNonStackable it:
-								if (GameMethods.IsItemInvNonStackable32(id)) {
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvBasicColoritzed32NonStackable ininv=(ItemInvBasicColoritzed32NonStackable)InventoryNormal[i];
-											InventoryNormal[i]=itemBlank;
-										}
-									}
-								}
-								break;
-
-							case ItemNonInvTool it:
-								if (GameMethods.IsItemInvTool16(id)) {
-									int remain=it.Count;
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvTool16 ininv=(ItemInvTool16)InventoryNormal[i];
-											if (ininv.GetCount<=remain) {
-												remain-=ininv.GetCount;
-												ushort newid=GameMethods.ToolToBasic(id);
-												if (newid==0) InventoryNormal[i]=itemBlank;
-												else InventoryNormal[i]=new ItemInvTool16(
-													ItemIdToTexture(id),
-													newid,
-													1,
-												 //   GameMethods.ToolMax(id),
-													(int)ininv.posTex.X,
-													(int)ininv.posTex.Y
-												);
-											} else {
-												ininv.SetCount=ininv.GetCount-remain;
-												remain=0;
-												break;
-											}
-										}
-									}
-								} else {
-									int remain=it.Count;
-									for (int i=0; i<maxInvCount; i++) {
-										if (InventoryNormal[i].Id==id) {
-											ItemInvTool32 ininv=(ItemInvTool32)InventoryNormal[i];
-											if (ininv.GetCount<=remain) {
-												remain-=ininv.GetCount;
-												ushort newid=GameMethods.ToolToBasic(id);
-												if (newid==0) InventoryNormal[i]=itemBlank;
-												else InventoryNormal[i]=new ItemInvTool32(
-													ItemIdToTexture(id),
-													newid,
-													1,
-												 //   GameMethods.ToolMax(id),
-													(int)ininv.posTex.X,
-													(int)ininv.posTex.Y
-												);
-											} else {
-												ininv.SetCount=ininv.GetCount-remain;
-												remain=0;
-												break;
-											}
-										}
-									}
-								}
-								break;
-						}
-						//int count=item.Y;
-						//for (int i=0; i<maxInvCount; i++) {
-						//    if (InventoryNormal[i].Id==item.X) {
-						//        if (InventoryNormal[i].Y>count) {
-						//            InventoryNormal[i].Y-=count;
-						//            break;
-						//        } else {
-						//            count-=InventoryNormal[i].Y;
-						//            if (item.X>(ushort)Items._SystemMaxTools) {
-						//                InventoryNormal[i].X=0;
-						//                InventoryNormal[i].Y=0;
-						//            }  else {
-						//                Items expec=GameMethods.ToolToBasic((Items)InventoryNormal[i].X);
-						//                if (expec==Items.None) {
-						//                    InventoryNormal[i].X=0;
-						//                    InventoryNormal[i].Y=0;
-						//                } else {
-						//                    InventoryNormal[i].Y=1;
-						//                    InventoryNormal[i].X=(int)expec;
-						//                }
-						//            }
-						//        }
-						//    }
-						//}
-					}
-
-					foreach (CraftingOut d in CurrentDeskCrafting[SelectedCraftingRecipe].Output){//selectedCraftingItem
-						if (d.EveryTime) AddItemToPlayer(d.Item);
-						else{
-							if (FastRandom.Double()<d.ChanceToDrop) AddItemToPlayer(d.Item);
-						}
-						//if (d.EveryTime) ItemDrop(d.Item.X,d.Item.Y, PlayerX-11, PlayerY-16);
-						//else ItemDrop(d.Item.X,FastRandom.RandomInt(d.ChanceMin,d.ChanceMax), PlayerX-11, PlayerY-16);
-					}
-				}
-			}
-			SetNeed();
-		}
-
-		void SetNeed() {
-			if (SelectedCraftingRecipe==-1)return;
-			if (CurrentDeskCrafting==null)return;
-			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-
-			int i = 0;
-			for (int y = 0; y<2; y++) {
-				for (int x = 0; x<6; x++) {
-					if (slots.Length==i) break;
-					CraftingIn slot=slots[i];
-					ItemNonInv[] item=slot.ItemSlot;
-
-					if (slot.SelectedItem==-1) {
-						 slot.TmpSelected=FastRandom.Int(item.Length);
-						 slot.Texture=ItemIdToTexture(item[slot.TmpSelected].Id);
-					}else{
-					   // ItemNonInv selectedSlot=item[slot.SelectedItem];
-						if (item.Length==1) {
-							switch (slot.ItemSlot[0]) {
-								case ItemNonInvTool t:
-									slot.Texture=ItemIdToTexture(item[0].Id);
-									if (t.Count==-1){
-										slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>0;
-									}else{
-										slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=t.Count;
-									}
-									break;
-
-								case ItemNonInvBasic t:
-									slot.Texture=ItemIdToTexture(item[0].Id);
-									slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=t.Count;
-									break;
-
-								//case ItemNonInvNonStackable f:
-								//    slot.Texture=ItemIdToTexture(item[0].Id);
-								//    slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
-								//    break;
-
-								//case ItemNonInvBasicColoritzedNonStackable f:
-								//    slot.Texture=ItemIdToTexture(item[0].Id);
-								//    slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
-								//    break;
-
-								default:
-									slot.Texture=ItemIdToTexture(item[0].Id);
-									slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
-									break;
-							}
-
-						}else{
-							slot.Texture=ItemIdToTexture(item[slot.SelectedItem].Id);
-						}
-					}
-
-				  i++;
-
-
-				}
-			}
-		}
-
-		void DrawInventoryNormal() {
-			int xx=0, yh=0;
-
-			//Slots
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-			if (i>maxInvCount) break;
-				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
-
-				//if (InventoryNormal[i].X!=0) {
-				//    if (!invMove || (invMove && invStartInventory,invStartId!=i)) {
-				//        Texture2D tex=ItemIdToTexture(InventoryNormal[i].X);
-				//        if (tex!=null) GameDraw.DrawItemInInventory(tex,InventoryNormal[i],Global.WindowWidthHalf-300+4+200+4+4+xx+4,Global.WindowHeightHalf-200+2+4+yh+4);
-				//    }
-				//}
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-
-			xx=0;
-
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-			if (i>maxInvCount) break;
-				if (InventoryNormal[i].Id!=0) {
-					InventoryNormal[i].Draw();
-				}
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-				}
-			}
-
-			if (maxInvCount>49) {
-				inventoryScrollbar.maxheight=((maxInvCount-5)/9)*40;
-				inventoryScrollbar.height=5*40;
-				inventoryScrollbar.ButtonDraw(/*newMouseState.X,newMouseState.Y,mouseLeftDown,*/Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
-			}
-		}
-
-		void DrawInventoryWithMoving() {
-			int xx=0, yh=0;
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-				if (i>maxInvCount) break;
-				spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
-
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-			xx=0;
-			yh=0;
-
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-				if (i>maxInvCount) break;
-
-				if (InventoryNormal[i].Id!=0) {
-					InventoryNormal[i].Draw();
-
-					if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh)) MouseItemNameEvent(InventoryNormal[i]/*.Id*/);
-				}
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-
-			if (maxInvCount>49) {
-				inventoryScrollbar.maxheight=((maxInvCount-5)/9)*40;
-				inventoryScrollbar.height=5*40;
-				inventoryScrollbar.ButtonDraw(Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
-			}
-
-			if (inventory==InventoryType.BoxAdv
-			|| inventory==InventoryType.BoxWooden
-			|| inventory==InventoryType.Charger
-			|| inventory==InventoryType.Composter
-			|| inventory==InventoryType.Creative
-			|| inventory==InventoryType.Miner
-			|| inventory==InventoryType.Shelf) {
-				spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5), Color.White);
-				spriteBatch.Draw(TextureBin,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40+4, Global.WindowHeightHalf-200+2+4+40*5+4), Color.White);
-			}
-		}
-
-		//void DrawRightInventoryNormal() {
-
-		//    // Slots
-		//    for (int i = 0; i<5; i++) {
-		//        if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.LightBlue);
-		//        else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.White);
-		//    }
-
-		//    // Items
-		//    for (int i = 0; i<5; i++) {
-		//        invStartInventory[i].Draw();
-		//    }
-		//}
-
-		void DrawSideInventory() {
-			//int x=;
-			//int y=;
-		   Vector2 vec = new(Global.WindowWidth-40, Global.WindowHeightHalf-80);
-			//slots
-			for (int i = 0; i<5; i++) {
-			//	Vector2 vec=new(x, y);
-
-				if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Color.LightBlue);
-				else spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Global.ColorWhite);
-				vec.Y+=40;
-			}
-
-			//items
-			for (int i = 0; i<5; i++) InventoryNormal[i].Draw();
-		}
-
-		void InventoryDrawClothes() {
-			for (int i=0; i<8; i++) InventoryClothes[i].Draw();
-		}
-		#endregion
-
-		#region Items
-		void DropItemToPos(ItemNonInv i, DInt d) {
-			DroppedItems.Add(new Item{
-				X=d.X,
-				Y=d.Y,
-				item=i,
-				Texture=ItemIdToTexture(i.Id)
-			});
-		}
-
-		void DropItemToPos(ItemNonInv i, int x, int y) {
-			DroppedItems.Add(new Item {
-				X=x,
-				Y=y,
-				item=i,
-				Texture=ItemIdToTexture(i.Id)
-			});
-		}
-
-		void DropItemToPos(ItemNonInv i, float x, float y) {
-			DroppedItems.Add(new Item {
-				X=(int)x,
-				Y=(int)y,
-				item=i,
-				Texture=ItemIdToTexture(i.Id)
-			});
-		}
-
-		void UpdateItem(List<Item> list) {
-			foreach (Item i in list) {
-				if (i.X>PlayerXInt-11-16) {
-					if (i.X<PlayerXInt+11) {
-						if (i.Y>PlayerYInt-20) {
-							if (i.Y<PlayerYInt+20) {
-								AddItemToPlayer(i.item);
-								list.Remove(i);
-								return;
-							}
-						}
-					}
-				}
-
-				if (terrain[i.X/16]!=null) {
-					if (i.Y>0){
-						if (i.Y<124*16) {
-							if (!terrain[i.X/16].IsSolidBlocks[i.Y/16+1]) {
-								i.Y+=2;
-							}
-						}
-					}
-				}
-
-				if (i.Y>5000) {
-					list.Remove(i);
-					return;
-				}
-			}
-		}
-
-		void ItemEat() {
-			if (barEat.Value>1f) {
-			switch (InventoryNormal[boxSelected].Id) {
-				case (ushort)Items.Banana:
-					barEat.Value -=10f;
-					barWater.Value -=1f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Olive:
-					barEat.Value -=2f;
-					barWater.Value -=0.1f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Toadstool:
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					Die(Lang.Texts[166]);
-					break;
-
-				case (ushort)Items.Boletus:
-					barEat.Value -=1.5f;
-					barWater.Value -=0.1f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Champignon:
-					barEat .Value-=1.5f;
-					barWater.Value -=0.1f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Lemon:
-					barEat.Value -=5f;
-					barWater.Value -=3f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Orange:
-					barEat.Value -=9f;
-					barWater.Value -=3f;
-					InventoryRemoveSelectedItem();
-				 if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Cherry:
-					barEat.Value -=2f;
-					barWater.Value -=0.1f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.BucketWater:
-					barEat.Value -=0.01f;
-					barWater.Value -=20f;
-					DropItemToPos(new ItemNonInvBasic((ushort)Items.Bucket,1), PlayerXInt, PlayerYInt);
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Dandelion:
-					barEat.Value -=2f;
-					barWater.Value -=0.01f;
-					InventoryRemoveSelectedItem();
-				   if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Plum:
-					barEat.Value -=5f;
-					barWater.Value -=0.05f;
-					InventoryRemoveSelectedItem();
-				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Rashberry:
-					barEat.Value -=2f;
-					barWater.Value -=0.3f;
-					InventoryRemoveSelectedItem();
-				  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Apple:
-					barEat.Value -=12f;
-					barWater.Value--;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics)SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.RabbitMeatCooked:
-					barEat.Value -=30f;
-					barWater.Value -=2f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.RabbitMeat:
-					barEat.Value -=10;
-					barWater.Value -=1;
-					if (FastRandom.Bool_20Percent()) {
-						barHeart.Value +=5f;
-						if (barHeart.Value>32f)barHeart.Value=32f;
-					}
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Strawberry:
-					barEat.Value -=3f;
-					barWater.Value -=0.5f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.WheatSeeds:
-					barEat.Value--;
-					barWater.Value -=0.002f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.Blueberries:
-					barEat.Value-=2f;
-					barWater.Value -=0.2f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.boiledEgg:
-					barEat.Value-=2f;
-					barWater.Value -=0.2f;
-					InventoryRemoveSelectedItem();
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.BowlWithMushrooms:
-					barEat.Value-=15f;
-					barWater.Value -=5f;
-					InventoryRemoveSelectedItem();
-					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-
-				case (ushort)Items.BowlWithVegetables:
-					barEat.Value-=15;
-					barWater.Value -=5f;
-					InventoryRemoveSelectedItem();
-					AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
-					if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
-					break;
-				}
-			}
-
-			//drink
-			if (barWater.Value>1f) {
-				switch (InventoryNormal[boxSelected].Id) {
-					case (ushort)Items.BottleWater:
-						{
-							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater.Value-bottle.GetCount/3f;
-							if (d<0) {
-								barWater.Value=0f;
-								InventoryNormal[boxSelected]=new ItemInvBasic32(bottleEmptyTexture,(ushort)Items.Bottle,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
-							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
-								barWater.Value=d;
-							}
-						}
-						break;
-
-					case (ushort)Items.BucketWater:
-						{
-							ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
-							float d=barWater.Value-bottle.GetCount/3f;
-							if (d<0) {
-								barWater.Value=0f;
-								InventoryNormal[boxSelected]=new ItemInvBasic32(ItemBucketTexture,(ushort)Items.Bucket,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
-							}else{
-								bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
-								barWater.Value=d;
-							}
-						}
-						break;
-				}
-			}
-
-			if (barEat.Value>32)barEat.Value=32f;
-			if (barWater.Value>32)barWater.Value=32f;
-			if (barEat.Value<0)barEat.Value=0f;
-			if (barWater.Value<0)barWater.Value=0f;
-		}
-
-		// Crafting basic
-		void SetInvCraftingBlocks() {
-			ushort[] items={
-				(ushort)Items.Gravel,
-				(ushort)Items.HayBlock,
-			};
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			inventoryScrollbarValueCrafting=0;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingMashines() {
-			ushort[] items={
-				(ushort)Items.Desk,
-				(ushort)Items.Ladder,
-			};
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			inventoryScrollbarValueCrafting=0;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingTools() {
-			ushort[] items={
-				// Stone
-				(ushort)Items.StoneHead,
-				(ushort)Items.PickaxeStone,
-				(ushort)Items.AxeStone,
-				(ushort)Items.ShovelStone,
-				(ushort)Items.HoeStone,
-
-				// Copper
-				(ushort)Items.PickaxeCopper,
-				(ushort)Items.AxeCopper,
-				(ushort)Items.ShovelCopper,
-				(ushort)Items.HoeCopper,
-				(ushort)Items.KnifeCopper,
-				(ushort)Items.ShearsCopper,
-				(ushort)Items.HammerCopper,
-
-				//Bronze
-				(ushort)Items.PickaxeBronze,
-				(ushort)Items.AxeBronze,
-				(ushort)Items.ShovelBronze,
-				(ushort)Items.HoeBronze,
-				(ushort)Items.KnifeBronze,
-				(ushort)Items.ShearsBronze,
-				(ushort)Items.HammerBronze,
-
-				// Gold
-				(ushort)Items.PickaxeGold,
-				(ushort)Items.AxeGold,
-				(ushort)Items.ShovelGold,
-				(ushort)Items.HoeGold,
-				(ushort)Items.KnifeGold,
-				(ushort)Items.ShearsGold,
-				(ushort)Items.HammerGold,
-
-				// Iron
-				(ushort)Items.PickaxeIron,
-				(ushort)Items.AxeIron,
-				(ushort)Items.ShovelIron,
-				(ushort)Items.HoeIron,
-				(ushort)Items.KnifeIron,
-				(ushort)Items.ShearsIron,
-				(ushort)Items.HammerIron,
-
-				// Steel
-				(ushort)Items.PickaxeSteel,
-				(ushort)Items.AxeSteel,
-				(ushort)Items.ShovelSteel,
-				(ushort)Items.HoeSteel,
-				(ushort)Items.KnifeSteel,
-				(ushort)Items.ShearsSteel,
-				(ushort)Items.HammerSteel,
-
-				// Aluminium
-				(ushort)Items.PickaxeAluminium,
-				(ushort)Items.AxeAluminium,
-				(ushort)Items.ShovelAluminium,
-				(ushort)Items.HoeAluminium,
-				(ushort)Items.KnifeAluminium,
-				(ushort)Items.ShearsAluminium,
-				(ushort)Items.HammerAluminium,
-
-				(ushort)Items.TorchOFF,
-			};
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			inventoryScrollbarValueCrafting=0;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingNature() {
-			ushort[] items={
-				(ushort)Items.Stick,
-				(ushort)Items.Sticks,
-				(ushort)Items.Leave,
-				(ushort)Items.Seeds,
-				(ushort)Items.WheatSeeds,
-			};
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			inventoryScrollbarValueCrafting=0;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingItems() {
-			ushort[] items={
-				(ushort)Items.Flag,
-				(ushort)Items.MediumStone,
-				(ushort)Items.SmallStone,
-
-				(ushort)Items.DyeOrange,
-				(ushort)Items.DyeDarkRed,
-				(ushort)Items.DyeRoseQuartz,
-				(ushort)Items.DyePink,
-				(ushort)Items.DyeMagenta,
-				(ushort)Items.DyeLightBlue,
-				(ushort)Items.DyeDarkBlue,
-				(ushort)Items.DyeTeal,
-				(ushort)Items.DyeLightGreen,
-				(ushort)Items.DyeDarkGreen,
-				(ushort)Items.DyeArmy,
-				(ushort)Items.DyeBrown,
-
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			inventoryScrollbarValueCrafting=0;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		// Crafting adv
-		void SetInvCraftingBlocksA() {
-			inventoryScrollbarValueCrafting=0;
-			ushort[] items={
-				(ushort)Items.Stonerubble,
-				(ushort)Items.Gravel,
-				(ushort)Items.Sand,
-				(ushort)Items.Planks,
-				(ushort)Items.AdvancedSpaceBlock,
-				(ushort)Items.AdvancedSpaceFloor,
-				(ushort)Items.AdvancedSpacePart1,
-				(ushort)Items.AdvancedSpacePart2,
-				(ushort)Items.AdvancedSpacePart3,
-				(ushort)Items.AdvancedSpacePart4,
-				(ushort)Items.AdvancedSpaceWindow,
-				(ushort)Items.Bricks,
-				(ushort)Items.Roof1,
-				(ushort)Items.Roof2,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingMashinesA() {
-			inventoryScrollbarValueCrafting=0;
-			 ushort[] items={
-				(ushort)Items.Desk,
-				(ushort)Items.Ladder,
-				(ushort)Items.Door,
-				(ushort)Items.Composter,
-				(ushort)Items.Shelf,
-				(ushort)Items.BoxWooden,
-				(ushort)Items.BoxAdv,
-				(ushort)Items.BucketForRubber,
-				(ushort)Items.Barrel,
-
-				(ushort)Items.SolarPanel,
-				(ushort)Items.WindMill,
-				(ushort)Items.WaterMill,
-
-				(ushort)Items.Label,
-
-				(ushort)Items.FurnaceElectric,
-				(ushort)Items.FurnaceStone,
-				(ushort)Items.Macerator,
-				(ushort)Items.Miner,
-				(ushort)Items.Radio,
-				(ushort)Items.Lamp,
-				(ushort)Items.Charger,
-				(ushort)Items.SewingMachine,
-				(ushort)Items.OxygenMachine,
-				(ushort)Items.Rocket
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingToolsA() {
-		inventoryScrollbarValueCrafting=0;
-			 ushort[] items={
-				(ushort)Items.StoneHead,
-
-				// Stone
-				(ushort)Items.PickaxeStone,
-				(ushort)Items.AxeStone,
-				(ushort)Items.ShovelStone,
-				(ushort)Items.HoeStone,
-
-				// Copper
-				(ushort)Items.PickaxeCopper,
-				(ushort)Items.AxeCopper,
-				(ushort)Items.ShovelCopper,
-				(ushort)Items.HoeCopper,
-				(ushort)Items.KnifeCopper,
-				(ushort)Items.ShearsCopper,
-				(ushort)Items.SawCopper,
-				(ushort)Items.HammerCopper,
-
-				// Bronze
-				(ushort)Items.PickaxeBronze,
-				(ushort)Items.AxeBronze,
-				(ushort)Items.ShovelBronze,
-				(ushort)Items.HoeBronze,
-				(ushort)Items.KnifeBronze,
-				(ushort)Items.ShearsBronze,
-				(ushort)Items.SawBronze,
-				(ushort)Items.HammerBronze,
-
-				// Gold
-				(ushort)Items.PickaxeGold,
-				(ushort)Items.AxeGold,
-				(ushort)Items.ShovelGold,
-				(ushort)Items.HoeGold,
-				(ushort)Items.KnifeGold,
-				(ushort)Items.ShearsGold,
-				(ushort)Items.SawGold,
-				(ushort)Items.HammerGold,
-
-				// Iron
-				(ushort)Items.PickaxeIron,
-				(ushort)Items.AxeIron,
-				(ushort)Items.ShovelIron,
-				(ushort)Items.HoeIron,
-				(ushort)Items.KnifeIron,
-				(ushort)Items.ShearsIron,
-				(ushort)Items.SawIron,
-				(ushort)Items.HammerIron,
-
-				// Steel
-				(ushort)Items.PickaxeSteel,
-				(ushort)Items.AxeSteel,
-				(ushort)Items.ShovelSteel,
-				(ushort)Items.HoeSteel,
-				(ushort)Items.KnifeSteel,
-				(ushort)Items.ShearsSteel,
-				(ushort)Items.SawSteel,
-				(ushort)Items.HammerSteel,
-
-				// Aluminium
-				(ushort)Items.PickaxeAluminium,
-				(ushort)Items.AxeAluminium,
-				(ushort)Items.ShovelAluminium,
-				(ushort)Items.HoeAluminium,
-				(ushort)Items.KnifeAluminium,
-				(ushort)Items.ShearsAluminium,
-				(ushort)Items.SawAluminium,
-				(ushort)Items.HammerAluminium,
-
-
-				(ushort)Items.ElectricDrill,
-				(ushort)Items.ElectricSaw,
-				(ushort)Items.Gun,
-				(ushort)Items.Bucket,
-				(ushort)Items.TorchOFF,
-				(ushort)Items.AirTank,
-				(ushort)Items.AirTank2,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingNatureA() {
-		inventoryScrollbarValueCrafting=0;
-			 ushort[] items={
-				(ushort)Items.Stick,
-				(ushort)Items.Sticks,
-				(ushort)Items.Leave,
-				(ushort)Items.HayBlock,
-				(ushort)Items.MudIngot,
-				(ushort)Items.Leave,
-				(ushort)Items.Seeds,
-				(ushort)Items.WheatSeeds,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvCraftingItemsA() {
-			inventoryScrollbarValueCrafting=0;
-			 ushort[] items={
-				(ushort)Items.Flag,
-				(ushort)Items.MediumStone,
-				(ushort)Items.SmallStone,
-
-				(ushort)Items.Nail,
-				(ushort)Items.Rod,
-				(ushort)Items.Ammo,
-				(ushort)Items.Gunpowder,
-				(ushort)Items.BronzeDust,
-
-				(ushort)Items.plateAluminium,
-				(ushort)Items.PlateBronze,
-				(ushort)Items.PlateCopper,
-				(ushort)Items.PlateGold,
-				(ushort)Items.PlateIron,
-
-				(ushort)Items.BareLabel,
-				(ushort)Items.Rezistance,
-				(ushort)Items.Condenser,
-				(ushort)Items.Diode,
-				(ushort)Items.Tranzistor,
-				(ushort)Items.Bulb,
-				(ushort)Items.ItemBattery,
-				(ushort)Items.Motor,
-
-				(ushort)Items.Circuit,
-				(ushort)Items.BigCircuit,
-
-				(ushort)Items.Yarn,
-				(ushort)Items.Cloth,
-				(ushort)Items.Rope,
-
-				(ushort)Items.AngelHair,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		// Creative
-		void SetInvCreativeBlocks() {
-			ushort[] items={
-				(ushort)Items.StoneSandstone,
-				(ushort)Items.StoneSchist,
-				(ushort)Items.StoneBasalt,
-				(ushort)Items.StoneDiorit,
-				(ushort)Items.StoneDolomite,
-				(ushort)Items.StoneGabbro,
-				(ushort)Items.StoneGneiss,
-				(ushort)Items.StoneLimestone,
-				(ushort)Items.StoneRhyolite,
-				(ushort)Items.StoneFlint,
-				(ushort)Items.StoneAnorthosite,
-				(ushort)Items.StoneMudstone,
-
-				(ushort)Items.OreCoal,
-				(ushort)Items.OreCopper,
-				(ushort)Items.OreTin,
-				(ushort)Items.OreIron,
-				(ushort)Items.OreAluminium,
-				(ushort)Items.OreSilver,
-				(ushort)Items.OreGold,
-				(ushort)Items.OreSulfur,
-				(ushort)Items.OreSaltpeter,
-
-				(ushort)Items.Lava,
-				(ushort)Items.Stonerubble,
-				(ushort)Items.Gravel,
-				(ushort)Items.Sand,
-				(ushort)Items.Dirt,
-				(ushort)Items.Compost,
-				(ushort)Items.Ice,
-				(ushort)Items.Snow,
-				(ushort)Items.SnowTop,
-				(ushort)Items.GrassBlockForest,
-				(ushort)Items.GrassBlockDesert,
-				(ushort)Items.GrassBlockHills,
-				(ushort)Items.GrassBlockJungle,
-				(ushort)Items.GrassBlockPlains,
-				(ushort)Items.GrassBlockClay,
-				(ushort)Items.GrassBlockCompost,
-
-				(ushort)Items.AppleLeaves,
-				(ushort)Items.AppleLeavesWithApples,
-				(ushort)Items.WoodApple,
-				(ushort)Items.CherryLeaves,
-				(ushort)Items.CherryLeavesWithCherries,
-				(ushort)Items.WoodCherry,
-				(ushort)Items.PlumLeaves,
-				(ushort)Items.PlumLeavesWithPlums,
-				(ushort)Items.WoodPlum,
-				(ushort)Items.OrangeLeaves,
-				(ushort)Items.OrangeLeavesWithOranges,
-				(ushort)Items.WoodOrange,
-				(ushort)Items.LemonLeaves,
-				(ushort)Items.LemonLeavesWithLemons,
-				(ushort)Items.WoodLemon,
-				(ushort)Items.LindenLeaves,
-				(ushort)Items.WoodLinden,
-				(ushort)Items.OakLeaves,
-				(ushort)Items.WoodOak,
-				(ushort)Items.PineLeaves,
-				(ushort)Items.WoodPine,
-				(ushort)Items.SpruceLeaves,
-				(ushort)Items.SpruceLeavesWithSnow,
-				(ushort)Items.WoodSpruce,
-
-				(ushort)Items.AcaciaLeaves,
-				(ushort)Items.AcaciaWood,
-
-				(ushort)Items.EucalyptusLeaves,
-				(ushort)Items.EucalyptusWood,
-
-				(ushort)Items.MangroveLeaves,
-				(ushort)Items.MangroveWood,
-
-				(ushort)Items.OliveLeaves,
-				(ushort)Items.OliveLeavesWithOlives,
-				(ushort)Items.OliveWood,
-				(ushort)Items.RubberTreeLeaves,
-				(ushort)Items.RubberTreeWood,
-				(ushort)Items.WillowLeaves,
-				(ushort)Items.WillowWood,
-				(ushort)Items.KapokLeaves,
-				(ushort)Items.KapokLeacesFlowering,
-				(ushort)Items.KapokLeavesFibre,
-				(ushort)Items.KapokWood,
-
-				(ushort)Items.Planks,
-				(ushort)Items.HayBlock,
-				(ushort)Items.Glass,
-				(ushort)Items.Bricks,
-				(ushort)Items.Roof1,
-				(ushort)Items.Roof2,
-				(ushort)Items.ChristmasStar,
-
-				(ushort)Items.AdvancedSpaceBlock,
-				(ushort)Items.AdvancedSpaceFloor,
-				(ushort)Items.AdvancedSpaceWindow,
-				(ushort)Items.AdvancedSpacePart1,
-				(ushort)Items.AdvancedSpacePart2,
-				(ushort)Items.AdvancedSpacePart3,
-				(ushort)Items.AdvancedSpacePart4,
-
-				(ushort)Items.BackSandstone,
-				(ushort)Items.BackSchist,
-				(ushort)Items.BackBasalt,
-				(ushort)Items.BackDiorit,
-				(ushort)Items.BackDolomite,
-				(ushort)Items.BackGabbro,
-				(ushort)Items.BackGneiss,
-				(ushort)Items.BackLimestone,
-				(ushort)Items.BackRhyolite,
-				(ushort)Items.BackFlint,
-				(ushort)Items.BackAnorthosite,
-				(ushort)Items.BackMudstone,
-
-				(ushort)Items.BackCoal,
-				(ushort)Items.BackCopper,
-				(ushort)Items.BackTin,
-				(ushort)Items.BackIron,
-				(ushort)Items.BackAluminium,
-				(ushort)Items.BackSilver,
-				(ushort)Items.BackGold,
-				(ushort)Items.BackSulfur,
-				(ushort)Items.BackSaltpeter,
-
-				(ushort)Items.AdvancedSpaceBack,
-				(ushort)Items.BackClay,
-				(ushort)Items.BackCobblestone,
-				(ushort)Items.BackSand,
-				(ushort)Items.BackRegolite,
-				(ushort)Items.BackDirt,
-			};
-			creativeScrollbar.scale=0;
-			for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
-			for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
-			inventoryScrollbarValueCraftingMax=items.Length;
-
-			ReSetInventoryCreativePositions();
-		}
-
-		void SetInvCreativePlants() {
-			ushort[] items={
-				(ushort)Items.Dandelion,
-				(ushort)Items.PlantViolet,
-				(ushort)Items.PlantRose,
-				(ushort)Items.PlantOrchid,
-				(ushort)Items.Heater,
-				(ushort)Items.Alore,
-
-				(ushort)Items.Boletus,
-				(ushort)Items.Champignon,
-				(ushort)Items.Toadstool,
-				(ushort)Items.CactusSmall,
-				(ushort)Items.CactusBig,
-				(ushort)Items.Coral,
-				(ushort)Items.PlantSeaweed,
-
-				(ushort)Items.GrassDesert,
-				(ushort)Items.GrassForest,
-				(ushort)Items.GrassHills,
-				(ushort)Items.GrassJungle,
-				(ushort)Items.GrassPlains,
-
-				(ushort)Items.SpruceSapling,
-				(ushort)Items.WillowSapling,
-				(ushort)Items.OakSapling,
-				(ushort)Items.LindenSapling,
-				(ushort)Items.EucalyptusSapling,
-				(ushort)Items.MangroveSapling,
-				(ushort)Items.PineSapling,
-				(ushort)Items.RubberTreeSapling,
-				(ushort)Items.KapokSapling,
-
-				(ushort)Items.AppleSapling,
-				(ushort)Items.CherrySapling,
-				(ushort)Items.PlumSapling,
-
-				(ushort)Items.OliveSapling,
-				(ushort)Items.OrangeSapling,
-				(ushort)Items.LemonSapling,
-
-				(ushort)Items.PlantStrawberry,
-				(ushort)Items.PlantRashberry,
-				(ushort)Items.PlantBlueberry,
-				(ushort)Items.Flax,
-				(ushort)Items.PlantOnion,
-				(ushort)Items.PlantPeas,
-				(ushort)Items.PlantCarrot,
-				(ushort)Items.SugarCane,
-
-				(ushort)Items.Seeds,
-				(ushort)Items.WheatSeeds,
-				(ushort)Items.FlaxSeeds,
-
-				(ushort)Items.Hay,
-				(ushort)Items.WheatStraw,
-				(ushort)Items.Stick,
-				(ushort)Items.Sticks,
-				(ushort)Items.Leave,
-			};
-			creativeScrollbar.scale=0;
-			for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
-			for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
-			inventoryScrollbarValueCraftingMax=items.Length;
-
-			ReSetInventoryCreativePositions();
-		}
-
-		void SetInvCreativeMashines() {
-			ushort[] items ={
-				(ushort)Items.Desk,
-				(ushort)Items.FurnaceStone,
-				(ushort)Items.Shelf,
-				(ushort)Items.BoxWooden,
-				(ushort)Items.BoxAdv,
-				(ushort)Items.Ladder,
-				(ushort)Items.Composter,
-				(ushort)Items.Door,
-				(ushort)Items.BucketForRubber,
-				(ushort)Items.Barrel,
-
-				(ushort)Items.WindMill,
-				(ushort)Items.SolarPanel,
-				(ushort)Items.WaterMill,
-				(ushort)Items.Label,
-				(ushort)Items.Lamp,
-				(ushort)Items.FurnaceElectric,
-				(ushort)Items.Macerator,
-				(ushort)Items.Miner,
-				(ushort)Items.Radio,
-				(ushort)Items.Charger,
-				(ushort)Items.SewingMachine,
-				(ushort)Items.OxygenMachine,
-				(ushort)Items.Rocket,
-			};
-			creativeScrollbar.scale=0;
-			for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
-			for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
-			inventoryScrollbarValueCraftingMax=items.Length;
-
-			ReSetInventoryCreativePositions();
-		}
-
-		void SetInvCreativeTools() {
-			ushort[] items ={
-				(ushort)Items.StoneHead,
-
-				// Stone
-				(ushort)Items.PickaxeStone,
-				(ushort)Items.AxeStone,
-				(ushort)Items.ShovelStone,
-				(ushort)Items.HoeStone,
-
-				// Copper
-				(ushort)Items.PickaxeCopper,
-				(ushort)Items.AxeCopper,
-				(ushort)Items.ShovelCopper,
-				(ushort)Items.HoeCopper,
-				(ushort)Items.KnifeCopper,
-				(ushort)Items.ShearsCopper,
-				(ushort)Items.SawCopper,
-				(ushort)Items.HammerCopper,
-
-				// Bronze
-				(ushort)Items.PickaxeCopper,
-				(ushort)Items.AxeCopper,
-				(ushort)Items.ShovelCopper,
-				(ushort)Items.HoeCopper,
-				(ushort)Items.KnifeCopper,
-				(ushort)Items.ShearsCopper,
-				(ushort)Items.SawCopper,
-				(ushort)Items.HammerCopper,
-
-				// Gold
-				(ushort)Items.PickaxeGold,
-				(ushort)Items.AxeGold,
-				(ushort)Items.ShovelGold,
-				(ushort)Items.HoeGold,
-				(ushort)Items.KnifeGold,
-				(ushort)Items.ShearsGold,
-				(ushort)Items.SawGold,
-				(ushort)Items.HammerGold,
-
-				// Iron
-				(ushort)Items.PickaxeIron,
-				(ushort)Items.AxeIron,
-				(ushort)Items.ShovelIron,
-				(ushort)Items.HoeIron,
-				(ushort)Items.KnifeIron,
-				(ushort)Items.ShearsIron,
-				(ushort)Items.SawIron,
-				(ushort)Items.HammerIron,
-
-				// Steel
-				(ushort)Items.PickaxeSteel,
-				(ushort)Items.AxeSteel,
-				(ushort)Items.ShovelSteel,
-				(ushort)Items.HoeSteel,
-				(ushort)Items.KnifeSteel,
-				(ushort)Items.ShearsSteel,
-				(ushort)Items.SawSteel,
-				(ushort)Items.HammerSteel,
-
-				// Aluminium
-				(ushort)Items.PickaxeAluminium,
-				(ushort)Items.AxeAluminium,
-				(ushort)Items.ShovelAluminium,
-				(ushort)Items.HoeAluminium,
-				(ushort)Items.KnifeAluminium,
-				(ushort)Items.ShearsAluminium,
-				(ushort)Items.SawAluminium,
-				(ushort)Items.HammerAluminium,
-
-
-				(ushort)Items.ElectricDrill,
-				(ushort)Items.ElectricSaw,
-				(ushort)Items.TorchElectricON,
-				(ushort)Items.Gun,
-				(ushort)Items.Ammo,
-				(ushort)Items.AirTank,
-				(ushort)Items.AirTank2,
-
-				(ushort)Items.Bucket,
-				(ushort)Items.BucketWater,
-				(ushort)Items.Bottle,
-				(ushort)Items.BottleWater,
-				(ushort)Items.TestTube,
-				(ushort)Items.TorchON,
-				(ushort)Items.Backpack,
-
-				(ushort)Items.Cap,
-				(ushort)Items.Hat,
-				(ushort)Items.Crown,
-				(ushort)Items.SpaceHelmet,
-
-				(ushort)Items.TShirt,
-				(ushort)Items.SpaceSuit,
-				(ushort)Items.Dress,
-				(ushort)Items.Shirt,
-
-				(ushort)Items.Jeans,
-				(ushort)Items.Shorts,
-				(ushort)Items.SpaceTrousers,
-				(ushort)Items.ArmyTrousers,
-				(ushort)Items.Skirt,
-
-				(ushort)Items.FormalShoes,
-				(ushort)Items.Pumps,
-				(ushort)Items.Sneakers,
-				(ushort)Items.SpaceBoots,
-
-				(ushort)Items.CoatArmy,
-				(ushort)Items.Coat,
-				(ushort)Items.JacketDenim,
-				(ushort)Items.JacketFormal,
-				(ushort)Items.JacketShort,
-
-				(ushort)Items.Underpants,
-				(ushort)Items.BoxerShorts,
-				(ushort)Items.Panties,
-				(ushort)Items.Swimsuit,
-				(ushort)Items.BikiniDown,
-
-				(ushort)Items.Bra,
-				(ushort)Items.BikiniTop,
-			};
-			creativeScrollbar.scale=0;
-			for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
-			for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
-			inventoryScrollbarValueCraftingMax=items.Length;
-
-			ReSetInventoryCreativePositions();
-		}
-
-		void SetInvCreativeItems() {
-			ushort[] items ={
-				(ushort)Items.Strawberry,
-				(ushort)Items.Rashberry,
-				(ushort)Items.Blueberries,
-				(ushort)Items.Apple,
-				(ushort)Items.Cherry,
-				(ushort)Items.Plum,
-				(ushort)Items.Banana,
-				(ushort)Items.Lemon,
-				(ushort)Items.Orange,
-
-				(ushort)Items.Onion,
-				(ushort)Items.Carrot,
-				(ushort)Items.Peas,
-				(ushort)Items.Seaweed,
-				(ushort)Items.FishMeatCooked,
-				(ushort)Items.RabbitMeat,
-				(ushort)Items.RabbitMeatCooked,
-				(ushort)Items.BowlEmpty,
-				(ushort)Items.BowlWithMushrooms,
-				(ushort)Items.BowlWithVegetables,
-				(ushort)Items.Egg,
-				(ushort)Items.boiledEgg,
-
-				(ushort)Items.SmallStone,
-				(ushort)Items.MediumStone,
-				(ushort)Items.BigStone,
-				(ushort)Items.ItemCoal,
-				(ushort)Items.ItemCopper,
-				(ushort)Items.ItemTin,
-				(ushort)Items.ItemIron,
-				(ushort)Items.ItemSilver,
-				(ushort)Items.ItemGold,
-				(ushort)Items.Diamond,
-				(ushort)Items.Ruby,
-				(ushort)Items.Saphirite,
-				(ushort)Items.Smaragd,
-
-				(ushort)Items.SulfurDust,
-				(ushort)Items.Saltpeter,
-				(ushort)Items.Gunpowder,
-				(ushort)Items.CoalDust,
-				(ushort)Items.BronzeDust,
-				(ushort)Items.CopperDust,
-				(ushort)Items.GoldDust,
-				(ushort)Items.IronDust,
-				(ushort)Items.SilverDust,
-				(ushort)Items.TinDust,
-
-				(ushort)Items.CopperIngot,
-				(ushort)Items.TinIngot,
-				(ushort)Items.BronzeIngot,
-				(ushort)Items.GoldIngot,
-				(ushort)Items.SilverIngot,
-				(ushort)Items.IronIngot,
-				(ushort)Items.SteelIngot,
-				(ushort)Items.AluminiumIngot,
-
-				(ushort)Items.MudIngot,
-
-				(ushort)Items.plateAluminium,
-				(ushort)Items.PlateBronze,
-				(ushort)Items.PlateCopper,
-				(ushort)Items.PlateGold,
-				(ushort)Items.PlateIron,
-
-				(ushort)Items.BareLabel,
-				(ushort)Items.Tranzistor,
-				(ushort)Items.Rezistance,
-				(ushort)Items.Condenser,
-				(ushort)Items.Diode,
-				(ushort)Items.Bulb,
-				(ushort)Items.ItemBattery,
-				(ushort)Items.Motor,
-				(ushort)Items.Circuit,
-				(ushort)Items.BigCircuit,
-
-				(ushort)Items.MudIngot,
-				(ushort)Items.Rubber,
-				(ushort)Items.Plastic,
-				(ushort)Items.Ash,
-				(ushort)Items.CoalWood,
-				(ushort)Items.KapokFibre,
-				(ushort)Items.Yarn,
-				(ushort)Items.Cloth,
-				(ushort)Items.Rope,
-				(ushort)Items.Nail,
-				(ushort)Items.Rod,
-
-				(ushort)Items.AxeHeadCopper,
-				(ushort)Items.AxeHeadBronze,
-				(ushort)Items.AxeHeadGold,
-				(ushort)Items.AxeHeadIron,
-				(ushort)Items.AxeHeadSteel,
-				(ushort)Items.AxeHeadAluminium,
-
-				(ushort)Items.ShovelHeadCopper,
-				(ushort)Items.ShovelHeadBronze,
-				(ushort)Items.ShovelHeadGold,
-				(ushort)Items.ShovelHeadIron,
-				(ushort)Items.ShovelHeadSteel,
-				(ushort)Items.ShovelHeadAluminium,
-
-				(ushort)Items.HoeHeadCopper,
-				(ushort)Items.HoeHeadBronze,
-				(ushort)Items.HoeHeadGold,
-				(ushort)Items.HoeHeadIron,
-				(ushort)Items.HoeHeadSteel,
-				(ushort)Items.HoeHeadAluminium,
-
-				(ushort)Items.PickaxeHeadCopper,
-				(ushort)Items.PickaxeHeadBronze,
-				(ushort)Items.PickaxeHeadGold,
-				(ushort)Items.PickaxeHeadIron,
-				(ushort)Items.PickaxeHeadSteel,
-				(ushort)Items.PickaxeHeadAluminium,
-
-				(ushort)Items.ShearsHeadCopper,
-				(ushort)Items.ShearsHeadBronze,
-				(ushort)Items.ShearsHeadGold,
-				(ushort)Items.ShearsHeadIron,
-				(ushort)Items.ShearsHeadSteel,
-				(ushort)Items.ShearsHeadAluminium,
-
-				(ushort)Items.KnifeHeadCopper,
-				(ushort)Items.KnifeHeadBronze,
-				(ushort)Items.KnifeHeadGold,
-				(ushort)Items.KnifeHeadIron,
-				(ushort)Items.KnifeHeadSteel,
-				(ushort)Items.KnifeHeadAluminium,
-
-				(ushort)Items.DyeArmy,
-				(ushort)Items.DyeBlack,
-				(ushort)Items.DyeBlue,
-				(ushort)Items.DyeBrown,
-				(ushort)Items.DyeDarkBlue,
-				(ushort)Items.DyeDarkGray,
-				(ushort)Items.DyeDarkGreen,
-				(ushort)Items.DyeDarkRed,
-				(ushort)Items.DyeGold,
-				(ushort)Items.DyeGray,
-				(ushort)Items.DyeGreen,
-				(ushort)Items.DyeLightBlue,
-				(ushort)Items.DyeLightGray,
-				(ushort)Items.DyeLightGreen,
-				(ushort)Items.DyeMagenta,
-				(ushort)Items.DyeOlive,
-				(ushort)Items.DyeOrange,
-				(ushort)Items.DyePink,
-				(ushort)Items.DyePurple,
-				(ushort)Items.DyeRed,
-				(ushort)Items.DyeSpringGreen,
-				(ushort)Items.DyeViolet,
-				(ushort)Items.DyeWhite,
-				(ushort)Items.DyeYellow,
-
-				(ushort)Items.AngelHair,
-
-				(ushort)Items.ChristmasBallGray,
-				(ushort)Items.ChristmasBallYellow,
-				(ushort)Items.ChristmasBallBlue,
-				(ushort)Items.ChristmasBallLightGreen,
-				(ushort)Items.ChristmasBallRed,
-				(ushort)Items.ChristmasBallOrange,
-				(ushort)Items.ChristmasBallPink,
-				(ushort)Items.ChristmasBallPurple,
-				(ushort)Items.ChristmasBallTeal,
-
-
-				(ushort)Items.AnimalRabbit,
-				(ushort)Items.AnimalChicken,
-				(ushort)Items.AnimalParrot,
-				(ushort)Items.AnimalFish,
-			};
-			creativeScrollbar.scale=0;
-
-			int i=0;
-			for (; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
-			inventoryScrollbarValueCraftingMax=i/*tems.Length*/;
-			for (; i<inventoryScrollbarValueCraftingMax; i++) InventoryCreative[i]=itemBlank;
-
-			ReSetInventoryCreativePositions();
-		}
-
-		// Bake
-		void SetInvBakeTools() {
-			 ushort[] items ={
-
-				(ushort)Items.AxeHeadCopper,
-				(ushort)Items.AxeHeadBronze,
-				(ushort)Items.AxeHeadGold,
-				(ushort)Items.AxeHeadIron,
-				(ushort)Items.AxeHeadSteel,
-				(ushort)Items.AxeHeadAluminium,
-
-				(ushort)Items.ShovelHeadCopper,
-				(ushort)Items.ShovelHeadBronze,
-				(ushort)Items.ShovelHeadGold,
-				(ushort)Items.ShovelHeadIron,
-				(ushort)Items.ShovelHeadSteel,
-				(ushort)Items.ShovelHeadAluminium,
-
-				(ushort)Items.HoeHeadCopper,
-				(ushort)Items.HoeHeadBronze,
-				(ushort)Items.HoeHeadGold,
-				(ushort)Items.HoeHeadIron,
-				(ushort)Items.HoeHeadSteel,
-				(ushort)Items.HoeHeadAluminium,
-
-				(ushort)Items.PickaxeHeadCopper,
-				(ushort)Items.PickaxeHeadBronze,
-				(ushort)Items.PickaxeHeadGold,
-				(ushort)Items.PickaxeHeadIron,
-				(ushort)Items.PickaxeHeadSteel,
-				(ushort)Items.PickaxeHeadAluminium,
-
-				(ushort)Items.ShearsHeadCopper,
-				(ushort)Items.ShearsHeadBronze,
-				(ushort)Items.ShearsHeadGold,
-				(ushort)Items.ShearsHeadIron,
-				(ushort)Items.ShearsHeadSteel,
-				(ushort)Items.ShearsHeadAluminium,
-
-				(ushort)Items.Bottle,
-				(ushort)Items.TestTube,
-				(ushort)Items.TorchON,
-			};
-
-			//inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			//for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCrafting, i, items[i]);
-			//for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCrafting[j]=itemBlank;
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvBakeIngots() {
-			ushort[] items ={
-				(ushort)Items.CopperIngot,
-				(ushort)Items.TinIngot,
-				(ushort)Items.BronzeIngot,
-				(ushort)Items.GoldIngot,
-				(ushort)Items.SilverIngot,
-				(ushort)Items.IronIngot,
-				(ushort)Items.SteelIngot,
-				(ushort)Items.AluminiumIngot,
-
-				(ushort)Items.PlateCopper,
-				(ushort)Items.PlateBronze,
-				(ushort)Items.PlateGold,
-				(ushort)Items.PlateIron,
-				(ushort)Items.plateAluminium,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvBakeItems() {
-			ushort[] items ={
-				(ushort)Items.Glass,
-				(ushort)Items.CoalWood,
-				(ushort)Items.Ash,
-				(ushort)Items.BareLabel,
-				(ushort)Items.Rubber,
-				(ushort)Items.Plastic,
-
-				(ushort)Items.ChristmasStar,
-				(ushort)Items.ChristmasBallGray,
-
-			  //  (ushort)Items.DyeArmy,
-				(ushort)Items.DyeBlack,
-				(ushort)Items.DyeBlue,
-				(ushort)Items.DyeBrown,
-			  // (ushort)Items.DyeDarkBlue,
-			   // (ushort)Items.DyeDarkGray,
-				(ushort)Items.DyeDarkGreen,
-			   // (ushort)Items.DyeDarkRed,
-				(ushort)Items.DyeGold,
-				(ushort)Items.DyeGray,
-				(ushort)Items.DyeGreen,
-			   // (ushort)Items.DyeLightBlue,
-			   // (ushort)Items.DyeLightGray,
-			   // (ushort)Items.DyeLightGreen,
-			   // (ushort)Items.DyeMagenta,
-				(ushort)Items.DyeOlive,
-				(ushort)Items.DyeOrange,
-			 //   (ushort)Items.DyePink,
-			  //  (ushort)Items.DyePurple,
-				(ushort)Items.DyeRed,
-				(ushort)Items.DyeSpringGreen,
-				(ushort)Items.DyeViolet,
-				(ushort)Items.DyeWhite,
-				(ushort)Items.DyeYellow,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvBakeFood() {
-			ushort[] items ={
-				(ushort)Items.FishMeatCooked,
-				(ushort)Items.RabbitMeatCooked,
-				(ushort)Items.BowlWithMushrooms,
-				(ushort)Items.BowlWithVegetables,
-				(ushort)Items.boiledEgg
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvBakeCeramics() {
-			ushort[] items ={
-				(ushort)Items.OneBrick
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-
-			ReSetCraftingInventoryPositions();
-		}
-
-		// toDust
-		void SetInvToDustDusts() {
-			ushort[] items ={
-				(ushort)Items.CopperDust,
-				(ushort)Items.TinDust,
-				(ushort)Items.BronzeDust,
-				(ushort)Items.IronDust,
-				(ushort)Items.AluminiumDust,
-				(ushort)Items.SilverDust,
-				(ushort)Items.GoldDust,
-				(ushort)Items.WoodDust,
-				(ushort)Items.CoalDust,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvToDustTools() {
-			ushort[] items ={
-				(ushort)Items.AxeHeadIron,
-				(ushort)Items.PickaxeHeadIron,
-				(ushort)Items.ShovelHeadIron,
-				(ushort)Items.StoneHead,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvToDustStone() {
-			ushort[] items ={
-				(ushort)Items.Stonerubble,
-				(ushort)Items.MediumStone,
-				(ushort)Items.SmallStone,
-				(ushort)Items.Gravel,
-				(ushort)Items.Sand,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvToDustNature() {
-			ushort[] items ={
-				(ushort)Items.Seeds,
-				(ushort)Items.WheatSeeds,
-				(ushort)Items.FlaxSeeds,
-				(ushort)Items.Leave,
-				(ushort)Items.Stick,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvToDustOther() {
-			ushort[] items ={
-				(ushort)Items.Yarn,
-				(ushort)Items.Hay,
-				(ushort)Items.BucketWater,
-				(ushort)Items.Cloth,
-				(ushort)Items.Label,
-				(ushort)Items.BareLabel
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		// sewing
-		void SetInvClothesHead() {
-			ushort[] items={
-				(ushort)Items.Cap,
-				(ushort)Items.Crown,
-				(ushort)Items.Hat,
-				(ushort)Items.SpaceHelmet,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvClothesChest() {
-			ushort[] items={
-				(ushort)Items.TShirt,
-				(ushort)Items.Shirt,
-				(ushort)Items.Dress,
-				(ushort)Items.CoatArmy,
-				(ushort)Items.Coat,
-				(ushort)Items.JacketDenim,
-				(ushort)Items.JacketFormal,
-				(ushort)Items.JacketShort,
-				(ushort)Items.SpaceSuit,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvClothesLegs() {
-			ushort[] items={
-				(ushort)Items.ArmyTrousers,
-				(ushort)Items.Jeans,
-				(ushort)Items.Shorts,
-				(ushort)Items.Skirt,
-				(ushort)Items.SpaceTrousers,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvClothesShoes() {
-			ushort[] items={
-				(ushort)Items.FormalShoes,
-				(ushort)Items.Pumps,
-				(ushort)Items.Sneakers,
-				(ushort)Items.SpaceBoots,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		void SetInvClothesUnderwear() {
-			ushort[] items={
-				(ushort)Items.Underpants,
-				(ushort)Items.BoxerShorts,
-				(ushort)Items.Panties,
-				(ushort)Items.Swimsuit,
-				(ushort)Items.BikiniTop,
-				(ushort)Items.BikiniDown,
-				(ushort)Items.Bra,
-			};
-
-			inventoryScrollbarValueCraftingMax=items.Length-1;
-			for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
-			for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
-			ReSetCraftingInventoryPositions();
-		}
-
-		Texture2D ItemIdToTexture(ushort id) {
-            return id switch{
-				 (ushort)Items.ChristmasBallGray => TextureChristmasBall,
-				 (ushort)Items.ChristmasBallYellow => TextureChristmasBallYellow,
-				 (ushort)Items.ChristmasBallOrange => TextureChristmasBallOrange,
-				 (ushort)Items.ChristmasBallRed => TextureChristmasBallRed,
-				 (ushort)Items.ChristmasBallPurple => TextureChristmasBallPurple,
-				 (ushort)Items.ChristmasBallPink => TextureChristmasBallPink,
-				 (ushort)Items.ChristmasBallLightGreen => TextureChristmasBallLightGreen,
-				 (ushort)Items.ChristmasBallBlue => TextureChristmasBallBlue,
-				 (ushort)Items.ChristmasBallTeal => TextureChristmasBallTeal,
-				 (ushort)Items.AngelHair => TextureAngelHair,
-
-				 (ushort)Items.ChristmasStar => TextureChristmasStar,
-				 (ushort)Items.AirTank => TextureAirTank,
-				 (ushort)Items.AirTank2 => TextureAirTank2,
-				 (ushort)Items.OxygenMachine => TextureOxygenMachine,
-				 (ushort)Items.BackSulfur => TextureBackSulfurOre,
-				 (ushort)Items.BackSaltpeter => TextureBackSaltpeterOre,
-				 (ushort)Items.Ammo => TextureAmmo,
-				 (ushort)Items.Gun => TextureGun,
-				 (ushort)Items.Saltpeter => TextureSaltpeter,
-				 (ushort)Items.SulfurDust => TextureSulfur,
-				 (ushort)Items.OreSaltpeter => TextureOreSaltpeter,
-				 (ushort)Items.OreSulfur => TextureOreSulfur,
-				 (ushort)Items.Gunpowder => TextureGunpowder,
-
-				 (ushort)Items.BucketForRubber => TextureBucketForRubber,
-				 (ushort)Items.Resin =>  TextureResin,
-				 (ushort)Items.Aluminium => ItemAluminiumTexture,
-				 (ushort)Items.TorchOFF => TextureTorchOff,
-				 //(ushort)Items.BronzeHeadHoe => TextureHoeHeadBronze,
-				 //(ushort)Items.CopperHeadHoe => TextureHoeHeadCopper,
-				 (ushort)Items.HoeHeadIron => TextureHoeHeadIron,
-				 (ushort)Items.HoeCopper => TextureHoeCopper,
-
-				(ushort)Items.Mobile => mobileTexture,
-				(ushort)Items.SewingMachine => sewingMachineTexture,
-				(ushort)Items.BucketOil => bucketOilTexture,
-				(ushort)Items.TorchON => torchInvTexture,
-
-				(ushort)Items.BottleOil => bottleOilTexture,
-				(ushort)Items.BoxAdv => boxAdvTexture,
-				(ushort)Items.BoxWooden => boxWoodenTexture,
-				(ushort)Items.Shelf => shelfTexture,
-				(ushort)Items.Heater => heatherTexture,
-				(ushort)Items.WoodDust => ItemWoodDustTexture,
-				(ushort)Items.AluminiumDust => ItemAluminiumDustTexture,
-				(ushort)Items.FlaxSeeds => flaxSeedsTexture,
-				(ushort)Items.MudIngot => oneMudBrickTexture,
-				(ushort)Items.AluminiumIngot => ItemAluminiumIngotTexture,
-				(ushort)Items.Nail => nailTexture,
-				(ushort)Items.Silicium => siliciumTexture,
-				(ushort)Items.StoneBasalt => basaltTexture,
-				(ushort)Items.StoneLimestone => limestoneTexture,
-				(ushort)Items.StoneRhyolite => rhyoliteTexture,
-				(ushort)Items.StoneGneiss => gneissTexture,
-				(ushort)Items.StoneSandstone => sandstoneTexture,
-				(ushort)Items.StoneSchist => schistTexture,
-				(ushort)Items.StoneGabbro => gabbroTexture,
-				(ushort)Items.StoneDiorit => dioritTexture,
-				(ushort)Items.StoneDolomite => dolomiteTexture,
-				(ushort)Items.Flax => flaxInvTexture,
-				(ushort)Items.Dirt => TextureDirt,
-				(ushort)Items.Sand => sandTexture,
-				(ushort)Items.Lava => lavaTexture,
-				(ushort)Items.Stonerubble => cobblestoneTexture,
-				(ushort)Items.Gravel => gravelTexture,
-
-				(ushort)Items.WoodOak => TextureOakWood,
-				(ushort)Items.WoodSpruce => spruceWoodTexture,
-				(ushort)Items.WoodLinden => TextureLindenWood,
-				(ushort)Items.WoodPine => pineWoodTexture,
-				(ushort)Items.WoodApple => TextureAppleWood,
-				(ushort)Items.WoodCherry => cherryWoodTexture,
-				(ushort)Items.WoodPlum => TexturePlumWood,
-				(ushort)Items.WoodLemon => TextureLemonWood,
-				(ushort)Items.WoodOrange => TextureOrangeWood,
-
-				(ushort)Items.OakLeaves => TextureOakLeaves,
-
-				(ushort)Items.GrassBlockDesert => TextureGrassBlockDesert,
-				(ushort)Items.GrassBlockForest => TextureGrassBlockForest,
-				(ushort)Items.GrassBlockHills => TextureGrassBlockHills,
-				(ushort)Items.GrassBlockJungle => TextureGrassBlockJungle,
-				(ushort)Items.GrassBlockPlains => TextureGrassBlockPlains,
-				(ushort)Items.GrassBlockCompost => TextureGrassBlockCompost,
-
-				//Crafted
-				(ushort)Items.Glass => glassTexture,
-				(ushort)Items.Bricks => bricksTexture,
-
-				(ushort)Items.Planks => planksTexture,
-
-				(ushort)Items.Desk => deskTexture,
-				(ushort)Items.Door => ItemDoorTexture,
-				(ushort)Items.Ladder => ladderTexture,
-				(ushort)Items.Flag => ItemFlagTexture,
-
-				(ushort)Items.Rope => ItemRopeTexture,
-
-				(ushort)Items.HayBlock => hayBlockTexture,
-
-				(ushort)Items.Roof1 => roof1Texture,
-				(ushort)Items.Roof2 => roof2Texture,
-
-				//Mashines
-				(ushort)Items.AdvancedSpaceBack => advancedSpaceBackTexture,
-				(ushort)Items.AdvancedSpaceWindow => advancedSpaceWindowTexture,
-				(ushort)Items.AdvancedSpaceBlock => advancedSpaceBlockTexture,
-				(ushort)Items.AdvancedSpaceFloor => advancedSpaceFloorTexture,
-				(ushort)Items.AdvancedSpacePart1 => advancedSpacePart1Texture,
-				(ushort)Items.AdvancedSpacePart2 => advancedSpacePart2Texture,
-				(ushort)Items.AdvancedSpacePart3 => advancedSpacePart3Texture,
-				(ushort)Items.AdvancedSpacePart4 => advancedSpacePart4Texture,
-
-				(ushort)Items.WindMill => ItemWindMillTexture,
-				(ushort)Items.WaterMill => ItemWaterMillTexture,
-				(ushort)Items.SolarPanel => solarPanelTexture,
-
-				(ushort)Items.Miner => minerTexture,
-				(ushort)Items.Macerator => maceratorOneTexture,
-				(ushort)Items.Lamp => lampTexture,
-				(ushort)Items.Radio => radioInvTexture,
-				(ushort)Items.Label => labelOneTexture,
-				(ushort)Items.Rocket => ItemRocketTexture,
-				(ushort)Items.FurnaceElectric => furnaceElectricOneTexture,
-				(ushort)Items.FurnaceStone => furnaceStoneOneTexture,
-				(ushort)Items.Barrel => TextureBarrel,
-
-				//Food
-				(ushort)Items.Banana => ItemBananaTexture,
-				(ushort)Items.Cherry => ItemCherryTexture,
-				(ushort)Items.Lemon => ItemLemonTexture,
-				(ushort)Items.Orange => ItemOrangeTexture,
-				(ushort)Items.Plum => ItemPlumTexture,
-				(ushort)Items.Apple => ItemAppleTexture,
-				(ushort)Items.Rashberry => rashberryTexture,
-				(ushort)Items.Strawberry => strawberryTexture,
-				(ushort)Items.Blueberries => blueberryTexture,
-
-				(ushort)Items.RabbitMeatCooked => ItemRabbtCookedMeatTexture,
-				(ushort)Items.RabbitMeat => ItemRabbitMeatTexture,
-
-				(ushort)Items.AnimalFish => fishTexture0,
-				(ushort)Items.FishMeatCooked => fishCookedTexture,
-
-				(ushort)Items.Egg => TextureItemEgg,
-				(ushort)Items.boiledEgg => TextureItemBoiledEgg,
-
-				//Clothes
-				(ushort)Items.Backpack => ItemBackpackTexture,
-
-				//Items
-				(ushort)Items.CoalDust => ItemCoalDustTexture,
-				(ushort)Items.BronzeDust => ItemBronzeDustTexture,
-				(ushort)Items.GoldDust => ItemGoldDustTexture,
-				(ushort)Items.IronDust => ItemIronDustTexture,
-				(ushort)Items.SilverDust => ItemSilverDustTexture,
-				(ushort)Items.CopperDust => ItemCopperDustTexture,
-				(ushort)Items.TinDust => ItemTinDustTexture,
-
-				(ushort)Items.BronzeIngot => ItemBronzeIngotTexture,
-				(ushort)Items.SteelIngot => TextureIngotSteel,
-				(ushort)Items.GoldIngot => ItemGoldIngotTexture,
-				(ushort)Items.IronIngot => ItemIronIngotTexture,
-				(ushort)Items.TinIngot => ItemTinIngotTexture,
-				(ushort)Items.SilverIngot => ItemSilverIngotTexture,
-				(ushort)Items.CopperIngot => ItemCopperIngotTexture,
-
-				(ushort)Items.PlateIron => plateIronTexture,
-				(ushort)Items.PlateBronze => plateBronzeTexture,
-				(ushort)Items.plateAluminium => plateAluminiumTexture,
-				(ushort)Items.PlateCopper => plateCopperTexture,
-				(ushort)Items.PlateGold => plateGoldTexture,
-
-				(ushort)Items.OreCoal => TextureOreCoal,
-				(ushort)Items.ItemCoal => ItemCoalTexture,
-				(ushort)Items.ItemGold => ItemGoldTexture,
-				(ushort)Items.ItemTin => ItemTinTexture,
-				(ushort)Items.ItemSilver => ItemSilverTexture,
-				(ushort)Items.ItemIron => ItemIronTexture,
-				(ushort)Items.ItemCopper => ItemCopperTexture,
-				(ushort)Items.Ash => ashTexture,
-				(ushort)Items.CoalWood => coalWoodTexture,
-
-				(ushort)Items.Saphirite => ItemSaphiriteTexture,
-				(ushort)Items.Diamond => ItemDiamondTexture,
-				(ushort)Items.Smaragd => ItemSmaragdTexture,
-				(ushort)Items.Ruby => ItemRubyTexture,
-				(ushort)Items.SmallStone => ItemSmallStoneTexture,
-				(ushort)Items.BigStone => ItemBigStoneTexture,
-				(ushort)Items.MediumStone => ItemMediumStoneTexture,
-
-				(ushort)Items.Bulb => ItemBulbTexture,
-				(ushort)Items.Circuit => ItemCircuitTexture,
-				(ushort)Items.ItemBattery => ItemBatteryTexture,
-				(ushort)Items.BigCircuit => ItemBigCircuitTexture,
-				(ushort)Items.OneBrick => oneBrickTexture,
-
-				(ushort)Items.Cloth => clothTexture,
-				(ushort)Items.Yarn => yarnTexture,
-
-				(ushort)Items.Condenser => condenserTexture,
-				(ushort)Items.Diode => diodeTexture,
-				(ushort)Items.Tranzistor => tranzistorTexture,
-				(ushort)Items.Rezistance => resistanceTexture,
-				(ushort)Items.Motor => motorTexture,
-				(ushort)Items.BareLabel => bareLabelTexture,
-
-				//Plants
-				(ushort)Items.OakSapling => oakSaplingTexture,
-				(ushort)Items.LindenSapling => TextureLindenSapling,
-				(ushort)Items.PineSapling => pineSaplingTexture,
-				(ushort)Items.AppleSapling => TextureAppleSapling,
-				(ushort)Items.LemonSapling => lemonSaplingTexture,
-				(ushort)Items.CherrySapling => cherrySaplingTexture,
-				(ushort)Items.PlumSapling => plumSaplingTexture,
-				(ushort)Items.SpruceSapling => spruceSaplingTexture,
-				(ushort)Items.OrangeSapling => orangeSaplingTexture,
-
-				(ushort)Items.Dandelion => plantDandelionTexture,
-				(ushort)Items.PlantRose => plantRoseTexture,
-				(ushort)Items.PlantOrchid => plantOrchidTexture,
-				(ushort)Items.PlantViolet => plantVioletTexture,
-
-				(ushort)Items.PlantStrawberry => invStrawberryTexture,
-				(ushort)Items.PlantRashberry => invRashberryTexture,
-				(ushort)Items.PlantBlueberry => invBlueberryTexture,
-
-				(ushort)Items.CactusBig => cactusBigTexture,
-				(ushort)Items.CactusSmall => cactusLittleTexture,
-
-				(ushort)Items.SugarCane => sugarCaneTexture,
-				(ushort)Items.Onion => ItemOnionTexture,
-
-				(ushort)Items.Toadstool => toadstoolTexture,
-				(ushort)Items.Boletus => boletusTexture,
-				(ushort)Items.Champignon => champignonTexture,
-
-				(ushort)Items.Coral => coralTexture,
-				(ushort)Items.Seaweed => seaweedTexture,
-				(ushort)Items.PlantSeaweed => seaweedTexture,
-				(ushort)Items.PlantOnion => plantOnionTexture,
-
-				//Nature
-				(ushort)Items.WheatSeeds => ItemWheatSeedsTexture,
-				(ushort)Items.Seeds => ItemSeedsTexture,
-
-				(ushort)Items.WheatStraw => ItemWheatStrawTexture,
-				(ushort)Items.Hay => ItemHayTexture,
-
-				(ushort)Items.Leave => ItemLeaveTexture,
-				(ushort)Items.Stick => ItemStickTexture,
-				(ushort)Items.Sticks => ItemSticksTexture,
-				(ushort)Items.Rubber => ItemRubberTexture,
-
-				//Tools
-				(ushort)Items.Bucket => ItemBucketTexture,
-				(ushort)Items.BucketWater => ItemBucketWaterTexture,
-
-				(ushort)Items.StoneHead => stoneHeadTexture,
-
-				//(ushort)Items.AxeHeadIron => TextureHeadAxeIron,
-				//(ushort)Items.ShovelHeadIron => TextureHeadShovelIron,
-				//(ushort)Items.PickaxeHeadIron => TextureHeadPickaxeIron,
-
-				//Shovel
-				(ushort)Items.ShovelStone => TextureShovelStone,
-				(ushort)Items.ShovelCopper => TextureShovelCopper,
-				(ushort)Items.ShovelBronze => TextureShovelBronze,
-				(ushort)Items.ShovelGold => TextureShovelGold,
-				(ushort)Items.ShovelIron => TextureShovelIron,
-				(ushort)Items.ShovelSteel => TextureShovelSteel,
-				(ushort)Items.ShovelAluminium => TextureShovelAluminium,
-
-				// Pickaxe
-				(ushort)Items.PickaxeStone => TexturePickaxeStone,
-				(ushort)Items.PickaxeCopper => TexturePickaxeCopper,
-				(ushort)Items.PickaxeBronze => TexturePickaxeBronze,
-				(ushort)Items.PickaxeGold => TexturePickaxeGold,
-				(ushort)Items.PickaxeIron => TexturePickaxeIron,
-				(ushort)Items.PickaxeSteel => TexturePickaxeSteel,
-				(ushort)Items.PickaxeAluminium => TexturePickaxeAluminium,
-
-				// Axe
-				(ushort)Items.AxeStone => TextureAxeStone,
-				(ushort)Items.AxeCopper => TextureAxeCopper,
-				(ushort)Items.AxeBronze => TextureAxeBronze,
-				(ushort)Items.AxeGold => TextureAxeGold,
-				(ushort)Items.AxeIron => TextureAxeIron,
-				(ushort)Items.AxeSteel => TextureAxeSteel,
-				(ushort)Items.AxeAluminium => TextureAxeAluminium,
-
-				// Hammers
-				(ushort)Items.HammerCopper => TextureHammerCopper,
-				(ushort)Items.HammerBronze => TextureHammerBronze,
-				(ushort)Items.HammerIron => TextureHammerIron,
-				(ushort)Items.HammerGold => TextureHammerGold,
-				(ushort)Items.HammerSteel => TextureHammerSteel,
-				(ushort)Items.HammerAluminium => TextureHammerAluminium,
-
-				// Shears
-				(ushort)Items.ShearsCopper => TextureShearsCopper,
-				(ushort)Items.ShearsBronze => TextureShearsBronze,
-				(ushort)Items.ShearsGold => TextureShearsGold,
-				(ushort)Items.ShearsIron => TextureShearsIron,
-				(ushort)Items.ShearsSteel => TextureShearsSteel,
-				(ushort)Items.ShearsAluminium => TextureShearsAluminium,
-
-				// Saw
-				(ushort)Items.SawCopper => TextureSawCopper,
-				(ushort)Items.SawBronze => TextureSawBronze,
-				(ushort)Items.SawGold => TextureSawGold,
-				(ushort)Items.SawIron => TextureSawIron,
-				(ushort)Items.SawSteel => TextureSawSteel,
-				(ushort)Items.SawAluminium => TextureSawAluminium,
-
-				(ushort)Items.ElectricDrill => TextureDrillElectric,
-				(ushort)Items.ElectricSaw => electricSawTexture,
-
-				(ushort)Items.OreAluminium => TextureOreAluminium,
-				(ushort)Items.OreCopper => TextureOreCopper,
-				(ushort)Items.OreGold => TextureOreGold,
-				(ushort)Items.OreIron => TextureOreIron,
-				(ushort)Items.OreSilver => TextureOreSilver,
-				(ushort)Items.OreTin => TextureOreTin,
-
-				(ushort)Items.AppleLeaves => TextureAppleLeaves,
-				(ushort)Items.AppleLeavesWithApples => TextureAppleLeavesWithApples,
-				(ushort)Items.OrangeLeaves => TextureOrangeLeaves,
-				(ushort)Items.OrangeLeavesWithOranges => TextureOrangeLeavesWithOranges,
-				(ushort)Items.PlumLeaves => TexturePlumLeaves,
-				(ushort)Items.PlumLeavesWithPlums => TexturePlumLeavesWithPlums,
-				(ushort)Items.CherryLeaves => TextureCherryLeaves,
-				(ushort)Items.CherryLeavesWithCherries => TextureCherryLeavesWithCherries,
-				(ushort)Items.LemonLeaves => TextureLemonLeaves,
-				(ushort)Items.LemonLeavesWithLemons => lemonLeavesWithLemonsTexture,
-				(ushort)Items.LindenLeaves => TextureLindenLeaves,
-				(ushort)Items.SpruceLeaves => spruceLeavesTexture,
-				(ushort)Items.SpruceLeavesWithSnow => spruceLeavesWithSnowTexture,
-				(ushort)Items.PineLeaves => pineLeavesTexture,
-
-				(ushort)Items.Snow => snowTexture,
-				(ushort)Items.SnowTop => snowTopTexture,
-				(ushort)Items.Ice => iceTexture,
-
-				(ushort)Items.GrassDesert => grassDesertTexture,
-				(ushort)Items.GrassForest => grassForestTexture,
-				(ushort)Items.GrassHills => grassHillsTexture,
-				(ushort)Items.GrassJungle => grassJungleTexture,
-				(ushort)Items.GrassPlains => grassPlainsTexture,
-
-				(ushort)Items.Alore => plantAloreTexture,
-				(ushort)Items.Plastic => ItemPlasticTexture,
-
-				(ushort)Items.Carrot => ItemCarrotTexture,
-				(ushort)Items.PlantCarrot => plantCarrotTexture,
-				(ushort)Items.Peas => ItemPeasTexture,
-				(ushort)Items.PlantPeas => plantPeasTexture,
-
-				(ushort)Items.Battery => ItemBatteryTexture,
-
-				(ushort)Items.BottleWater => bottleWaterTexture,
-				(ushort)Items.Bottle => bottleEmptyTexture,
-				(ushort)Items.BowlEmpty => bowlEmptyTexture,
-				(ushort)Items.BowlWithMushrooms => bowlMushroomsTexture,
-				(ushort)Items.BowlWithVegetables => bowlVegetablesTexture,
-
-				(ushort)Items.ElectricDrillOff => TextureDrillElectric,
-				(ushort)Items.ElectricSawOff => electricSawTexture,
-
-				(ushort)Items.HoeStone => TextureHoeStone,
-				(ushort)Items.HoeBronze => TextureHoeBronze,
-				(ushort)Items.HoeIron => TextureHoeIron,
-
-				(ushort)Items.Charger => chargerTexture,
-
-				(ushort)Items.Clay => clayTexture,
-				(ushort)Items.GrassBlockClay => TextureGrassBlockClay,
-				(ushort)Items.BackDirt => backgroundDirtTexture,
-				(ushort)Items.BackSand => backgroundSandTexture,
-				(ushort)Items.BackClay => backgroundClayTexture,
-				(ushort)Items.BackCobblestone => backgroundCobblestoneTexture,
-				(ushort)Items.BackGravel => backgroundGravelTexture,
-				(ushort)Items.BackRedSand => backgroundRedSandTexture,
-				(ushort)Items.BackRegolite => backgroundRegoliteTexture,
-
-				(ushort)Items.BackCoal => backgroundCoalTexture,
-				(ushort)Items.BackAluminium => backgroundAluminiumTexture,
-				(ushort)Items.BackCopper => backgroundCopperTexture,
-				(ushort)Items.BackGold => backgroundGoldTexture,
-				(ushort)Items.BackIron => backgroundIronTexture,
-				(ushort)Items.BackTin => backgroundTinTexture,
-				(ushort)Items.BackSilver => backgroundSilverTexture,
-
-
-				(ushort)Items.BackAnorthosite => backgroundAnorthositeTexture,
-				(ushort)Items.BackBasalt => backgroundBasaltTexture,
-				(ushort)Items.BackDiorit => backgroundDioritTexture,
-				(ushort)Items.BackDolomite => backgroundDolomiteTexture,
-				(ushort)Items.BackFlint => backgroundFlintTexture,
-				(ushort)Items.BackGabbro => backgroundGabbroTexture,
-				(ushort)Items.BackGneiss => backgroundGneissTexture,
-				(ushort)Items.BackLimestone => backgroundLimestoneTexture,
-				(ushort)Items.BackMudstone => backgroundMudstoneTexture,
-				(ushort)Items.BackSandstone => backgroundSandstoneTexture,
-				(ushort)Items.BackSchist => backgroundSchistTexture,
-				(ushort)Items.BackRhyolite => backgroundRhyoliteTexture,
-
-				(ushort)Items.StoneFlint => flintTexture,
-				(ushort)Items.StoneMudstone => mudstoneTexture,
-				(ushort)Items.StoneAnorthosite => anorthositeTexture,
-				(ushort)Items.AnimalRabbit => rabbitStillTexture,
-				(ushort)Items.AnimalParrot => TextureParrotStill,
-				(ushort)Items.AnimalChicken => chickenStillTexture,
-				(ushort)Items.Rod => RodTexture,
-				(ushort)Items.TorchElectricOFF => LightElectricTexture,
-				(ushort)Items.TorchElectricON => LightElectricTexture,
-				(ushort)Items.Compost => CompostTexture,
-				(ushort)Items.Composter => ComposterTexture,
-
-				(ushort)Items.FormalShoes => TextureItemFormalShoes,
-				(ushort)Items.Pumps => TextureItemPumps,
-				(ushort)Items.Sneakers => TextureItemSneakers,
-				(ushort)Items.SpaceBoots => TextureItemSpaceBoots,
-
-				(ushort)Items.Jeans => TextureItemJeans,
-				(ushort)Items.Shorts => TextureItemShorts,
-				(ushort)Items.SpaceTrousers => TextureItemSpaceTrousers,
-				(ushort)Items.ArmyTrousers => TextureItemArmyTrousers,
-				(ushort)Items.Skirt => TextureItemSkirt,
-
-				(ushort)Items.TShirt => TextureItemTShirt,
-				(ushort)Items.SpaceSuit => TextureItemSpaceSuit,
-				(ushort)Items.Dress => TextureItemDress,
-				(ushort)Items.Shirt => TextureItemShirt,
-
-				(ushort)Items.Cap => TextureItemCap,
-				(ushort)Items.Hat => TextureItemHat,
-				(ushort)Items.Crown => TextureItemCrown,
-				(ushort)Items.SpaceHelmet => TextureItemSpaceHelmet,
-
-				(ushort)Items.Underpants => TextureItemUnderpants,
-				(ushort)Items.BoxerShorts => TextureItemBoxerShorts,
-				(ushort)Items.Panties => TextureItemPanties,
-				(ushort)Items.Swimsuit => TextureItemSwimsuit,
-				(ushort)Items.BikiniDown => TextureItemBikiniDown,
-
-				(ushort)Items.Bra => TextureItemBra,
-				(ushort)Items.BikiniTop => TextureItemBikiniTop,
-
-				(ushort)Items.CoatArmy => TextureItemCoatArmy,
-				(ushort)Items.Coat => TextureItemCoat,
-				(ushort)Items.JacketDenim => ItemJacketDenimTexture,
-				(ushort)Items.JacketFormal => ItemJacketFormalTexture,
-				(ushort)Items.JacketShort => TextureItemJacketShort,
-
-				(ushort)Items.AcaciaLeaves => TextureAcaciaLeaves,
-				(ushort)Items.AcaciaWood => TextureAcaciaWood,
-				(ushort)Items.AcaciaSapling => TextureAcaciaSapling,
-				(ushort)Items.MangroveLeaves => TextureMangroveLeaves,
-				(ushort)Items.MangroveWood => TextureMangroveWood,
-				(ushort)Items.MangroveSapling => TextureMangroveSapling,
-				(ushort)Items.WillowLeaves => TextureWillowLeaves,
-				(ushort)Items.WillowWood => TextureWillowWood,
-				(ushort)Items.WillowSapling => TextureWillowSapling,
-				(ushort)Items.Olive => ItemOliveTexture,
-				(ushort)Items.OliveLeaves => TextureOliveLeaves,
-				(ushort)Items.OliveLeavesWithOlives => TextureOliveLeavesWithOlives,
-				(ushort)Items.OliveWood => TextureOliveWood,
-				(ushort)Items.OliveSapling => TextureOliveSapling,
-				(ushort)Items.EucalyptusLeaves => TextureEucalyptusLeaves,
-				(ushort)Items.EucalyptusSapling => TextureEucalyptusSapling,
-				(ushort)Items.EucalyptusWood => TextureEucalyptusWood,
-				(ushort)Items.RubberTreeLeaves => TextureRubberTreeLeaves,
-				(ushort)Items.RubberTreeSapling => TextureRubberTreeSapling,
-				(ushort)Items.RubberTreeWood => TextureRubberTreeWood,
-				(ushort)Items.KapokLeaves => TextureKapokLeaves,
-				(ushort)Items.KapokLeavesFibre => TextureKapokLeavesFibre,
-				(ushort)Items.KapokLeacesFlowering => TextureKapokBlossom,
-				(ushort)Items.KapokSapling => TextureKapokSapling,
-				(ushort)Items.KapokWood => TextureKapokWood,
-				(ushort)Items.KapokFibre => ItemKapokFibreTexture,
-				(ushort)Items.KnifeCopper => TextureKnifeCopper,
-				(ushort)Items.KnifeBronze => TextureKnifeBronze,
-				(ushort)Items.KnifeGold => TextureKnifeGold,
-				(ushort)Items.KnifeIron => TextureKnifeIron,
-				(ushort)Items.KnifeSteel => TextureKnifeSteel,
-				(ushort)Items.KnifeAluminium => TextureKnifeAluminium,
-
-				(ushort)Items.HoeGold => TextureHoeGold,
-				(ushort)Items.HoeSteel => TextureHoeSteel,
-				(ushort)Items.HoeAluminium => TextureHoeAluminium,
-				(ushort)Items.DyeGold => TextureDyeGold,
-				(ushort)Items.DyeWhite => TextureDyeWhite,
-				(ushort)Items.DyeYellow => TextureDyeYellow,
-				(ushort)Items.DyeOrange => TextureDyeOrange,
-				(ushort)Items.DyeRed => TextureDyeRed,
-				(ushort)Items.DyeDarkRed => TextureDyeDarkRed,
-				(ushort)Items.DyeOlive => TextureDyeOlive,
-				(ushort)Items.DyePurple => TextureDyePurple,
-				(ushort)Items.DyePink => TextureDyePink,
-				(ushort)Items.DyeTeal => TextureDyeTeal,
-				(ushort)Items.DyeLightBlue => TextureDyeLightBlue,
-				(ushort)Items.DyeBlue => TextureDyeBlue,
-				(ushort)Items.DyeMagenta => TextureDyeMagenta,
-				(ushort)Items.DyeDarkBlue => TextureDyeDarkBlue,
-				(ushort)Items.DyeBlack => TextureDyeBlack,
-				(ushort)Items.DyeBrown => TextureDyeBrown,
-				(ushort)Items.DyeLightGray => TextureDyeLightGray,
-				(ushort)Items.DyeGray => TextureDyeGray,
-				(ushort)Items.DyeDarkGray => TextureDyeDarkGray,
-				(ushort)Items.DyeViolet => TextureDyeViolet,
-				(ushort)Items.DyeSpringGreen => TextureDyeSpringGreen,
-				(ushort)Items.DyeRoseQuartz => TextureDyeRoseQuartz,
-				(ushort)Items.TestTube => TextureTestTube,
-				(ushort)Items.DyeLightGreen => TextureDyeLightGreen,
-				(ushort)Items.DyeGreen => TextureDyeGreen,
-				(ushort)Items.DyeArmy => TextureDyeArmy,
-				(ushort)Items.DyeDarkGreen => TextureDyeDarkGreen,
-
-					 //Shovel
-				(ushort)Items.ShovelHeadCopper => TextureShovelHeadCopper,
-				(ushort)Items.ShovelHeadBronze => TextureShovelHeadBronze,
-				(ushort)Items.ShovelHeadGold => TextureShovelHeadGold,
-				(ushort)Items.ShovelHeadIron => TextureShovelHeadIron,
-				(ushort)Items.ShovelHeadSteel => TextureShovelHeadSteel,
-				(ushort)Items.ShovelHeadAluminium => TextureShovelHeadAluminium,
-
-				// Pickaxe
-				(ushort)Items.PickaxeHeadCopper => TexturePickaxeHeadCopper,
-				(ushort)Items.PickaxeHeadBronze => TexturePickaxeHeadBronze,
-				(ushort)Items.PickaxeHeadGold => TexturePickaxeHeadGold,
-				(ushort)Items.PickaxeHeadIron => TexturePickaxeHeadIron,
-				(ushort)Items.PickaxeHeadSteel => TexturePickaxeHeadSteel,
-				(ushort)Items.PickaxeHeadAluminium => TexturePickaxeHeadAluminium,
-
-				// Axe
-				(ushort)Items.AxeHeadCopper => TextureAxeHeadCopper,
-				(ushort)Items.AxeHeadBronze => TextureAxeHeadBronze,
-				(ushort)Items.AxeHeadGold => TextureAxeHeadGold,
-				(ushort)Items.AxeHeadIron => TextureAxeHeadIron,
-				(ushort)Items.AxeHeadSteel => TextureAxeHeadSteel,
-				(ushort)Items.AxeHeadAluminium => TextureAxeHeadAluminium,
-
-				// Shears
-				(ushort)Items.ShearsHeadCopper => TextureShearsHeadCopper,
-				(ushort)Items.ShearsHeadBronze => TextureShearsHeadBronze,
-				(ushort)Items.ShearsHeadGold => TextureShearsHeadGold,
-				(ushort)Items.ShearsHeadIron => TextureShearsHeadIron,
-				(ushort)Items.ShearsHeadSteel => TextureShearsHeadSteel,
-				(ushort)Items.ShearsHeadAluminium => TextureShearsHeadAluminium,
-
-				(ushort)Items.KnifeHeadCopper => TextureKnifeHeadCopper,
-				(ushort)Items.KnifeHeadBronze => TextureKnifeHeadBronze,
-				(ushort)Items.KnifeHeadGold => TextureKnifeHeadGold,
-				(ushort)Items.KnifeHeadIron => TextureKnifeHeadIron,
-				(ushort)Items.KnifeHeadSteel => TextureKnifeHeadSteel,
-				(ushort)Items.KnifeHeadAluminium => TextureKnifeHeadAluminium,
-
-				(ushort)Items.HoeHeadCopper => TextureHoeHeadCopper,
-				(ushort)Items.HoeHeadBronze => TextureHoeHeadBronze,
-				(ushort)Items.HoeHeadGold => TextureHoeHeadGold,
-				//(ushort)Items.HoeHeadIron => TextureHoeHeadIron,
-				(ushort)Items.HoeHeadSteel => TextureHoeHeadSteel,
-				(ushort)Items.HoeHeadAluminium => TextureHoeHeadAluminium,
-
-				(ushort)Items.RedSand => TextureRedSand,
-				(ushort)Items.FishMeat => fishTexture0,
-
-				_=>
-					#if DEBUG
-					throw new Exception("Missing texture for item "+(Items)id),
-					#else
-					null,
-					#endif
-			};
-		}
-
-		//void ItemDrop(ItemNonInv item, DInt _pos) {
-		//    DroppedItems.Add(new Item {
-		//        X=_pos.X,
-		//        Y=_pos.Y,
-		//        item=item,
-		//        Texture=ItemIdToTexture(item.Id),
-		//    });
-		//}
-
-		void ItemDrop(ItemNonInv item, int x, int y) {
-			DroppedItems.Add(new Item {
-				X=x,
-				Y=y,
-				item=item,
-				Texture=ItemIdToTexture(item.Id),
-			});
-		}
-
-		//void ItemDrop(ItemNonInv item, float x, float y) {
-		//    DroppedItems.Add(new Item {
-		//        X=(int)x,
-		//        Y=(int)y,
-		//        item=item,
-		//        Texture=ItemIdToTexture(item.Id),
-		//    });
-		//}
-		#endregion
-
-		#region Typing
-		string TextEdit(string editText) {
+        #endregion
+
+        //#region Inventory
+        //void SetUpInvToNew() {
+        //	Resize();
+        //	if (lastMashineType!=inventory) {
+        //		switch (inventory) {
+        //			case InventoryType.BasicInv:
+        //				SetInvCraftingBlocks();
+        //				break;
+
+        //			case InventoryType.Desk:
+        //				SetInvCraftingBlocksA();
+        //				break;
+
+        //			case InventoryType.FurnaceStone:
+        //				SetInvBakeIngots();
+        //				for (int i=0; i<4; i++) {
+        //					((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
+        //				}
+        //				break;
+
+        //			case InventoryType.FurnaceElectric:
+        //				SetInvBakeIngots();
+        //				break;
+
+        //			case InventoryType.Macerator:
+        //				SetInvToDustDusts();
+        //				break;
+
+        //			case InventoryType.SewingMachine:
+        //				SetInvClothesHead();
+        //				break;
+        //		}
+        //	}
+        //	CurrentDeskCrafting=null;
+
+        //	SelectedCraftingRecipe=-1;
+        //	lastMashineType=inventory;
+        //}
+
+        //void InventoryRemoveSelectedItem() {
+        //	ItemInv i=InventoryNormal[boxSelected];
+        //	switch (i) {
+        //		case ItemInvTool32 s:
+        //		   // s.SetCount=s.GetCount-1;
+        //			if (s.GetCount==1) {
+        //				InventoryNormal[boxSelected]=itemBlank;
+        //			} else {
+        //				s.SetCount=s.GetCount-1;
+        //			}
+        //			break;
+
+        //		case ItemInvTool16 s:
+        //			if (s.GetCount==1) {
+        //				InventoryNormal[boxSelected]=itemBlank;
+        //			} else {
+        //				s.SetCount=s.GetCount-1;
+        //			}
+        //			break;
+
+        //		case ItemInvBasic16 s:
+        //			if (s.GetCount==1) {
+        //				InventoryNormal[boxSelected]=itemBlank;
+        //			} else {
+        //				s.SetCount=s.GetCount-1;
+        //			}
+        //			break;
+
+        //		case ItemInvBasic32 s:
+        //			if (s.GetCount==1) {
+        //				InventoryNormal[boxSelected]=itemBlank;
+        //			} else {
+        //				s.SetCount=s.GetCount-1;
+        //			}
+        //			break;
+
+        //		//case ItemInvBasicColoritzed32NonStackable s:
+        //		//    InventoryNormal[boxSelected]=itemBlank;
+        //		//    break;
+
+        //		//case ItemInvNonStackable16 s:
+        //		//    InventoryNormal[boxSelected]=itemBlank;
+        //		//    break;
+
+        //		//case ItemInvNonStackable32 s:
+        //		//    InventoryNormal[boxSelected]=itemBlank;
+        //		//    break;
+
+        //		case ItemInvFood16 s:
+        //			if (s.GetCount==1) {
+        //				InventoryNormal[boxSelected]=itemBlank;
+        //			} else {
+        //				s.SetCount=s.GetCount-1;
+        //			}
+        //			break;
+
+        //		default:
+        //			InventoryNormal[boxSelected]=itemBlank;
+        //			break;
+
+        //	}
+        //}
+
+        //void StartItemMove(ItemInv[] inv, int id) {
+        //	Debug.WriteLine("StartItemMove");
+        //	if (inv[id].Id!=0) {
+        //		invMove = true;
+        //		startMovePos=inv[id].GetPos();
+        //		mouseItem=inv[id];
+        //		inv[id]=itemBlank;
+        //		invStartId=id;
+        //		invStartInventory=inv;
+        //		showMouseItemWhileMooving=true;
+        //		mouseDrawItemTextInfo=false;
+
+        //		//Console.WriteLine("start: "+id);
+        //	}
+        //}
+
+        //void StartItemMoveHalf(ItemInv[] inv, int id) {
+        //	Debug.WriteLine("StartItemMoveHalf");
+        //	if (id!=0) {
+        //		invMove = true;
+        //		invStartId=id;
+        //		invStartInventory=inv;
+
+        //		startMovePos=inv[id].GetPos();
+
+        //		showMouseItemWhileMooving=true;
+        //		mouseDrawItemTextInfo=false;
+
+        //		switch (inv[id]) {
+        //			case ItemInvBasic16 i:
+        //				{
+        //					int c=i.GetCount;
+        //					if (c==1) {
+        //						mouseItem=new ItemInvBasic16(i.Texture, i.Id, 1, mouseRealPosX, mouseRealPosY);
+        //						inv[id]=itemBlank;
+        //					} else {
+        //						int stay=c/2;
+        //						DInt z=GetPosOfItemInInventories(inv,id);
+        //						inv[id]=new ItemInvBasic16(i.Texture, i.Id, stay, z.X, z.Y);
+        //						mouseItem=new ItemInvBasic16(i.Texture, i.Id, c-stay, mouseRealPosX, mouseRealPosY);
+        //					}
+        //				}
+        //				return;
+
+        //			case ItemInvBasic32 i:
+        //				{
+        //					int c=i.GetCount;
+        //					if (c==1) {
+        //						mouseItem=new ItemInvBasic32(i.Texture, i.Id, 1, mouseRealPosX, mouseRealPosY);
+        //						inv[id]=itemBlank;
+        //					} else {
+        //						int stay=c/2;
+        //					((ItemInvBasic32)inv[id]).SetCount=stay;
+        //					//	inv[id]=new ItemInvBasic32(i.Texture, i.Id, stay, mouseRealPosX, mouseRealPosY);
+        //						mouseItem=new ItemInvBasic32(i.Texture, i.Id, c-stay, mouseRealPosX, mouseRealPosY);
+        //					}
+        //				}
+        //				return;
+
+        //			case ItemInvFood16 i:
+        //				{
+        //					int c=i.GetCount;
+        //					if (c==1) {
+        //						mouseItem=new ItemInvFood16(i.Texture, i.Id, 1, i.CountMaximum, i.GetDescay, i.DescayMaximum, mouseRealPosX, mouseRealPosY);
+        //						inv[id]=itemBlank;
+        //					} else {
+        //						int stay=c/2;
+        //						inv[id]=new ItemInvFood16(i.Texture, i.Id, stay, i.CountMaximum, i.GetDescay, i.DescayMaximum,  mouseRealPosX, mouseRealPosY);
+        //						mouseItem=new ItemInvFood16(i.Texture, i.Id, c-stay, i.CountMaximum, i.GetDescay, i.DescayMaximum, mouseRealPosX, mouseRealPosY);
+        //					}
+        //				}
+        //				return;
+
+        //			case ItemInvTool16 i:
+        //				{
+        //					mouseItem=new ItemInvTool16(i.Texture, i.Id, 1, i.Maximum, mouseRealPosX, mouseRealPosY);
+        //					inv[id]=itemBlank;
+        //				}
+        //				return;
+
+        //			case ItemInvTool32 i:
+        //				{
+        //					mouseItem=new ItemInvTool32(i.Texture, i.Id, 1, i.Maximum, mouseRealPosX, mouseRealPosY);
+        //					inv[id]=itemBlank;
+        //				}
+        //				return;
+
+        //			case ItemInvNonStackable16 i:
+        //				{
+        //					mouseItem=new ItemInvNonStackable16(i.Texture, i.Id, mouseRealPosX, mouseRealPosY);
+        //					inv[id]=itemBlank;
+        //				}
+        //				return;
+
+        //			case ItemInvNonStackable32 i:
+        //				{
+        //					mouseItem=new ItemInvNonStackable32(i.Texture, i.Id, mouseRealPosX, mouseRealPosY);
+        //					inv[id]=itemBlank;
+        //				}
+        //				return;
+
+        //			case ItemInvBasicColoritzed32NonStackable i:
+        //				{
+        //					mouseItem=new ItemInvBasicColoritzed32NonStackable(i.Texture, i.Id, i.color, mouseRealPosX, mouseRealPosY);
+        //					inv[id]=itemBlank;
+        //				}
+        //				return;
+        //		}
+        //	}
+        //}
+
+        //DInt GetPosOfItemInInventories(ItemInv[] inv, int i) {
+        //	if (IsSameArray(inv, InventoryNormal)) {
+        //		DInt p=InventoryGetPosNormal(i);
+        //		if (p is not null) return p;
+        //	}
+        //	if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //		if (IsSameArray(inv, InventoryClothes)) {
+        //			DInt p=InventoryGetPosClothes(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.BoxWooden) {
+        //		if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosBoxWooden(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.FurnaceStone) {
+        //		if (IsSameArray(inv, ((MashineBlockBasic )terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosFurnaceStone(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.BoxAdv) {
+        //		if (IsSameArray(inv, ((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosAdvBox(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.Miner) {
+        //		if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosBoxWooden(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //		if (IsSameArray(inv, ((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosShelf(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //		if (IsSameArray(inv, ((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			return new DInt{ X=Global.WindowWidthHalf-300+38+40+4, Y=Global.WindowHeightHalf+20-2+40+25+4 };
+        //		}
+        //	}
+        //	if (inventory==InventoryType.Barrel) {
+        //		if (IsSameArray(inv, ((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv)) {
+        //			DInt p=InventoryGetPosBarrel(i);
+        //			if (p is not null) return p;
+        //		}
+        //	}
+        //	#if DEBUG
+        //	throw new Exception("Unknown move to position");
+        //	#else
+        //	return null;
+        //	#endif
+        //}
+
+        //void InvMove(ItemInv[] toA, int toI) {
+        //	Debug.WriteLine("InvMove");
+        //	showMouseItemWhileMooving=false;
+        //	mouseDrawItemTextInfo=true;
+        //	invMove=false;
+        //	// Debug.WriteLine("dest: "+toI);
+        //	if (mouseItem.Id==toA[toI].Id) {
+        //		switch (mouseItem) {
+        //			case ItemInvBasic16 f:
+        //				{
+        //					ItemInvBasic16 t=(ItemInvBasic16)toA[toI];
+        //					int total=f.GetCount+t.GetCount;
+        //					if (total>100) {
+        //						t.SetCount=99;
+        //						f.SetCount=total-99;
+        //						invStartInventory[invStartId]=mouseItem;
+        //					} else {
+        //						t.SetCount=total;
+        //					}
+        //				}
+        //				return;
+
+        //			case ItemInvBasic32 f:
+        //				{
+        //					ItemInvBasic32 t=(ItemInvBasic32)toA[toI];
+        //					int total=f.GetCount+t.GetCount;
+
+        //					if (total>100) {
+        //						t.SetCount=99;
+        //						f.SetCount=total-99;
+        //						invStartInventory[invStartId]=mouseItem;
+        //					} else {
+        //						t.SetCount=total;
+        //					}
+        //				}
+        //				return;
+
+        //			case ItemInvFood16 f:
+        //				{
+        //					ItemInvFood16 t=(ItemInvFood16)toA[toI];
+        //					int max=f.CountMaximum;
+        //					int total=f.GetCount+t.GetCount;
+
+        //					if (total>max) {
+        //						t.SetCount=max;
+        //						f.SetCount=total-max;
+        //						invStartInventory[invStartId]=mouseItem;
+        //					} else {
+        //						t.SetCount=total;
+        //					}
+        //				}
+        //				return;
+
+        //			//case ItemInvNonStackable16 f:
+        //			//    {
+        //			//        ItemInv t=toA[toI];
+        //			//        toA[toI]=mouseItem;
+        //			//        invStartInventory[invStartId]=t;
+        //			//    }
+        //			//    return;
+
+        //			//case ItemInvNonStackable32 f:
+        //			//    {
+        //			//        ItemInv t=toA[toI];
+        //			//        toA[toI]=mouseItem;
+        //			//        invStartInventory[invStartId]=t;
+        //			//    }
+        //			//    return;
+
+        //			//case ItemInvBasicColoritzed32NonStackable f:
+        //			//    {
+        //			//        ItemInv t=toA[toI];
+        //			//        toA[toI]=mouseItem;
+        //			//        invStartInventory[invStartId]=t;
+        //			//    }
+        //			//    return;
+
+        //			//case ItemInvTool32 f:
+        //			//    {
+        //			//        ItemInv t=toA[toI];
+        //			//        toA[toI]=mouseItem;
+        //			//        invStartInventory[invStartId]=t;
+        //			//    }
+        //			//    return;
+
+        //			default:
+        //				{
+        //					ItemInv t=toA[toI];
+        //					toA[toI]=mouseItem;
+        //					invStartInventory[invStartId]=t;
+        //				}
+        //				return;
+        //		}
+        //	} else {
+        //		if (toA[toI].Id==0) {
+
+        //			//invStartInventory[invStartId]=itemBlank;
+        //			//DInt p=new DInt(int.MinValue,int.MinValue);
+        //			//if (toA==InventoryNormal) {
+        //			//    p=InventoryGetPosNormal(toI);
+        //			//}
+        //			//if (inventory==InventoryType.BasicInv) {
+        //			//    if (toA==InventoryClothes) {
+        //			//        p=InventoryGetPosClothes(toI);
+        //			//    }
+        //			//}
+        //			//if (inventory==InventoryType.BoxWooden) {
+        //			//    p=InventoryGetPosBoxWooden();
+        //			//}
+        //			//if (inventory==InventoryType.BoxAdv) {
+        //			//    p=InventoryGetPosAdvBox();
+        //			//}
+        //			//#if DEBUG
+        //			//if (p.X==int.MinValue) throw new Exception("Unknown move to position");
+        //			//#endif
+        //			DInt p=GetPosOfItemInInventories(toA,toI);
+        //			toA[toI]=mouseItem;
+        //			toA[toI].SetPos(p.X, p.Y);
+        //			mouseItem=itemBlank;
+        //			return;
+        //		} else {
+        //			ItemInv t=toA[toI];
+        //			DInt destinationPos=t.GetPos();
+        //		  //  Vector2 sourcePos=invStartInventory[invStartId].GetPosVector2();
+
+        //			toA[toI]=mouseItem;
+        //			mouseItem.SetPos(destinationPos.X, destinationPos.Y);
+        //			invStartInventory[invStartId]=t;
+        //			t.SetPos(startMovePos.X, startMovePos.Y);
+        //		  //  DInt p=null;
+        //		  ////  if (invStartInventory==InventoryNormal) {
+        //		  //      p=InventoryGetPosNormal(invStartId);
+        //		  // // }
+        //		  //  if (inventory==InventoryType.BasicInv) {
+        //		  //      if (toA==InventoryClothes) {
+        //		  //          p=InventoryGetPosClothes(toI);
+        //		  //      }
+        //		  //  }
+        //		  //  if (inventory==InventoryType.BoxWooden) {
+        //		  //      p=InventoryGetPosBoxWooden();
+        //		  //  }
+        //		  //  if (inventory==InventoryType.BoxAdv) {
+        //		  //      p=InventoryGetPosAdvBox();
+        //		  //  }
+        //		  //  #if DEBUG
+        //		  //  if (p==null) throw new Exception("Unknown move to position");
+        //		  //  #endif
+        //		   // DInt p=GetPosOfItemInInventories(toA,toI);
+        //			mouseItem=itemBlank;
+        //			return;
+        //		}
+        //	}
+        //}
+
+        //void InvMoveOne(ItemInv[] toA, int toI) {
+        //	Debug.WriteLine("InvMoveOne");
+        //	if (mouseItem.Id==toA[toI].Id) {
+        //		switch (mouseItem) {
+        //			case ItemInvBasic16 f:
+        //				{
+        //					ItemInvBasic16 t=(ItemInvBasic16)toA[toI];
+        //					if (t.GetCount==99) return;
+
+        //					if (f.GetCount==1) {
+        //						t.SetCount=t.GetCount+1;
+        //						invStartInventory[invStartId]=itemBlank;
+        //					} else {
+        //						t.SetCount=t.GetCount+1;
+        //					//	t.SetCount=t.GetCount-1;
+        //					}
+        //					return;
+        //				}
+
+
+        //			case ItemInvBasic32 f:
+        //				{
+        //					ItemInvBasic32 t=(ItemInvBasic32)toA[toI];
+        //					if (t.GetCount==99) return;
+
+        //					if (f.GetCount==1) {
+        //						t.SetCount=t.GetCount+1;
+        //						invStartInventory[invStartId]=itemBlank;
+        //					} else {
+        //						t.SetCount=t.GetCount+1;
+        //						//t.SetCount=t.GetCount-1;
+        //					}
+        //					return;
+        //				}
+
+        //			case ItemInvFood16 f:
+        //				{
+        //					ItemInvFood16 t=(ItemInvFood16)toA[toI];
+        //					int max=t.CountMaximum;
+        //					if (t.GetCount==max) return;
+
+        //					if (f.GetCount==1) {
+        //						t.SetCount=t.GetCount+1;
+        //						invStartInventory[invStartId]=itemBlank;
+        //					} else {
+        //						t.SetCount=t.GetCount+1;
+        //						t.SetCount=t.GetCount-1;
+        //					}
+        //					return;
+        //				}
+        //		}
+        //	} else if (toA[toI].Id==(ushort)BlockId.None) {
+        //		 switch (mouseItem) {
+        //			case ItemInvBasic16 f:
+        //				{
+        //					if (f.GetCount==1) {
+        //						DInt p=GetPosOfItemInInventories(toA, toI);
+        //						toA[toI]=new ItemInvBasic16(f.Texture, f.Id, 1, p.X, p.Y);
+        //						mouseItem=itemBlank;
+        //					} else {
+        //						int half=f.GetCount/2;
+        //						DInt p=GetPosOfItemInInventories(toA, toI);
+        //						toA[toI]=new ItemInvBasic16(f.Texture, f.Id, f.GetCount-half, p.X, p.Y);
+        //						f.SetCount=half;
+        //					}
+        //					return;
+        //				}
+
+        //			case ItemInvBasic32 f:
+        //				{
+        //					if (f.GetCount==1) {
+        //						DInt p=GetPosOfItemInInventories(toA, toI);
+        //						toA[toI]=new ItemInvBasic32(f.Texture, f.Id, 1, p.X, p.Y);
+        //						mouseItem=itemBlank;
+        //					} else {
+        //						int half=f.GetCount/2;
+        //						DInt p=GetPosOfItemInInventories(toA, toI);
+        //						toA[toI]=new ItemInvBasic32(f.Texture, f.Id, f.GetCount-half, p.X, p.Y);
+        //						f.SetCount=half;
+        //					}
+        //					return;
+        //				}
+
+        //			#if DEBUG
+        //			default: throw new Exception("Missing ItemInv category in switch");
+        //			#endif
+        //		}
+        //	}else{
+        //		 switch (mouseItem) {
+        //			case ItemInvBasicColoritzed32NonStackable f:
+        //				invMove=false;
+        //				Vector2 toPos=toA[toI].GetPosVector2();
+        //				invStartInventory[invStartId]=toA[toI];
+        //				toA[toI]=mouseItem;
+        //				f.SetPos(toPos);
+        //				mouseItem=null;
+        //				invStartInventory[invStartId].SetPos(startMovePos);
+        //				mouseDrawItemTextInfo=true;
+        //				showMouseItemWhileMooving=false;
+        //				return;
+
+        //			#if DEBUG
+        //			default: throw new Exception("Missing ItemInv category in switch");
+        //			#endif
+        //		}
+        //	}
+
+        //	invMove=false;
+        //}
+
+        //void InvMoveHalf(ItemInv[] toA, int toI) {
+        //	Debug.WriteLine("InvMoveHalf");
+        //	//if (fromA[fromI].Id!=0 && toA[toI].Id==0) {
+        //		switch (invStartInventory[invStartId]) {
+        //			case ItemInvBasic16 item:
+        //				{
+        //					if (item.GetCount>1) {
+        //						int half=(int)((float)item.GetCount/2);
+        //						int fromY=item.GetCount-half;
+        //					   // DInt p=GetPosOfItemInInventories(invStartInventory,invStartId);
+        //					   // InventoryGetPosNormal(toI);
+        //						toA[toI]=new ItemInvBasic16(item.Texture,item.Id,half, startMovePos.X, startMovePos.Y);
+        //						((ItemInvBasic16)invStartInventory[invStartId]).SetCount=fromY;
+        //						return;
+        //					}
+        //				}
+        //				break;
+
+        //			case ItemInvBasic32 item:
+        //				{
+        //					if (item.GetCount>1) {
+        //						int half=(int)((float)item.GetCount/2);
+        //						int fromY=item.GetCount-half;
+        //						DInt p=InventoryGetPosNormal(toI);
+        //						toA[toI]=new ItemInvBasic32(item.Texture,item.Id,half, p.X, p.Y);
+        //						((ItemInvBasic32)invStartInventory[invStartId]).SetCount=fromY;
+        //						return;
+        //					}
+        //				}
+        //				break;
+        //		}
+        //   // }
+        //	invMove=false;
+        //}
+
+        //void InvDrop() {
+        //	if (mouseRealPosX<Global.WindowWidthHalf){
+        //		if (terrain[(PlayerXInt-30)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
+        //		else DropItemToPos(mouseItem.ToNon(), PlayerXInt-30, PlayerYInt);
+        //	}else{
+        //		if (terrain[(PlayerXInt+20)/16].IsSolidBlocks[PlayerYInt/16])AddItemToPlayer(mouseItem.ToNon());
+        //		else DropItemToPos(mouseItem.ToNon(), PlayerXInt+20, PlayerYInt);
+        //	}
+        //	invMove=false;
+        //	mouseItem=itemBlank;
+        //	mouseItemId=0;
+        //	showMouseItemWhileMooving=false;
+        //	mouseDrawItemTextInfo=true;
+        //}
+
+        //void InvRemove() {
+        // //   invStartInventory[invStartId]=itemBlank;
+        //	invMove=false;
+        //	showMouseItemWhileMooving=false;
+        //	mouseItem=itemBlank;
+        //}
+
+        //bool InventoryAddOne(ushort index) {
+
+        //	#region Nonstackable
+        //	if (GameMethods.IsItemInvNonStackable32(index)) {
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == 0) {
+        //				DInt pos;
+        //				if (i<5) pos=InventoryGetPosNormal(i);
+        //				else pos=InventoryGetPosNormalInv(i);
+        //				InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(index),index,pos.X,pos.Y);
+        //				return true;
+        //			}
+        //		}
+        //		return false;
+        //	}
+        //	if (GameMethods.IsItemInvFood16(index)) {
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == 0) {
+        //				DInt pos;
+        //				if (i<5) pos=InventoryGetPosNormal(i);
+        //				else pos=InventoryGetPosNormalInv(i);
+        //				InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(index),index,pos.X,pos.Y);
+        //				return true;
+        //			}
+        //		}
+        //		return false;
+        //	}
+        //	if (GameMethods.IsItemInvFood32(index)) {
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == 0) {
+        //				DInt pos;
+        //				if (i<5) pos=InventoryGetPosNormal(i);
+        //				else pos=InventoryGetPosNormalInv(i);
+        //				InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(index),index,pos.X,pos.Y);
+        //				return true;
+        //			}
+        //		}
+        //		return false;
+        //	}
+        //	#endregion
+
+        //	#region Stackable
+        //	if (GameMethods.IsItemInvBasic16(index)) {
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == 0) {
+        //				DInt pos;
+        //				if (i<5) pos=InventoryGetPosNormal(i);
+        //				else pos=InventoryGetPosNormalInv(i);
+        //				InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
+        //				return true;
+        //			}
+        //		}
+
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == index) {
+        //				ItemInvBasic16 item=(ItemInvBasic16)InventoryNormal[i];
+        //				if (item.GetCount<99) {
+        //					item.SetCount=item.GetCount+1;
+        //					return true;
+        //				}
+        //			}
+        //		}
+        //		return false;
+        //	}
+
+        //	if (GameMethods.IsItemInvBasic32(index)) {
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == 0) {
+        //				DInt pos;
+        //				if (i<5) pos=InventoryGetPosNormal(i);
+        //				else pos=InventoryGetPosNormalInv(i);
+        //				InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
+        //				return true;
+        //			}
+        //		}
+
+        //		for (int i=0; i<maxInvCount; i++) {
+        //			if (InventoryNormal[i].Id == index) {
+        //				ItemInvBasic32 item=(ItemInvBasic32)InventoryNormal[i];
+        //				if (item.GetCount<99) {
+        //					item.SetCount=item.GetCount+1;
+        //					return true;
+        //				}
+        //			}
+        //		}
+        //		return false;
+        //	}
+        //	#endregion
+
+        //	return false;
+        //}
+
+        ////bool InventoryAddOne(ushort index, Color color) {
+
+        ////    #region Nonstackable
+        ////    if (GameMethods.IsItemInvNonStackable32(index)) {
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == 0) {
+        ////                DInt pos;
+        ////                if (i<5) pos=InventoryGetPosNormal(i);
+        ////                else pos=InventoryGetPosNormalInv(i);
+        ////                InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(index),index,pos.X,pos.Y);
+        ////                return true;
+        ////            }
+        ////        }
+        ////        return false;
+        ////    }
+
+        ////    if (GameMethods.IsItemInvBasicColoritzed32NonStackable(index)) {
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == 0) {
+        ////                DInt pos;
+        ////                if (i<5) pos=InventoryGetPosNormal(i);
+        ////                else pos=InventoryGetPosNormalInv(i);
+        ////                InventoryNormal[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(index),index,color,pos.X,pos.Y);
+        ////                return true;
+        ////            }
+        ////        }
+        ////        return false;
+        ////    }
+        ////    #endregion
+
+        ////    #region Stackable
+        ////    if (GameMethods.IsItemInvBasic16(index)) {
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == 0) {
+        ////                DInt pos;
+        ////                if (i<5) pos=InventoryGetPosNormal(i);
+        ////                else pos=InventoryGetPosNormalInv(i);
+        ////                InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
+        ////                return true;
+        ////            }
+        ////        }
+
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == index) {
+        ////                ItemInvBasic16 item=(ItemInvBasic16)InventoryNormal[i];
+        ////                if (item.GetCount<99) {
+        ////                    item.SetCount=item.GetCount+1;
+        ////                    return true;
+        ////                }
+        ////            }
+        ////        }
+        ////        return false;
+        ////    }
+
+        ////    if (GameMethods.IsItemInvBasic32(index)) {
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == 0) {
+        ////                DInt pos;
+        ////                if (i<5) pos=InventoryGetPosNormal(i);
+        ////                else pos=InventoryGetPosNormalInv(i);
+        ////                InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(index), index, 1, pos.X, pos.Y);
+        ////                return true;
+        ////            }
+        ////        }
+
+        ////        for (int i=0; i<maxInvCount; i++) {
+        ////            if (InventoryNormal[i].Id == index) {
+        ////                ItemInvBasic32 item=(ItemInvBasic32)InventoryNormal[i];
+        ////                if (item.GetCount<99) {
+        ////                    item.SetCount=item.GetCount+1;
+        ////                    return true;
+        ////                }
+        ////            }
+        ////        }
+        ////        return false;
+        ////    }
+        ////    #endregion
+
+        ////    return false;
+        ////}
+
+        //ItemNonInv InventoryAdd(ItemNonInv it) {
+
+        //	switch (it) {
+        //		#region Nonstackable
+        //		case ItemNonInvNonStackable item:
+        //			if (GameMethods.IsItemInvNonStackable32(it.Id)) {
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i].Id == 0) {
+        //						DInt pos=InventoryGetPosNormal(i);
+        //						//if (i<5) pos
+        //						//else pos=InventoryGetPosNormalInv(i);
+        //						InventoryNormal[i]=new ItemInvNonStackable32(ItemIdToTexture(it.Id),it.Id,pos.X,pos.Y);
+        //						return null;
+        //					}
+        //				}
+        //			} else {
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i].Id == 0) {
+        //						DInt pos=InventoryGetPosNormal(i);
+        //						//if (i<5) pos
+        //						//else pos=InventoryGetPosNormalInv(i);
+        //						InventoryNormal[i]=new ItemInvNonStackable16(ItemIdToTexture(it.Id),it.Id,pos.X,pos.Y);
+        //						return null;
+        //					}
+        //				}
+        //			}
+        //			return it;
+
+        //		case ItemNonInvBasicColoritzedNonStackable item:
+        //			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(it.Id)) {
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i].Id == 0) {
+        //						DInt pos=InventoryGetPosNormal(i);
+        //						//if (i<5) pos
+        //						//else pos=InventoryGetPosNormalInv(i);
+        //						InventoryNormal[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(it.Id),it.Id,item.color,pos.X,pos.Y);
+        //						return null;
+        //					}
+        //				}
+        //			}
+        //			return it;
+
+        //	#endregion
+
+        //		#region stackable
+        //		case ItemNonInvBasic item:
+        //			if (GameMethods.IsItemInvBasic16(it.Id)) {
+        //				int remain=item.Count;
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i].Id == it.Id) {
+        //						ItemInvBasic16 item2=(ItemInvBasic16)InventoryNormal[i];
+        //						if (item2.GetCount<99) {
+        //							int needToAdd=99-item2.GetCount;
+        //							if (needToAdd>remain) {
+        //								item2.SetCount=item2.GetCount+remain;
+        //								return null;
+        //							} else if (needToAdd==remain) {
+        //								item2.SetCount=item2.GetCount+remain;
+        //								return null;
+        //							} else {
+        //								item2.SetCount=99;
+        //								remain-=needToAdd;
+        //							}
+        //						}
+        //					}
+        //				}
+
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i].Id == 0) {
+        //						DInt pos=InventoryGetPosNormal(i);
+        //						//if (i<5) pos
+        //						//else pos=InventoryGetPosNormalInv(i);
+        //						if (remain<=99) {
+        //							InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
+        //							return null;
+        //						} else {
+        //							InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
+        //							remain-=99;
+        //						}
+        //					}
+        //				}
+
+        //				return new ItemNonInvBasic(it.Id,remain);
+        //			} else {
+        //				int remain=item.Count;
+
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i]!=null) {
+        //						if (InventoryNormal[i].Id == it.Id) {
+        //							ItemInvBasic32 item2=(ItemInvBasic32)InventoryNormal[i];
+        //							if (item2.GetCount<99) {
+        //								int needToAdd=99-item2.GetCount;
+        //								if (needToAdd>remain) {
+        //									item2.SetCount=item2.GetCount+remain;
+        //									return null;
+        //								} else if (needToAdd==remain) {
+        //									item2.SetCount=item2.GetCount+remain;
+        //									return null;
+        //								} else {
+        //									item2.SetCount=99;
+        //									remain-=needToAdd;
+        //								}
+        //							}
+        //						}
+        //					}
+        //				}
+
+        //				for (int i=0; i<maxInvCount; i++) {
+        //					if (InventoryNormal[i]!=null) {
+
+        //						if (InventoryNormal[i].Id == 0) {
+        //							DInt pos;
+        //							if (i<5) pos=InventoryGetPosNormal(i);
+        //							else pos=InventoryGetPosNormalInv(i);
+        //							if (remain<=99) {
+        //								InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
+        //								return null;
+        //							} else {
+        //								InventoryNormal[i]=new ItemInvBasic32(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
+        //								remain-=99;
+        //							}
+        //						}
+        //					}
+        //				}
+        //				return new ItemNonInvBasic(it.Id,remain);
+        //			}
+
+        //	case ItemNonInvFood item:
+        //		if (GameMethods.IsItemInvFood16(it.Id)) {
+        //			int remain=item.Count;
+        //			//for (int i=0; i<maxInvCount; i++) {
+        //			//	if (InventoryNormal[i]!=null) {
+        //			//		if (InventoryNormal[i].Id == it.Id) {
+        //			//			ItemInvFood16 item2=(ItemInvFood16)InventoryNormal[i];
+        //			//			if (item2.GetCount<item2.CountMaximum) {
+        //			//				int needToAdd=item2.CountMaximum-item2.GetCount;
+        //			//				if (needToAdd>remain) {
+        //			//					item2.SetCount=item2.GetCount+remain;
+        //			//					return null;
+        //			//				} else if (needToAdd==remain) {
+        //			//					item2.SetCount=item2.GetCount+remain;
+        //			//					return null;
+        //			//				} else {
+        //			//					item2.SetCount=item2.CountMaximum;
+        //			//					remain-=needToAdd;
+        //			//				}
+        //			//			}
+        //			//		}
+        //			//	}
+        //			//}
+
+        //			for (int i=0; i<maxInvCount; i++) {
+        //				if (InventoryNormal[i]!=null) {
+
+        //				if (InventoryNormal[i].Id == 0) {
+        //					DInt pos=InventoryGetPosNormal(i);
+        //						if (remain<=item.CountMaximum) {
+        //					InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
+        //						 //   InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
+        //							return null;
+        //						} else {
+        //					InventoryNormal[i]=new ItemInvFood16(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
+        //						  //  InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
+        //							remain-=item.CountMaximum;
+        //						}
+        //					}
+        //				} }
+        //			return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
+        //		} else {
+        //		   int remain=item.Count;
+        //			//for (int i=0; i<maxInvCount; i++) {
+        //			//	if (InventoryNormal[i]!=null) {
+
+        //			//	if (InventoryNormal[i].Id == it.Id) {
+        //			//		ItemInvFood32 item2=(ItemInvFood32)InventoryNormal[i];
+        //			//		if (item2.GetCount<item2.CountMaximum) {
+        //			//			int needToAdd=item2.CountMaximum-item2.GetCount;
+        //			//			if (needToAdd>remain) {
+        //			//				item2.SetCount=item2.GetCount+remain;
+        //			//				return null;
+        //			//			} else if (needToAdd==remain) {
+        //			//				item2.SetCount=item2.GetCount+remain;
+        //			//				return null;
+        //			//			} else {
+        //			//				item2.SetCount=item2.CountMaximum;
+        //			//				remain-=needToAdd;
+        //			//			}
+        //			//		}
+        //			//	}
+        //			//} }
+
+        //			for (int i=0; i<maxInvCount; i++) {
+        //				if (InventoryNormal[i]!=null) {
+
+        //				if (InventoryNormal[i].Id == 0) {
+        //					DInt pos=InventoryGetPosNormal(i);
+        //						if (remain<=item.CountMaximum) {
+        //					InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
+        //						 //   InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, remain, pos.X, pos.Y);
+        //							return null;
+        //						} else {
+        //					InventoryNormal[i]=new ItemInvFood32(ItemIdToTexture(it.Id), it.Id, remain, item.CountMaximum, item.Descay, item.DescayMaximum, pos.X, pos.Y);
+        //						  //  InventoryNormal[i]=new ItemInvBasic16(ItemIdToTexture(it.Id), it.Id, 99, pos.X, pos.Y);
+        //							remain-=item.CountMaximum;
+        //						}
+        //					}
+        //				} }
+
+        //			return new ItemNonInvFood(it.Id,remain,item.CountMaximum,item.Descay,item.DescayMaximum);
+        //		}
+
+        //	case ItemNonInvTool item:
+        //		if (GameMethods.IsItemInvTool32(it.Id)) {
+        //			for (int i=0; i<maxInvCount; i++) {
+        //				if (InventoryNormal[i]!=null) {
+
+        //				if (InventoryNormal[i].Id == 0) {
+        //					DInt pos;
+        //					if (i<5) pos=InventoryGetPosNormal(i);
+        //					else pos=InventoryGetPosNormalInv(i);
+        //					InventoryNormal[i]=new ItemInvTool32(ItemIdToTexture(it.Id), it.Id, item.Count, item.Maximum, pos.X, pos.Y);
+        //					return null;
+        //				}
+        //			} }
+
+        //			return item;//new ItemNonInvTool(item.Id, item.Count, item.Maximum);
+        //		}else{
+        //		   for (int i=0; i<maxInvCount; i++) {
+        //				if (InventoryNormal[i]!=null) {
+
+        //				if (InventoryNormal[i].Id == 0) {
+        //					DInt pos;
+        //					if (i<5) pos=InventoryGetPosNormal(i);
+        //					else pos=InventoryGetPosNormalInv(i);
+        //					InventoryNormal[i]=new ItemInvTool16(ItemIdToTexture(it.Id), it.Id, item.Count, item.Maximum, pos.X, pos.Y);
+        //					return null;
+        //				}
+        //			} }
+
+        //			return item;//new ItemNonInvTool(item.Id, item.Count, item.Maximum);
+        //		}
+        //		default:
+        //			#if DEBUG
+        //			throw new Exception("Missing category");
+        //			#else
+        //			return it;
+        //			#endif
+        //	}
+        //	#endregion
+
+        //	//return it;
+        //}
+
+        void ChangeInventoryState() {
+            if (inventory==InventoryType.Normal) {
+
+                if (Global.WorldDifficulty==2) {
+                    inventory=InventoryType.Creative;
+                    SetCaptionInventory();
+                    if (creativeTabCrafting) SetInvCraftingBlocks();
+                    else SetInvCreativeBlocks();
+                    return;
+                }
+
+                inventory=InventoryType.BasicInv;
+                SetCaptionInventory();
+                SetUpInvToNew();
+                SetNeed();
+                return;
+
+            }
+            else {
+                if (inventory==InventoryType.Typing) {
+
+                    return;
+                }
+                else if (inventory==InventoryType.Shelf) {
+
+                    ShelfBlock block = (ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
+
+                    if (block.Inv[4].Id!=0) {
+                        Texture2D tex = ItemIdToTexture(block.Inv[4].Id);
+                        if (tex!=null) {
+                            block.SmalItemTexture=tex;
+                            block.IsSmallItem=true;
+
+                            inventory=0;
+                            return;
+                        }
+                    }
+
+                    block.IsSmallItem=false;
+                    inventory=0;
+                    return;
+                }
+
+                SetPlayerClothes();
+                inventory=0;
+                return;
+            }
+        }
+
+        //int InvSideMoveId() {
+        //	// Basic right inventory
+        //	if (In(Global.WindowWidth-40, Global.WindowHeightHalf-80, Global.WindowWidth, Global.WindowHeightHalf-80+5*40)) {
+        //	  //  Debug.WriteLine((newMouseState.Y-(Global.WindowHeightHalf-80))/40);
+        //		return (newMouseState.Y-(Global.WindowHeightHalf-80))/40;
+        //	}
+        //	return -1;
+        //}
+
+        //int InvMoveId() {
+        //	// Inventory
+        //	if (In(Global.WindowWidthHalf-300+4+200+4+4, Global.WindowHeightHalf-200+2+4, Global.WindowWidthHalf-300+4+200+4+4+(9*40), Global.WindowHeightHalf-200+2+4+(5*40))) {
+        //		int row=(mouseRealPosY-(Global.WindowHeightHalf-200+2+4))/40;
+        //		int col=(mouseRealPosX-(Global.WindowWidthHalf-300+4+200+4+4))/40;
+        //		// Debug.WriteLine(row*9+" "+col+" "+inventoryScrollbarValue+" "+4);
+        //		return row*9+col+inventoryScrollbarValue+5;
+        //	}
+        //	return -1;
+        //}
+
+        //int InvShelfMoveId() {
+        //	// Shelf
+        //	if (In(Global.WindowWidthHalf-300+38, Global.WindowHeightHalf+20-2+25, Global.WindowWidthHalf-300+38+40*3-1, Global.WindowHeightHalf+20-2+3*40+25-1)) {
+        //		int row=(mouseRealPosX-(Global.WindowWidthHalf-300+38))/40;
+        //		int col=(mouseRealPosY-(Global.WindowHeightHalf+20-2+25))/40;
+        //		return row+col*3;
+        //	}
+
+        //	return -1;
+        //}
+
+        //int InvFurnaceStoneMoveId() {
+        //	if (In40(Global.WindowWidthHalf-300+4+1+40,      Global.WindowHeightHalf-200+2+4+60)) return 0;
+        //	if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60)) return 1;
+        //	if (In40(Global.WindowWidthHalf-300+4+1+40*2+40, Global.WindowHeightHalf-200+2+4+60)) return 2;
+        //	if (In40(Global.WindowWidthHalf-300+4+1+40+40,   Global.WindowHeightHalf-200+2+4+60+40+8)) return 3;
+
+        //	return -1;
+        //}
+
+        //int InvWoodenBoxMoveId() {
+        //	// Wooden box
+        //	if (In(Global.WindowWidthHalf-300+59, Global.WindowHeightHalf+59, Global.WindowWidthHalf-300+59+(12*40), Global.WindowHeightHalf+59+40*2)) {
+        //		int row=(mouseRealPosX-(Global.WindowWidthHalf-300+59))/40;
+        //		int col=(mouseRealPosY-(Global.WindowHeightHalf+59))/40;
+        //		//Debug.WriteLine("[wooden] row: "+row+", col:"+col+", id: "+(row+col*12));
+        //		return row+col*12;
+        //	}
+
+        //	return -1;
+        //}
+
+        //int InvAdvBoxMoveId() {
+        //	// Adv box
+        //	if (In(Global.WindowWidthHalf-300+20, Global.WindowHeightHalf+23, Global.WindowWidthHalf-300+20+12*40, Global.WindowHeightHalf+23+40*4)) {
+        //		int row=(mouseRealPosX-(Global.WindowWidthHalf-300+20))/40;
+        //		int col=(mouseRealPosY-(Global.WindowHeightHalf+23))/40;
+        //	  //  Debug.WriteLine("[adv] row: "+row+", col:"+col+", id: "+(row+col*12));
+        //		return row+col*12;
+        //	}
+
+        //	return -1;
+        //}
+
+        //int InvClothesMoveId() {
+        //	if (mouseRealPosY>Global.WindowHeightHalf-200+2+4+4+(4*40)) return -1;
+        //	if (mouseRealPosY<Global.WindowHeightHalf-200+2+4+4) return -1;
+
+        //	// Clothes
+        //	if (mouseRealPosX>Global.WindowWidthHalf-300+4+60+4){
+
+        //		if (mouseRealPosX<Global.WindowWidthHalf-300+4+60+4+40){
+        //			return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40;
+        //		}else if (mouseRealPosX<Global.WindowWidthHalf-300+4+60+4+40+40){
+        //			return (newMouseState.Y-(Global.WindowHeightHalf-200+2+4+4))/40+4;
+        //		}
+        //	}
+        //	return -1;
+        //}
+
+        //void ChangeInventory() {
+        //	if (invMove) {
+        //		if (leftMove) {
+        //			if (mouseRightRelease) {
+        //				int i;
+
+        //				// Basic right inventory
+        //				if ((i=InvSideMoveId())>=0) {
+        //					InvMoveOne(InventoryNormal,i);
+        //					return;
+        //				}
+
+        //				// Inventory
+        //				if ((i=InvMoveId())>=0) {
+        //					InvMoveOne(InventoryNormal,i);
+        //					return;
+        //				}
+
+        //				// Clothes
+        //				if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //					if ((i=InvClothesMoveId())>=0) {
+        //						InvMoveOne(InventoryClothes, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Shelf
+        //				if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //					if ((i=InvShelfMoveId())>=0) {
+        //						InvMoveOne(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// FurnaceStone
+        //				if (inventory==InventoryType.FurnaceStone) {
+        //					if ((i=InvFurnaceStoneMoveId())>=0) {
+        //						InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// BoxWooden
+        //				if (inventory==InventoryType.BoxWooden) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						InvMoveOne(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Adv box
+        //				if (inventory==InventoryType.BoxAdv) {
+        //					if ((i=InvAdvBoxMoveId())>=0) {
+        //						InvMoveOne(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+
+        //				// Miner
+        //				if (inventory==InventoryType.Miner) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Charger || OxygenMachine
+        //				if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //					if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //						InvMoveOne(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						return;
+        //					}
+        //				}
+
+        //				if (inventory==InventoryType.Barrel) {
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //						InvMoveOne(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						return;
+        //					}
+
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //						InvMoveOne(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //						return;
+        //					}
+        //				}
+
+        //				InvDrop();
+
+        //			} else if (mouseLeftRelease) {
+        //					int i;
+
+        //					// Basic right inventory
+        //					if ((i=InvSideMoveId())>=0) {
+        //						InvMove(InventoryNormal,i);
+        //						return;
+        //					}
+
+        //					// Inventory
+        //					if ((i=InvMoveId())>=0) {
+        //						InvMove(InventoryNormal,i);
+        //						return;
+        //					}
+
+        //					// Clothes
+        //					if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //						if ((i=InvClothesMoveId())>=0) {
+        //							InvMove(InventoryClothes,i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Shelf
+        //					if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //						if ((i=InvShelfMoveId())>=0) {
+        //							InvMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// FurnaceStone
+        //					if (inventory==InventoryType.FurnaceStone) {
+        //						if ((i=InvFurnaceStoneMoveId())>=0) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// BoxWooden
+        //					if (inventory==InventoryType.BoxWooden) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Adv box
+        //					if (inventory==InventoryType.BoxAdv) {
+        //						if ((i=InvAdvBoxMoveId())>=0) {
+        //							InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Miner
+        //					if (inventory==InventoryType.Miner) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Charger || OxygenMachine
+        //					if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //						if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //							return;
+        //						}
+        //					}
+
+        //					if (inventory==InventoryType.Barrel) {
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //							InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //							return;
+        //						}
+
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //							InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //							return;
+        //						}
+        //					}
+
+        //					//delete
+        //					if (inventory==InventoryType.Creative) {
+        //						if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
+        //							InvRemove();
+        //							return;
+        //						}
+        //					}
+
+        //					InvDrop();
+
+        //				}
+        //		} else {
+        //			if (mouseLeftRelease) {
+        //				int i;
+
+        //				// Basic right inventory
+        //				if ((i=InvSideMoveId())>=0) {
+        //					InvMoveHalf(InventoryNormal,i);
+        //					return;
+        //				}
+
+        //				// Inventory
+        //				if ((i=InvMoveId())>=0) {
+        //					InvMoveHalf(InventoryNormal,i);
+        //					return;
+        //				}
+
+        //				// Clothes
+        //				if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //					if ((i=InvClothesMoveId())>=0) {
+        //						InvMoveHalf(InventoryClothes,i);
+        //						return;
+        //					}
+        //				}
+
+        //				// FurnaceStone
+        //				if (inventory==InventoryType.FurnaceStone) {
+        //					if ((i=InvFurnaceStoneMoveId())>=0) {
+        //						InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Shelf
+        //				if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //					if ((i=InvShelfMoveId())>=0) {
+        //						InvMoveHalf(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// BoxWooden
+        //				if (inventory==InventoryType.BoxWooden) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						InvMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Adv box
+        //				if (inventory==InventoryType.BoxAdv) {
+        //					if ((i=InvAdvBoxMoveId())>=0) {
+        //						InvMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Miner
+        //				if (inventory==InventoryType.Miner) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// Charger || OxygenMachine
+        //				if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //					if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //						InvMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						return;
+        //					}
+        //				}
+
+        //				if (inventory==InventoryType.Barrel) {
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //						InvMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						return;
+        //					}
+
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //						InvMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //						return;
+        //					}
+        //				}
+
+        //				//delete
+        //				if (inventory==InventoryType.Creative) {
+        //					if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
+        //						InvRemove();
+        //						return;
+        //					}
+        //				}
+
+        //				InvDrop();
+
+        //			} else {
+        //				if (mouseRightRelease) {
+        //					int i;
+
+        //					// Basic right inventory
+        //					if ((i=InvSideMoveId())>=0) {
+        //						InvMove(InventoryNormal,i);
+        //						return;
+        //					}
+
+        //					// Inventory
+        //					if ((i=InvMoveId())>=0) {
+        //						InvMove(InventoryNormal,i);
+        //						return;
+        //					}
+
+        //					// Clothes
+        //					if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //						if ((i=InvClothesMoveId())>=0) {
+        //							InvMove(InventoryClothes,i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Shelf
+        //					if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //						if ((i=InvShelfMoveId())>=0) {
+        //							InvMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// FurnaceStone
+        //					if (inventory==InventoryType.FurnaceStone) {
+        //						if ((i=InvFurnaceStoneMoveId())>=0) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// BoxWooden
+        //					if (inventory==InventoryType.BoxWooden) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Adv box
+        //					if (inventory==InventoryType.BoxAdv) {
+        //						if ((i=InvAdvBoxMoveId())>=0) {
+        //							InvMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Miner
+        //					if (inventory==InventoryType.Miner) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //							return;
+        //						}
+        //					}
+
+        //					// Charger || OxygenMachine
+        //					if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //						if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //							InvMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //							return;
+        //						}
+        //					}
+
+        //					if (inventory==InventoryType.Barrel) {
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //							InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //							return;
+        //						}
+
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //							InvMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //							return;
+        //						}
+        //					}
+
+        //					//delete
+        //					if (inventory==InventoryType.Creative) {
+        //						if (In40(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5)) {
+        //							InvRemove();
+        //							return;
+        //						}
+        //					}
+
+        //					InvDrop();
+        //				}
+        //			}
+        //		}
+        //	} else {
+        //		if (mouseLeftPress) {
+        //			int i;
+
+        //			// Basic right inventory
+        //			if ((i=InvSideMoveId())>=0) {
+        //				StartItemMove(InventoryNormal, i);
+        //				leftMove = true;
+        //				return;
+        //			}
+
+        //			// Inventory
+        //			if ((i=InvMoveId())>=0) {
+        //				StartItemMove(InventoryNormal, i);
+        //				leftMove = true;
+        //				return;
+        //			}
+
+        //			// Clothes
+        //			if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //				if ((i=InvClothesMoveId())>=0) {
+        //					StartItemMove(InventoryClothes, i);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			// Shelf
+        //			if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //				if ((i=InvShelfMoveId())>=0) {
+        //					StartItemMove(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			// FurnaceStone
+        //			if (inventory==InventoryType.FurnaceStone) {
+        //				if ((i=InvFurnaceStoneMoveId())>=0) {
+        //					StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //					return;
+        //				}
+        //			}
+
+        //			// BoxWooden
+        //			if (inventory==InventoryType.BoxWooden) {
+        //				if ((i=InvWoodenBoxMoveId())>=0) {
+        //					StartItemMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			// Adv box
+        //			if (inventory==InventoryType.BoxAdv) {
+        //				if ((i=InvAdvBoxMoveId())>=0) {
+        //					StartItemMove(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			// Miner
+        //			if (inventory==InventoryType.Miner) {
+        //				if ((i=InvWoodenBoxMoveId())>=0) {
+        //					StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			// Charger || OxygenMachine
+        //			if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //				if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //					StartItemMove(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //			if (inventory==InventoryType.Barrel) {
+        //				if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //					StartItemMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //					leftMove = true;
+        //					return;
+        //				}
+
+        //				if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //					StartItemMove(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //					leftMove = true;
+        //					return;
+        //				}
+        //			}
+
+        //		} else {
+        //			if (mouseRightPress) {
+        //				int i;
+
+        //				// Basic right inventory
+        //				if ((i=InvSideMoveId())>=0) {
+        //					StartItemMoveHalf(InventoryNormal, i);
+        //					leftMove = false;
+        //					return;
+        //				}
+
+        //				// Inventory
+        //				if ((i=InvMoveId())>=0) {
+        //					StartItemMoveHalf(InventoryNormal, i);
+        //					leftMove = false;
+        //					return;
+        //				}
+
+        //				// Clothes
+        //				if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //					if ((i=InvClothesMoveId())>=0) {
+        //						if (i<8){
+        //						StartItemMoveHalf(InventoryClothes, i);
+        //						leftMove = false;
+        //						return;
+        //						}
+        //					}
+        //				}
+
+        //				// Shelf
+        //				if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //					if ((i=InvShelfMoveId())>=0) {
+        //						StartItemMoveHalf(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+
+        //				// FurnaceStone
+        //				if (inventory==InventoryType.FurnaceStone) {
+        //					if ((i=InvFurnaceStoneMoveId())>=0) {
+        //						StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						return;
+        //					}
+        //				}
+
+        //				// BoxWooden
+        //				if (inventory==InventoryType.BoxWooden) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						StartItemMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+
+        //				// Adv box
+        //				if (inventory==InventoryType.BoxAdv) {
+        //					if ((i=InvAdvBoxMoveId())>=0) {
+        //						StartItemMoveHalf(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+
+        //				// Miner
+        //				if (inventory==InventoryType.Miner) {
+        //					if ((i=InvWoodenBoxMoveId())>=0) {
+        //						StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, i);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+
+        //				// Charger || OxygenMachine
+        //				if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //					if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //						StartItemMoveHalf(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+
+        //				if (inventory==InventoryType.Barrel) {
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //						StartItemMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 0);
+        //						leftMove = false;
+        //						return;
+        //					}
+
+        //					if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //						StartItemMoveHalf(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv, 1);
+        //						leftMove = false;
+        //						return;
+        //					}
+        //				}
+        //			}else{
+        //				if (mousePosChanged) {
+        //					int i;
+        //					mouseDrawItemTextInfo=false;
+        //					// Basic right inventory
+        //					if ((i=InvSideMoveId())>=0) {
+        //						MouseItemNameEvent(InventoryNormal[i]);
+        //						return;
+        //					}
+
+        //					// Inventory
+        //					if ((i=InvMoveId())>=0) {
+        //						MouseItemNameEvent(InventoryNormal[i]);
+        //						return;
+        //					}
+
+        //					// Clothes
+        //					if (inventory==InventoryType.BasicInv || inventory==InventoryType.Creative) {
+        //						if ((i=InvClothesMoveId())>=0) {
+        //							if (i<8) MouseItemNameEvent(InventoryClothes[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// Shelf
+        //					if (inventory==InventoryType.Shelf || inventory==InventoryType.Composter) {
+        //						if ((i=InvShelfMoveId())>=0) {
+        //							MouseItemNameEvent(((ShelfBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// FurnaceStone
+        //					if (inventory==InventoryType.FurnaceStone) {
+        //						if ((i=InvFurnaceStoneMoveId())>=0) {
+        //							MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// BoxWooden
+        //					if (inventory==InventoryType.BoxWooden) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// Adv box
+        //					if (inventory==InventoryType.BoxAdv) {
+        //						if ((i=InvAdvBoxMoveId())>=0) {
+        //							MouseItemNameEvent(((BoxBlock)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// Miner
+        //					if (inventory==InventoryType.Miner) {
+        //						if ((i=InvWoodenBoxMoveId())>=0) {
+        //							MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					// Charger || OxygenMachine
+        //					if (inventory==InventoryType.Charger || inventory==InventoryType.OxygenMachine) {
+        //						if (In40(Global.WindowWidthHalf-300+38+40,Global.WindowHeightHalf+20-2+40+25)) {
+        //							MouseItemNameEvent(((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
+        //							return;
+        //						}
+        //					}
+
+        //					if (inventory==InventoryType.Barrel) {
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250)) {
+        //							MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[0]);
+        //							return;
+        //						}
+
+        //						if (In40(Global.WindowWidthHalf-300+119,Global.WindowHeightHalf-198+250+64)) {
+        //							MouseItemNameEvent(((Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[1]);
+        //							return;
+        //						}
+        //					}
+
+        //					// Creative
+        //					if (inventory==InventoryType.Creative) {
+        //						if (!creativeTabCrafting){
+        //							if ((i=GetInventoryIdCreative())>=0) {
+        //								MouseItemNameEvent(InventoryCreative[i]);
+        //								return;
+        //							}
+        //						}
+        //					}
+
+        //					// crafting
+        //					if (inventory==InventoryType.BasicInv
+        //					 || (inventory==InventoryType.Creative && creativeTabCrafting)
+        //					 || inventory==InventoryType.Desk
+        //					 || inventory==InventoryType.SewingMachine
+        //					 || inventory==InventoryType.Macerator
+        //					 || inventory==InventoryType.FurnaceStone
+        //					 || inventory==InventoryType.FurnaceElectric) {
+        //						if ((i=GetCraftingInventoryId())>=0) {
+        //							MouseItemNameEvent(InventoryCrafting[i]);
+        //							return;
+        //						}
+        //					}
+
+        //					mouseDrawItemTextInfo=false;
+        //				}
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void SelectItemCraft() {
+        //	if (mouseLeftRelease) {
+        //		int xx =0, yh=0;
+
+        //		for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+        //			if (i>inventoryScrollbarValueCraftingMax) break;
+
+        //			if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
+        //				selectedCraftingItem=i;
+        //				ItemInv itemToCraft=InventoryCrafting[i];
+
+        //				CurrentDeskCrafting=GameMethods.Craft(itemToCraft.Id);
+        //				SelectedCraftingRecipe=0;
+        //				SetNeed();
+        //				return;
+        //			}
+        //			xx+=40;
+
+        //			if (xx==6*40) {
+        //				xx=0;
+        //				yh+=40;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void SelectItemCraftPlus() {
+        //	int AddH=35;
+        //	if (mouseLeftRelease) {
+        //		int xx =0, yh=0;
+
+        //		for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+        //			if (i>inventoryScrollbarValueCraftingMax) break;
+
+        //			if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8+AddH)) {
+
+        //				selectedCraftingItem=i;
+
+        //				ItemInv itemToCraft=InventoryCrafting[i];
+
+        //				CurrentDeskCrafting=GameMethods.Craft(itemToCraft.Id);
+        //				SelectedCraftingRecipe=0;
+        //				SetNeed();
+        //				return;
+        //			}
+        //			xx+=40;
+
+        //			if (xx==6*40) {
+        //				xx=0;
+        //				yh+=40;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void SelectItemBake() {
+        //	if (mouseLeftRelease) {
+        //		int xx = 0, yh=0;
+
+        //		for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+        //			if (i>inventoryScrollbarValueCraftingMax) break;
+
+        //			if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
+        //				selectedCraftingItem=i;
+        //				ItemInv itemToCraft=InventoryCrafting[i];
+
+        //				CurrentDeskCrafting=GameMethods.Bake(itemToCraft.Id);
+        //				SelectedCraftingRecipe=0;
+        //				SetNeed();
+        //				return;
+        //			}
+        //			xx+=40;
+
+        //			if (xx==6*40) {
+        //				xx=0;
+        //				yh+=40;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void SelectItemClothes() {
+        //	if (mouseLeftRelease) {
+        //		int xx =0, yh=0;
+
+        //		for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+        //			if (i>inventoryScrollbarValueCraftingMax) break;
+
+        //			if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
+        //				selectedCraftingItem=i;
+
+        //				ItemInv itemToCraft=InventoryCrafting[i];
+        //				SelectedCraftingRecipe=0;
+        //				CurrentDeskCrafting=GameMethods.Clothes(itemToCraft.Id);
+        //				SetNeed();
+        //				return;
+        //			}
+        //			xx+=40;
+
+        //			if (xx==6*40) {
+        //				xx=0;
+        //				yh+=40;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void SelectItemToDust() {
+        //	if (mouseLeftRelease) {
+        //		int xx=0, yh=0;
+
+        //		for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+        //			if (i>inventoryScrollbarValueCraftingMax) break;
+
+        //			if (In40(Global.WindowWidthHalf-300+4+40+4+xx,Global.WindowHeightHalf-200+2+4+200+8+yh+8)) {
+
+        //				selectedCraftingItem=i;
+
+        //				SelectedCraftingRecipe=0;
+
+        //				ItemInv itemToCraft=InventoryCrafting[i];
+
+        //				CurrentDeskCrafting=GameMethods.ToDust(itemToCraft.Id);
+
+        //				SetNeed();
+        //				return;
+        //			}
+
+        //			xx+=40;
+
+        //			if (xx==6*40) {
+        //				xx=0;
+        //				yh+=40;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //int TotalItemsInInventoryItemBasic16(ushort id) {
+        //	int inInv = 0;
+        //	foreach (ItemInv i in InventoryNormal) {
+        //		if (id==i.Id) inInv+=(i as ItemInvBasic16).GetCount;
+        //	}
+        //	return inInv;
+        //}
+
+        //int TotalItemsInInventoryForAllTypes(ushort id) {
+        //	if (GameMethods.IsItemInvBasic16(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv+=(i as ItemInvBasic16).GetCount;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvBasic32(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv+=(i as ItemInvBasic32).GetCount;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvTool32(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv+=(i as ItemInvTool32).GetCount;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvFood16(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv+=(i as ItemInvFood16).GetCount;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvNonStackable32(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv++;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv++;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	if (GameMethods.IsItemInvTool16(id)) {
+        //		int inInv = 0;
+        //		foreach (ItemInv i in InventoryNormal) {
+        //			if (id==i.Id) inInv+=(i as ItemInvTool16).GetCount;
+        //		}
+        //		return inInv;
+        //	}
+
+        //	#if DEBUG
+        //	throw new Exception("Not detectable item '"+(Items)id+"' in categories IsItemInvNonStackable32, IsItemBasicColorized32NonStackable, ...; Add in some category");
+        //	#else
+        //	return 0;
+        //	#endif
+        //}
+        //#endregion
+
+        //#region Inventory draw
+        //void InvMouseDraw() {
+        //	mouseItem.SetPos(mouseRealPosX-16,mouseRealPosY-16);
+        //	mouseItem.Draw();
+        //}
+
+        ////void InventoryDrawItems() {
+        ////    for (int i=0; i<5; i++) InventoryNormal[i].Draw();
+        ////}
+
+        //void DrawNeed() {
+        //	if (CurrentDeskCrafting==null) return;
+        //	if (selectedCraftingItem==-1) return;
+        //	if (SelectedCraftingRecipe==-1) return;
+        //	spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8), Color.White);
+        //	CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+
+        //	int i = 0;
+        //	for (int y = 0; y<2; y++) {
+        //		for (int x = 0; x<6; x++) {
+        //			if (slots.Length==i) break;
+
+        //			CraftingIn slot=slots[i];
+        //			ItemNonInv[] item=slot.ItemSlot;
+        //			if (slot.SelectedItem==-1) {
+        //				if (!slot.HaveItemInInventory)
+        //					spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
+
+        //				/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
+
+        //				spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
+        //			}else{
+        //			  //  ItemNonInv selectedSlot=item[slot.SelectedItem];
+
+        //				if (item.Length==1) {
+        //					if (!slot.HaveItemInInventory)
+        //						spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
+
+        //					if (slot.Texture!=null) /*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
+        //				} else {
+        //					if (!slot.HaveItemInInventory)
+        //						spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8, 40, 40), color_r255_g0_b0_a100);
+
+        //					if (slots[i].SelectedItem==-1) {
+        //						/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
+        //					} else {
+        //						/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture, */item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8);
+        //					}
+        //					spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16), Color.White);
+        //				}
+        //			}
+
+        //			i++;
+        //		}
+        //	}
+
+        //	if (CurrentDeskCrafting.Length!=1) {
+        //		 buttonPrev.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		 buttonNext.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //	}
+
+        //	if (CanCraft(1)) {
+        //		buttonCraft1x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+
+        //		if (CanCraft(10)) {
+        //			buttonCraft10x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+
+        //			if (CanCraft(100)) buttonCraft100x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //			else buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		} else {
+        //			buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //			buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		}
+        //	} else {
+        //		buttonCraft1x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //	}
+        //}
+
+        //void DrawNeedNewPlus() {
+        //	int AddH=35;
+        //	if (CurrentDeskCrafting==null)return;
+        //	if (selectedCraftingItem==-1)return;
+        //	if (SelectedCraftingRecipe==-1)return;
+        //	spriteBatch.Draw(inventoryNeedTexture, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8, Global.WindowHeightHalf-200+2+4+200+8+8+AddH), Color.White);
+        //	CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+
+        //	int i = 0;
+        //	for (int y = 0; y<2; y++) {
+        //		for (int x = 0; x<6; x++) {
+        //			if (slots.Length==i) break;
+
+        //			CraftingIn slot=slots[i];
+        //			ItemNonInv[] item=slot.ItemSlot;
+        //			if (slot.SelectedItem==-1) {
+        //				if (!slot.HaveItemInInventory) spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
+
+        //				DrawItem(item[slot.TmpSelected],Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
+
+        //			   // GameDraw.DrawItemInInventory(ItemIdToTexture(item[slot.TmpSelected].Id), , Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
+
+        //				spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
+        //			}else{
+        //			 //   ItemNonInv selectedSlot=item[slot.SelectedItem];
+
+        //				if (item.Length==1) {
+        //					if (!slot.HaveItemInInventory) spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
+
+        //					if (slot.Texture!=null) DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
+        //				} else {
+        //					if (!slot.HaveItemInInventory)
+        //						spriteBatch.Draw(pixel, new Rectangle(Global.WindowWidthHalf-300+4+200+80+40+8+x*40, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH, 40, 40), color_r255_g0_b0_a100);
+
+        //					if (slots[i].SelectedItem==-1) {
+        //						/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(item[slot.TmpSelected].Id),*/ item[slot.TmpSelected], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
+        //					} else {
+        //						/*GameDraw.DrawItemInInventory*/DrawItem(/*slot.Texture,*/ item[slot.SelectedItem], Global.WindowWidthHalf-300+4+200+80+40+8+x*40+4, 4+y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH);
+        //					}
+        //					spriteBatch.Draw(TextureSelectCrafting, new Vector2(Global.WindowWidthHalf-300+4+200+80+40+8+x*40+40-16, y*40+Global.WindowHeightHalf-200+2+4+200+8+8+40-16+AddH), Color.White);
+        //				}
+        //			}
+
+        //			i++;
+        //		}
+        //	}
+
+
+        //	if (CurrentDeskCrafting.Length!=1) {
+        //		 buttonPrev.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		 buttonNext.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //	}
+
+        //	if (CanCraft(1)) {
+        //		buttonCraft1x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+
+        //		if (CanCraft(10)) {
+        //			buttonCraft10x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+
+        //			if (CanCraft(100)) buttonCraft100x.ButtonDraw(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //			else buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		} else {
+        //			buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //			buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		}
+        //	} else {
+        //		buttonCraft1x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		buttonCraft10x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //		buttonCraft100x.ButtonDrawRed(/*spriteBatch, mouseLeftDown, mouseRealPos*/);
+        //	}
+        //}
+
+        //void DrawItem(ItemNonInv item, int x, int y) {
+        //	ushort id=item.Id;
+        //	if (id==0) return;
+        //	switch (item){
+        //		case ItemNonInvBasic it:
+        //			if (GameMethods.IsItemInvBasic16(id)) new ItemInvBasic16(ItemIdToTexture(id), id, it.Count, x, y).Draw();
+        //			else new ItemInvBasic32(ItemIdToTexture(id), id, it.Count, x, y).Draw();
+        //			return;
+
+        //		case ItemNonInvBasicColoritzedNonStackable it:
+        //			new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, it.color, x, y).Draw();
+        //			return;
+
+        //		case ItemNonInvFood it:
+        //			if (GameMethods.IsItemInvFood32(id)) new ItemInvFood32(ItemIdToTexture(id), id, it.Count, it.CountMaximum, it.Descay, it.DescayMaximum, x, y).Draw();
+        //			else new ItemInvFood16(ItemIdToTexture(id), id, it.Count, it.CountMaximum, it.Descay, it.DescayMaximum, x, y).Draw();
+        //			return;
+
+        //		case ItemNonInvNonStackable it:
+        //			new ItemInvNonStackable32(ItemIdToTexture(id), id, x, y).Draw();
+        //			return;
+
+        //		case ItemNonInvTool it:
+        //			 if (GameMethods.IsItemInvTool16(id)) new ItemInvTool16(ItemIdToTexture(id), id, it.Count, it.Maximum, x, y).Draw();
+        //			 else new ItemInvTool32(ItemIdToTexture(id), id, it.Count, it.Maximum, x, y).Draw();
+        //			 return;
+        //	}
+
+        //	#if DEBUG
+        //	throw new Exception("Item '"+(Items)id+"' is not registrated or missing category up");
+        //	#endif
+        //}
+
+        //bool CanCraft(int c) {
+        //	foreach (CraftingIn n in CurrentDeskCrafting[SelectedCraftingRecipe].Input) {
+        //		if (n.SelectedItem==-1) return false;
+        //		ItemNonInv item=n.ItemSlot[n.SelectedItem];
+        //		switch (item) {
+        //			case ItemNonInvTool t:
+        //				if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
+        //				break;
+
+        //			case ItemNonInvNonStackable t:
+        //				if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
+        //				break;
+
+        //			case ItemNonInvBasicColoritzedNonStackable t:
+        //				if (TotalItemsInInventoryForAllTypes(item.Id)<1*c) return false;
+        //				break;
+
+        //			case ItemNonInvFood t:
+        //				if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
+        //				break;
+
+        //			case ItemNonInvBasic t:
+        //				if (TotalItemsInInventoryForAllTypes(item.Id)<t.Count*c) return false;
+        //				break;
+
+        //			default:
+        //				#if DEBUG
+        //				throw new Exception("Missing type");
+        //				#else
+        //				return false;
+        //				#endif
+        //		}
+        //	  //  if (TotalItemsInInventoryForAllTypes(item.Id)<item.Y*c)  return false;
+        //	}
+        //	return true;
+        //}
+
+        //void CraftingEventsCraft() {
+
+        //	if (buttonCraft1x.Update()) {
+        //		MakeCrafting(1);
+        //		return;
+        //	}
+
+        //	if (buttonCraft10x.Update()) {
+        //		MakeCrafting(10);
+        //		return;
+        //	}
+
+        //	if (buttonCraft100x.Update()) {
+        //		MakeCrafting(100);
+        //		return;
+        //	}
+        //}
+
+        //void CraftingEvents() {
+        //	if (SelectedCraftingRecipe!=-1) {
+        //		#if DEBUG
+        //		if (CurrentDeskCrafting==null) throw new Exception("Pravděpodobně chybí recept - doplň v GameMethods ("+((Items)InventoryCrafting[selectedCraftingItem].Id)+")");
+        //		#endif
+
+        //		CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+        //		if (CurrentDeskCrafting!=null) {
+        //			if (CurrentDeskCrafting.Length!=1) {
+        //				if (buttonNext.Update()) {
+        //					SelectedCraftingRecipe++;
+        //					if (SelectedCraftingRecipe==CurrentDeskCrafting.Length)SelectedCraftingRecipe=0;
+        //					SetNeed();
+        //				}
+
+        //				if (buttonPrev.Update()) {
+        //					SelectedCraftingRecipe--;
+        //					if (SelectedCraftingRecipe==-1)SelectedCraftingRecipe=CurrentDeskCrafting.Length-1;
+        //					SetNeed();
+        //				}
+        //			}
+        //		}
+
+        //		int i = 0;
+        //		for (int y = 0; y<2; y++) {
+        //			for (int x = 0; x<6; x++) {
+        //				if (slots.Length==i) break;
+        //				CraftingIn slot=slots[i];
+        //				ItemNonInv[] item=slot.ItemSlot;
+        //				if (item.Length>1) {
+        //					if (mouseLeftDown) {
+        //						if (In40(Global.WindowWidthHalf-300+4+200+80+40+8+x*40,y*40+Global.WindowHeightHalf-200+2+4+200+8+8)) {
+        //							displayPopUpWindow=true;
+        //							PopUpWindowChoosingPotencialdItem=i;
+        //							PopUpWindowSelectedItem=-1;
+        //							ShowPopUpWindow();
+        //						}
+        //					}
+        //				}
+        //				i++;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void CraftingEventsPlus() {
+        //	int AddH=35;
+        //	if (SelectedCraftingRecipe!=-1) {
+        //		#if DEBUG
+        //		if (CurrentDeskCrafting==null) throw new Exception("Pravděpodobně chybí recept - doplň v GameMethods");
+        //		#endif
+
+        //		CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+        //		if (CurrentDeskCrafting!=null) {
+        //			if (CurrentDeskCrafting.Length!=1) {
+        //				if (buttonNext.Update()) {
+        //					SelectedCraftingRecipe++;
+        //					if (SelectedCraftingRecipe==CurrentDeskCrafting.Length)SelectedCraftingRecipe=0;
+        //					SetNeed();
+        //				}
+
+        //				if (buttonPrev.Update()) {
+        //					SelectedCraftingRecipe--;
+        //					if (SelectedCraftingRecipe==-1)SelectedCraftingRecipe=CurrentDeskCrafting.Length-1;
+        //					SetNeed();
+        //				}
+        //			}
+        //		}
+
+        //		int i = 0;
+        //		for (int y = 0; y<2; y++) {
+        //			for (int x = 0; x<6; x++) {
+        //				if (slots.Length==i) break;
+        //				CraftingIn slot=slots[i];
+        //				ItemNonInv[] item=slot.ItemSlot;
+        //				if (item.Length>1) {
+        //					if (mouseLeftDown) {
+        //						if (In40(Global.WindowWidthHalf-300+4+200+80+40+8+x*40,y*40+Global.WindowHeightHalf-200+2+4+200+8+8+AddH)) {
+        //							displayPopUpWindow=true;
+        //							PopUpWindowChoosingPotencialdItem=i;
+        //							PopUpWindowSelectedItem=-1;
+        //							ShowPopUpWindow();
+        //						}
+        //					}
+        //				}
+        //				i++;
+        //			}
+        //		}
+        //	}
+        //}
+
+        //void MakeCrafting(int c) {
+        //	if (CanCraft(c)) {
+        //		for (int g=0; g<c; g++) {
+
+        //			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;//selectedCraftingItem
+
+        //			foreach (CraftingIn d in slots) {
+        //				if (d.SelectedItem==-1) return;
+        //			}
+
+        //			foreach (CraftingIn d in slots) {
+        //				ItemNonInv item=d.ItemSlot[d.SelectedItem];
+        //				ushort id=item.Id;
+
+        //				if (id==(ushort)Items.BronzeIngot) AchievementBronzeAge=true;
+        //				if (id==(ushort)Items.AxeIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.AxeIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.ShovelIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.HammerIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.HoeIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.KnifeIron) AchievementIronAge=true;
+        //				if (id==(ushort)Items.SawIron) AchievementIronAge=true;
+
+        //				switch (item) {
+        //					case ItemNonInvBasic it:
+        //						if (GameMethods.IsItemInvBasic16(id)) {
+        //							int remain=it.Count;
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvBasic16 ininv=(ItemInvBasic16)InventoryNormal[i];
+        //									if (ininv.GetCount<=remain) {
+        //										remain-=ininv.GetCount;
+        //										InventoryNormal[i]=itemBlank;
+        //									} else {
+        //										ininv.SetCount=ininv.GetCount-remain;
+        //										remain=0;
+        //										break;
+        //									}
+        //								}
+        //							}
+        //						} else {
+        //							int remain=it.Count;
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvBasic32 ininv=(ItemInvBasic32)InventoryNormal[i];
+        //									if (ininv.GetCount<=remain) {
+        //										remain-=ininv.GetCount;
+        //										InventoryNormal[i]=itemBlank;
+        //									} else {
+        //										ininv.SetCount=ininv.GetCount-remain;
+        //										remain=0;
+        //										break;
+        //									}
+        //								}
+        //							}
+        //						}
+        //						break;
+
+        //					case ItemNonInvNonStackable it:
+        //						if (GameMethods.IsItemInvNonStackable32(id)) {
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvNonStackable32 ininv=(ItemInvNonStackable32)InventoryNormal[i];
+        //									InventoryNormal[i]=itemBlank;
+        //								}
+        //							}
+        //						}
+        //						break;
+
+        //					case ItemNonInvBasicColoritzedNonStackable it:
+        //						if (GameMethods.IsItemInvNonStackable32(id)) {
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvBasicColoritzed32NonStackable ininv=(ItemInvBasicColoritzed32NonStackable)InventoryNormal[i];
+        //									InventoryNormal[i]=itemBlank;
+        //								}
+        //							}
+        //						}
+        //						break;
+
+        //					case ItemNonInvTool it:
+        //						if (GameMethods.IsItemInvTool16(id)) {
+        //							int remain=it.Count;
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvTool16 ininv=(ItemInvTool16)InventoryNormal[i];
+        //									if (ininv.GetCount<=remain) {
+        //										remain-=ininv.GetCount;
+        //										ushort newid=GameMethods.ToolToBasic(id);
+        //										if (newid==0) InventoryNormal[i]=itemBlank;
+        //										else InventoryNormal[i]=new ItemInvTool16(
+        //											ItemIdToTexture(id),
+        //											newid,
+        //											1,
+        //										 //   GameMethods.ToolMax(id),
+        //											(int)ininv.posTex.X,
+        //											(int)ininv.posTex.Y
+        //										);
+        //									} else {
+        //										ininv.SetCount=ininv.GetCount-remain;
+        //										remain=0;
+        //										break;
+        //									}
+        //								}
+        //							}
+        //						} else {
+        //							int remain=it.Count;
+        //							for (int i=0; i<maxInvCount; i++) {
+        //								if (InventoryNormal[i].Id==id) {
+        //									ItemInvTool32 ininv=(ItemInvTool32)InventoryNormal[i];
+        //									if (ininv.GetCount<=remain) {
+        //										remain-=ininv.GetCount;
+        //										ushort newid=GameMethods.ToolToBasic(id);
+        //										if (newid==0) InventoryNormal[i]=itemBlank;
+        //										else InventoryNormal[i]=new ItemInvTool32(
+        //											ItemIdToTexture(id),
+        //											newid,
+        //											1,
+        //										 //   GameMethods.ToolMax(id),
+        //											(int)ininv.posTex.X,
+        //											(int)ininv.posTex.Y
+        //										);
+        //									} else {
+        //										ininv.SetCount=ininv.GetCount-remain;
+        //										remain=0;
+        //										break;
+        //									}
+        //								}
+        //							}
+        //						}
+        //						break;
+        //				}
+        //				//int count=item.Y;
+        //				//for (int i=0; i<maxInvCount; i++) {
+        //				//    if (InventoryNormal[i].Id==item.X) {
+        //				//        if (InventoryNormal[i].Y>count) {
+        //				//            InventoryNormal[i].Y-=count;
+        //				//            break;
+        //				//        } else {
+        //				//            count-=InventoryNormal[i].Y;
+        //				//            if (item.X>(ushort)Items._SystemMaxTools) {
+        //				//                InventoryNormal[i].X=0;
+        //				//                InventoryNormal[i].Y=0;
+        //				//            }  else {
+        //				//                Items expec=GameMethods.ToolToBasic((Items)InventoryNormal[i].X);
+        //				//                if (expec==Items.None) {
+        //				//                    InventoryNormal[i].X=0;
+        //				//                    InventoryNormal[i].Y=0;
+        //				//                } else {
+        //				//                    InventoryNormal[i].Y=1;
+        //				//                    InventoryNormal[i].X=(int)expec;
+        //				//                }
+        //				//            }
+        //				//        }
+        //				//    }
+        //				//}
+        //			}
+
+        //			foreach (CraftingOut d in CurrentDeskCrafting[SelectedCraftingRecipe].Output){//selectedCraftingItem
+        //				if (d.EveryTime) AddItemToPlayer(d.Item);
+        //				else{
+        //					if (FastRandom.Double()<d.ChanceToDrop) AddItemToPlayer(d.Item);
+        //				}
+        //				//if (d.EveryTime) ItemDrop(d.Item.X,d.Item.Y, PlayerX-11, PlayerY-16);
+        //				//else ItemDrop(d.Item.X,FastRandom.RandomInt(d.ChanceMin,d.ChanceMax), PlayerX-11, PlayerY-16);
+        //			}
+        //		}
+        //	}
+        //	SetNeed();
+        //}
+
+        //void SetNeed() {
+        //	if (SelectedCraftingRecipe==-1)return;
+        //	if (CurrentDeskCrafting==null)return;
+        //	CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+
+        //	int i = 0;
+        //	for (int y = 0; y<2; y++) {
+        //		for (int x = 0; x<6; x++) {
+        //			if (slots.Length==i) break;
+        //			CraftingIn slot=slots[i];
+        //			ItemNonInv[] item=slot.ItemSlot;
+
+        //			if (slot.SelectedItem==-1) {
+        //				 slot.TmpSelected=FastRandom.Int(item.Length);
+        //				 slot.Texture=ItemIdToTexture(item[slot.TmpSelected].Id);
+        //			}else{
+        //			   // ItemNonInv selectedSlot=item[slot.SelectedItem];
+        //				if (item.Length==1) {
+        //					switch (slot.ItemSlot[0]) {
+        //						case ItemNonInvTool t:
+        //							slot.Texture=ItemIdToTexture(item[0].Id);
+        //							if (t.Count==-1){
+        //								slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>0;
+        //							}else{
+        //								slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=t.Count;
+        //							}
+        //							break;
+
+        //						case ItemNonInvBasic t:
+        //							slot.Texture=ItemIdToTexture(item[0].Id);
+        //							slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=t.Count;
+        //							break;
+
+        //						//case ItemNonInvNonStackable f:
+        //						//    slot.Texture=ItemIdToTexture(item[0].Id);
+        //						//    slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
+        //						//    break;
+
+        //						//case ItemNonInvBasicColoritzedNonStackable f:
+        //						//    slot.Texture=ItemIdToTexture(item[0].Id);
+        //						//    slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
+        //						//    break;
+
+        //						default:
+        //							slot.Texture=ItemIdToTexture(item[0].Id);
+        //							slot.HaveItemInInventory=TotalItemsInInventoryForAllTypes(slot.ItemSlot[0].Id)>=1;
+        //							break;
+        //					}
+
+        //				}else{
+        //					slot.Texture=ItemIdToTexture(item[slot.SelectedItem].Id);
+        //				}
+        //			}
+
+        //		  i++;
+
+
+        //		}
+        //	}
+        //}
+
+        //void DrawInventoryNormal() {
+        //	int xx=0, yh=0;
+
+        //	//Slots
+        //	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+        //	if (i>maxInvCount) break;
+        //		spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
+
+        //		//if (InventoryNormal[i].X!=0) {
+        //		//    if (!invMove || (invMove && invStartInventory,invStartId!=i)) {
+        //		//        Texture2D tex=ItemIdToTexture(InventoryNormal[i].X);
+        //		//        if (tex!=null) GameDraw.DrawItemInInventory(tex,InventoryNormal[i],Global.WindowWidthHalf-300+4+200+4+4+xx+4,Global.WindowHeightHalf-200+2+4+yh+4);
+        //		//    }
+        //		//}
+        //		xx+=40;
+
+        //		if (xx==9*40) {
+        //			xx=0;
+        //			yh+=40;
+        //		}
+        //	}
+
+        //	xx=0;
+
+        //	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+        //	if (i>maxInvCount) break;
+        //		if (InventoryNormal[i].Id!=0) {
+        //			InventoryNormal[i].Draw();
+        //		}
+        //		xx+=40;
+
+        //		if (xx==9*40) {
+        //			xx=0;
+        //		}
+        //	}
+
+        //	if (maxInvCount>49) {
+        //		inventoryScrollbar.maxheight=((maxInvCount-5)/9)*40;
+        //		inventoryScrollbar.height=5*40;
+        //		inventoryScrollbar.ButtonDraw(/*newMouseState.X,newMouseState.Y,mouseLeftDown,*/Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
+        //	}
+        //}
+
+        //void DrawInventoryWithMoving() {
+        //	int xx=0, yh=0;
+        //	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+        //		if (i>maxInvCount) break;
+        //		spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh), Color.White);
+
+        //		xx+=40;
+
+        //		if (xx==9*40) {
+        //			xx=0;
+        //			yh+=40;
+        //		}
+        //	}
+        //	xx=0;
+        //	yh=0;
+
+        //	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+        //		if (i>maxInvCount) break;
+
+        //		if (InventoryNormal[i].Id!=0) {
+        //			InventoryNormal[i].Draw();
+
+        //			if (In40(Global.WindowWidthHalf-300+4+200+4+4+xx, Global.WindowHeightHalf-200+2+4+yh)) MouseItemNameEvent(InventoryNormal[i]/*.Id*/);
+        //		}
+        //		xx+=40;
+
+        //		if (xx==9*40) {
+        //			xx=0;
+        //			yh+=40;
+        //		}
+        //	}
+
+        //	if (maxInvCount>49) {
+        //		inventoryScrollbar.maxheight=((maxInvCount-5)/9)*40;
+        //		inventoryScrollbar.height=5*40;
+        //		inventoryScrollbar.ButtonDraw(Global.WindowWidthHalf+300-20-4, Global.WindowHeightHalf-200+2+4);
+        //	}
+
+        //	if (inventory==InventoryType.BoxAdv
+        //	|| inventory==InventoryType.BoxWooden
+        //	|| inventory==InventoryType.Charger
+        //	|| inventory==InventoryType.Composter
+        //	|| inventory==InventoryType.Creative
+        //	|| inventory==InventoryType.Miner
+        //	|| inventory==InventoryType.Shelf) {
+        //		spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40, Global.WindowHeightHalf-200+2+4+40*5), Color.White);
+        //		spriteBatch.Draw(TextureBin,new Vector2(Global.WindowWidthHalf-300+4+200+4+4+8*40+4, Global.WindowHeightHalf-200+2+4+40*5+4), Color.White);
+        //	}
+        //}
+
+        ////void DrawRightInventoryNormal() {
+
+        ////    // Slots
+        ////    for (int i = 0; i<5; i++) {
+        ////        if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.LightBlue);
+        ////        else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidth-40, Global.WindowHeightHalf-80+i*40), Color.White);
+        ////    }
+
+        ////    // Items
+        ////    for (int i = 0; i<5; i++) {
+        ////        invStartInventory[i].Draw();
+        ////    }
+        ////}
+
+        //void DrawSideInventory() {
+        //	//int x=;
+        //	//int y=;
+        //   Vector2 vec = new(Global.WindowWidth-40, Global.WindowHeightHalf-80);
+        //	//slots
+        //	for (int i = 0; i<5; i++) {
+        //	//	Vector2 vec=new(x, y);
+
+        //		if (boxSelected==i) spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Color.LightBlue);
+        //		else spriteBatch.Draw(inventorySlotTexture, vec/*new Vector2(x, y)*/, Global.ColorWhite);
+        //		vec.Y+=40;
+        //	}
+
+        //	//items
+        //	for (int i = 0; i<5; i++) InventoryNormal[i].Draw();
+        //}
+
+        //void InventoryDrawClothes() {
+        //	for (int i=0; i<8; i++) InventoryClothes[i].Draw();
+        //}
+        //#endregion
+
+        //#region Items
+        //void DropItemToPos(ItemNonInv i, DInt d) {
+        //	DroppedItems.Add(new Item{
+        //		X=d.X,
+        //		Y=d.Y,
+        //		item=i,
+        //		Texture=ItemIdToTexture(i.Id)
+        //	});
+        //}
+
+        //void DropItemToPos(ItemNonInv i, int x, int y) {
+        //	DroppedItems.Add(new Item {
+        //		X=x,
+        //		Y=y,
+        //		item=i,
+        //		Texture=ItemIdToTexture(i.Id)
+        //	});
+        //}
+
+        //void DropItemToPos(ItemNonInv i, float x, float y) {
+        //	DroppedItems.Add(new Item {
+        //		X=(int)x,
+        //		Y=(int)y,
+        //		item=i,
+        //		Texture=ItemIdToTexture(i.Id)
+        //	});
+        //}
+
+        //void UpdateItem(List<Item> list) {
+        //	foreach (Item i in list) {
+        //		if (i.X>PlayerXInt-11-16) {
+        //			if (i.X<PlayerXInt+11) {
+        //				if (i.Y>PlayerYInt-20) {
+        //					if (i.Y<PlayerYInt+20) {
+        //						AddItemToPlayer(i.item);
+        //						list.Remove(i);
+        //						return;
+        //					}
+        //				}
+        //			}
+        //		}
+
+        //		if (terrain[i.X/16]!=null) {
+        //			if (i.Y>0){
+        //				if (i.Y<124*16) {
+        //					if (!terrain[i.X/16].IsSolidBlocks[i.Y/16+1]) {
+        //						i.Y+=2;
+        //					}
+        //				}
+        //			}
+        //		}
+
+        //		if (i.Y>5000) {
+        //			list.Remove(i);
+        //			return;
+        //		}
+        //	}
+        //}
+
+        //void ItemEat() {
+        //	if (barEat.Value>1f) {
+        //	switch (InventoryNormal[boxSelected].Id) {
+        //		case (ushort)Items.Banana:
+        //			barEat.Value -=10f;
+        //			barWater.Value -=1f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Olive:
+        //			barEat.Value -=2f;
+        //			barWater.Value -=0.1f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Toadstool:
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			Die(Lang.Texts[166]);
+        //			break;
+
+        //		case (ushort)Items.Boletus:
+        //			barEat.Value -=1.5f;
+        //			barWater.Value -=0.1f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Champignon:
+        //			barEat .Value-=1.5f;
+        //			barWater.Value -=0.1f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Lemon:
+        //			barEat.Value -=5f;
+        //			barWater.Value -=3f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Orange:
+        //			barEat.Value -=9f;
+        //			barWater.Value -=3f;
+        //			InventoryRemoveSelectedItem();
+        //		 if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Cherry:
+        //			barEat.Value -=2f;
+        //			barWater.Value -=0.1f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.BucketWater:
+        //			barEat.Value -=0.01f;
+        //			barWater.Value -=20f;
+        //			DropItemToPos(new ItemNonInvBasic((ushort)Items.Bucket,1), PlayerXInt, PlayerYInt);
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Dandelion:
+        //			barEat.Value -=2f;
+        //			barWater.Value -=0.01f;
+        //			InventoryRemoveSelectedItem();
+        //		   if (Global.HasSoundGraphics)  SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Plum:
+        //			barEat.Value -=5f;
+        //			barWater.Value -=0.05f;
+        //			InventoryRemoveSelectedItem();
+        //		  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Rashberry:
+        //			barEat.Value -=2f;
+        //			barWater.Value -=0.3f;
+        //			InventoryRemoveSelectedItem();
+        //		  if (Global.HasSoundGraphics)   SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Apple:
+        //			barEat.Value -=12f;
+        //			barWater.Value--;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics)SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.RabbitMeatCooked:
+        //			barEat.Value -=30f;
+        //			barWater.Value -=2f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.RabbitMeat:
+        //			barEat.Value -=10;
+        //			barWater.Value -=1;
+        //			if (FastRandom.Bool_20Percent()) {
+        //				barHeart.Value +=5f;
+        //				if (barHeart.Value>32f)barHeart.Value=32f;
+        //			}
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Strawberry:
+        //			barEat.Value -=3f;
+        //			barWater.Value -=0.5f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.WheatSeeds:
+        //			barEat.Value--;
+        //			barWater.Value -=0.002f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.Blueberries:
+        //			barEat.Value-=2f;
+        //			barWater.Value -=0.2f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.boiledEgg:
+        //			barEat.Value-=2f;
+        //			barWater.Value -=0.2f;
+        //			InventoryRemoveSelectedItem();
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.BowlWithMushrooms:
+        //			barEat.Value-=15f;
+        //			barWater.Value -=5f;
+        //			InventoryRemoveSelectedItem();
+        //			AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+
+        //		case (ushort)Items.BowlWithVegetables:
+        //			barEat.Value-=15;
+        //			barWater.Value -=5f;
+        //			InventoryRemoveSelectedItem();
+        //			AddItemToPlayer(new ItemNonInvBasic((ushort)Items.BowlEmpty,1));
+        //			if (Global.HasSoundGraphics) SoundEffects.Eat.Play();
+        //			break;
+        //		}
+        //	}
+
+        //	//drink
+        //	if (barWater.Value>1f) {
+        //		switch (InventoryNormal[boxSelected].Id) {
+        //			case (ushort)Items.BottleWater:
+        //				{
+        //					ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
+        //					float d=barWater.Value-bottle.GetCount/3f;
+        //					if (d<0) {
+        //						barWater.Value=0f;
+        //						InventoryNormal[boxSelected]=new ItemInvBasic32(bottleEmptyTexture,(ushort)Items.Bottle,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
+        //					}else{
+        //						bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+        //						barWater.Value=d;
+        //					}
+        //				}
+        //				break;
+
+        //			case (ushort)Items.BucketWater:
+        //				{
+        //					ItemInvTool32 bottle=(ItemInvTool32)InventoryNormal[boxSelected];
+        //					float d=barWater.Value-bottle.GetCount/3f;
+        //					if (d<0) {
+        //						barWater.Value=0f;
+        //						InventoryNormal[boxSelected]=new ItemInvBasic32(ItemBucketTexture,(ushort)Items.Bucket,1,(int)bottle.posTex.X,(int)bottle.posTex.Y);
+        //					}else{
+        //						bottle.SetCount=bottle.GetCount-(int)(barWater.Value*3);
+        //						barWater.Value=d;
+        //					}
+        //				}
+        //				break;
+        //		}
+        //	}
+
+        //	if (barEat.Value>32)barEat.Value=32f;
+        //	if (barWater.Value>32)barWater.Value=32f;
+        //	if (barEat.Value<0)barEat.Value=0f;
+        //	if (barWater.Value<0)barWater.Value=0f;
+        //}
+
+        //// Crafting basic
+        //void SetInvCraftingBlocks() {
+        //	ushort[] items={
+        //		(ushort)Items.Gravel,
+        //		(ushort)Items.HayBlock,
+        //	};
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	inventoryScrollbarValueCrafting=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingMashines() {
+        //	ushort[] items={
+        //		(ushort)Items.Desk,
+        //		(ushort)Items.Ladder,
+        //	};
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	inventoryScrollbarValueCrafting=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingTools() {
+        //	ushort[] items={
+        //		// Stone
+        //		(ushort)Items.StoneHead,
+        //		(ushort)Items.PickaxeStone,
+        //		(ushort)Items.AxeStone,
+        //		(ushort)Items.ShovelStone,
+        //		(ushort)Items.HoeStone,
+
+        //		// Copper
+        //		(ushort)Items.PickaxeCopper,
+        //		(ushort)Items.AxeCopper,
+        //		(ushort)Items.ShovelCopper,
+        //		(ushort)Items.HoeCopper,
+        //		(ushort)Items.KnifeCopper,
+        //		(ushort)Items.ShearsCopper,
+        //		(ushort)Items.HammerCopper,
+
+        //		//Bronze
+        //		(ushort)Items.PickaxeBronze,
+        //		(ushort)Items.AxeBronze,
+        //		(ushort)Items.ShovelBronze,
+        //		(ushort)Items.HoeBronze,
+        //		(ushort)Items.KnifeBronze,
+        //		(ushort)Items.ShearsBronze,
+        //		(ushort)Items.HammerBronze,
+
+        //		// Gold
+        //		(ushort)Items.PickaxeGold,
+        //		(ushort)Items.AxeGold,
+        //		(ushort)Items.ShovelGold,
+        //		(ushort)Items.HoeGold,
+        //		(ushort)Items.KnifeGold,
+        //		(ushort)Items.ShearsGold,
+        //		(ushort)Items.HammerGold,
+
+        //		// Iron
+        //		(ushort)Items.PickaxeIron,
+        //		(ushort)Items.AxeIron,
+        //		(ushort)Items.ShovelIron,
+        //		(ushort)Items.HoeIron,
+        //		(ushort)Items.KnifeIron,
+        //		(ushort)Items.ShearsIron,
+        //		(ushort)Items.HammerIron,
+
+        //		// Steel
+        //		(ushort)Items.PickaxeSteel,
+        //		(ushort)Items.AxeSteel,
+        //		(ushort)Items.ShovelSteel,
+        //		(ushort)Items.HoeSteel,
+        //		(ushort)Items.KnifeSteel,
+        //		(ushort)Items.ShearsSteel,
+        //		(ushort)Items.HammerSteel,
+
+        //		// Aluminium
+        //		(ushort)Items.PickaxeAluminium,
+        //		(ushort)Items.AxeAluminium,
+        //		(ushort)Items.ShovelAluminium,
+        //		(ushort)Items.HoeAluminium,
+        //		(ushort)Items.KnifeAluminium,
+        //		(ushort)Items.ShearsAluminium,
+        //		(ushort)Items.HammerAluminium,
+
+        //		(ushort)Items.TorchOFF,
+        //	};
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	inventoryScrollbarValueCrafting=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingNature() {
+        //	ushort[] items={
+        //		(ushort)Items.Stick,
+        //		(ushort)Items.Sticks,
+        //		(ushort)Items.Leave,
+        //		(ushort)Items.Seeds,
+        //		(ushort)Items.WheatSeeds,
+        //	};
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	inventoryScrollbarValueCrafting=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingItems() {
+        //	ushort[] items={
+        //		(ushort)Items.Flag,
+        //		(ushort)Items.MediumStone,
+        //		(ushort)Items.SmallStone,
+
+        //		(ushort)Items.DyeOrange,
+        //		(ushort)Items.DyeDarkRed,
+        //		(ushort)Items.DyeRoseQuartz,
+        //		(ushort)Items.DyePink,
+        //		(ushort)Items.DyeMagenta,
+        //		(ushort)Items.DyeLightBlue,
+        //		(ushort)Items.DyeDarkBlue,
+        //		(ushort)Items.DyeTeal,
+        //		(ushort)Items.DyeLightGreen,
+        //		(ushort)Items.DyeDarkGreen,
+        //		(ushort)Items.DyeArmy,
+        //		(ushort)Items.DyeBrown,
+
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	inventoryScrollbarValueCrafting=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //// Crafting adv
+        //void SetInvCraftingBlocksA() {
+        //	inventoryScrollbarValueCrafting=0;
+        //	ushort[] items={
+        //		(ushort)Items.Stonerubble,
+        //		(ushort)Items.Gravel,
+        //		(ushort)Items.Sand,
+        //		(ushort)Items.Planks,
+        //		(ushort)Items.AdvancedSpaceBlock,
+        //		(ushort)Items.AdvancedSpaceFloor,
+        //		(ushort)Items.AdvancedSpacePart1,
+        //		(ushort)Items.AdvancedSpacePart2,
+        //		(ushort)Items.AdvancedSpacePart3,
+        //		(ushort)Items.AdvancedSpacePart4,
+        //		(ushort)Items.AdvancedSpaceWindow,
+        //		(ushort)Items.Bricks,
+        //		(ushort)Items.Roof1,
+        //		(ushort)Items.Roof2,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingMashinesA() {
+        //	inventoryScrollbarValueCrafting=0;
+        //	 ushort[] items={
+        //		(ushort)Items.Desk,
+        //		(ushort)Items.Ladder,
+        //		(ushort)Items.Door,
+        //		(ushort)Items.Composter,
+        //		(ushort)Items.Shelf,
+        //		(ushort)Items.BoxWooden,
+        //		(ushort)Items.BoxAdv,
+        //		(ushort)Items.BucketForRubber,
+        //		(ushort)Items.Barrel,
+
+        //		(ushort)Items.SolarPanel,
+        //		(ushort)Items.WindMill,
+        //		(ushort)Items.WaterMill,
+
+        //		(ushort)Items.Label,
+
+        //		(ushort)Items.FurnaceElectric,
+        //		(ushort)Items.FurnaceStone,
+        //		(ushort)Items.Macerator,
+        //		(ushort)Items.Miner,
+        //		(ushort)Items.Radio,
+        //		(ushort)Items.Lamp,
+        //		(ushort)Items.Charger,
+        //		(ushort)Items.SewingMachine,
+        //		(ushort)Items.OxygenMachine,
+        //		(ushort)Items.Rocket
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingToolsA() {
+        //inventoryScrollbarValueCrafting=0;
+        //	 ushort[] items={
+        //		(ushort)Items.StoneHead,
+
+        //		// Stone
+        //		(ushort)Items.PickaxeStone,
+        //		(ushort)Items.AxeStone,
+        //		(ushort)Items.ShovelStone,
+        //		(ushort)Items.HoeStone,
+
+        //		// Copper
+        //		(ushort)Items.PickaxeCopper,
+        //		(ushort)Items.AxeCopper,
+        //		(ushort)Items.ShovelCopper,
+        //		(ushort)Items.HoeCopper,
+        //		(ushort)Items.KnifeCopper,
+        //		(ushort)Items.ShearsCopper,
+        //		(ushort)Items.SawCopper,
+        //		(ushort)Items.HammerCopper,
+
+        //		// Bronze
+        //		(ushort)Items.PickaxeBronze,
+        //		(ushort)Items.AxeBronze,
+        //		(ushort)Items.ShovelBronze,
+        //		(ushort)Items.HoeBronze,
+        //		(ushort)Items.KnifeBronze,
+        //		(ushort)Items.ShearsBronze,
+        //		(ushort)Items.SawBronze,
+        //		(ushort)Items.HammerBronze,
+
+        //		// Gold
+        //		(ushort)Items.PickaxeGold,
+        //		(ushort)Items.AxeGold,
+        //		(ushort)Items.ShovelGold,
+        //		(ushort)Items.HoeGold,
+        //		(ushort)Items.KnifeGold,
+        //		(ushort)Items.ShearsGold,
+        //		(ushort)Items.SawGold,
+        //		(ushort)Items.HammerGold,
+
+        //		// Iron
+        //		(ushort)Items.PickaxeIron,
+        //		(ushort)Items.AxeIron,
+        //		(ushort)Items.ShovelIron,
+        //		(ushort)Items.HoeIron,
+        //		(ushort)Items.KnifeIron,
+        //		(ushort)Items.ShearsIron,
+        //		(ushort)Items.SawIron,
+        //		(ushort)Items.HammerIron,
+
+        //		// Steel
+        //		(ushort)Items.PickaxeSteel,
+        //		(ushort)Items.AxeSteel,
+        //		(ushort)Items.ShovelSteel,
+        //		(ushort)Items.HoeSteel,
+        //		(ushort)Items.KnifeSteel,
+        //		(ushort)Items.ShearsSteel,
+        //		(ushort)Items.SawSteel,
+        //		(ushort)Items.HammerSteel,
+
+        //		// Aluminium
+        //		(ushort)Items.PickaxeAluminium,
+        //		(ushort)Items.AxeAluminium,
+        //		(ushort)Items.ShovelAluminium,
+        //		(ushort)Items.HoeAluminium,
+        //		(ushort)Items.KnifeAluminium,
+        //		(ushort)Items.ShearsAluminium,
+        //		(ushort)Items.SawAluminium,
+        //		(ushort)Items.HammerAluminium,
+
+
+        //		(ushort)Items.ElectricDrill,
+        //		(ushort)Items.ElectricSaw,
+        //		(ushort)Items.Gun,
+        //		(ushort)Items.Bucket,
+        //		(ushort)Items.TorchOFF,
+        //		(ushort)Items.AirTank,
+        //		(ushort)Items.AirTank2,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingNatureA() {
+        //inventoryScrollbarValueCrafting=0;
+        //	 ushort[] items={
+        //		(ushort)Items.Stick,
+        //		(ushort)Items.Sticks,
+        //		(ushort)Items.Leave,
+        //		(ushort)Items.HayBlock,
+        //		(ushort)Items.MudIngot,
+        //		(ushort)Items.Leave,
+        //		(ushort)Items.Seeds,
+        //		(ushort)Items.WheatSeeds,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvCraftingItemsA() {
+        //	inventoryScrollbarValueCrafting=0;
+        //	 ushort[] items={
+        //		(ushort)Items.Flag,
+        //		(ushort)Items.MediumStone,
+        //		(ushort)Items.SmallStone,
+
+        //		(ushort)Items.Nail,
+        //		(ushort)Items.Rod,
+        //		(ushort)Items.Ammo,
+        //		(ushort)Items.Gunpowder,
+        //		(ushort)Items.BronzeDust,
+
+        //		(ushort)Items.plateAluminium,
+        //		(ushort)Items.PlateBronze,
+        //		(ushort)Items.PlateCopper,
+        //		(ushort)Items.PlateGold,
+        //		(ushort)Items.PlateIron,
+
+        //		(ushort)Items.BareLabel,
+        //		(ushort)Items.Rezistance,
+        //		(ushort)Items.Condenser,
+        //		(ushort)Items.Diode,
+        //		(ushort)Items.Tranzistor,
+        //		(ushort)Items.Bulb,
+        //		(ushort)Items.ItemBattery,
+        //		(ushort)Items.Motor,
+
+        //		(ushort)Items.Circuit,
+        //		(ushort)Items.BigCircuit,
+
+        //		(ushort)Items.Yarn,
+        //		(ushort)Items.Cloth,
+        //		(ushort)Items.Rope,
+
+        //		(ushort)Items.AngelHair,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //// Creative
+        //void SetInvCreativeBlocks() {
+        //	ushort[] items={
+        //		(ushort)Items.StoneSandstone,
+        //		(ushort)Items.StoneSchist,
+        //		(ushort)Items.StoneBasalt,
+        //		(ushort)Items.StoneDiorit,
+        //		(ushort)Items.StoneDolomite,
+        //		(ushort)Items.StoneGabbro,
+        //		(ushort)Items.StoneGneiss,
+        //		(ushort)Items.StoneLimestone,
+        //		(ushort)Items.StoneRhyolite,
+        //		(ushort)Items.StoneFlint,
+        //		(ushort)Items.StoneAnorthosite,
+        //		(ushort)Items.StoneMudstone,
+
+        //		(ushort)Items.OreCoal,
+        //		(ushort)Items.OreCopper,
+        //		(ushort)Items.OreTin,
+        //		(ushort)Items.OreIron,
+        //		(ushort)Items.OreAluminium,
+        //		(ushort)Items.OreSilver,
+        //		(ushort)Items.OreGold,
+        //		(ushort)Items.OreSulfur,
+        //		(ushort)Items.OreSaltpeter,
+
+        //		(ushort)Items.Lava,
+        //		(ushort)Items.Stonerubble,
+        //		(ushort)Items.Gravel,
+        //		(ushort)Items.Sand,
+        //		(ushort)Items.Dirt,
+        //		(ushort)Items.Compost,
+        //		(ushort)Items.Ice,
+        //		(ushort)Items.Snow,
+        //		(ushort)Items.SnowTop,
+        //		(ushort)Items.GrassBlockForest,
+        //		(ushort)Items.GrassBlockDesert,
+        //		(ushort)Items.GrassBlockHills,
+        //		(ushort)Items.GrassBlockJungle,
+        //		(ushort)Items.GrassBlockPlains,
+        //		(ushort)Items.GrassBlockClay,
+        //		(ushort)Items.GrassBlockCompost,
+
+        //		(ushort)Items.AppleLeaves,
+        //		(ushort)Items.AppleLeavesWithApples,
+        //		(ushort)Items.WoodApple,
+        //		(ushort)Items.CherryLeaves,
+        //		(ushort)Items.CherryLeavesWithCherries,
+        //		(ushort)Items.WoodCherry,
+        //		(ushort)Items.PlumLeaves,
+        //		(ushort)Items.PlumLeavesWithPlums,
+        //		(ushort)Items.WoodPlum,
+        //		(ushort)Items.OrangeLeaves,
+        //		(ushort)Items.OrangeLeavesWithOranges,
+        //		(ushort)Items.WoodOrange,
+        //		(ushort)Items.LemonLeaves,
+        //		(ushort)Items.LemonLeavesWithLemons,
+        //		(ushort)Items.WoodLemon,
+        //		(ushort)Items.LindenLeaves,
+        //		(ushort)Items.WoodLinden,
+        //		(ushort)Items.OakLeaves,
+        //		(ushort)Items.WoodOak,
+        //		(ushort)Items.PineLeaves,
+        //		(ushort)Items.WoodPine,
+        //		(ushort)Items.SpruceLeaves,
+        //		(ushort)Items.SpruceLeavesWithSnow,
+        //		(ushort)Items.WoodSpruce,
+
+        //		(ushort)Items.AcaciaLeaves,
+        //		(ushort)Items.AcaciaWood,
+
+        //		(ushort)Items.EucalyptusLeaves,
+        //		(ushort)Items.EucalyptusWood,
+
+        //		(ushort)Items.MangroveLeaves,
+        //		(ushort)Items.MangroveWood,
+
+        //		(ushort)Items.OliveLeaves,
+        //		(ushort)Items.OliveLeavesWithOlives,
+        //		(ushort)Items.OliveWood,
+        //		(ushort)Items.RubberTreeLeaves,
+        //		(ushort)Items.RubberTreeWood,
+        //		(ushort)Items.WillowLeaves,
+        //		(ushort)Items.WillowWood,
+        //		(ushort)Items.KapokLeaves,
+        //		(ushort)Items.KapokLeacesFlowering,
+        //		(ushort)Items.KapokLeavesFibre,
+        //		(ushort)Items.KapokWood,
+
+        //		(ushort)Items.Planks,
+        //		(ushort)Items.HayBlock,
+        //		(ushort)Items.Glass,
+        //		(ushort)Items.Bricks,
+        //		(ushort)Items.Roof1,
+        //		(ushort)Items.Roof2,
+        //		(ushort)Items.ChristmasStar,
+
+        //		(ushort)Items.AdvancedSpaceBlock,
+        //		(ushort)Items.AdvancedSpaceFloor,
+        //		(ushort)Items.AdvancedSpaceWindow,
+        //		(ushort)Items.AdvancedSpacePart1,
+        //		(ushort)Items.AdvancedSpacePart2,
+        //		(ushort)Items.AdvancedSpacePart3,
+        //		(ushort)Items.AdvancedSpacePart4,
+
+        //		(ushort)Items.BackSandstone,
+        //		(ushort)Items.BackSchist,
+        //		(ushort)Items.BackBasalt,
+        //		(ushort)Items.BackDiorit,
+        //		(ushort)Items.BackDolomite,
+        //		(ushort)Items.BackGabbro,
+        //		(ushort)Items.BackGneiss,
+        //		(ushort)Items.BackLimestone,
+        //		(ushort)Items.BackRhyolite,
+        //		(ushort)Items.BackFlint,
+        //		(ushort)Items.BackAnorthosite,
+        //		(ushort)Items.BackMudstone,
+
+        //		(ushort)Items.BackCoal,
+        //		(ushort)Items.BackCopper,
+        //		(ushort)Items.BackTin,
+        //		(ushort)Items.BackIron,
+        //		(ushort)Items.BackAluminium,
+        //		(ushort)Items.BackSilver,
+        //		(ushort)Items.BackGold,
+        //		(ushort)Items.BackSulfur,
+        //		(ushort)Items.BackSaltpeter,
+
+        //		(ushort)Items.AdvancedSpaceBack,
+        //		(ushort)Items.BackClay,
+        //		(ushort)Items.BackCobblestone,
+        //		(ushort)Items.BackSand,
+        //		(ushort)Items.BackRegolite,
+        //		(ushort)Items.BackDirt,
+        //	};
+        //	creativeScrollbar.scale=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
+        //	for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
+        //	inventoryScrollbarValueCraftingMax=items.Length;
+
+        //	ReSetInventoryCreativePositions();
+        //}
+
+        //void SetInvCreativePlants() {
+        //	ushort[] items={
+        //		(ushort)Items.Dandelion,
+        //		(ushort)Items.PlantViolet,
+        //		(ushort)Items.PlantRose,
+        //		(ushort)Items.PlantOrchid,
+        //		(ushort)Items.Heater,
+        //		(ushort)Items.Alore,
+
+        //		(ushort)Items.Boletus,
+        //		(ushort)Items.Champignon,
+        //		(ushort)Items.Toadstool,
+        //		(ushort)Items.CactusSmall,
+        //		(ushort)Items.CactusBig,
+        //		(ushort)Items.Coral,
+        //		(ushort)Items.PlantSeaweed,
+
+        //		(ushort)Items.GrassDesert,
+        //		(ushort)Items.GrassForest,
+        //		(ushort)Items.GrassHills,
+        //		(ushort)Items.GrassJungle,
+        //		(ushort)Items.GrassPlains,
+
+        //		(ushort)Items.SpruceSapling,
+        //		(ushort)Items.WillowSapling,
+        //		(ushort)Items.OakSapling,
+        //		(ushort)Items.LindenSapling,
+        //		(ushort)Items.EucalyptusSapling,
+        //		(ushort)Items.MangroveSapling,
+        //		(ushort)Items.PineSapling,
+        //		(ushort)Items.RubberTreeSapling,
+        //		(ushort)Items.KapokSapling,
+
+        //		(ushort)Items.AppleSapling,
+        //		(ushort)Items.CherrySapling,
+        //		(ushort)Items.PlumSapling,
+
+        //		(ushort)Items.OliveSapling,
+        //		(ushort)Items.OrangeSapling,
+        //		(ushort)Items.LemonSapling,
+
+        //		(ushort)Items.PlantStrawberry,
+        //		(ushort)Items.PlantRashberry,
+        //		(ushort)Items.PlantBlueberry,
+        //		(ushort)Items.Flax,
+        //		(ushort)Items.PlantOnion,
+        //		(ushort)Items.PlantPeas,
+        //		(ushort)Items.PlantCarrot,
+        //		(ushort)Items.SugarCane,
+
+        //		(ushort)Items.Seeds,
+        //		(ushort)Items.WheatSeeds,
+        //		(ushort)Items.FlaxSeeds,
+
+        //		(ushort)Items.Hay,
+        //		(ushort)Items.WheatStraw,
+        //		(ushort)Items.Stick,
+        //		(ushort)Items.Sticks,
+        //		(ushort)Items.Leave,
+        //	};
+        //	creativeScrollbar.scale=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
+        //	for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
+        //	inventoryScrollbarValueCraftingMax=items.Length;
+
+        //	ReSetInventoryCreativePositions();
+        //}
+
+        //void SetInvCreativeMashines() {
+        //	ushort[] items ={
+        //		(ushort)Items.Desk,
+        //		(ushort)Items.FurnaceStone,
+        //		(ushort)Items.Shelf,
+        //		(ushort)Items.BoxWooden,
+        //		(ushort)Items.BoxAdv,
+        //		(ushort)Items.Ladder,
+        //		(ushort)Items.Composter,
+        //		(ushort)Items.Door,
+        //		(ushort)Items.BucketForRubber,
+        //		(ushort)Items.Barrel,
+
+        //		(ushort)Items.WindMill,
+        //		(ushort)Items.SolarPanel,
+        //		(ushort)Items.WaterMill,
+        //		(ushort)Items.Label,
+        //		(ushort)Items.Lamp,
+        //		(ushort)Items.FurnaceElectric,
+        //		(ushort)Items.Macerator,
+        //		(ushort)Items.Miner,
+        //		(ushort)Items.Radio,
+        //		(ushort)Items.Charger,
+        //		(ushort)Items.SewingMachine,
+        //		(ushort)Items.OxygenMachine,
+        //		(ushort)Items.Rocket,
+        //	};
+        //	creativeScrollbar.scale=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
+        //	for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
+        //	inventoryScrollbarValueCraftingMax=items.Length;
+
+        //	ReSetInventoryCreativePositions();
+        //}
+
+        //void SetInvCreativeTools() {
+        //	ushort[] items ={
+        //		(ushort)Items.StoneHead,
+
+        //		// Stone
+        //		(ushort)Items.PickaxeStone,
+        //		(ushort)Items.AxeStone,
+        //		(ushort)Items.ShovelStone,
+        //		(ushort)Items.HoeStone,
+
+        //		// Copper
+        //		(ushort)Items.PickaxeCopper,
+        //		(ushort)Items.AxeCopper,
+        //		(ushort)Items.ShovelCopper,
+        //		(ushort)Items.HoeCopper,
+        //		(ushort)Items.KnifeCopper,
+        //		(ushort)Items.ShearsCopper,
+        //		(ushort)Items.SawCopper,
+        //		(ushort)Items.HammerCopper,
+
+        //		// Bronze
+        //		(ushort)Items.PickaxeCopper,
+        //		(ushort)Items.AxeCopper,
+        //		(ushort)Items.ShovelCopper,
+        //		(ushort)Items.HoeCopper,
+        //		(ushort)Items.KnifeCopper,
+        //		(ushort)Items.ShearsCopper,
+        //		(ushort)Items.SawCopper,
+        //		(ushort)Items.HammerCopper,
+
+        //		// Gold
+        //		(ushort)Items.PickaxeGold,
+        //		(ushort)Items.AxeGold,
+        //		(ushort)Items.ShovelGold,
+        //		(ushort)Items.HoeGold,
+        //		(ushort)Items.KnifeGold,
+        //		(ushort)Items.ShearsGold,
+        //		(ushort)Items.SawGold,
+        //		(ushort)Items.HammerGold,
+
+        //		// Iron
+        //		(ushort)Items.PickaxeIron,
+        //		(ushort)Items.AxeIron,
+        //		(ushort)Items.ShovelIron,
+        //		(ushort)Items.HoeIron,
+        //		(ushort)Items.KnifeIron,
+        //		(ushort)Items.ShearsIron,
+        //		(ushort)Items.SawIron,
+        //		(ushort)Items.HammerIron,
+
+        //		// Steel
+        //		(ushort)Items.PickaxeSteel,
+        //		(ushort)Items.AxeSteel,
+        //		(ushort)Items.ShovelSteel,
+        //		(ushort)Items.HoeSteel,
+        //		(ushort)Items.KnifeSteel,
+        //		(ushort)Items.ShearsSteel,
+        //		(ushort)Items.SawSteel,
+        //		(ushort)Items.HammerSteel,
+
+        //		// Aluminium
+        //		(ushort)Items.PickaxeAluminium,
+        //		(ushort)Items.AxeAluminium,
+        //		(ushort)Items.ShovelAluminium,
+        //		(ushort)Items.HoeAluminium,
+        //		(ushort)Items.KnifeAluminium,
+        //		(ushort)Items.ShearsAluminium,
+        //		(ushort)Items.SawAluminium,
+        //		(ushort)Items.HammerAluminium,
+
+
+        //		(ushort)Items.ElectricDrill,
+        //		(ushort)Items.ElectricSaw,
+        //		(ushort)Items.TorchElectricON,
+        //		(ushort)Items.Gun,
+        //		(ushort)Items.Ammo,
+        //		(ushort)Items.AirTank,
+        //		(ushort)Items.AirTank2,
+
+        //		(ushort)Items.Bucket,
+        //		(ushort)Items.BucketWater,
+        //		(ushort)Items.Bottle,
+        //		(ushort)Items.BottleWater,
+        //		(ushort)Items.TestTube,
+        //		(ushort)Items.TorchON,
+        //		(ushort)Items.Backpack,
+
+        //		(ushort)Items.Cap,
+        //		(ushort)Items.Hat,
+        //		(ushort)Items.Crown,
+        //		(ushort)Items.SpaceHelmet,
+
+        //		(ushort)Items.TShirt,
+        //		(ushort)Items.SpaceSuit,
+        //		(ushort)Items.Dress,
+        //		(ushort)Items.Shirt,
+
+        //		(ushort)Items.Jeans,
+        //		(ushort)Items.Shorts,
+        //		(ushort)Items.SpaceTrousers,
+        //		(ushort)Items.ArmyTrousers,
+        //		(ushort)Items.Skirt,
+
+        //		(ushort)Items.FormalShoes,
+        //		(ushort)Items.Pumps,
+        //		(ushort)Items.Sneakers,
+        //		(ushort)Items.SpaceBoots,
+
+        //		(ushort)Items.CoatArmy,
+        //		(ushort)Items.Coat,
+        //		(ushort)Items.JacketDenim,
+        //		(ushort)Items.JacketFormal,
+        //		(ushort)Items.JacketShort,
+
+        //		(ushort)Items.Underpants,
+        //		(ushort)Items.BoxerShorts,
+        //		(ushort)Items.Panties,
+        //		(ushort)Items.Swimsuit,
+        //		(ushort)Items.BikiniDown,
+
+        //		(ushort)Items.Bra,
+        //		(ushort)Items.BikiniTop,
+        //	};
+        //	creativeScrollbar.scale=0;
+        //	for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
+        //	for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCreative[j]=itemBlank;
+        //	inventoryScrollbarValueCraftingMax=items.Length;
+
+        //	ReSetInventoryCreativePositions();
+        //}
+
+        //void SetInvCreativeItems() {
+        //	ushort[] items ={
+        //		(ushort)Items.Strawberry,
+        //		(ushort)Items.Rashberry,
+        //		(ushort)Items.Blueberries,
+        //		(ushort)Items.Apple,
+        //		(ushort)Items.Cherry,
+        //		(ushort)Items.Plum,
+        //		(ushort)Items.Banana,
+        //		(ushort)Items.Lemon,
+        //		(ushort)Items.Orange,
+
+        //		(ushort)Items.Onion,
+        //		(ushort)Items.Carrot,
+        //		(ushort)Items.Peas,
+        //		(ushort)Items.Seaweed,
+        //		(ushort)Items.FishMeatCooked,
+        //		(ushort)Items.RabbitMeat,
+        //		(ushort)Items.RabbitMeatCooked,
+        //		(ushort)Items.BowlEmpty,
+        //		(ushort)Items.BowlWithMushrooms,
+        //		(ushort)Items.BowlWithVegetables,
+        //		(ushort)Items.Egg,
+        //		(ushort)Items.boiledEgg,
+
+        //		(ushort)Items.SmallStone,
+        //		(ushort)Items.MediumStone,
+        //		(ushort)Items.BigStone,
+        //		(ushort)Items.ItemCoal,
+        //		(ushort)Items.ItemCopper,
+        //		(ushort)Items.ItemTin,
+        //		(ushort)Items.ItemIron,
+        //		(ushort)Items.ItemSilver,
+        //		(ushort)Items.ItemGold,
+        //		(ushort)Items.Diamond,
+        //		(ushort)Items.Ruby,
+        //		(ushort)Items.Saphirite,
+        //		(ushort)Items.Smaragd,
+
+        //		(ushort)Items.SulfurDust,
+        //		(ushort)Items.Saltpeter,
+        //		(ushort)Items.Gunpowder,
+        //		(ushort)Items.CoalDust,
+        //		(ushort)Items.BronzeDust,
+        //		(ushort)Items.CopperDust,
+        //		(ushort)Items.GoldDust,
+        //		(ushort)Items.IronDust,
+        //		(ushort)Items.SilverDust,
+        //		(ushort)Items.TinDust,
+
+        //		(ushort)Items.CopperIngot,
+        //		(ushort)Items.TinIngot,
+        //		(ushort)Items.BronzeIngot,
+        //		(ushort)Items.GoldIngot,
+        //		(ushort)Items.SilverIngot,
+        //		(ushort)Items.IronIngot,
+        //		(ushort)Items.SteelIngot,
+        //		(ushort)Items.AluminiumIngot,
+
+        //		(ushort)Items.MudIngot,
+
+        //		(ushort)Items.plateAluminium,
+        //		(ushort)Items.PlateBronze,
+        //		(ushort)Items.PlateCopper,
+        //		(ushort)Items.PlateGold,
+        //		(ushort)Items.PlateIron,
+
+        //		(ushort)Items.BareLabel,
+        //		(ushort)Items.Tranzistor,
+        //		(ushort)Items.Rezistance,
+        //		(ushort)Items.Condenser,
+        //		(ushort)Items.Diode,
+        //		(ushort)Items.Bulb,
+        //		(ushort)Items.ItemBattery,
+        //		(ushort)Items.Motor,
+        //		(ushort)Items.Circuit,
+        //		(ushort)Items.BigCircuit,
+
+        //		(ushort)Items.MudIngot,
+        //		(ushort)Items.Rubber,
+        //		(ushort)Items.Plastic,
+        //		(ushort)Items.Ash,
+        //		(ushort)Items.CoalWood,
+        //		(ushort)Items.KapokFibre,
+        //		(ushort)Items.Yarn,
+        //		(ushort)Items.Cloth,
+        //		(ushort)Items.Rope,
+        //		(ushort)Items.Nail,
+        //		(ushort)Items.Rod,
+
+        //		(ushort)Items.AxeHeadCopper,
+        //		(ushort)Items.AxeHeadBronze,
+        //		(ushort)Items.AxeHeadGold,
+        //		(ushort)Items.AxeHeadIron,
+        //		(ushort)Items.AxeHeadSteel,
+        //		(ushort)Items.AxeHeadAluminium,
+
+        //		(ushort)Items.ShovelHeadCopper,
+        //		(ushort)Items.ShovelHeadBronze,
+        //		(ushort)Items.ShovelHeadGold,
+        //		(ushort)Items.ShovelHeadIron,
+        //		(ushort)Items.ShovelHeadSteel,
+        //		(ushort)Items.ShovelHeadAluminium,
+
+        //		(ushort)Items.HoeHeadCopper,
+        //		(ushort)Items.HoeHeadBronze,
+        //		(ushort)Items.HoeHeadGold,
+        //		(ushort)Items.HoeHeadIron,
+        //		(ushort)Items.HoeHeadSteel,
+        //		(ushort)Items.HoeHeadAluminium,
+
+        //		(ushort)Items.PickaxeHeadCopper,
+        //		(ushort)Items.PickaxeHeadBronze,
+        //		(ushort)Items.PickaxeHeadGold,
+        //		(ushort)Items.PickaxeHeadIron,
+        //		(ushort)Items.PickaxeHeadSteel,
+        //		(ushort)Items.PickaxeHeadAluminium,
+
+        //		(ushort)Items.ShearsHeadCopper,
+        //		(ushort)Items.ShearsHeadBronze,
+        //		(ushort)Items.ShearsHeadGold,
+        //		(ushort)Items.ShearsHeadIron,
+        //		(ushort)Items.ShearsHeadSteel,
+        //		(ushort)Items.ShearsHeadAluminium,
+
+        //		(ushort)Items.KnifeHeadCopper,
+        //		(ushort)Items.KnifeHeadBronze,
+        //		(ushort)Items.KnifeHeadGold,
+        //		(ushort)Items.KnifeHeadIron,
+        //		(ushort)Items.KnifeHeadSteel,
+        //		(ushort)Items.KnifeHeadAluminium,
+
+        //		(ushort)Items.DyeArmy,
+        //		(ushort)Items.DyeBlack,
+        //		(ushort)Items.DyeBlue,
+        //		(ushort)Items.DyeBrown,
+        //		(ushort)Items.DyeDarkBlue,
+        //		(ushort)Items.DyeDarkGray,
+        //		(ushort)Items.DyeDarkGreen,
+        //		(ushort)Items.DyeDarkRed,
+        //		(ushort)Items.DyeGold,
+        //		(ushort)Items.DyeGray,
+        //		(ushort)Items.DyeGreen,
+        //		(ushort)Items.DyeLightBlue,
+        //		(ushort)Items.DyeLightGray,
+        //		(ushort)Items.DyeLightGreen,
+        //		(ushort)Items.DyeMagenta,
+        //		(ushort)Items.DyeOlive,
+        //		(ushort)Items.DyeOrange,
+        //		(ushort)Items.DyePink,
+        //		(ushort)Items.DyePurple,
+        //		(ushort)Items.DyeRed,
+        //		(ushort)Items.DyeSpringGreen,
+        //		(ushort)Items.DyeViolet,
+        //		(ushort)Items.DyeWhite,
+        //		(ushort)Items.DyeYellow,
+
+        //		(ushort)Items.AngelHair,
+
+        //		(ushort)Items.ChristmasBallGray,
+        //		(ushort)Items.ChristmasBallYellow,
+        //		(ushort)Items.ChristmasBallBlue,
+        //		(ushort)Items.ChristmasBallLightGreen,
+        //		(ushort)Items.ChristmasBallRed,
+        //		(ushort)Items.ChristmasBallOrange,
+        //		(ushort)Items.ChristmasBallPink,
+        //		(ushort)Items.ChristmasBallPurple,
+        //		(ushort)Items.ChristmasBallTeal,
+
+
+        //		(ushort)Items.AnimalRabbit,
+        //		(ushort)Items.AnimalChicken,
+        //		(ushort)Items.AnimalParrot,
+        //		(ushort)Items.AnimalFish,
+        //	};
+        //	creativeScrollbar.scale=0;
+
+        //	int i=0;
+        //	for (; i<items.Length; i++) SetItemCreative(InventoryCreative, i, items[i]);
+        //	inventoryScrollbarValueCraftingMax=i/*tems.Length*/;
+        //	for (; i<inventoryScrollbarValueCraftingMax; i++) InventoryCreative[i]=itemBlank;
+
+        //	ReSetInventoryCreativePositions();
+        //}
+
+        //// Bake
+        //void SetInvBakeTools() {
+        //	 ushort[] items ={
+
+        //		(ushort)Items.AxeHeadCopper,
+        //		(ushort)Items.AxeHeadBronze,
+        //		(ushort)Items.AxeHeadGold,
+        //		(ushort)Items.AxeHeadIron,
+        //		(ushort)Items.AxeHeadSteel,
+        //		(ushort)Items.AxeHeadAluminium,
+
+        //		(ushort)Items.ShovelHeadCopper,
+        //		(ushort)Items.ShovelHeadBronze,
+        //		(ushort)Items.ShovelHeadGold,
+        //		(ushort)Items.ShovelHeadIron,
+        //		(ushort)Items.ShovelHeadSteel,
+        //		(ushort)Items.ShovelHeadAluminium,
+
+        //		(ushort)Items.HoeHeadCopper,
+        //		(ushort)Items.HoeHeadBronze,
+        //		(ushort)Items.HoeHeadGold,
+        //		(ushort)Items.HoeHeadIron,
+        //		(ushort)Items.HoeHeadSteel,
+        //		(ushort)Items.HoeHeadAluminium,
+
+        //		(ushort)Items.PickaxeHeadCopper,
+        //		(ushort)Items.PickaxeHeadBronze,
+        //		(ushort)Items.PickaxeHeadGold,
+        //		(ushort)Items.PickaxeHeadIron,
+        //		(ushort)Items.PickaxeHeadSteel,
+        //		(ushort)Items.PickaxeHeadAluminium,
+
+        //		(ushort)Items.ShearsHeadCopper,
+        //		(ushort)Items.ShearsHeadBronze,
+        //		(ushort)Items.ShearsHeadGold,
+        //		(ushort)Items.ShearsHeadIron,
+        //		(ushort)Items.ShearsHeadSteel,
+        //		(ushort)Items.ShearsHeadAluminium,
+
+        //		(ushort)Items.Bottle,
+        //		(ushort)Items.TestTube,
+        //		(ushort)Items.TorchON,
+        //	};
+
+        //	//inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	//for (int i=0; i<items.Length; i++) SetItemCreative(InventoryCrafting, i, items[i]);
+        //	//for (int j = items.Length; j<inventoryScrollbarValueCraftingMax; j++) InventoryCrafting[j]=itemBlank;
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvBakeIngots() {
+        //	ushort[] items ={
+        //		(ushort)Items.CopperIngot,
+        //		(ushort)Items.TinIngot,
+        //		(ushort)Items.BronzeIngot,
+        //		(ushort)Items.GoldIngot,
+        //		(ushort)Items.SilverIngot,
+        //		(ushort)Items.IronIngot,
+        //		(ushort)Items.SteelIngot,
+        //		(ushort)Items.AluminiumIngot,
+
+        //		(ushort)Items.PlateCopper,
+        //		(ushort)Items.PlateBronze,
+        //		(ushort)Items.PlateGold,
+        //		(ushort)Items.PlateIron,
+        //		(ushort)Items.plateAluminium,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvBakeItems() {
+        //	ushort[] items ={
+        //		(ushort)Items.Glass,
+        //		(ushort)Items.CoalWood,
+        //		(ushort)Items.Ash,
+        //		(ushort)Items.BareLabel,
+        //		(ushort)Items.Rubber,
+        //		(ushort)Items.Plastic,
+
+        //		(ushort)Items.ChristmasStar,
+        //		(ushort)Items.ChristmasBallGray,
+
+        //	  //  (ushort)Items.DyeArmy,
+        //		(ushort)Items.DyeBlack,
+        //		(ushort)Items.DyeBlue,
+        //		(ushort)Items.DyeBrown,
+        //	  // (ushort)Items.DyeDarkBlue,
+        //	   // (ushort)Items.DyeDarkGray,
+        //		(ushort)Items.DyeDarkGreen,
+        //	   // (ushort)Items.DyeDarkRed,
+        //		(ushort)Items.DyeGold,
+        //		(ushort)Items.DyeGray,
+        //		(ushort)Items.DyeGreen,
+        //	   // (ushort)Items.DyeLightBlue,
+        //	   // (ushort)Items.DyeLightGray,
+        //	   // (ushort)Items.DyeLightGreen,
+        //	   // (ushort)Items.DyeMagenta,
+        //		(ushort)Items.DyeOlive,
+        //		(ushort)Items.DyeOrange,
+        //	 //   (ushort)Items.DyePink,
+        //	  //  (ushort)Items.DyePurple,
+        //		(ushort)Items.DyeRed,
+        //		(ushort)Items.DyeSpringGreen,
+        //		(ushort)Items.DyeViolet,
+        //		(ushort)Items.DyeWhite,
+        //		(ushort)Items.DyeYellow,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvBakeFood() {
+        //	ushort[] items ={
+        //		(ushort)Items.FishMeatCooked,
+        //		(ushort)Items.RabbitMeatCooked,
+        //		(ushort)Items.BowlWithMushrooms,
+        //		(ushort)Items.BowlWithVegetables,
+        //		(ushort)Items.boiledEgg
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvBakeCeramics() {
+        //	ushort[] items ={
+        //		(ushort)Items.OneBrick
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //// toDust
+        //void SetInvToDustDusts() {
+        //	ushort[] items ={
+        //		(ushort)Items.CopperDust,
+        //		(ushort)Items.TinDust,
+        //		(ushort)Items.BronzeDust,
+        //		(ushort)Items.IronDust,
+        //		(ushort)Items.AluminiumDust,
+        //		(ushort)Items.SilverDust,
+        //		(ushort)Items.GoldDust,
+        //		(ushort)Items.WoodDust,
+        //		(ushort)Items.CoalDust,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvToDustTools() {
+        //	ushort[] items ={
+        //		(ushort)Items.AxeHeadIron,
+        //		(ushort)Items.PickaxeHeadIron,
+        //		(ushort)Items.ShovelHeadIron,
+        //		(ushort)Items.StoneHead,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvToDustStone() {
+        //	ushort[] items ={
+        //		(ushort)Items.Stonerubble,
+        //		(ushort)Items.MediumStone,
+        //		(ushort)Items.SmallStone,
+        //		(ushort)Items.Gravel,
+        //		(ushort)Items.Sand,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvToDustNature() {
+        //	ushort[] items ={
+        //		(ushort)Items.Seeds,
+        //		(ushort)Items.WheatSeeds,
+        //		(ushort)Items.FlaxSeeds,
+        //		(ushort)Items.Leave,
+        //		(ushort)Items.Stick,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvToDustOther() {
+        //	ushort[] items ={
+        //		(ushort)Items.Yarn,
+        //		(ushort)Items.Hay,
+        //		(ushort)Items.BucketWater,
+        //		(ushort)Items.Cloth,
+        //		(ushort)Items.Label,
+        //		(ushort)Items.BareLabel
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //// sewing
+        //void SetInvClothesHead() {
+        //	ushort[] items={
+        //		(ushort)Items.Cap,
+        //		(ushort)Items.Crown,
+        //		(ushort)Items.Hat,
+        //		(ushort)Items.SpaceHelmet,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvClothesChest() {
+        //	ushort[] items={
+        //		(ushort)Items.TShirt,
+        //		(ushort)Items.Shirt,
+        //		(ushort)Items.Dress,
+        //		(ushort)Items.CoatArmy,
+        //		(ushort)Items.Coat,
+        //		(ushort)Items.JacketDenim,
+        //		(ushort)Items.JacketFormal,
+        //		(ushort)Items.JacketShort,
+        //		(ushort)Items.SpaceSuit,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvClothesLegs() {
+        //	ushort[] items={
+        //		(ushort)Items.ArmyTrousers,
+        //		(ushort)Items.Jeans,
+        //		(ushort)Items.Shorts,
+        //		(ushort)Items.Skirt,
+        //		(ushort)Items.SpaceTrousers,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvClothesShoes() {
+        //	ushort[] items={
+        //		(ushort)Items.FormalShoes,
+        //		(ushort)Items.Pumps,
+        //		(ushort)Items.Sneakers,
+        //		(ushort)Items.SpaceBoots,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //void SetInvClothesUnderwear() {
+        //	ushort[] items={
+        //		(ushort)Items.Underpants,
+        //		(ushort)Items.BoxerShorts,
+        //		(ushort)Items.Panties,
+        //		(ushort)Items.Swimsuit,
+        //		(ushort)Items.BikiniTop,
+        //		(ushort)Items.BikiniDown,
+        //		(ushort)Items.Bra,
+        //	};
+
+        //	inventoryScrollbarValueCraftingMax=items.Length-1;
+        //	for (int i=0; i<items.Length; i++) SetItemCrafting(InventoryCrafting, i, items[i]);
+        //	for (int j = items.Length; j<InventoryCrafting.Length; j++) InventoryCrafting[j]=itemBlank;
+        //	ReSetCraftingInventoryPositions();
+        //}
+
+        //Texture2D ItemIdToTexture(ushort id) {
+        //          return id switch{
+        //		 (ushort)Items.ChristmasBallGray => TextureChristmasBall,
+        //		 (ushort)Items.ChristmasBallYellow => TextureChristmasBallYellow,
+        //		 (ushort)Items.ChristmasBallOrange => TextureChristmasBallOrange,
+        //		 (ushort)Items.ChristmasBallRed => TextureChristmasBallRed,
+        //		 (ushort)Items.ChristmasBallPurple => TextureChristmasBallPurple,
+        //		 (ushort)Items.ChristmasBallPink => TextureChristmasBallPink,
+        //		 (ushort)Items.ChristmasBallLightGreen => TextureChristmasBallLightGreen,
+        //		 (ushort)Items.ChristmasBallBlue => TextureChristmasBallBlue,
+        //		 (ushort)Items.ChristmasBallTeal => TextureChristmasBallTeal,
+        //		 (ushort)Items.AngelHair => TextureAngelHair,
+
+        //		 (ushort)Items.ChristmasStar => TextureChristmasStar,
+        //		 (ushort)Items.AirTank => TextureAirTank,
+        //		 (ushort)Items.AirTank2 => TextureAirTank2,
+        //		 (ushort)Items.OxygenMachine => TextureOxygenMachine,
+        //		 (ushort)Items.BackSulfur => TextureBackSulfurOre,
+        //		 (ushort)Items.BackSaltpeter => TextureBackSaltpeterOre,
+        //		 (ushort)Items.Ammo => TextureAmmo,
+        //		 (ushort)Items.Gun => TextureGun,
+        //		 (ushort)Items.Saltpeter => TextureSaltpeter,
+        //		 (ushort)Items.SulfurDust => TextureSulfur,
+        //		 (ushort)Items.OreSaltpeter => TextureOreSaltpeter,
+        //		 (ushort)Items.OreSulfur => TextureOreSulfur,
+        //		 (ushort)Items.Gunpowder => TextureGunpowder,
+
+        //		 (ushort)Items.BucketForRubber => TextureBucketForRubber,
+        //		 (ushort)Items.Resin =>  TextureResin,
+        //		 (ushort)Items.Aluminium => ItemAluminiumTexture,
+        //		 (ushort)Items.TorchOFF => TextureTorchOff,
+        //		 //(ushort)Items.BronzeHeadHoe => TextureHoeHeadBronze,
+        //		 //(ushort)Items.CopperHeadHoe => TextureHoeHeadCopper,
+        //		 (ushort)Items.HoeHeadIron => TextureHoeHeadIron,
+        //		 (ushort)Items.HoeCopper => TextureHoeCopper,
+
+        //		(ushort)Items.Mobile => mobileTexture,
+        //		(ushort)Items.SewingMachine => sewingMachineTexture,
+        //		(ushort)Items.BucketOil => bucketOilTexture,
+        //		(ushort)Items.TorchON => torchInvTexture,
+
+        //		(ushort)Items.BottleOil => bottleOilTexture,
+        //		(ushort)Items.BoxAdv => boxAdvTexture,
+        //		(ushort)Items.BoxWooden => boxWoodenTexture,
+        //		(ushort)Items.Shelf => shelfTexture,
+        //		(ushort)Items.Heater => heatherTexture,
+        //		(ushort)Items.WoodDust => ItemWoodDustTexture,
+        //		(ushort)Items.AluminiumDust => ItemAluminiumDustTexture,
+        //		(ushort)Items.FlaxSeeds => flaxSeedsTexture,
+        //		(ushort)Items.MudIngot => oneMudBrickTexture,
+        //		(ushort)Items.AluminiumIngot => ItemAluminiumIngotTexture,
+        //		(ushort)Items.Nail => nailTexture,
+        //		(ushort)Items.Silicium => siliciumTexture,
+        //		(ushort)Items.StoneBasalt => basaltTexture,
+        //		(ushort)Items.StoneLimestone => limestoneTexture,
+        //		(ushort)Items.StoneRhyolite => rhyoliteTexture,
+        //		(ushort)Items.StoneGneiss => gneissTexture,
+        //		(ushort)Items.StoneSandstone => sandstoneTexture,
+        //		(ushort)Items.StoneSchist => schistTexture,
+        //		(ushort)Items.StoneGabbro => gabbroTexture,
+        //		(ushort)Items.StoneDiorit => dioritTexture,
+        //		(ushort)Items.StoneDolomite => dolomiteTexture,
+        //		(ushort)Items.Flax => flaxInvTexture,
+        //		(ushort)Items.Dirt => TextureDirt,
+        //		(ushort)Items.Sand => sandTexture,
+        //		(ushort)Items.Lava => lavaTexture,
+        //		(ushort)Items.Stonerubble => cobblestoneTexture,
+        //		(ushort)Items.Gravel => gravelTexture,
+
+        //		(ushort)Items.WoodOak => TextureOakWood,
+        //		(ushort)Items.WoodSpruce => spruceWoodTexture,
+        //		(ushort)Items.WoodLinden => TextureLindenWood,
+        //		(ushort)Items.WoodPine => pineWoodTexture,
+        //		(ushort)Items.WoodApple => TextureAppleWood,
+        //		(ushort)Items.WoodCherry => cherryWoodTexture,
+        //		(ushort)Items.WoodPlum => TexturePlumWood,
+        //		(ushort)Items.WoodLemon => TextureLemonWood,
+        //		(ushort)Items.WoodOrange => TextureOrangeWood,
+
+        //		(ushort)Items.OakLeaves => TextureOakLeaves,
+
+        //		(ushort)Items.GrassBlockDesert => TextureGrassBlockDesert,
+        //		(ushort)Items.GrassBlockForest => TextureGrassBlockForest,
+        //		(ushort)Items.GrassBlockHills => TextureGrassBlockHills,
+        //		(ushort)Items.GrassBlockJungle => TextureGrassBlockJungle,
+        //		(ushort)Items.GrassBlockPlains => TextureGrassBlockPlains,
+        //		(ushort)Items.GrassBlockCompost => TextureGrassBlockCompost,
+
+        //		//Crafted
+        //		(ushort)Items.Glass => glassTexture,
+        //		(ushort)Items.Bricks => bricksTexture,
+
+        //		(ushort)Items.Planks => planksTexture,
+
+        //		(ushort)Items.Desk => deskTexture,
+        //		(ushort)Items.Door => ItemDoorTexture,
+        //		(ushort)Items.Ladder => ladderTexture,
+        //		(ushort)Items.Flag => ItemFlagTexture,
+
+        //		(ushort)Items.Rope => ItemRopeTexture,
+
+        //		(ushort)Items.HayBlock => hayBlockTexture,
+
+        //		(ushort)Items.Roof1 => roof1Texture,
+        //		(ushort)Items.Roof2 => roof2Texture,
+
+        //		//Mashines
+        //		(ushort)Items.AdvancedSpaceBack => advancedSpaceBackTexture,
+        //		(ushort)Items.AdvancedSpaceWindow => advancedSpaceWindowTexture,
+        //		(ushort)Items.AdvancedSpaceBlock => advancedSpaceBlockTexture,
+        //		(ushort)Items.AdvancedSpaceFloor => advancedSpaceFloorTexture,
+        //		(ushort)Items.AdvancedSpacePart1 => advancedSpacePart1Texture,
+        //		(ushort)Items.AdvancedSpacePart2 => advancedSpacePart2Texture,
+        //		(ushort)Items.AdvancedSpacePart3 => advancedSpacePart3Texture,
+        //		(ushort)Items.AdvancedSpacePart4 => advancedSpacePart4Texture,
+
+        //		(ushort)Items.WindMill => ItemWindMillTexture,
+        //		(ushort)Items.WaterMill => ItemWaterMillTexture,
+        //		(ushort)Items.SolarPanel => solarPanelTexture,
+
+        //		(ushort)Items.Miner => minerTexture,
+        //		(ushort)Items.Macerator => maceratorOneTexture,
+        //		(ushort)Items.Lamp => lampTexture,
+        //		(ushort)Items.Radio => radioInvTexture,
+        //		(ushort)Items.Label => labelOneTexture,
+        //		(ushort)Items.Rocket => ItemRocketTexture,
+        //		(ushort)Items.FurnaceElectric => furnaceElectricOneTexture,
+        //		(ushort)Items.FurnaceStone => furnaceStoneOneTexture,
+        //		(ushort)Items.Barrel => TextureBarrel,
+
+        //		//Food
+        //		(ushort)Items.Banana => ItemBananaTexture,
+        //		(ushort)Items.Cherry => ItemCherryTexture,
+        //		(ushort)Items.Lemon => ItemLemonTexture,
+        //		(ushort)Items.Orange => ItemOrangeTexture,
+        //		(ushort)Items.Plum => ItemPlumTexture,
+        //		(ushort)Items.Apple => ItemAppleTexture,
+        //		(ushort)Items.Rashberry => rashberryTexture,
+        //		(ushort)Items.Strawberry => strawberryTexture,
+        //		(ushort)Items.Blueberries => blueberryTexture,
+
+        //		(ushort)Items.RabbitMeatCooked => ItemRabbtCookedMeatTexture,
+        //		(ushort)Items.RabbitMeat => ItemRabbitMeatTexture,
+
+        //		(ushort)Items.AnimalFish => fishTexture0,
+        //		(ushort)Items.FishMeatCooked => fishCookedTexture,
+
+        //		(ushort)Items.Egg => TextureItemEgg,
+        //		(ushort)Items.boiledEgg => TextureItemBoiledEgg,
+
+        //		//Clothes
+        //		(ushort)Items.Backpack => ItemBackpackTexture,
+
+        //		//Items
+        //		(ushort)Items.CoalDust => ItemCoalDustTexture,
+        //		(ushort)Items.BronzeDust => ItemBronzeDustTexture,
+        //		(ushort)Items.GoldDust => ItemGoldDustTexture,
+        //		(ushort)Items.IronDust => ItemIronDustTexture,
+        //		(ushort)Items.SilverDust => ItemSilverDustTexture,
+        //		(ushort)Items.CopperDust => ItemCopperDustTexture,
+        //		(ushort)Items.TinDust => ItemTinDustTexture,
+
+        //		(ushort)Items.BronzeIngot => ItemBronzeIngotTexture,
+        //		(ushort)Items.SteelIngot => TextureIngotSteel,
+        //		(ushort)Items.GoldIngot => ItemGoldIngotTexture,
+        //		(ushort)Items.IronIngot => ItemIronIngotTexture,
+        //		(ushort)Items.TinIngot => ItemTinIngotTexture,
+        //		(ushort)Items.SilverIngot => ItemSilverIngotTexture,
+        //		(ushort)Items.CopperIngot => ItemCopperIngotTexture,
+
+        //		(ushort)Items.PlateIron => plateIronTexture,
+        //		(ushort)Items.PlateBronze => plateBronzeTexture,
+        //		(ushort)Items.plateAluminium => plateAluminiumTexture,
+        //		(ushort)Items.PlateCopper => plateCopperTexture,
+        //		(ushort)Items.PlateGold => plateGoldTexture,
+
+        //		(ushort)Items.OreCoal => TextureOreCoal,
+        //		(ushort)Items.ItemCoal => ItemCoalTexture,
+        //		(ushort)Items.ItemGold => ItemGoldTexture,
+        //		(ushort)Items.ItemTin => ItemTinTexture,
+        //		(ushort)Items.ItemSilver => ItemSilverTexture,
+        //		(ushort)Items.ItemIron => ItemIronTexture,
+        //		(ushort)Items.ItemCopper => ItemCopperTexture,
+        //		(ushort)Items.Ash => ashTexture,
+        //		(ushort)Items.CoalWood => coalWoodTexture,
+
+        //		(ushort)Items.Saphirite => ItemSaphiriteTexture,
+        //		(ushort)Items.Diamond => ItemDiamondTexture,
+        //		(ushort)Items.Smaragd => ItemSmaragdTexture,
+        //		(ushort)Items.Ruby => ItemRubyTexture,
+        //		(ushort)Items.SmallStone => ItemSmallStoneTexture,
+        //		(ushort)Items.BigStone => ItemBigStoneTexture,
+        //		(ushort)Items.MediumStone => ItemMediumStoneTexture,
+
+        //		(ushort)Items.Bulb => ItemBulbTexture,
+        //		(ushort)Items.Circuit => ItemCircuitTexture,
+        //		(ushort)Items.ItemBattery => ItemBatteryTexture,
+        //		(ushort)Items.BigCircuit => ItemBigCircuitTexture,
+        //		(ushort)Items.OneBrick => oneBrickTexture,
+
+        //		(ushort)Items.Cloth => clothTexture,
+        //		(ushort)Items.Yarn => yarnTexture,
+
+        //		(ushort)Items.Condenser => condenserTexture,
+        //		(ushort)Items.Diode => diodeTexture,
+        //		(ushort)Items.Tranzistor => tranzistorTexture,
+        //		(ushort)Items.Rezistance => resistanceTexture,
+        //		(ushort)Items.Motor => motorTexture,
+        //		(ushort)Items.BareLabel => bareLabelTexture,
+
+        //		//Plants
+        //		(ushort)Items.OakSapling => oakSaplingTexture,
+        //		(ushort)Items.LindenSapling => TextureLindenSapling,
+        //		(ushort)Items.PineSapling => pineSaplingTexture,
+        //		(ushort)Items.AppleSapling => TextureAppleSapling,
+        //		(ushort)Items.LemonSapling => lemonSaplingTexture,
+        //		(ushort)Items.CherrySapling => cherrySaplingTexture,
+        //		(ushort)Items.PlumSapling => plumSaplingTexture,
+        //		(ushort)Items.SpruceSapling => spruceSaplingTexture,
+        //		(ushort)Items.OrangeSapling => orangeSaplingTexture,
+
+        //		(ushort)Items.Dandelion => plantDandelionTexture,
+        //		(ushort)Items.PlantRose => plantRoseTexture,
+        //		(ushort)Items.PlantOrchid => plantOrchidTexture,
+        //		(ushort)Items.PlantViolet => plantVioletTexture,
+
+        //		(ushort)Items.PlantStrawberry => invStrawberryTexture,
+        //		(ushort)Items.PlantRashberry => invRashberryTexture,
+        //		(ushort)Items.PlantBlueberry => invBlueberryTexture,
+
+        //		(ushort)Items.CactusBig => cactusBigTexture,
+        //		(ushort)Items.CactusSmall => cactusLittleTexture,
+
+        //		(ushort)Items.SugarCane => sugarCaneTexture,
+        //		(ushort)Items.Onion => ItemOnionTexture,
+
+        //		(ushort)Items.Toadstool => toadstoolTexture,
+        //		(ushort)Items.Boletus => boletusTexture,
+        //		(ushort)Items.Champignon => champignonTexture,
+
+        //		(ushort)Items.Coral => coralTexture,
+        //		(ushort)Items.Seaweed => seaweedTexture,
+        //		(ushort)Items.PlantSeaweed => seaweedTexture,
+        //		(ushort)Items.PlantOnion => plantOnionTexture,
+
+        //		//Nature
+        //		(ushort)Items.WheatSeeds => ItemWheatSeedsTexture,
+        //		(ushort)Items.Seeds => ItemSeedsTexture,
+
+        //		(ushort)Items.WheatStraw => ItemWheatStrawTexture,
+        //		(ushort)Items.Hay => ItemHayTexture,
+
+        //		(ushort)Items.Leave => ItemLeaveTexture,
+        //		(ushort)Items.Stick => ItemStickTexture,
+        //		(ushort)Items.Sticks => ItemSticksTexture,
+        //		(ushort)Items.Rubber => ItemRubberTexture,
+
+        //		//Tools
+        //		(ushort)Items.Bucket => ItemBucketTexture,
+        //		(ushort)Items.BucketWater => ItemBucketWaterTexture,
+
+        //		(ushort)Items.StoneHead => stoneHeadTexture,
+
+        //		//(ushort)Items.AxeHeadIron => TextureHeadAxeIron,
+        //		//(ushort)Items.ShovelHeadIron => TextureHeadShovelIron,
+        //		//(ushort)Items.PickaxeHeadIron => TextureHeadPickaxeIron,
+
+        //		//Shovel
+        //		(ushort)Items.ShovelStone => TextureShovelStone,
+        //		(ushort)Items.ShovelCopper => TextureShovelCopper,
+        //		(ushort)Items.ShovelBronze => TextureShovelBronze,
+        //		(ushort)Items.ShovelGold => TextureShovelGold,
+        //		(ushort)Items.ShovelIron => TextureShovelIron,
+        //		(ushort)Items.ShovelSteel => TextureShovelSteel,
+        //		(ushort)Items.ShovelAluminium => TextureShovelAluminium,
+
+        //		// Pickaxe
+        //		(ushort)Items.PickaxeStone => TexturePickaxeStone,
+        //		(ushort)Items.PickaxeCopper => TexturePickaxeCopper,
+        //		(ushort)Items.PickaxeBronze => TexturePickaxeBronze,
+        //		(ushort)Items.PickaxeGold => TexturePickaxeGold,
+        //		(ushort)Items.PickaxeIron => TexturePickaxeIron,
+        //		(ushort)Items.PickaxeSteel => TexturePickaxeSteel,
+        //		(ushort)Items.PickaxeAluminium => TexturePickaxeAluminium,
+
+        //		// Axe
+        //		(ushort)Items.AxeStone => TextureAxeStone,
+        //		(ushort)Items.AxeCopper => TextureAxeCopper,
+        //		(ushort)Items.AxeBronze => TextureAxeBronze,
+        //		(ushort)Items.AxeGold => TextureAxeGold,
+        //		(ushort)Items.AxeIron => TextureAxeIron,
+        //		(ushort)Items.AxeSteel => TextureAxeSteel,
+        //		(ushort)Items.AxeAluminium => TextureAxeAluminium,
+
+        //		// Hammers
+        //		(ushort)Items.HammerCopper => TextureHammerCopper,
+        //		(ushort)Items.HammerBronze => TextureHammerBronze,
+        //		(ushort)Items.HammerIron => TextureHammerIron,
+        //		(ushort)Items.HammerGold => TextureHammerGold,
+        //		(ushort)Items.HammerSteel => TextureHammerSteel,
+        //		(ushort)Items.HammerAluminium => TextureHammerAluminium,
+
+        //		// Shears
+        //		(ushort)Items.ShearsCopper => TextureShearsCopper,
+        //		(ushort)Items.ShearsBronze => TextureShearsBronze,
+        //		(ushort)Items.ShearsGold => TextureShearsGold,
+        //		(ushort)Items.ShearsIron => TextureShearsIron,
+        //		(ushort)Items.ShearsSteel => TextureShearsSteel,
+        //		(ushort)Items.ShearsAluminium => TextureShearsAluminium,
+
+        //		// Saw
+        //		(ushort)Items.SawCopper => TextureSawCopper,
+        //		(ushort)Items.SawBronze => TextureSawBronze,
+        //		(ushort)Items.SawGold => TextureSawGold,
+        //		(ushort)Items.SawIron => TextureSawIron,
+        //		(ushort)Items.SawSteel => TextureSawSteel,
+        //		(ushort)Items.SawAluminium => TextureSawAluminium,
+
+        //		(ushort)Items.ElectricDrill => TextureDrillElectric,
+        //		(ushort)Items.ElectricSaw => electricSawTexture,
+
+        //		(ushort)Items.OreAluminium => TextureOreAluminium,
+        //		(ushort)Items.OreCopper => TextureOreCopper,
+        //		(ushort)Items.OreGold => TextureOreGold,
+        //		(ushort)Items.OreIron => TextureOreIron,
+        //		(ushort)Items.OreSilver => TextureOreSilver,
+        //		(ushort)Items.OreTin => TextureOreTin,
+
+        //		(ushort)Items.AppleLeaves => TextureAppleLeaves,
+        //		(ushort)Items.AppleLeavesWithApples => TextureAppleLeavesWithApples,
+        //		(ushort)Items.OrangeLeaves => TextureOrangeLeaves,
+        //		(ushort)Items.OrangeLeavesWithOranges => TextureOrangeLeavesWithOranges,
+        //		(ushort)Items.PlumLeaves => TexturePlumLeaves,
+        //		(ushort)Items.PlumLeavesWithPlums => TexturePlumLeavesWithPlums,
+        //		(ushort)Items.CherryLeaves => TextureCherryLeaves,
+        //		(ushort)Items.CherryLeavesWithCherries => TextureCherryLeavesWithCherries,
+        //		(ushort)Items.LemonLeaves => TextureLemonLeaves,
+        //		(ushort)Items.LemonLeavesWithLemons => lemonLeavesWithLemonsTexture,
+        //		(ushort)Items.LindenLeaves => TextureLindenLeaves,
+        //		(ushort)Items.SpruceLeaves => spruceLeavesTexture,
+        //		(ushort)Items.SpruceLeavesWithSnow => spruceLeavesWithSnowTexture,
+        //		(ushort)Items.PineLeaves => pineLeavesTexture,
+
+        //		(ushort)Items.Snow => snowTexture,
+        //		(ushort)Items.SnowTop => snowTopTexture,
+        //		(ushort)Items.Ice => iceTexture,
+
+        //		(ushort)Items.GrassDesert => grassDesertTexture,
+        //		(ushort)Items.GrassForest => grassForestTexture,
+        //		(ushort)Items.GrassHills => grassHillsTexture,
+        //		(ushort)Items.GrassJungle => grassJungleTexture,
+        //		(ushort)Items.GrassPlains => grassPlainsTexture,
+
+        //		(ushort)Items.Alore => plantAloreTexture,
+        //		(ushort)Items.Plastic => ItemPlasticTexture,
+
+        //		(ushort)Items.Carrot => ItemCarrotTexture,
+        //		(ushort)Items.PlantCarrot => plantCarrotTexture,
+        //		(ushort)Items.Peas => ItemPeasTexture,
+        //		(ushort)Items.PlantPeas => plantPeasTexture,
+
+        //		(ushort)Items.Battery => ItemBatteryTexture,
+
+        //		(ushort)Items.BottleWater => bottleWaterTexture,
+        //		(ushort)Items.Bottle => bottleEmptyTexture,
+        //		(ushort)Items.BowlEmpty => bowlEmptyTexture,
+        //		(ushort)Items.BowlWithMushrooms => bowlMushroomsTexture,
+        //		(ushort)Items.BowlWithVegetables => bowlVegetablesTexture,
+
+        //		(ushort)Items.ElectricDrillOff => TextureDrillElectric,
+        //		(ushort)Items.ElectricSawOff => electricSawTexture,
+
+        //		(ushort)Items.HoeStone => TextureHoeStone,
+        //		(ushort)Items.HoeBronze => TextureHoeBronze,
+        //		(ushort)Items.HoeIron => TextureHoeIron,
+
+        //		(ushort)Items.Charger => chargerTexture,
+
+        //		(ushort)Items.Clay => clayTexture,
+        //		(ushort)Items.GrassBlockClay => TextureGrassBlockClay,
+        //		(ushort)Items.BackDirt => backgroundDirtTexture,
+        //		(ushort)Items.BackSand => backgroundSandTexture,
+        //		(ushort)Items.BackClay => backgroundClayTexture,
+        //		(ushort)Items.BackCobblestone => backgroundCobblestoneTexture,
+        //		(ushort)Items.BackGravel => backgroundGravelTexture,
+        //		(ushort)Items.BackRedSand => backgroundRedSandTexture,
+        //		(ushort)Items.BackRegolite => backgroundRegoliteTexture,
+
+        //		(ushort)Items.BackCoal => backgroundCoalTexture,
+        //		(ushort)Items.BackAluminium => backgroundAluminiumTexture,
+        //		(ushort)Items.BackCopper => backgroundCopperTexture,
+        //		(ushort)Items.BackGold => backgroundGoldTexture,
+        //		(ushort)Items.BackIron => backgroundIronTexture,
+        //		(ushort)Items.BackTin => backgroundTinTexture,
+        //		(ushort)Items.BackSilver => backgroundSilverTexture,
+
+
+        //		(ushort)Items.BackAnorthosite => backgroundAnorthositeTexture,
+        //		(ushort)Items.BackBasalt => backgroundBasaltTexture,
+        //		(ushort)Items.BackDiorit => backgroundDioritTexture,
+        //		(ushort)Items.BackDolomite => backgroundDolomiteTexture,
+        //		(ushort)Items.BackFlint => backgroundFlintTexture,
+        //		(ushort)Items.BackGabbro => backgroundGabbroTexture,
+        //		(ushort)Items.BackGneiss => backgroundGneissTexture,
+        //		(ushort)Items.BackLimestone => backgroundLimestoneTexture,
+        //		(ushort)Items.BackMudstone => backgroundMudstoneTexture,
+        //		(ushort)Items.BackSandstone => backgroundSandstoneTexture,
+        //		(ushort)Items.BackSchist => backgroundSchistTexture,
+        //		(ushort)Items.BackRhyolite => backgroundRhyoliteTexture,
+
+        //		(ushort)Items.StoneFlint => flintTexture,
+        //		(ushort)Items.StoneMudstone => mudstoneTexture,
+        //		(ushort)Items.StoneAnorthosite => anorthositeTexture,
+        //		(ushort)Items.AnimalRabbit => rabbitStillTexture,
+        //		(ushort)Items.AnimalParrot => TextureParrotStill,
+        //		(ushort)Items.AnimalChicken => chickenStillTexture,
+        //		(ushort)Items.Rod => RodTexture,
+        //		(ushort)Items.TorchElectricOFF => LightElectricTexture,
+        //		(ushort)Items.TorchElectricON => LightElectricTexture,
+        //		(ushort)Items.Compost => CompostTexture,
+        //		(ushort)Items.Composter => ComposterTexture,
+
+        //		(ushort)Items.FormalShoes => TextureItemFormalShoes,
+        //		(ushort)Items.Pumps => TextureItemPumps,
+        //		(ushort)Items.Sneakers => TextureItemSneakers,
+        //		(ushort)Items.SpaceBoots => TextureItemSpaceBoots,
+
+        //		(ushort)Items.Jeans => TextureItemJeans,
+        //		(ushort)Items.Shorts => TextureItemShorts,
+        //		(ushort)Items.SpaceTrousers => TextureItemSpaceTrousers,
+        //		(ushort)Items.ArmyTrousers => TextureItemArmyTrousers,
+        //		(ushort)Items.Skirt => TextureItemSkirt,
+
+        //		(ushort)Items.TShirt => TextureItemTShirt,
+        //		(ushort)Items.SpaceSuit => TextureItemSpaceSuit,
+        //		(ushort)Items.Dress => TextureItemDress,
+        //		(ushort)Items.Shirt => TextureItemShirt,
+
+        //		(ushort)Items.Cap => TextureItemCap,
+        //		(ushort)Items.Hat => TextureItemHat,
+        //		(ushort)Items.Crown => TextureItemCrown,
+        //		(ushort)Items.SpaceHelmet => TextureItemSpaceHelmet,
+
+        //		(ushort)Items.Underpants => TextureItemUnderpants,
+        //		(ushort)Items.BoxerShorts => TextureItemBoxerShorts,
+        //		(ushort)Items.Panties => TextureItemPanties,
+        //		(ushort)Items.Swimsuit => TextureItemSwimsuit,
+        //		(ushort)Items.BikiniDown => TextureItemBikiniDown,
+
+        //		(ushort)Items.Bra => TextureItemBra,
+        //		(ushort)Items.BikiniTop => TextureItemBikiniTop,
+
+        //		(ushort)Items.CoatArmy => TextureItemCoatArmy,
+        //		(ushort)Items.Coat => TextureItemCoat,
+        //		(ushort)Items.JacketDenim => ItemJacketDenimTexture,
+        //		(ushort)Items.JacketFormal => ItemJacketFormalTexture,
+        //		(ushort)Items.JacketShort => TextureItemJacketShort,
+
+        //		(ushort)Items.AcaciaLeaves => TextureAcaciaLeaves,
+        //		(ushort)Items.AcaciaWood => TextureAcaciaWood,
+        //		(ushort)Items.AcaciaSapling => TextureAcaciaSapling,
+        //		(ushort)Items.MangroveLeaves => TextureMangroveLeaves,
+        //		(ushort)Items.MangroveWood => TextureMangroveWood,
+        //		(ushort)Items.MangroveSapling => TextureMangroveSapling,
+        //		(ushort)Items.WillowLeaves => TextureWillowLeaves,
+        //		(ushort)Items.WillowWood => TextureWillowWood,
+        //		(ushort)Items.WillowSapling => TextureWillowSapling,
+        //		(ushort)Items.Olive => ItemOliveTexture,
+        //		(ushort)Items.OliveLeaves => TextureOliveLeaves,
+        //		(ushort)Items.OliveLeavesWithOlives => TextureOliveLeavesWithOlives,
+        //		(ushort)Items.OliveWood => TextureOliveWood,
+        //		(ushort)Items.OliveSapling => TextureOliveSapling,
+        //		(ushort)Items.EucalyptusLeaves => TextureEucalyptusLeaves,
+        //		(ushort)Items.EucalyptusSapling => TextureEucalyptusSapling,
+        //		(ushort)Items.EucalyptusWood => TextureEucalyptusWood,
+        //		(ushort)Items.RubberTreeLeaves => TextureRubberTreeLeaves,
+        //		(ushort)Items.RubberTreeSapling => TextureRubberTreeSapling,
+        //		(ushort)Items.RubberTreeWood => TextureRubberTreeWood,
+        //		(ushort)Items.KapokLeaves => TextureKapokLeaves,
+        //		(ushort)Items.KapokLeavesFibre => TextureKapokLeavesFibre,
+        //		(ushort)Items.KapokLeacesFlowering => TextureKapokBlossom,
+        //		(ushort)Items.KapokSapling => TextureKapokSapling,
+        //		(ushort)Items.KapokWood => TextureKapokWood,
+        //		(ushort)Items.KapokFibre => ItemKapokFibreTexture,
+        //		(ushort)Items.KnifeCopper => TextureKnifeCopper,
+        //		(ushort)Items.KnifeBronze => TextureKnifeBronze,
+        //		(ushort)Items.KnifeGold => TextureKnifeGold,
+        //		(ushort)Items.KnifeIron => TextureKnifeIron,
+        //		(ushort)Items.KnifeSteel => TextureKnifeSteel,
+        //		(ushort)Items.KnifeAluminium => TextureKnifeAluminium,
+
+        //		(ushort)Items.HoeGold => TextureHoeGold,
+        //		(ushort)Items.HoeSteel => TextureHoeSteel,
+        //		(ushort)Items.HoeAluminium => TextureHoeAluminium,
+        //		(ushort)Items.DyeGold => TextureDyeGold,
+        //		(ushort)Items.DyeWhite => TextureDyeWhite,
+        //		(ushort)Items.DyeYellow => TextureDyeYellow,
+        //		(ushort)Items.DyeOrange => TextureDyeOrange,
+        //		(ushort)Items.DyeRed => TextureDyeRed,
+        //		(ushort)Items.DyeDarkRed => TextureDyeDarkRed,
+        //		(ushort)Items.DyeOlive => TextureDyeOlive,
+        //		(ushort)Items.DyePurple => TextureDyePurple,
+        //		(ushort)Items.DyePink => TextureDyePink,
+        //		(ushort)Items.DyeTeal => TextureDyeTeal,
+        //		(ushort)Items.DyeLightBlue => TextureDyeLightBlue,
+        //		(ushort)Items.DyeBlue => TextureDyeBlue,
+        //		(ushort)Items.DyeMagenta => TextureDyeMagenta,
+        //		(ushort)Items.DyeDarkBlue => TextureDyeDarkBlue,
+        //		(ushort)Items.DyeBlack => TextureDyeBlack,
+        //		(ushort)Items.DyeBrown => TextureDyeBrown,
+        //		(ushort)Items.DyeLightGray => TextureDyeLightGray,
+        //		(ushort)Items.DyeGray => TextureDyeGray,
+        //		(ushort)Items.DyeDarkGray => TextureDyeDarkGray,
+        //		(ushort)Items.DyeViolet => TextureDyeViolet,
+        //		(ushort)Items.DyeSpringGreen => TextureDyeSpringGreen,
+        //		(ushort)Items.DyeRoseQuartz => TextureDyeRoseQuartz,
+        //		(ushort)Items.TestTube => TextureTestTube,
+        //		(ushort)Items.DyeLightGreen => TextureDyeLightGreen,
+        //		(ushort)Items.DyeGreen => TextureDyeGreen,
+        //		(ushort)Items.DyeArmy => TextureDyeArmy,
+        //		(ushort)Items.DyeDarkGreen => TextureDyeDarkGreen,
+
+        //			 //Shovel
+        //		(ushort)Items.ShovelHeadCopper => TextureShovelHeadCopper,
+        //		(ushort)Items.ShovelHeadBronze => TextureShovelHeadBronze,
+        //		(ushort)Items.ShovelHeadGold => TextureShovelHeadGold,
+        //		(ushort)Items.ShovelHeadIron => TextureShovelHeadIron,
+        //		(ushort)Items.ShovelHeadSteel => TextureShovelHeadSteel,
+        //		(ushort)Items.ShovelHeadAluminium => TextureShovelHeadAluminium,
+
+        //		// Pickaxe
+        //		(ushort)Items.PickaxeHeadCopper => TexturePickaxeHeadCopper,
+        //		(ushort)Items.PickaxeHeadBronze => TexturePickaxeHeadBronze,
+        //		(ushort)Items.PickaxeHeadGold => TexturePickaxeHeadGold,
+        //		(ushort)Items.PickaxeHeadIron => TexturePickaxeHeadIron,
+        //		(ushort)Items.PickaxeHeadSteel => TexturePickaxeHeadSteel,
+        //		(ushort)Items.PickaxeHeadAluminium => TexturePickaxeHeadAluminium,
+
+        //		// Axe
+        //		(ushort)Items.AxeHeadCopper => TextureAxeHeadCopper,
+        //		(ushort)Items.AxeHeadBronze => TextureAxeHeadBronze,
+        //		(ushort)Items.AxeHeadGold => TextureAxeHeadGold,
+        //		(ushort)Items.AxeHeadIron => TextureAxeHeadIron,
+        //		(ushort)Items.AxeHeadSteel => TextureAxeHeadSteel,
+        //		(ushort)Items.AxeHeadAluminium => TextureAxeHeadAluminium,
+
+        //		// Shears
+        //		(ushort)Items.ShearsHeadCopper => TextureShearsHeadCopper,
+        //		(ushort)Items.ShearsHeadBronze => TextureShearsHeadBronze,
+        //		(ushort)Items.ShearsHeadGold => TextureShearsHeadGold,
+        //		(ushort)Items.ShearsHeadIron => TextureShearsHeadIron,
+        //		(ushort)Items.ShearsHeadSteel => TextureShearsHeadSteel,
+        //		(ushort)Items.ShearsHeadAluminium => TextureShearsHeadAluminium,
+
+        //		(ushort)Items.KnifeHeadCopper => TextureKnifeHeadCopper,
+        //		(ushort)Items.KnifeHeadBronze => TextureKnifeHeadBronze,
+        //		(ushort)Items.KnifeHeadGold => TextureKnifeHeadGold,
+        //		(ushort)Items.KnifeHeadIron => TextureKnifeHeadIron,
+        //		(ushort)Items.KnifeHeadSteel => TextureKnifeHeadSteel,
+        //		(ushort)Items.KnifeHeadAluminium => TextureKnifeHeadAluminium,
+
+        //		(ushort)Items.HoeHeadCopper => TextureHoeHeadCopper,
+        //		(ushort)Items.HoeHeadBronze => TextureHoeHeadBronze,
+        //		(ushort)Items.HoeHeadGold => TextureHoeHeadGold,
+        //		//(ushort)Items.HoeHeadIron => TextureHoeHeadIron,
+        //		(ushort)Items.HoeHeadSteel => TextureHoeHeadSteel,
+        //		(ushort)Items.HoeHeadAluminium => TextureHoeHeadAluminium,
+
+        //		(ushort)Items.RedSand => TextureRedSand,
+        //		(ushort)Items.FishMeat => fishTexture0,
+
+        //		_=>
+        //			#if DEBUG
+        //			throw new Exception("Missing texture for item "+(Items)id),
+        //			#else
+        //			null,
+        //			#endif
+        //	};
+        //}
+
+        ////void ItemDrop(ItemNonInv item, DInt _pos) {
+        ////    DroppedItems.Add(new Item {
+        ////        X=_pos.X,
+        ////        Y=_pos.Y,
+        ////        item=item,
+        ////        Texture=ItemIdToTexture(item.Id),
+        ////    });
+        ////}
+
+        //void ItemDrop(ItemNonInv item, int x, int y) {
+        //	DroppedItems.Add(new Item {
+        //		X=x,
+        //		Y=y,
+        //		item=item,
+        //		Texture=ItemIdToTexture(item.Id),
+        //	});
+        //}
+
+        ////void ItemDrop(ItemNonInv item, float x, float y) {
+        ////    DroppedItems.Add(new Item {
+        ////        X=(int)x,
+        ////        Y=(int)y,
+        ////        item=item,
+        ////        Texture=ItemIdToTexture(item.Id),
+        ////    });
+        ////}
+        //#endregion
+
+        #region Typing
+        string TextEdit(string editText) {
 			string newKey=Add();
 
 			string add;
@@ -22639,7 +22853,7 @@ rameno.X -= 17;
 		void SetWintableSources() {
 			foreach (ShortAndByte w in windable) {
 				Block[] blocks=terrain[w.X].TopBlocks;
-
+				float windForce =terrain[w.X].Biome.precipitation.WindForce;
 				switch (blocks[w.Y].Id) {
 					case (ushort)BlockId.Windmill:
 						((AnimatedBlockOffset)blocks[w.Y]).imageSpeed=windForce;
@@ -22763,7 +22977,7 @@ rameno.X -= 17;
 			//mousePos= new Vector2((newMouseState.X-Global.WindowWidthHalf)/(Global.WindowWidth/848f)*divider_zoom+WindowCenterX, (newMouseState.Y-Global.WindowHeightHalf)/((float)Global.WindowHeight/560f)*divider_zoom+WindowCenterY);
 		}
 
-		void MobileON() => ( mobileOS=new Mobile.System { Content=Rabcr.content } ).Init();
+		//void MobileON() => ( mobileOS=new Mobile.System { Content=Rabcr.content } ).Init();
 
 		#region Jobs
 		void ChargerJob(ShortAndByte ch) {
@@ -22989,86 +23203,86 @@ rameno.X -= 17;
 			}
 		}
 
-		bool BucketsForRubberJob(ShortAndByte ch) {
-		  //  Block bucket=terrain[ch.X].TopBlocks[ch.Y];
+        bool BucketsForRubberJob(ShortAndByte ch) {
+            //  Block bucket=terrain[ch.X].TopBlocks[ch.Y];
 
-			for (int y=ch.Y+1; y<100; y++) {
-				if (terrain[ch.X].IsBackground[y]) {
-					if (terrain[ch.X].Background[y].Id==(ushort)BlockId.RubberTreeWood) {
-						if (FastRandom.Int(2000)==1) {
-							RemovefromBucketsForRubber(ch.X,ch.Y);
-							TerrainSetTopBlockNormal(ch.X,ch.Y,(ushort)BlockId.BucketWithLatex,TextureBucketWithLatex);
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-		#endregion
+            for (int y = ch.Y+1; y<100; y++) {
+                if (terrain[ch.X].IsBackground[y]) {
+                    if (terrain[ch.X].Background[y].Id==(ushort)BlockId.RubberTreeWood) {
+                        if (FastRandom.Int(2000)==1) {
+                            RemovefromBucketsForRubber(ch.X, ch.Y);
+                            TerrainSetTopBlockNormal(ch.X, ch.Y, (ushort)BlockId.BucketWithLatex, TextureBucketWithLatex);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        #endregion
 
-		ItemNonInv MinerAddItem(ItemNonInv item, MashineBlockBasic miner) {
-			switch (item) {
-				case ItemNonInvBasic ii:
-					{
-						ushort id=ii.Id;
-						if (GameMethods.IsItemInvBasic16(id)) {
+  //      ItemNonInv MinerAddItem(ItemNonInv item, MashineBlockBasic miner) {
+		//	switch (item) {
+		//		case ItemNonInvBasic ii:
+		//			{
+		//				ushort id=ii.Id;
+		//				if (GameMethods.IsItemInvBasic16(id)) {
 
-							int remain=ii.Count;
+		//					int remain=ii.Count;
 
-							for (int i=0; i<miner.Inv.Length; i++) {
-								if (miner.Inv[i].Id == id) {
-									ItemInvBasic16 slot=(ItemInvBasic16)miner.Inv[i];
-									if (slot.GetCount<99) {
-										if (slot.GetCount+remain<=99) {
-											slot.SetCount=slot.GetCount-remain;
-											return null;
-										}else{
-											remain-=99-slot.GetCount;
-											slot.SetCount=99;
-										}
-									}
-								}
-							}
+		//					for (int i=0; i<miner.Inv.Length; i++) {
+		//						if (miner.Inv[i].Id == id) {
+		//							ItemInvBasic16 slot=(ItemInvBasic16)miner.Inv[i];
+		//							if (slot.GetCount<99) {
+		//								if (slot.GetCount+remain<=99) {
+		//									slot.SetCount=slot.GetCount-remain;
+		//									return null;
+		//								}else{
+		//									remain-=99-slot.GetCount;
+		//									slot.SetCount=99;
+		//								}
+		//							}
+		//						}
+		//					}
 
-							for (int i=0; i<miner.Inv.Length; i++) {
-								if (miner.Inv[i].Id == 0) {
-									miner.Inv[i]=new ItemInvBasic16(ItemIdToTexture(id),id,remain/*,0,0*/);
-									return null;
-								}
-							}
-							return new ItemNonInvBasic(id, remain);
-						} else{
-							int remain=ii.Count;
+		//					for (int i=0; i<miner.Inv.Length; i++) {
+		//						if (miner.Inv[i].Id == 0) {
+		//							miner.Inv[i]=new ItemInvBasic16(ItemIdToTexture(id),id,remain/*,0,0*/);
+		//							return null;
+		//						}
+		//					}
+		//					return new ItemNonInvBasic(id, remain);
+		//				} else{
+		//					int remain=ii.Count;
 
-							for (int i=0; i<miner.Inv.Length; i++) {
-								if (miner.Inv[i].Id == id) {
-									ItemInvBasic32 slot=(ItemInvBasic32)miner.Inv[i];
-									if (slot.GetCount<99) {
-										if (slot.GetCount+remain<=99) {
-											slot.SetCount=slot.GetCount-remain;
-											return null;
-										}else{
-											remain-=99-slot.GetCount;
-											slot.SetCount=99;
-										}
-									}
-								}
-							}
+		//					for (int i=0; i<miner.Inv.Length; i++) {
+		//						if (miner.Inv[i].Id == id) {
+		//							ItemInvBasic32 slot=(ItemInvBasic32)miner.Inv[i];
+		//							if (slot.GetCount<99) {
+		//								if (slot.GetCount+remain<=99) {
+		//									slot.SetCount=slot.GetCount-remain;
+		//									return null;
+		//								}else{
+		//									remain-=99-slot.GetCount;
+		//									slot.SetCount=99;
+		//								}
+		//							}
+		//						}
+		//					}
 
-							for (int i=0; i<miner.Inv.Length; i++) {
-								if (miner.Inv[i].Id == 0) {
-									miner.Inv[i]=new ItemInvBasic32(ItemIdToTexture(id),id,remain/*,0,0*/);
-									return null;
-								}
-							}
-							return new ItemNonInvBasic(id, remain);
-						}
-					}
-			}
+		//					for (int i=0; i<miner.Inv.Length; i++) {
+		//						if (miner.Inv[i].Id == 0) {
+		//							miner.Inv[i]=new ItemInvBasic32(ItemIdToTexture(id),id,remain/*,0,0*/);
+		//							return null;
+		//						}
+		//					}
+		//					return new ItemNonInvBasic(id, remain);
+		//				}
+		//			}
+		//	}
 
-			return item;
-		}
+		//	return item;
+		//}
 
 		void CountGravity(AstronomicalObject[] objects) {
 			for (int oi=0; oi<objects.Length; oi++) {
@@ -24561,332 +24775,332 @@ rameno.X -= 17;
 		}
 		#endregion
 
-		#region Inventory positions
-		static DInt InventoryGetPosClothes(int ix) {
-			if (ix<4) return new DInt{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
-			else      return new DInt{ X=Global.WindowWidthHalf-300+4+60+4+40, Y=Global.WindowHeightHalf-200+2+4+4+40*(ix-4) };
-		}
-
-		static DInt InventoryGetPosFurnaceStone(int ix) {
-            return ix switch {
-                0 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                1 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                2 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                3 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
-				#if DEBUG
-                _ => throw new Exception("Unknown pos id of stone frurnace inv"),
-				#else
-				_ => new DInt(0,0)
-				#endif
-            };
-        }
-
-		static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
-            return ix switch {
-                0 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                1 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                2 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
-                3 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
-				#if DEBUG
-                _ => throw new Exception("Unknown pos id of stone frurnace inv"),
-				#else
-				_=> Vector2.Zero
-				#endif
-            };
-        }
-
-		static Vector2 InventoryGetPosClothesVector2(int ix) {
-			if (ix<4) return new Vector2{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
-			else      return new Vector2{ X=Global.WindowWidthHalf-300+4+60+4+40, Y=Global.WindowHeightHalf-200+2+4+4+40*(ix-4) };
-		}
-
-		DInt InventoryGetPosNormalInv(int ix) {
-			int xx=0, yh=0;
-
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-				if (i>maxInvCount) break;
-
-				if (ix==i) return new DInt{ X= Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
-
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-			return null/*DInt.NotDefined*/;
-		}
-
-		Vector2 InventoryGetPosNormalInvVector2(int ix) {
-			int xx=0, yh=0;
-
-			for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
-				if (i>maxInvCount) break;
-
-				if (ix==i) return new Vector2{ X=Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
-
-				xx+=40;
-
-				if (xx==9*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-			return Vector2.Zero;
-		}
-
-		static DInt InventoryGetPosNormal5(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
-
-		static Vector2 InventoryGetPosNormal5Vector2(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
-
-		static DInt InventoryGetPosAdvBox(int i) {
-			int row=i/12;
-			return new DInt{ X=Global.WindowWidthHalf-300+10+5+5+row*40+4, Y=Global.WindowHeightHalf+23+(i-row*3)*40+4 };
-		}
-
-		static DInt InventoryGetPosBoxWooden(int i) {
-			int row=i/12;
-			return new DInt{ X=Global.WindowWidthHalf-300+59+row*40+4, Y=Global.WindowHeightHalf+59+(i-row*12)*40+4 };
-		}
-
-		static DInt InventoryGetPosShelf(int i) {
-			int row=i/3;
-			return new DInt{X=Global.WindowWidthHalf-300+38+(i-row*3)*40+4, Y=Global.WindowHeightHalf+20-2+25+row*40+4 };
-		}
-
-		static DInt InventoryGetPosBarrel(int i) {
-			if (i==0) return new DInt{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+4    };
-			else      return new DInt{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+64+4 };
-		}
-
-		static Vector2 InventoryGetPosBarrelVector2(int i) {
-			if (i==0) return new Vector2{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+4    };
-			else      return new Vector2{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+64+4 };
-		}
-
-		DInt InventoryGetPosNormal(int ix) {
-			if (ix<5) return InventoryGetPosNormal5(ix);
-			return InventoryGetPosNormalInv(ix);
-		}
-
-		Vector2 InventoryGetPosNormalVector2(int ix) {
-			if (ix<5) return InventoryGetPosNormal5Vector2(ix);
-			return InventoryGetPosNormalInvVector2(ix);
-		}
-		#endregion
-
-		void ShowPopUpWindow() => textChooseItemWindow=new Text(Lang.Texts[160], Global.WindowWidthHalf-150-2+10, Global.WindowHeightHalf-134+10,BitmapFont.bitmapFont18);
-
-		void DrawChooseItemWindow() {
-			spriteBatch.Draw(pixel, Fullscreen, color_r0_g0_b0_a100);
-
-			DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-134,304,234+2,1, color_r0_g0_b0_a100);
-			DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-133,302,234,1, color_r0_g0_b0_a200);
-			spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-132,300,34), color_r10_g140_b255);
-			spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-100+2,300,200-2), Color.LightBlue);
-
-			buttonClosePopUp.Position=new Vector2(Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1);
-			buttonClosePopUp.ButtonDraw(/*spriteBatch,newMouseState.X,newMouseState.Y,Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1,mouseLeftDown*/);
-
-			textChooseItemWindow.Draw(spriteBatch);
-
-			CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
-			ItemNonInv[] items=slots[PopUpWindowChoosingPotencialdItem].ItemSlot;
-			int i=0;
-
-			for (int y=0; y<4; y++) {
-				for (int x=0; x<7; x++) {
-
-					if (items.Length==i) break;
-					bool hasItem=HasItem();
-
-					bool HasItem() {
-                        return items[i] switch {
-                            ItemNonInvBasic t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
-                            ItemNonInvTool t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
-                            ItemNonInvFood t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
-                            //case ItemNonInvNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
-                            //case ItemNonInvBasicColoritzedNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
-                            _ => TotalItemsInInventoryForAllTypes(items[i].Id) >= 1,
-                        };
-                        //return false;
-                    }
-
-					if (In40(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20)) {
-						if (mouseLeftDown) {
-							displayPopUpWindow=false;
-							PopUpWindowSelectedItem=i;
-							CraftingIn slot=slots[PopUpWindowChoosingPotencialdItem];
-							slot.SelectedItem=slot.TmpSelected=i;
-							slot.Texture=ItemIdToTexture(items[i].Id);
-							slot.HaveItemInInventory=hasItem;
-							return;
-						}
-						if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.DarkGray);
-						else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.Red);
-					} else {
-						if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.White);
-						else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), new Color(255,150,150));
-					}
-
-					/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(items[i].Id),*/ items[i], Global.WindowWidthHalf-150+10+x*40+4, Global.WindowHeightHalf-100+y*40+20+4);
-
-					i++;
-				}
-			}
-
-		}
-
-		static bool In40(int x, int y) {
-			if (mouseRealPosY < y)      return false;
-			if (mouseRealPosX < x)      return false;
-			if (mouseRealPosX > x + 39) return false;
-			if (mouseRealPosY > y + 39) return false;
-			return true;
-		}
-
-		static bool In(int x, int y, int x2, int y2) {
-			if (mouseRealPosY < y)  return false;
-			if (mouseRealPosX < x)  return false;
-			if (mouseRealPosX > x2) return false;
-			if (mouseRealPosY > y2) return false;
-			return true;
-		}
-
-		void SetCaptionInventory() {
-			if (Constants.AnimationsControls) animationInvBack=0;
-			else animationInvBack=100;
-			inventoryScrollbarValueCrafting=0;
-
-			switch (inventory) {
-				case InventoryType.Normal:
-					textOpenInventory=null;
-					return;
-
-				case InventoryType.BoxWooden:
-					textOpenInventory=new Text(Lang.Texts[172], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Barrel:
-					textOpenInventory=new Text(Lang.Texts[1433], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.SewingMachine:
-					textOpenInventory=new Text(Lang.Texts[168], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Charger:
-					textOpenInventory=new Text(Lang.Texts[176],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Creative:
-					textOpenInventory=new Text(Lang.Texts[183],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Desk:
-					textOpenInventory=new Text(Lang.Texts[158],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.FurnaceStone:
-					textOpenInventory=new Text(Lang.Texts[170],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					//for (int i=0; i<4; i++) {
-					//	((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
-					//}
-					return;
-
-				case InventoryType.FurnaceElectric:
-					textOpenInventory=new Text(Lang.Texts[159], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Macerator:
-					textOpenInventory=new Text(Lang.Texts[169], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.BasicInv:
-					textOpenInventory=new Text(Lang.Texts[157], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Rocket:
-					textOpenInventory=new Text(Lang.Texts[175], Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-225-3, BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Miner:
-					textOpenInventory=new Text(Lang.Texts[177], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Shelf:
-					textOpenInventory=new Text(Lang.Texts[180] , Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Mobile:
-					textOpenInventory=new Text(Lang.Texts[174], Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-225-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Radio:
-					textOpenInventory=new Text(Lang.Texts[178], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.Composter:
-					textOpenInventory=new Text(Lang.Texts[181], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.BoxAdv:
-					textOpenInventory=new Text(Lang.Texts[173], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.OxygenMachine:
-					textOpenInventory=new Text(Lang.Texts[298], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-
-				case InventoryType.GameMenu:
-					textOpenInventory=new Text(Lang.Texts[114], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
-					return;
-			}
-		}
-
-		void DrawCreative() {
-			creativeScrollbar.ButtonDraw(/*mouseRealPosX,mouseRealPosY,mouseLeftDown,*/Global.WindowWidthHalf-300+4+60+4-16+13*40+3, Global.WindowHeightHalf-200+2+4+4+243);
-		   // int z;
-			int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
-		 //  z=i;
-			for (int y=0; y<4*40; y+=40) {
-				for (int x=0; x<13*40; x+=40) {
-					if (inventoryScrollbarValueCraftingMax<=i)return;
-					if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
-						if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
-						else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
-					} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
-
-				   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
-					   InventoryCreative[i].Draw();
-				   // }
-					i++;
-				}
-			}
-		}
-
-		void CreativeGetItems() {
-			creativeScrollbar.maxheight=(inventoryScrollbarValueCraftingMax/13+1)*40;
-			creativeScrollbar.height=4*40;
-
-			if (mouseLeftRelease) {
-			   // int max=((inventoryScrollbarValueCraftingMax+1)/13)*40;
-
-				int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
-
-				for (int y=0; y<4*40; y+=40) {
-					for (int x=0; x<13*40; x+=40) {
-						if (inventoryScrollbarValueCraftingMax<i)return;
-						if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
-							AddItemToPlayer(InventoryCreative[i].ToNon());
-							return;
-						}
-						i++;
-					}
-				}
-			}
-		}
+		//#region Inventory positions
+		//static DInt InventoryGetPosClothes(int ix) {
+		//	if (ix<4) return new DInt{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
+		//	else      return new DInt{ X=Global.WindowWidthHalf-300+4+60+4+40, Y=Global.WindowHeightHalf-200+2+4+4+40*(ix-4) };
+		//}
+
+		//static DInt InventoryGetPosFurnaceStone(int ix) {
+  //          return ix switch {
+  //              0 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              1 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              2 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              3 => new DInt { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+		//		#if DEBUG
+  //              _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+		//		#else
+		//		_ => new DInt(0,0)
+		//		#endif
+  //          };
+  //      }
+
+		//static Vector2 InventoryGetPosFurnaceStoneVector2(int ix) {
+  //          return ix switch {
+  //              0 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              1 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              2 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 * 2 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 4 },
+  //              3 => new Vector2 { X = Global.WindowWidthHalf - 300 + 4 + 1 + 40 + 40 + 4, Y = Global.WindowHeightHalf - 200 + 2 + 4 + 60 + 40 + 8 + 4 },
+		//		#if DEBUG
+  //              _ => throw new Exception("Unknown pos id of stone frurnace inv"),
+		//		#else
+		//		_=> Vector2.Zero
+		//		#endif
+  //          };
+  //      }
+
+		//static Vector2 InventoryGetPosClothesVector2(int ix) {
+		//	if (ix<4) return new Vector2{ X=Global.WindowWidthHalf-300+4+60+4,    Y=Global.WindowHeightHalf-200+2+4+4+ix*40     };
+		//	else      return new Vector2{ X=Global.WindowWidthHalf-300+4+60+4+40, Y=Global.WindowHeightHalf-200+2+4+4+40*(ix-4) };
+		//}
+
+		//DInt InventoryGetPosNormalInv(int ix) {
+		//	int xx=0, yh=0;
+
+		//	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+		//		if (i>maxInvCount) break;
+
+		//		if (ix==i) return new DInt{ X= Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
+
+		//		xx+=40;
+
+		//		if (xx==9*40) {
+		//			xx=0;
+		//			yh+=40;
+		//		}
+		//	}
+		//	return null/*DInt.NotDefined*/;
+		//}
+
+		//Vector2 InventoryGetPosNormalInvVector2(int ix) {
+		//	int xx=0, yh=0;
+
+		//	for (int i=(inventoryScrollbarValue/9)*9+5; i<(inventoryScrollbarValue/9)*9+45+5; i++) {
+		//		if (i>maxInvCount) break;
+
+		//		if (ix==i) return new Vector2{ X=Global.WindowWidthHalf-300+4+200+4+4+xx+4, Y=Global.WindowHeightHalf-200+2+4+yh+4 };
+
+		//		xx+=40;
+
+		//		if (xx==9*40) {
+		//			xx=0;
+		//			yh+=40;
+		//		}
+		//	}
+		//	return Vector2.Zero;
+		//}
+
+		//static DInt InventoryGetPosNormal5(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+
+		//static Vector2 InventoryGetPosNormal5Vector2(int ix) => new() { X=Global.WindowWidth-36, Y=Global.WindowHeightHalf-80+ix*40+4 };
+
+		//static DInt InventoryGetPosAdvBox(int i) {
+		//	int row=i/12;
+		//	return new DInt{ X=Global.WindowWidthHalf-300+10+5+5+row*40+4, Y=Global.WindowHeightHalf+23+(i-row*3)*40+4 };
+		//}
+
+		//static DInt InventoryGetPosBoxWooden(int i) {
+		//	int row=i/12;
+		//	return new DInt{ X=Global.WindowWidthHalf-300+59+row*40+4, Y=Global.WindowHeightHalf+59+(i-row*12)*40+4 };
+		//}
+
+		//static DInt InventoryGetPosShelf(int i) {
+		//	int row=i/3;
+		//	return new DInt{X=Global.WindowWidthHalf-300+38+(i-row*3)*40+4, Y=Global.WindowHeightHalf+20-2+25+row*40+4 };
+		//}
+
+		//static DInt InventoryGetPosBarrel(int i) {
+		//	if (i==0) return new DInt{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+4    };
+		//	else      return new DInt{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+64+4 };
+		//}
+
+		//static Vector2 InventoryGetPosBarrelVector2(int i) {
+		//	if (i==0) return new Vector2{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+4    };
+		//	else      return new Vector2{ X=Global.WindowWidthHalf-300+119+4, Y=Global.WindowHeightHalf-198+250+64+4 };
+		//}
+
+		//DInt InventoryGetPosNormal(int ix) {
+		//	if (ix<5) return InventoryGetPosNormal5(ix);
+		//	return InventoryGetPosNormalInv(ix);
+		//}
+
+		//Vector2 InventoryGetPosNormalVector2(int ix) {
+		//	if (ix<5) return InventoryGetPosNormal5Vector2(ix);
+		//	return InventoryGetPosNormalInvVector2(ix);
+		//}
+		//#endregion
+
+		//void ShowPopUpWindow() => textChooseItemWindow=new Text(Lang.Texts[160], Global.WindowWidthHalf-150-2+10, Global.WindowHeightHalf-134+10,BitmapFont.bitmapFont18);
+
+		//void DrawChooseItemWindow() {
+		//	spriteBatch.Draw(pixel, Fullscreen, color_r0_g0_b0_a100);
+
+		//	DrawFrame(Global.WindowWidthHalf-150-2, Global.WindowHeightHalf-134,304,234+2,1, color_r0_g0_b0_a100);
+		//	DrawFrame(Global.WindowWidthHalf-150-1, Global.WindowHeightHalf-133,302,234,1, color_r0_g0_b0_a200);
+		//	spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-132,300,34), color_r10_g140_b255);
+		//	spriteBatch.Draw(pixel,new Rectangle(Global.WindowWidthHalf-150, Global.WindowHeightHalf-100+2,300,200-2), Color.LightBlue);
+
+		//	buttonClosePopUp.Position=new Vector2(Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1);
+		//	buttonClosePopUp.ButtonDraw(/*spriteBatch,newMouseState.X,newMouseState.Y,Global.WindowWidthHalf+150-32,Global.WindowHeightHalf-132+1,mouseLeftDown*/);
+
+		//	textChooseItemWindow.Draw(spriteBatch);
+
+		//	CraftingIn[] slots=CurrentDeskCrafting[SelectedCraftingRecipe].Input;
+		//	ItemNonInv[] items=slots[PopUpWindowChoosingPotencialdItem].ItemSlot;
+		//	int i=0;
+
+		//	for (int y=0; y<4; y++) {
+		//		for (int x=0; x<7; x++) {
+
+		//			if (items.Length==i) break;
+		//			bool hasItem=HasItem();
+
+		//			bool HasItem() {
+  //                      return items[i] switch {
+  //                          ItemNonInvBasic t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+  //                          ItemNonInvTool t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+  //                          ItemNonInvFood t => TotalItemsInInventoryForAllTypes(items[i].Id) >= t.Count,
+  //                          //case ItemNonInvNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
+  //                          //case ItemNonInvBasicColoritzedNonStackable t: return TotalItemsInInventoryForAllTypes(items[i].Id)>=1;
+  //                          _ => TotalItemsInInventoryForAllTypes(items[i].Id) >= 1,
+  //                      };
+  //                      //return false;
+  //                  }
+
+		//			if (In40(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20)) {
+		//				if (mouseLeftDown) {
+		//					displayPopUpWindow=false;
+		//					PopUpWindowSelectedItem=i;
+		//					CraftingIn slot=slots[PopUpWindowChoosingPotencialdItem];
+		//					slot.SelectedItem=slot.TmpSelected=i;
+		//					slot.Texture=ItemIdToTexture(items[i].Id);
+		//					slot.HaveItemInInventory=hasItem;
+		//					return;
+		//				}
+		//				if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.DarkGray);
+		//				else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.Red);
+		//			} else {
+		//				if (hasItem) spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), Color.White);
+		//				else spriteBatch.Draw(inventorySlotTexture,new Vector2(Global.WindowWidthHalf-150+10+x*40, Global.WindowHeightHalf-100+y*40+20), new Color(255,150,150));
+		//			}
+
+		//			/*GameDraw.DrawItemInInventory*/DrawItem(/*ItemIdToTexture(items[i].Id),*/ items[i], Global.WindowWidthHalf-150+10+x*40+4, Global.WindowHeightHalf-100+y*40+20+4);
+
+		//			i++;
+		//		}
+		//	}
+
+		//}
+
+		//static bool In40(int x, int y) {
+		//	if (mouseRealPosY < y)      return false;
+		//	if (mouseRealPosX < x)      return false;
+		//	if (mouseRealPosX > x + 39) return false;
+		//	if (mouseRealPosY > y + 39) return false;
+		//	return true;
+		//}
+
+		//static bool In(int x, int y, int x2, int y2) {
+		//	if (mouseRealPosY < y)  return false;
+		//	if (mouseRealPosX < x)  return false;
+		//	if (mouseRealPosX > x2) return false;
+		//	if (mouseRealPosY > y2) return false;
+		//	return true;
+		//}
+
+		//void SetCaptionInventory() {
+		//	if (Constants.AnimationsControls) animationInvBack=0;
+		//	else animationInvBack=100;
+		//	inventoryScrollbarValueCrafting=0;
+
+		//	switch (inventory) {
+		//		case InventoryType.Normal:
+		//			textOpenInventory=null;
+		//			return;
+
+		//		case InventoryType.BoxWooden:
+		//			textOpenInventory=new Text(Lang.Texts[172], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Barrel:
+		//			textOpenInventory=new Text(Lang.Texts[1433], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.SewingMachine:
+		//			textOpenInventory=new Text(Lang.Texts[168], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Charger:
+		//			textOpenInventory=new Text(Lang.Texts[176],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Creative:
+		//			textOpenInventory=new Text(Lang.Texts[183],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Desk:
+		//			textOpenInventory=new Text(Lang.Texts[158],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.FurnaceStone:
+		//			textOpenInventory=new Text(Lang.Texts[170],Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			//for (int i=0; i<4; i++) {
+		//			//	((MashineBlockBasic)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y]).Inv[i].SetPos(InventoryGetPosFurnaceStone(i));
+		//			//}
+		//			return;
+
+		//		case InventoryType.FurnaceElectric:
+		//			textOpenInventory=new Text(Lang.Texts[159], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Macerator:
+		//			textOpenInventory=new Text(Lang.Texts[169], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.BasicInv:
+		//			textOpenInventory=new Text(Lang.Texts[157], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Rocket:
+		//			textOpenInventory=new Text(Lang.Texts[175], Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-225-3, BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Miner:
+		//			textOpenInventory=new Text(Lang.Texts[177], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Shelf:
+		//			textOpenInventory=new Text(Lang.Texts[180] , Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Mobile:
+		//			textOpenInventory=new Text(Lang.Texts[174], Global.WindowWidthHalf-150-2+12, Global.WindowHeightHalf-225-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Radio:
+		//			textOpenInventory=new Text(Lang.Texts[178], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.Composter:
+		//			textOpenInventory=new Text(Lang.Texts[181], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.BoxAdv:
+		//			textOpenInventory=new Text(Lang.Texts[173], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.OxygenMachine:
+		//			textOpenInventory=new Text(Lang.Texts[298], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+
+		//		case InventoryType.GameMenu:
+		//			textOpenInventory=new Text(Lang.Texts[114], Global.WindowWidthHalf-300-2+10, Global.WindowHeightHalf-234+10-3,BitmapFont.bitmapFont18);
+		//			return;
+		//	}
+		//}
+
+		//void DrawCreative() {
+		//	creativeScrollbar.ButtonDraw(/*mouseRealPosX,mouseRealPosY,mouseLeftDown,*/Global.WindowWidthHalf-300+4+60+4-16+13*40+3, Global.WindowHeightHalf-200+2+4+4+243);
+		//   // int z;
+		//	int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
+		// //  z=i;
+		//	for (int y=0; y<4*40; y+=40) {
+		//		for (int x=0; x<13*40; x+=40) {
+		//			if (inventoryScrollbarValueCraftingMax<=i)return;
+		//			if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
+		//				if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
+		//				else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
+		//			} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
+
+		//		   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
+		//			   InventoryCreative[i].Draw();
+		//		   // }
+		//			i++;
+		//		}
+		//	}
+		//}
+
+		//void CreativeGetItems() {
+		//	creativeScrollbar.maxheight=(inventoryScrollbarValueCraftingMax/13+1)*40;
+		//	creativeScrollbar.height=4*40;
+
+		//	if (mouseLeftRelease) {
+		//	   // int max=((inventoryScrollbarValueCraftingMax+1)/13)*40;
+
+		//		int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
+
+		//		for (int y=0; y<4*40; y+=40) {
+		//			for (int x=0; x<13*40; x+=40) {
+		//				if (inventoryScrollbarValueCraftingMax<i)return;
+		//				if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
+		//					AddItemToPlayer(InventoryCreative[i].ToNon());
+		//					return;
+		//				}
+		//				i++;
+		//			}
+		//		}
+		//	}
+		//}
 
 		void UpdateLiquid(ushort id) {
 			int blocks = ((int)(Global.WindowWidthHalf*1.25f))/16;
@@ -24907,13 +25121,13 @@ rameno.X -= 17;
 								if (chunk.IsTopBlocks[iy-1]) {
 									if (chunk.TopBlocks[iy-1].Id==id) {
 
-										if (precipitation) {
-											Water w=(Water)chunk.TopBlocks[iy];
-											if (w.GetMass<255) {
-												if (FastRandom.Bool_1Percent())w.Mass(w.GetMass+1);
-											}
-										}
-									}
+                                        if (CurrentPrecipitation.Rain) {
+                                            Water w = (Water)chunk.TopBlocks[iy];
+                                            if (w.GetMass<255) {
+                                                if (FastRandom.Bool_1Percent()) w.Mass(w.GetMass+1);
+                                            }
+                                        }
+                                    }
 								}
 							}
 
@@ -25182,9 +25396,10 @@ rameno.X -= 17;
 		}
 
 		static bool IsEaster() {
-			DateTime now=DateTime.Now;//new DateTime(2020,3,12+3,1,1,1);
+			DateTime 
+				now=DateTime.Now,
+				easter = EasterTime();
 
-			DateTime easter = EasterTime();
 			int dayDelta=(now-easter).Days;
 
 			return dayDelta>=0 && dayDelta<7;
@@ -25204,9 +25419,7 @@ rameno.X -= 17;
 				int e = (2 * (year % 4) + 4 * (year % 7) + 6 * d + ((4 + k - leapYear) % 7)) % 7;
 				if ((d + e + 22) < 32) return new DateTime(year,3,d + e + 22);
 				if (d == 29 && e == 6) return new DateTime(year,4,19);
-				if (d == 28 && e == 6 && goldenNumber > 10) {
-					return new DateTime(year,3,18);
-				}
+				if (d == 28 && e == 6 && goldenNumber > 10) return new DateTime(year,3,18);
 				return new DateTime(year,3,d + e - 9);
 			}
 		}
@@ -25220,202 +25433,202 @@ rameno.X -= 17;
 			});
 		}
 
-		void SetItemCreative(ItemInv[] inv, int i, ushort id) {
-			if (GameMethods.IsItemInvBasic16(id)) {
-				inv[i]=new ItemInvBasic16(ItemIdToTexture(id), id, 99, 0, 0);
-				return;
-			}
+		//void SetItemCreative(ItemInv[] inv, int i, ushort id) {
+		//	if (GameMethods.IsItemInvBasic16(id)) {
+		//		inv[i]=new ItemInvBasic16(ItemIdToTexture(id), id, 99, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvBasic32(id)) {
-				inv[i]=new ItemInvBasic32(ItemIdToTexture(id), id, 99, 0, 0);
-				return;
-			}
+		//	if (GameMethods.IsItemInvBasic32(id)) {
+		//		inv[i]=new ItemInvBasic32(ItemIdToTexture(id), id, 99, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvTool32(id)) {
-				int max=GameMethods.ToolMax(id);
-				inv[i]=new ItemInvTool32(ItemIdToTexture(id), id, max, max, 0, 0);
-				return;
-			}
+		//	if (GameMethods.IsItemInvTool32(id)) {
+		//		int max=GameMethods.ToolMax(id);
+		//		inv[i]=new ItemInvTool32(ItemIdToTexture(id), id, max, max, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvFood16(id)) {
-				int max=GameMethods.FoodMaxCount(id);
-				float des=GameMethods.FoodMaxDescay(id);
-				inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
-				return;
-			}
+		//	if (GameMethods.IsItemInvFood16(id)) {
+		//		int max=GameMethods.FoodMaxCount(id);
+		//		float des=GameMethods.FoodMaxDescay(id);
+		//		inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvFood32(id)) {
-				int max=GameMethods.FoodMaxCount(id);
-				float des=GameMethods.FoodMaxDescay(id);
-				inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
-				return;
-			}
+		//	if (GameMethods.IsItemInvFood32(id)) {
+		//		int max=GameMethods.FoodMaxCount(id);
+		//		float des=GameMethods.FoodMaxDescay(id);
+		//		inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, max, max, des, des, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White, 0, 0);
-				return;
-			}
-			if (GameMethods.IsItemInvNonStackable32(id)) {
-				inv[i]=new ItemInvNonStackable32(ItemIdToTexture(id), id, 0, 0);
-				return;
-			}
+		//	if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
+		//		inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White, 0, 0);
+		//		return;
+		//	}
+		//	if (GameMethods.IsItemInvNonStackable32(id)) {
+		//		inv[i]=new ItemInvNonStackable32(ItemIdToTexture(id), id, 0, 0);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvTool16(id)) {
-				int max=GameMethods.ToolMax(id);
-				inv[i]=new ItemInvTool16(ItemIdToTexture(id), id, max, max/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvTool16(id)) {
+		//		int max=GameMethods.ToolMax(id);
+		//		inv[i]=new ItemInvTool16(ItemIdToTexture(id), id, max, max/*, 0, 0*/);
+		//		return;
+		//	}
 
-			#if DEBUG
-			throw new Exception("Missing item or caterory (Item: "+(Items)id+")");
-			#endif
-		}
+		//	#if DEBUG
+		//	throw new Exception("Missing item or caterory (Item: "+(Items)id+")");
+		//	#endif
+		//}
 
-		void SetItemCrafting(ItemInv[] inv, int i, ushort id) {
-			if (GameMethods.IsItemInvBasic16(id)) {
-				inv[i]=new ItemInvBasic16(ItemIdToTexture(id), id, 1/*, 0, 0*/);
-				return;
-			}
+		//void SetItemCrafting(ItemInv[] inv, int i, ushort id) {
+		//	if (GameMethods.IsItemInvBasic16(id)) {
+		//		inv[i]=new ItemInvBasic16(ItemIdToTexture(id), id, 1/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvBasic32(id)) {
-				inv[i]=new ItemInvBasic32(ItemIdToTexture(id), id, 1/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvBasic32(id)) {
+		//		inv[i]=new ItemInvBasic32(ItemIdToTexture(id), id, 1/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvTool32(id)) {
-				inv[i]=new ItemInvTool32(ItemIdToTexture(id), id/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvTool32(id)) {
+		//		inv[i]=new ItemInvTool32(ItemIdToTexture(id), id/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvFood16(id)) {
-				inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, 1, 0/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvFood16(id)) {
+		//		inv[i]=new ItemInvFood16(ItemIdToTexture(id), id, 1, 0/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvFood32(id)) {
-				inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, 1, 0/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvFood32(id)) {
+		//		inv[i]=new ItemInvFood32(ItemIdToTexture(id), id, 1, 0/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White/*, 0, 0*/);
-				return;
-			}
-			if (GameMethods.IsItemInvNonStackable32(id)) {
-				inv[i]=new ItemInvNonStackable32(ItemIdToTexture(id), id/*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
+		//		inv[i]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, Color.White/*, 0, 0*/);
+		//		return;
+		//	}
+		//	if (GameMethods.IsItemInvNonStackable32(id)) {
+		//		inv[i]=new ItemInvNonStackable32(ItemIdToTexture(id), id/*, 0, 0*/);
+		//		return;
+		//	}
 
-			if (GameMethods.IsItemInvTool16(id)) {
-				inv[i]=new ItemInvTool16(ItemIdToTexture(id), id/*, max, max*//*, 0, 0*/);
-				return;
-			}
+		//	if (GameMethods.IsItemInvTool16(id)) {
+		//		inv[i]=new ItemInvTool16(ItemIdToTexture(id), id/*, max, max*//*, 0, 0*/);
+		//		return;
+		//	}
 
-			#if DEBUG
-			throw new Exception("Missing item or caterory (Item: "+(Items)id+")");
-			#endif
-		}
+		//	#if DEBUG
+		//	throw new Exception("Missing item or caterory (Item: "+(Items)id+")");
+		//	#endif
+		//}
 
-		void AddItemToPlayer(ItemNonInv it) {
-			ItemNonInv remain=InventoryAdd(it);
-			if (remain!=null) ItemDrop(remain, PlayerXInt, PlayerYInt);
-		}
+		//void AddItemToPlayer(ItemNonInv it) {
+		//	ItemNonInv remain=InventoryAdd(it);
+		//	if (remain!=null) ItemDrop(remain, PlayerXInt, PlayerYInt);
+		//}
 
-		void SaveInventory(string name, ItemInv[] inv) {
-			List<byte> bytes=new();
-			foreach (ItemInv x in inv) x.SaveBytes(bytes);
-			File.WriteAllBytes(pathToWorld+@"\"+name+".bin", bytes.ToArray());
-		}
+		//void SaveInventory(string name, ItemInv[] inv) {
+		//	List<byte> bytes=new();
+		//	foreach (ItemInv x in inv) x.SaveBytes(bytes);
+		//	File.WriteAllBytes(pathToWorld+@"\"+name+".bin", bytes.ToArray());
+		//}
 
-		void ReSetCraftingInventoryPositions() {
-			int xx = 0, yh = 0;
+		//void ReSetCraftingInventoryPositions() {
+		//	int xx = 0, yh = 0;
 
-			if (Global.WorldDifficulty==2) {
-				if (inventory==InventoryType.Creative) yh+=35;
-			}
+		//	if (Global.WorldDifficulty==2) {
+		//		if (inventory==InventoryType.Creative) yh+=35;
+		//	}
 
-			for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-				if (i>inventoryScrollbarValueCraftingMax) return;
+		//	for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+		//		if (i>inventoryScrollbarValueCraftingMax) return;
 
-				InventoryCrafting[i].SetPos(Global.WindowWidthHalf-300+4+40+xx+4+4, Global.WindowHeightHalf-200+2+4+200+8+yh+4+8);
+		//		InventoryCrafting[i].SetPos(Global.WindowWidthHalf-300+4+40+xx+4+4, Global.WindowHeightHalf-200+2+4+200+8+yh+4+8);
 
-				xx+=40;
+		//		xx+=40;
 
-				if (xx==6*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-		}
+		//		if (xx==6*40) {
+		//			xx=0;
+		//			yh+=40;
+		//		}
+		//	}
+		//}
 
-		int GetCraftingInventoryId() {
-			int xx = 0, yh = 0;
+		//int GetCraftingInventoryId() {
+		//	int xx = 0, yh = 0;
 
-			if (Global.WorldDifficulty==2) {
-				if (inventory==InventoryType.Creative) yh+=35;
-			}
+		//	if (Global.WorldDifficulty==2) {
+		//		if (inventory==InventoryType.Creative) yh+=35;
+		//	}
 
-			for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
-				if (i>inventoryScrollbarValueCraftingMax) return -1;
-				if (In40(Global.WindowWidthHalf-300+4+40+xx+4+4, Global.WindowHeightHalf-200+2+4+200+8+yh+4+8)) return i;
+		//	for (int i=inventoryScrollbarValueCrafting; i<inventoryScrollbarValueCrafting+6*4; i++) {
+		//		if (i>inventoryScrollbarValueCraftingMax) return -1;
+		//		if (In40(Global.WindowWidthHalf-300+4+40+xx+4+4, Global.WindowHeightHalf-200+2+4+200+8+yh+4+8)) return i;
 
-				xx+=40;
+		//		xx+=40;
 
-				if (xx==6*40) {
-					xx=0;
-					yh+=40;
-				}
-			}
-			return -1;
-		}
+		//		if (xx==6*40) {
+		//			xx=0;
+		//			yh+=40;
+		//		}
+		//	}
+		//	return -1;
+		//}
 
-		void ReSetInventoryCreativePositions() {
+		//void ReSetInventoryCreativePositions() {
 
-			int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
+		//	int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
 
-			for (int y=0; y<4*40; y+=40) {
-				for (int x=0; x<13*40; x+=40) {
-					if (inventoryScrollbarValueCraftingMax<=i)return;
-					//if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
-					//    if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
-					//    else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
-					//} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
+		//	for (int y=0; y<4*40; y+=40) {
+		//		for (int x=0; x<13*40; x+=40) {
+		//			if (inventoryScrollbarValueCraftingMax<=i)return;
+		//			//if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) {
+		//			//    if (mouseLeftDown) spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.LightGray);
+		//			//    else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), ColorSmokeWhite);
+		//			//} else spriteBatch.Draw(inventorySlotTexture, new Vector2(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243), Color.White);
 
-				   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
-						InventoryCreative[i].SetPos(Global.WindowWidthHalf-300+4+60+x+4-16+4, Global.WindowHeightHalf-200+2+4+y+4+243+4);
-				   // }
-					i++;
-				}
-			}
-		}
+		//		   // if (!invMove || (invMove && invStartInventory[invStartId]!=InventoryCreative[i])) {
+		//				InventoryCreative[i].SetPos(Global.WindowWidthHalf-300+4+60+x+4-16+4, Global.WindowHeightHalf-200+2+4+y+4+243+4);
+		//		   // }
+		//			i++;
+		//		}
+		//	}
+		//}
 
-		int GetInventoryIdCreative() {
-			int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
+		//int GetInventoryIdCreative() {
+		//	int i=((int)(creativeScrollbar.scale*(inventoryScrollbarValueCraftingMax-13*3))/13)*13;
 
-			for (int y=0; y<4*40; y+=40) {
-				for (int x=0; x<13*40; x+=40) {
-					if (inventoryScrollbarValueCraftingMax<=i) return -1;
-					if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) return i;
-					i++;
-				}
-			}
-			return -1;
-		}
+		//	for (int y=0; y<4*40; y+=40) {
+		//		for (int x=0; x<13*40; x+=40) {
+		//			if (inventoryScrollbarValueCraftingMax<=i) return -1;
+		//			if (In40(Global.WindowWidthHalf-300+4+60+x+4-16, Global.WindowHeightHalf-200+2+4+y+4+243)) return i;
+		//			i++;
+		//		}
+		//	}
+		//	return -1;
+		//}
 
-		void DrawItemMouse() {
-			if (mouseDrawItemTextInfo) {
-				int cursorWidth = 15;
+		//void DrawItemMouse() {
+		//	if (mouseDrawItemTextInfo) {
+		//		int cursorWidth = 15;
 
-				if (mouseRealPosX+cursorWidth+mouseItemNameWidth<Global.WindowWidth) {
-					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX+cursorWidth, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
-					itemText.ChangePosition(mouseRealPosX+cursorWidth, mouseRealPosY);
-				} else {
-					Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
-					itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY);
-				}
-				itemText.Draw(spriteBatch);
-			}
-		}
+		//		if (mouseRealPosX+cursorWidth+mouseItemNameWidth<Global.WindowWidth) {
+		//			Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX+cursorWidth, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
+		//			itemText.ChangePosition(mouseRealPosX+cursorWidth, mouseRealPosY);
+		//		} else {
+		//			Rabcr.spriteBatch.Draw(pixel, new Rectangle(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY,mouseItemNameWidth+6,30), Color.White*0.9f);
+		//			itemText.ChangePosition(mouseRealPosX-cursorWidth-mouseItemNameWidth-6, mouseRealPosY);
+		//		}
+		//		itemText.Draw(spriteBatch);
+		//	}
+		//}
 
 		//void MouseItemNameEvent(ushort newId) {
 		//	if (newId!=0)mouseDrawItemTextInfo=true;
@@ -25452,64 +25665,64 @@ rameno.X -= 17;
 		//	}
 		//}
 
-		void MouseItemNameEvent(ItemInv item) {
-			if (item==null) return;
-			ushort id= item.Id;
-			if (id!=0) mouseDrawItemTextInfo=true;
+		//void MouseItemNameEvent(ItemInv item) {
+		//	if (item==null) return;
+		//	ushort id= item.Id;
+		//	if (id!=0) mouseDrawItemTextInfo=true;
 
-			if (mouseItemId!=id) {
-				if (id==0) {
-					mouseItemId=id;
-					mouseDrawItemTextInfo=false;
-					return;
-				}
+		//	if (mouseItemId!=id) {
+		//		if (id==0) {
+		//			mouseItemId=id;
+		//			mouseDrawItemTextInfo=false;
+		//			return;
+		//		}
 
-				int langid=GameMethods.GetItemNameId(id);
+		//		int langid=GameMethods.GetItemNameId(id);
 
-				if (langid==-1) {
-					#if DEBUG
-					mouseDrawItemTextInfo=true;
-					mouseItemId=id;
-					mouseItemName=Lang.Texts[999];
-				   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
+		//		if (langid==-1) {
+		//			#if DEBUG
+		//			mouseDrawItemTextInfo=true;
+		//			mouseItemId=id;
+		//			mouseItemName=Lang.Texts[999];
+		//		   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
 
-					itemText=new Text(mouseItemName,0,0,BitmapFont.bitmapFont18);
-					mouseItemNameWidth=(int)itemText.MeasureX();
-					#else
-					mouseDrawItemTextInfo=false;
-					#endif
-				} else {
-					mouseDrawItemTextInfo=true;
-					mouseItemId=id;
-					mouseItemName=Lang.Texts[langid];
-				   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
-				    if (debug) {
-					   string add="";
-						switch (item) {
-							case ItemInvFood16 food16:
-								add="ItemInvFood16";
-								add+='\n';
-								add=food16.GetCount+"/"+food16.CountMaximum;
-								add+='\n';
-								add+=food16.GetDescay+"/"+food16.DescayMaximum;
-								break;
+		//			itemText=new Text(mouseItemName,0,0,BitmapFont.bitmapFont18);
+		//			mouseItemNameWidth=(int)itemText.MeasureX();
+		//			#else
+		//			mouseDrawItemTextInfo=false;
+		//			#endif
+		//		} else {
+		//			mouseDrawItemTextInfo=true;
+		//			mouseItemId=id;
+		//			mouseItemName=Lang.Texts[langid];
+		//		   // mouseItemNameWidth=(int)spriteFont_small.MeasureString(mouseItemName).X;
+		//		    if (debug) {
+		//			   string add="";
+		//				switch (item) {
+		//					case ItemInvFood16 food16:
+		//						add="ItemInvFood16";
+		//						add+='\n';
+		//						add=food16.GetCount+"/"+food16.CountMaximum;
+		//						add+='\n';
+		//						add+=food16.GetDescay+"/"+food16.DescayMaximum;
+		//						break;
 
-							case ItemInvFood32 food32:
-								add="ItemInvFood32";
-								add+='\n';
-								add=food32.GetCount+"/"+food32.CountMaximum;
-								add+='\n';
-								add+=food32.GetDescay+"/"+food32.DescayMaximum;
-								break;
-						}
-						itemText=new Text(mouseItemName+'\n'+add, 0, 0, BitmapFont.bitmapFont18);
-					} else {
-						itemText=new Text(mouseItemName, 0, 0, BitmapFont.bitmapFont18);
-					}
-					mouseItemNameWidth=(int)itemText.MeasureX();
-				}
-			}
-		}
+		//					case ItemInvFood32 food32:
+		//						add="ItemInvFood32";
+		//						add+='\n';
+		//						add=food32.GetCount+"/"+food32.CountMaximum;
+		//						add+='\n';
+		//						add+=food32.GetDescay+"/"+food32.DescayMaximum;
+		//						break;
+		//				}
+		//				itemText=new Text(mouseItemName+'\n'+add, 0, 0, BitmapFont.bitmapFont18);
+		//			} else {
+		//				itemText=new Text(mouseItemName, 0, 0, BitmapFont.bitmapFont18);
+		//			}
+		//			mouseItemNameWidth=(int)itemText.MeasureX();
+		//		}
+		//	}
+		//}
 		float DetectSolidBlocksLeft(float npx, float npy) {
 			int to=((int)npy+20)/16;
 
@@ -25743,346 +25956,346 @@ AddShake(d.to.X*16, d.to.Y*16);
         //    }
         //}
 
-        static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
-			if (a1==a2) return true;
-			if (a1.Length!=a2.Length) return false;
+  //      static bool IsSameArray(ItemInv[] a1, ItemInv[] a2) {
+		//	if (a1==a2) return true;
+		//	if (a1.Length!=a2.Length) return false;
 
-			int a1Len=a1.Length;
-			for (int i=0; i<a1Len; i++) {
-				if (a1[i]!=a2[i]) return false;
-			}
-			return true;
-		}
+		//	int a1Len=a1.Length;
+		//	for (int i=0; i<a1Len; i++) {
+		//		if (a1[i]!=a2[i]) return false;
+		//	}
+		//	return true;
+		//}
 
-		void InventoryBarrelInSlotEvent(){
-			Barrel barrel=(Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
-			if (barrel.Inv[0].Id!=0)  AddToBarrel(barrel);
-			if (barrel.Inv[1].Id!=0)  RemoveFromBarrel(barrel);
-		}
+		//void InventoryBarrelInSlotEvent(){
+		//	Barrel barrel=(Barrel)terrain[selectedMashine.X].TopBlocks[selectedMashine.Y];
+		//	if (barrel.Inv[0].Id!=0)  AddToBarrel(barrel);
+		//	if (barrel.Inv[1].Id!=0)  RemoveFromBarrel(barrel);
+		//}
 
-		bool AddToBarrel(Barrel barrel){
-			ItemInv item=barrel.Inv[0];
-			(byte, int, ushort) convert=GameMethods.ItemsIdToLiquid(item.Id);
+		//bool AddToBarrel(Barrel barrel){
+		//	ItemInv item=barrel.Inv[0];
+		//	(byte, int, ushort) convert=GameMethods.ItemsIdToLiquid(item.Id);
 
-			if (convert.Item1!=(byte)LiquidId.None) {
-				if (barrel.LiquidId==convert.Item1 || barrel.LiquidId==0) {
-					if (barrel.LiquidAmount<Barrel.LiquidAmountMax) {
-						if (GameMethods.HasLiquid(barrel.Inv[0].Id)) {
-							switch (barrel.Inv[0]) {
-								case ItemInvBasic16 i:
-									if (i.GetCount==1){
-										barrel.Inv[0]=itemBlank;
-									} else {
-										i.RemoveOne();
-									}
-									barrel.LiquidId=convert.Item1;
-									barrel.LiquidAmount+=convert.Item2;
-									if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
-									break;
+		//	if (convert.Item1!=(byte)LiquidId.None) {
+		//		if (barrel.LiquidId==convert.Item1 || barrel.LiquidId==0) {
+		//			if (barrel.LiquidAmount<Barrel.LiquidAmountMax) {
+		//				if (GameMethods.HasLiquid(barrel.Inv[0].Id)) {
+		//					switch (barrel.Inv[0]) {
+		//						case ItemInvBasic16 i:
+		//							if (i.GetCount==1){
+		//								barrel.Inv[0]=itemBlank;
+		//							} else {
+		//								i.RemoveOne();
+		//							}
+		//							barrel.LiquidId=convert.Item1;
+		//							barrel.LiquidAmount+=convert.Item2;
+		//							if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
+		//							break;
 
-								//case ItemInvBasicColoritzed32NonStackable i:
-								//    if (barrel.Inv[1].Id==0) {
-								//        if (barrel.LiquidAmount>=50){
-								//            Color c=GameMethods.DyeToColor(barrel.LiquidId);
-								//            if (c!=Color.Transparent) {
-								//                i.color=c;
-								//                barrel.Inv[1]=i;
-								//                barrel.Inv[0]=itemBlank;
-								//                barrel.LiquidAmount-=50;
-								//                if (barrel.LiquidAmount==0) barrel.LiquidId=0;
-								//            }
-								//        }
-								//    }
-								//    break;
+		//						//case ItemInvBasicColoritzed32NonStackable i:
+		//						//    if (barrel.Inv[1].Id==0) {
+		//						//        if (barrel.LiquidAmount>=50){
+		//						//            Color c=GameMethods.DyeToColor(barrel.LiquidId);
+		//						//            if (c!=Color.Transparent) {
+		//						//                i.color=c;
+		//						//                barrel.Inv[1]=i;
+		//						//                barrel.Inv[0]=itemBlank;
+		//						//                barrel.LiquidAmount-=50;
+		//						//                if (barrel.LiquidAmount==0) barrel.LiquidId=0;
+		//						//            }
+		//						//        }
+		//						//    }
+		//						//    break;
 
-								case ItemInvBasic32 i:
-									if (i.GetCount==1) {
-										barrel.Inv[0]=itemBlank;
-									} else {
-										i.RemoveOne();
-									}
-									barrel.LiquidId=convert.Item1;
-									barrel.LiquidAmount+=convert.Item2;
-									if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
-									break;
+		//						case ItemInvBasic32 i:
+		//							if (i.GetCount==1) {
+		//								barrel.Inv[0]=itemBlank;
+		//							} else {
+		//								i.RemoveOne();
+		//							}
+		//							barrel.LiquidId=convert.Item1;
+		//							barrel.LiquidAmount+=convert.Item2;
+		//							if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
+		//							break;
 
-								case ItemInvFood16 i:
-									//if (i.GetCount<99){
-										i.SetCount=i.GetCount+1;
-										barrel.LiquidAmount+=convert.Item2;
-										barrel.LiquidId=convert.Item1;
-								   // }
-									break;
+		//						case ItemInvFood16 i:
+		//							//if (i.GetCount<99){
+		//								i.SetCount=i.GetCount+1;
+		//								barrel.LiquidAmount+=convert.Item2;
+		//								barrel.LiquidId=convert.Item1;
+		//						   // }
+		//							break;
 
-								case ItemInvFood32 i:
-								   // if (i.GetCount<99){
-										i.SetCount=i.GetCount+1;
-										barrel.LiquidAmount+=convert.Item2;
-										barrel.LiquidId=convert.Item1;
-								   // }
-									break;
+		//						case ItemInvFood32 i:
+		//						   // if (i.GetCount<99){
+		//								i.SetCount=i.GetCount+1;
+		//								barrel.LiquidAmount+=convert.Item2;
+		//								barrel.LiquidId=convert.Item1;
+		//						   // }
+		//							break;
 
-								case ItemInvTool16 i:
-									if (i.GetCount==1) {
-										ushort newId=convert.Item3;//GameMethods.ToolToBasic(i.Id);
-										if (newId==0) barrel.Inv[0]=itemBlank;
-										else SetNewItem(newId);
-									} else {
-										i.SetCount=i.GetCount-1;
-									}
-									barrel.LiquidAmount++;
-									barrel.LiquidId=convert.Item1;
-									if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
-									break;
+		//						case ItemInvTool16 i:
+		//							if (i.GetCount==1) {
+		//								ushort newId=convert.Item3;//GameMethods.ToolToBasic(i.Id);
+		//								if (newId==0) barrel.Inv[0]=itemBlank;
+		//								else SetNewItem(newId);
+		//							} else {
+		//								i.SetCount=i.GetCount-1;
+		//							}
+		//							barrel.LiquidAmount++;
+		//							barrel.LiquidId=convert.Item1;
+		//							if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
+		//							break;
 
-								case ItemInvTool32 i:
-									if (i.GetCount==1) {
-										ushort newId=convert.Item3;//GameMethods.ToolToBasic(i.Id);
-										if (newId==0) barrel.Inv[0]=itemBlank;
-										else SetNewItem(newId);
-									} else {
-										i.SetCount=i.GetCount-1;
-									}
-									barrel.LiquidAmount++;
-									barrel.LiquidId=convert.Item1;
-									if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
-									break;
+		//						case ItemInvTool32 i:
+		//							if (i.GetCount==1) {
+		//								ushort newId=convert.Item3;//GameMethods.ToolToBasic(i.Id);
+		//								if (newId==0) barrel.Inv[0]=itemBlank;
+		//								else SetNewItem(newId);
+		//							} else {
+		//								i.SetCount=i.GetCount-1;
+		//							}
+		//							barrel.LiquidAmount++;
+		//							barrel.LiquidId=convert.Item1;
+		//							if (barrel.LiquidAmount>Barrel.LiquidAmountMax) barrel.LiquidAmount=Barrel.LiquidAmountMax;
+		//							break;
 
-								void SetNewItem(ushort newId) {
-									if (GameMethods.IsItemInvTool32(newId)) {
-										DInt p=InventoryGetPosBarrel(0);
-										barrel.Inv[0]=new ItemInvTool32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-										return;
-									}
-									if (GameMethods.IsItemInvTool16(newId)) {
-										DInt p=InventoryGetPosBarrel(0);
-										barrel.Inv[0]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-										return;
-									}
-									if (GameMethods.IsItemInvBasic16(newId)) {
-										DInt p=InventoryGetPosBarrel(0);
-										barrel.Inv[0]=new ItemInvBasic16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-										return;
-									}
-									if (GameMethods.IsItemInvBasic32(newId)) {
-										barrel.Inv[0]=new ItemInvBasic32(ItemIdToTexture(newId), newId, 1,InventoryGetPosBarrelVector2(0));
-										return;
-									}
-								}
-							}
-						}
-						return true;
+		//						void SetNewItem(ushort newId) {
+		//							if (GameMethods.IsItemInvTool32(newId)) {
+		//								DInt p=InventoryGetPosBarrel(0);
+		//								barrel.Inv[0]=new ItemInvTool32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//								return;
+		//							}
+		//							if (GameMethods.IsItemInvTool16(newId)) {
+		//								DInt p=InventoryGetPosBarrel(0);
+		//								barrel.Inv[0]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//								return;
+		//							}
+		//							if (GameMethods.IsItemInvBasic16(newId)) {
+		//								DInt p=InventoryGetPosBarrel(0);
+		//								barrel.Inv[0]=new ItemInvBasic16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//								return;
+		//							}
+		//							if (GameMethods.IsItemInvBasic32(newId)) {
+		//								barrel.Inv[0]=new ItemInvBasic32(ItemIdToTexture(newId), newId, 1,InventoryGetPosBarrelVector2(0));
+		//								return;
+		//							}
+		//						}
+		//					}
+		//				}
+		//				return true;
 
-						}
-					   // if (barrel.Inv[1].Id==(ushort)Items.None) {
-						//    barrel.LiquidAmount+=convert.Item2;
-					  //      barrel.Inv[0]=
-					   // } else if (barrel.Inv[1].Id==convert.Item3) {
-						//    switch (barrel.Inv[0]) {
-						//        case ItemInvBasic16 i:
-						//            if (i.GetCount<99){
+		//				}
+		//			   // if (barrel.Inv[1].Id==(ushort)Items.None) {
+		//				//    barrel.LiquidAmount+=convert.Item2;
+		//			  //      barrel.Inv[0]=
+		//			   // } else if (barrel.Inv[1].Id==convert.Item3) {
+		//				//    switch (barrel.Inv[0]) {
+		//				//        case ItemInvBasic16 i:
+		//				//            if (i.GetCount<99){
 
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
 
-						//        case ItemInvBasic32 i:
-						//            if (i.GetCount<99){
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
+		//				//        case ItemInvBasic32 i:
+		//				//            if (i.GetCount<99){
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
 
-						//        case ItemInvFood16 i:
-						//            if (i.GetCount<99){
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
+		//				//        case ItemInvFood16 i:
+		//				//            if (i.GetCount<99){
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
 
-						//        case ItemInvFood32 i:
-						//            if (i.GetCount<99){
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
+		//				//        case ItemInvFood32 i:
+		//				//            if (i.GetCount<99){
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
 
-						//        case ItemInvTool16 i:
-						//            if (i.GetCount<99) {
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
+		//				//        case ItemInvTool16 i:
+		//				//            if (i.GetCount<99) {
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
 
-						//        case ItemInvTool32 i:
-						//            if (i.GetCount<99){
-						//                i.SetCount=i.GetCount+1;
-						//                barrel.LiquidAmount+=convert.Item2;
-						//            }
-						//            break;
-						//    }
-						//}
-						//return true;
-					//}
-				}
+		//				//        case ItemInvTool32 i:
+		//				//            if (i.GetCount<99){
+		//				//                i.SetCount=i.GetCount+1;
+		//				//                barrel.LiquidAmount+=convert.Item2;
+		//				//            }
+		//				//            break;
+		//				//    }
+		//				//}
+		//				//return true;
+		//			//}
+		//		}
 
-				//if (barrel.LiquidId==0) {
-				//    if (barrel.Inv[1].Id==(ushort)Items.None) {
-				//        ushort id=convert.Item3;
-				//        if (GameMethods.IsItemInvBasic16(id)) {
-				//            barrel.LiquidAmount=convert.Item2;
-				//            barrel.LiquidId=convert.Item1;
-				//            barrel.Inv[1]=new ItemInvBasic16(ItemIdToTexture(id), id, 1);
-				//            return true;
-				//        }
-				//        if (GameMethods.IsItemInvBasic32(id)) {
-				//            barrel.LiquidAmount=convert.Item2;
-				//            barrel.LiquidId=convert.Item1;
-				//            barrel.Inv[1]=new ItemInvBasic32(ItemIdToTexture(id), id, 1);
-				//            return true;
-				//        }
-				//        //if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
-				//        //    barrel.LiquidAmount=convert.Item2;
-				//        //    barrel.LiquidId=convert.Item1;
-				//        //    barrel.Inv[1]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, 1);
-				//        //    return true;
-				//        //}
-				//    }
+		//		//if (barrel.LiquidId==0) {
+		//		//    if (barrel.Inv[1].Id==(ushort)Items.None) {
+		//		//        ushort id=convert.Item3;
+		//		//        if (GameMethods.IsItemInvBasic16(id)) {
+		//		//            barrel.LiquidAmount=convert.Item2;
+		//		//            barrel.LiquidId=convert.Item1;
+		//		//            barrel.Inv[1]=new ItemInvBasic16(ItemIdToTexture(id), id, 1);
+		//		//            return true;
+		//		//        }
+		//		//        if (GameMethods.IsItemInvBasic32(id)) {
+		//		//            barrel.LiquidAmount=convert.Item2;
+		//		//            barrel.LiquidId=convert.Item1;
+		//		//            barrel.Inv[1]=new ItemInvBasic32(ItemIdToTexture(id), id, 1);
+		//		//            return true;
+		//		//        }
+		//		//        //if (GameMethods.IsItemInvBasicColoritzed32NonStackable(id)) {
+		//		//        //    barrel.LiquidAmount=convert.Item2;
+		//		//        //    barrel.LiquidId=convert.Item1;
+		//		//        //    barrel.Inv[1]=new ItemInvBasicColoritzed32NonStackable(ItemIdToTexture(id), id, 1);
+		//		//        //    return true;
+		//		//        //}
+		//		//    }
 
-				//}
-			}
+		//		//}
+		//	}
 
-			if (barrel.Inv[1].Id==0) {
-				switch (barrel.Inv[0]){
-					case ItemInvBasicColoritzed32NonStackable i:
-						if (barrel.LiquidAmount>=50) {
-							Color c = GameMethods.DyeToColor(barrel.LiquidId);
-							if (c!=Color.Transparent) {
-								i.color=c;
-								i.SetPos(InventoryGetPosBarrelVector2(1));
-								barrel.Inv[1]=i;
-								barrel.Inv[0]=itemBlank;
-								barrel.LiquidAmount-=50;
-								if (barrel.LiquidAmount==0) barrel.LiquidId=0;
-								return true;
-							}
-						}
-						break;
-				}
-			}
+		//	if (barrel.Inv[1].Id==0) {
+		//		switch (barrel.Inv[0]){
+		//			case ItemInvBasicColoritzed32NonStackable i:
+		//				if (barrel.LiquidAmount>=50) {
+		//					Color c = GameMethods.DyeToColor(barrel.LiquidId);
+		//					if (c!=Color.Transparent) {
+		//						i.color=c;
+		//						i.SetPos(InventoryGetPosBarrelVector2(1));
+		//						barrel.Inv[1]=i;
+		//						barrel.Inv[0]=itemBlank;
+		//						barrel.LiquidAmount-=50;
+		//						if (barrel.LiquidAmount==0) barrel.LiquidId=0;
+		//						return true;
+		//					}
+		//				}
+		//				break;
+		//		}
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 
-		void RemoveFromBarrel(Barrel barrel){
-			ItemInv item=barrel.Inv[1];
+		//void RemoveFromBarrel(Barrel barrel){
+		//	ItemInv item=barrel.Inv[1];
 
-			int max=0;
-			ushort newId=0;
-			bool canBeConvert=GameMethods.ItemsCanBeFill(item.Id, barrel.LiquidId, ref max, ref newId);
+		//	int max=0;
+		//	ushort newId=0;
+		//	bool canBeConvert=GameMethods.ItemsCanBeFill(item.Id, barrel.LiquidId, ref max, ref newId);
 
-			if (canBeConvert) {
-				switch (barrel.Inv[1]) {
-					case ItemInvBasic16 i:
-						if (barrel.LiquidAmount-max+i.GetCount>=0) {
-							if (newId==i.Id) {
-								if (i.GetCount<99) {
-									i.SetCount=i.GetCount+1;
-									barrel.LiquidAmount--;
-									if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-								}
-							} else {
-								if (i.GetCount==1) {
-									DInt p=InventoryGetPosBarrel(1);
-									barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-									barrel.LiquidAmount--;
-									if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-								}
-							}
-						}
-						break;
+		//	if (canBeConvert) {
+		//		switch (barrel.Inv[1]) {
+		//			case ItemInvBasic16 i:
+		//				if (barrel.LiquidAmount-max+i.GetCount>=0) {
+		//					if (newId==i.Id) {
+		//						if (i.GetCount<99) {
+		//							i.SetCount=i.GetCount+1;
+		//							barrel.LiquidAmount--;
+		//							if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//						}
+		//					} else {
+		//						if (i.GetCount==1) {
+		//							DInt p=InventoryGetPosBarrel(1);
+		//							barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//							barrel.LiquidAmount--;
+		//							if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//						}
+		//					}
+		//				}
+		//				break;
 
-					case ItemInvBasic32 i:
-						if (GameMethods.IsItemInvBasic32(newId)) {
-							if (barrel.LiquidAmount-max>=0) {
-								DInt p=InventoryGetPosBarrel(1);
-								barrel.Inv[1]=new ItemInvBasic32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-								barrel.LiquidAmount-=50;
-							}
-						} else {
-							if (barrel.LiquidAmount-max+i.GetCount>=0) {
-								if (newId==i.Id) {
-									if (i.GetCount<99) {
-										i.SetCount=i.GetCount+1;
-										barrel.LiquidAmount--;
-										if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-									}
-								} else {
-									if (i.GetCount==1) {
-										DInt p=InventoryGetPosBarrel(1);
-										barrel.Inv[1]=new ItemInvTool32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-										barrel.LiquidAmount--;
-										if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-									}
-								}
-							}
-						}
-						break;
+		//			case ItemInvBasic32 i:
+		//				if (GameMethods.IsItemInvBasic32(newId)) {
+		//					if (barrel.LiquidAmount-max>=0) {
+		//						DInt p=InventoryGetPosBarrel(1);
+		//						barrel.Inv[1]=new ItemInvBasic32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//						barrel.LiquidAmount-=50;
+		//					}
+		//				} else {
+		//					if (barrel.LiquidAmount-max+i.GetCount>=0) {
+		//						if (newId==i.Id) {
+		//							if (i.GetCount<99) {
+		//								i.SetCount=i.GetCount+1;
+		//								barrel.LiquidAmount--;
+		//								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//							}
+		//						} else {
+		//							if (i.GetCount==1) {
+		//								DInt p=InventoryGetPosBarrel(1);
+		//								barrel.Inv[1]=new ItemInvTool32(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//								barrel.LiquidAmount--;
+		//								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//							}
+		//						}
+		//					}
+		//				}
+		//				break;
 
-					case ItemInvTool16 i:
-						if (barrel.LiquidAmount-max+i.GetCount>=0) {
-							if (i.GetCount<i.Maximum) {
-								if (newId==i.Id){
-									i.SetCount=i.GetCount+1;
-								} else {
-									DInt p=InventoryGetPosBarrel(1);
-									barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-								}
-								barrel.LiquidAmount--;
-								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-							}
-						}
-						break;
+		//			case ItemInvTool16 i:
+		//				if (barrel.LiquidAmount-max+i.GetCount>=0) {
+		//					if (i.GetCount<i.Maximum) {
+		//						if (newId==i.Id){
+		//							i.SetCount=i.GetCount+1;
+		//						} else {
+		//							DInt p=InventoryGetPosBarrel(1);
+		//							barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//						}
+		//						barrel.LiquidAmount--;
+		//						if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//					}
+		//				}
+		//				break;
 
-					case ItemInvTool32 i:
-						if (barrel.LiquidAmount-max+i.GetCount>=0) {
-							if (i.GetCount<i.Maximum) {
-								if (newId==i.Id){
-									i.SetCount=i.GetCount+1;
-								} else {
-									DInt p=InventoryGetPosBarrel(1);
-									barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
-								}
-								barrel.LiquidAmount--;
-								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-							}
-						}
-						break;
-				}
-			} else {
-				ushort id=barrel.Inv[1].Id;
-				if (GameMethods.HasLiquid(id)) {
-					switch (barrel.Inv[1]) {
-						case ItemInvTool32 i:
-							if (i.GetCount < i.Maximum) {
-								i.SetCount=i.GetCount+1;
-								barrel.LiquidAmount--;
-								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-							}
-							return;
+		//			case ItemInvTool32 i:
+		//				if (barrel.LiquidAmount-max+i.GetCount>=0) {
+		//					if (i.GetCount<i.Maximum) {
+		//						if (newId==i.Id){
+		//							i.SetCount=i.GetCount+1;
+		//						} else {
+		//							DInt p=InventoryGetPosBarrel(1);
+		//							barrel.Inv[1]=new ItemInvTool16(ItemIdToTexture(newId), newId, 1, p.X, p.Y);
+		//						}
+		//						barrel.LiquidAmount--;
+		//						if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//					}
+		//				}
+		//				break;
+		//		}
+		//	} else {
+		//		ushort id=barrel.Inv[1].Id;
+		//		if (GameMethods.HasLiquid(id)) {
+		//			switch (barrel.Inv[1]) {
+		//				case ItemInvTool32 i:
+		//					if (i.GetCount < i.Maximum) {
+		//						i.SetCount=i.GetCount+1;
+		//						barrel.LiquidAmount--;
+		//						if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//					}
+		//					return;
 
-						case ItemInvTool16 i:
-							if (i.GetCount < i.Maximum) {
-								i.SetCount=i.GetCount+1;
-								barrel.LiquidAmount--;
-								if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
-							}
-							return;
-					}
-				}
-			}
-		}
+		//				case ItemInvTool16 i:
+		//					if (i.GetCount < i.Maximum) {
+		//						i.SetCount=i.GetCount+1;
+		//						barrel.LiquidAmount--;
+		//						if (barrel.LiquidAmount<=0) barrel.LiquidId=0;
+		//					}
+		//					return;
+		//			}
+		//		}
+		//	}
+		//}
 
 		// Gradient of rising sun for background / Červánke na pozadi
 		void CreateGradientTexture() {
@@ -26118,17 +26331,17 @@ AddShake(d.to.X*16, d.to.Y*16);
 			if (Biomes[half].End>pos) {
 				for (int i = 0; i<half; i++) {
 					if (Biomes[i].End>pos) {
-						return Biomes[i]/*.Name*/;
+						return Biomes[i];
 					}
 				}
 			} else {
 				for (int i = half; i<len; i++) {
 					if (Biomes[i].End>pos) {
-						return Biomes[i]/*.Name*/;
+						return Biomes[i];
 					}
 				}
 			}
-
+			
 			return new BiomeData();
 		}
 
@@ -26170,9 +26383,10 @@ AddShake(d.to.X*16, d.to.Y*16);
 		// Save settings / Okládáni nastaveni
 		void SaveSettings(){
 			#if DEBUG
-			Debug.WriteLine("Saved Settings.txt");
+			Debug.WriteLine("Saving Settings.txt...");
 			#endif
-			 File.WriteAllText(pathToWorld+@"\Settings.txt",
+
+			File.WriteAllText(pathToWorld+@"\Settings.txt",
 				Release.VersionString+"\r\n"+
 				debug+"\r\n"+
 				fly+"\r\n"+
@@ -26188,13 +26402,13 @@ AddShake(d.to.X*16, d.to.Y*16);
 				PlayerXInt+"\r\n"+
 				PlayerYInt+"\r\n"+
 
-				windForce+"\r\n"+
-				wind+"\r\n"+
-				precipitation+"\r\n"+
-				windRirectionRight+"\r\n"+
-				timeToChageWind+"\r\n"+
+				//windForce+"\r\n"+
+				//wind+"\r\n"+
+			//	precipitation+"\r\n"+
+				//windRirectionRight+"\r\n"+
+				//timeToChageWind+"\r\n"+
 
-				changeRain+"\r\n"+
+				//changeRain+"\r\n"+
 				day+"\r\n"+
 				year+"\r\n"+
 
@@ -26299,11 +26513,11 @@ AddShake(d.to.X*16, d.to.Y*16);
 
 		// Stop waving trees / gdež přestave fókat, vyřeš abe nebele strome nahnoty
 		void StopWavingTrees() {
-			 if (wind) {
+		//	 if (windfo) {
 				for (int i = 0; i<LiveObjects.Length; i++) {
 					LiveObjects[i].angle=0;
 				}
-			}
+			//}
 		}
 
 		// Waving plants during winter / gdež bode fókat, zamávé zelenym
@@ -27115,7 +27329,6 @@ AddShake(d.to.X*16, d.to.Y*16);
 			return Color.LightSkyBlue;
 		}
 
-
 		Color GetColorBackRain() {
 			// Day
 			if (time>=(dayStart+1)*hour && time<=dayEnd*hour) {
@@ -27165,139 +27378,139 @@ AddShake(d.to.X*16, d.to.Y*16);
 		}
 
 		// Dev commands / vévojařsky přékaze
-		bool Command() {
-			if (text.StartsWith("*time-set ")) {
-				if (int.TryParse(text.Substring("*time-set ".Length), out int num)) {
-					time=num*hour;
-				} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)) {
-					time=(int)(num2*hour);
-				}
-				text="";
-				diserpeard=0;
-				return true;
-			}
-			if (text.StartsWith("*pos-y ")) {
-				if (float.TryParse(text.Substring("*pos-y ".Length), out float num)) {
-					PlayerY=num;
-				} 
-				text="";
-				diserpeard=0;
-				return true;
-			}
-			if (text.StartsWith("*pos-x ")) {
-				if (float.TryParse(text.Substring("*pos-x ".Length), out float num)) {
-					PlayerX=num;
-				} 
-				text="";
-				diserpeard=0;
-				return true;
-			}
-			if (text.StartsWith("*day-set ")){
-				if (int.TryParse(text.Substring("*day-set ".Length), out int num)){
-					day=num;
-					ChangeLeavesForceEverything();
-				}
-				text="";
-				diserpeard=0;
-				return true;
-			}
-			if (text=="*time-set early morning"){
-				time=(int)(5.5f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//bool Command() {
+		//	if (text.StartsWith("*time-set ")) {
+		//		if (int.TryParse(text.Substring("*time-set ".Length), out int num)) {
+		//			time=num*hour;
+		//		} else if (float.TryParse(text.Substring("*time-set ".Length), out float num2)) {
+		//			time=(int)(num2*hour);
+		//		}
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text.StartsWith("*pos-y ")) {
+		//		if (float.TryParse(text.Substring("*pos-y ".Length), out float num)) {
+		//			PlayerY=num;
+		//		} 
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text.StartsWith("*pos-x ")) {
+		//		if (float.TryParse(text.Substring("*pos-x ".Length), out float num)) {
+		//			PlayerX=num;
+		//		} 
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text.StartsWith("*day-set ")){
+		//		if (int.TryParse(text.Substring("*day-set ".Length), out int num)){
+		//			day=num;
+		//			ChangeLeavesForceEverything();
+		//		}
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*time-set early morning"){
+		//		time=(int)(5.5f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set late morning"){
-				time=(int)(9.5f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set late morning"){
+		//		time=(int)(9.5f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set morning"){
-				time=(int)(7f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set morning"){
+		//		time=(int)(7f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set noon"){
-				time=(int)(12f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set noon"){
+		//		time=(int)(12f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set night"){
-				time=(int)(20f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set night"){
+		//		time=(int)(20f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set afternoon"){
-				time=(int)(14f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set afternoon"){
+		//		time=(int)(14f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set evening"){
-				time=(int)(16f*hour);
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set evening"){
+		//		time=(int)(16f*hour);
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*time-set midnight"){
-				time=0;
-				ChangeLeavesForceEverything();
-				text="";
-				diserpeard=0;
-				return true;
-			}
+		//	if (text=="*time-set midnight"){
+		//		time=0;
+		//		ChangeLeavesForceEverything();
+		//		text="";
+		//		diserpeard=0;
+		//		return true;
+		//	}
 
-			if (text=="*give-mobile") {
-				InventoryAddOne((ushort)Items.Mobile);
-				text="";
-				diserpeard=0;text="";diserpeard=0;
-				return true;
-			}
-			if (text=="*wd0") {
-				Global.WorldDifficulty=0;text="";diserpeard=0;
-				return true;
-			}
-			if (text=="*wd1") {
-				Global.WorldDifficulty=1;text="";diserpeard=0;
-				return true;
-			}
-			if (text=="*wd2") {
-				Global.WorldDifficulty=2;text="";diserpeard=0;
-				return true;
-			}
-			if (text=="*rain-change") {
-				changeRain=1;
-				text="";diserpeard=0;
-				return true;
-			}
-			if (text=="*wind-change") {
-				WindChange();
-				text="";diserpeard=0;
-				return true;
-			}
-			if (text.StartsWith("*error")) {
-				throw new Exception("Manual error");
-			}
-			return false;
-		}
+		//	if (text=="*give-mobile") {
+		//		InventoryAddOne((ushort)Items.Mobile);
+		//		text="";
+		//		diserpeard=0;text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*wd0") {
+		//		Global.WorldDifficulty=0;text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*wd1") {
+		//		Global.WorldDifficulty=1;text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*wd2") {
+		//		Global.WorldDifficulty=2;text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*rain-change") {
+		//		changeRain=1;
+		//		text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text=="*wind-change") {
+		//		WindChange();
+		//		text="";diserpeard=0;
+		//		return true;
+		//	}
+		//	if (text.StartsWith("*error")) {
+		//		throw new Exception("Manual error");
+		//	}
+		//	return false;
+		//}
 
 		// Stop falling blocks / zastav padané bloke
 		void CheckBlockFallling(int x, int y) {
@@ -27348,16 +27561,16 @@ AddShake(d.to.X*16, d.to.Y*16);
 
 			float maxUpscaling=20f;
             if (Graphics.GraphicsProfile==GraphicsProfile.HiDef) {
-                float scale = 8192f/Global.WindowWidth;
+                float scale = 8192f*Global.WindowWidthDiv;
                 if (scale<maxUpscaling)maxUpscaling=scale;
 
-                scale = 8192f/Global.WindowHeight;
+                scale = 8192f*Global.WindowHeightDiv;
                 if (scale<maxUpscaling) maxUpscaling=scale;
             } else { 
-                float scale = 4096f/Global.WindowWidth;
+                float scale = 4096f*Global.WindowWidthDiv;
                 if (scale<maxUpscaling) maxUpscaling=scale;
 
-                scale = 4096f/Global.WindowHeight;
+                scale = 4096f*Global.WindowHeightDiv;
                 if (scale<maxUpscaling) maxUpscaling=scale;
             }
 
@@ -27556,10 +27769,10 @@ AddShake(d.to.X*16, d.to.Y*16);
 			//}
 		}
 
-		VertexBuffer shapeBuffer; 
+	//	VertexBuffer shapeBuffer; 
 		BasicEffect basicEffect; 
 		VertexPositionColor[] vert;
-		Vector3 camPos;
+	//	Vector3 camPos;
 
 		// Set basic with shadows / nastav fšecko ke stinom
 		void BeginWithShadows(){
@@ -27569,156 +27782,258 @@ AddShake(d.to.X*16, d.to.Y*16);
                 LightingEnabled=false
             };
         }
-
+		float shadowAlpha;
 		void SetShadows(){
-			//camPos=new Vector3(0,0,-10);
-			float maxLen=Global.WindowHeight;
-			List<VertexPositionColor> list = new();
+			if (cameraMove || vert==null) {
+				//camPos=new Vector3(0,0,-10);
+				float maxLen=Global.WindowHeight/2f;
+				List<VertexPositionColor> listVerticles = new();
+				List<short> listIncides = new();
 
-			Color c=Color.Black*0.05f;
-			float b=maxLen;
-			float b16=maxLen+16;
+				Color c=Color.Blue*0.5f/**0.05f*/;
+				Color c2=Color.Red*0.5f/**0.05f*/;
+				float b=maxLen;
+				float b16=maxLen+16;
 
-			float posX, posY, posX2, posY2;
+				float posX, posY, posX2, posY2;
 
-			// Before lunch / dopoledne
-			if (time > 5.5f * hour && time < 12 * hour) {
-				float angle = -(float)Math.Atan((((float)time - 12f*hour) / (6f*hour)) * FastMath.PIHalf);
+				// Before lunch / dopoledne
+				if (time > 5.5f * hour && time < 12 * hour) {
+					float angle = -(float)Math.Atan((time - 12f*hour) / (6f*hour) * FastMath.PIHalf);
+					angleShadow=angle;
+					if (time < 6*hour) shadowAlpha=(1f-((6f*hour-time)/hour*2f));
+					else shadowAlpha=1f;
+				//	c*=(1f-((6f*hour-time)/hour*2f));
+					int startY=terrainStartIndexY-5>0?terrainStartIndexY-5:0;
 
-				if (time < 6*hour) c*=(1f-((6f*hour-time)/hour*2f));
-				for (int x = terrainStartIndexX-5>0?terrainStartIndexX-5:0; x < terrainStartIndexW; x++) {
-					for (int y = terrainStartIndexY-5>0?terrainStartIndexY-5:0; y < terrainStartIndexH; y++) {
-						if (terrain[x].IsTopBlocks[y]) {
-							if (GameMethods.IsLeavesOrBranches(terrain[x].TopBlocks[y].Id)){
-								if (wind){
-									if (terrain[x].TopBlocks[y] is LeavesBlock leaves) {
-										Vector4 rect=leaves.GetRealSquare();
-										posX=rect.X;
-										posY=rect.Y;
-										posX2=rect.Z;
-										posY2=rect.W;
-									}else{
-										posX=x*16;
-										posY=y*16;
-										posX2=posX+16;
-										posY2=posY+16;
-									}
-								} else {
-									posX=x*16;
-									posY=y*16;
-									posX2=posX+16;
-									posY2=posY+16;
+					for (int x = terrainStartIndexX-5>0?terrainStartIndexX-5:0; x < terrainStartIndexW; x++) {
+						Terrain chunk=terrain[x];
+						for (int y = startY < chunk.LightPosHalf ? chunk.LightPosHalf: startY; y < terrainStartIndexH && y<chunk.LightPosFull; y++) {
+							if (chunk.IsTopBlocks[y]) {
+								if (GameMethods.IsLeavesOrBranches(chunk.TopBlocks[y].Id)) {
+									//if (wind){
+										if (chunk.TopBlocks[y] is LeavesBlock leaves && leaves.tree!=null) {
+											Vector4 rect=leaves.GetRealSquare();
+											posX=rect.X;
+											posY=rect.Y;
+											posX2=rect.Z;
+											posY2=rect.W;
+										}else{
+											posX=x*16;
+											posY=y*16;
+											posX2=posX+16;
+											posY2=posY+16;
+										}
+									//} else {
+									//	posX=x*16;
+									//	posY=y*16;
+									//	posX2=posX+16;
+									//	posY2=posY+16;
+									//}
+
+									listVerticles.Add(new VertexPositionColor(new(posX  - WindowX, posY2 - WindowY, 1f), c2));
+									listVerticles.Add(new VertexPositionColor(new(posX2 - WindowX, posY - WindowY,  1f), c2));
+									listVerticles.Add(new VertexPositionColor(new(posX  - WindowX+angle*b, maxLen+ posY2 - WindowY, 1f), c));
+									listVerticles.Add(new VertexPositionColor(new(posX2 - WindowX+ angle*b16, maxLen+posY2-WindowY, 1f), c));
+
+									int offset=listVerticles.Count;
+									listIncides.Add((short)offset);
+									listIncides.Add((short)(offset+1));
+									listIncides.Add((short)(offset+2));
+
+									listIncides.Add((short)(offset+2));
+									listIncides.Add((short)(offset+1));
+									listIncides.Add((short)(offset+3));
 								}
-								
-								Vector3 vector3=new(posX - WindowX+angle*b, maxLen+ posY2 - WindowY, 1f);
-								Vector3 vector1=new(posX2- WindowX, posY - WindowY, 1f);
-
-								list.Add(new VertexPositionColor(new Vector3(posX - WindowX, posY2 - WindowY, 1f), c));
-								list.Add(new VertexPositionColor(vector1, c));
-								list.Add(new VertexPositionColor(vector3, c));
-
-								list.Add(new VertexPositionColor(vector3, c));
-								list.Add(new VertexPositionColor(vector1, c));
-								list.Add(new VertexPositionColor(new Vector3(posX2 - WindowX+angle * b16, maxLen+ posY2-WindowY, 1f), c));
 							}
 						}
 					}
-				}
 
-			// After lunch / popoledňo
-			} else if (time > 12*hour && time < 18.5f * hour) {  
-				float angle = (float)Math.Atan((1f - ((float)time - 6f*hour) / (6f*hour)) * FastMath.PIHalf);
-				
-				if (time > 18*hour) c*=((18.5f*hour-time)/hour*2f);
-				for (int x = terrainStartIndexX; x < terrainStartIndexW+5; x++) {
-					for (int y = terrainStartIndexY-5>0?terrainStartIndexY-5:0; y < terrainStartIndexH && y<terrain[x].LightPosFull; y++) {
-						if (terrain[x].IsTopBlocks[y]) {
-							if (GameMethods.IsLeavesOrBranches(terrain[x].TopBlocks[y].Id)) {
-								if (wind) {
-									if (terrain[x].TopBlocks[y] is LeavesBlock leaves) {
-										Vector4 rect=leaves.GetRealSquare();
-										posX=rect.X;
-										posY=rect.Y;
-										posX2=rect.Z;
-										posY2=rect.W;
-									} else {
-										posX=x*16;
-										posY=y*16;
-										posX2=posX+16;
-										posY2=posY+16;
-									}
-								} else {
-									posX=x*16;
-									posY=y*16;
-									posX2=posX+16;
-									posY2=posY+16;
+				// After lunch / popoledňo
+				} else if (time > 12*hour && time < 18.5f * hour) {  
+					float angle = (float)Math.Atan((1f - (time - 6f*hour) / (6f*hour)) * FastMath.PIHalf);
+					angleShadow=angle;
+					if (time > 18*hour)	shadowAlpha=((18.5f*hour-time)/hour*2f);
+					else shadowAlpha=1f;
+				//	 (time > 18*hour) c*=((18.5f*hour-time)/hour*2f);
+					int startY=terrainStartIndexY-5>0?terrainStartIndexY-5:0;
+
+					for (int x = terrainStartIndexX; x < terrainStartIndexW+5; x++) {
+						Terrain chunk=terrain[x];
+						for (int y = startY < chunk.LightPosHalf ? chunk.LightPosHalf: startY; y < terrainStartIndexH && y<chunk.LightPosFull; y++) {
+							if (chunk.IsTopBlocks[y]) {
+								if (GameMethods.IsLeavesOrBranches(chunk.TopBlocks[y].Id)) {
+									//if (wind) {
+										if (chunk.TopBlocks[y] is LeavesBlock leaves && leaves.tree!=null) {
+											Vector4 rect=leaves.GetRealSquare();
+											posX=rect.X;
+											posY=rect.Y;
+											posX2=rect.Z;
+											posY2=rect.W;
+										} else {
+											posX=x*16;
+											posY=y*16;
+											posX2=posX+16;
+											posY2=posY+16;
+										}
+									//} else {
+									//	posX=x*16;
+									//	posY=y*16;
+									//	posX2=posX+16;
+									//	posY2=posY+16;
+									//}
+
+									listVerticles.Add(new VertexPositionColor(new(posX  - WindowX, posY  - WindowY, 1f), c2));
+									listVerticles.Add(new VertexPositionColor(new(posX2 - WindowX, posY2 - WindowY, 1f), c2));
+									listVerticles.Add(new VertexPositionColor(new(posX2 - WindowX+angle*b,       posY2-WindowY+maxLen, 1f), c));
+									listVerticles.Add(new VertexPositionColor(new(posX  - WindowX + angle * b16, maxLen+posY2-WindowY, 1f), c));
+									
+									int offset=listVerticles.Count;
+									listIncides.Add((short)offset);
+									listIncides.Add((short)(offset+1));
+									listIncides.Add((short)(offset+2));
+
+									listIncides.Add((short)offset);
+									listIncides.Add((short)(offset+2));
+									listIncides.Add((short)(offset+3));
 								}
-
-								Vector3 vector3=new(posX2 - WindowX+angle*b, posY2-WindowY+maxLen, 1f);
-								Vector3 vector1=new(posX - WindowX, posY - WindowY, 1f);
-
-								list.Add(new VertexPositionColor(vector1, c));
-								list.Add(new VertexPositionColor(new Vector3(posX2 - WindowX, posY2 - WindowY, 1), c));
-								list.Add(new VertexPositionColor(vector3, c));
-
-								list.Add(new VertexPositionColor(vector1, c));
-								list.Add(new VertexPositionColor(vector3, c));
-								list.Add(new VertexPositionColor(new Vector3(posX - WindowX + angle * b16, maxLen+posY2-WindowY, 1f), c));
 							}
 						}
 					}
-				}
-			}
-            vert=list.ToArray();
-			
-			// set to send / nastavit k odesláni
-			if (vert.Length!=0) {
-				shapeBuffer = new VertexBuffer(Rabcr.Game.GraphicsDevice, VertexPositionTexture.VertexDeclaration, vert.Length,  BufferUsage.WriteOnly); 
-				shapeBuffer.SetData(vert);
+				} else shadowAlpha=0f;
+				vert=listVerticles.ToArray();
+				incides=listIncides.ToArray();
 			}
 		}
-				
+		short[] incides;
+		float angleShadow;
+		//IndexBuffer indexBuffer;
+		//int count
 		void DrawShadow(){
 			// No oblique shadows / bes šikméch stinu
 			if (vert.Length==0) return;
 				
 			// Set matrixs / Nastav matice
-			camPos=new Vector3(Global.WindowWidth/2, Global.WindowHeightHalf, -10);
+			Vector3 camPos=new(Global.WindowWidthHalf, Global.WindowHeightHalf, -10);
             basicEffect.View = ZoomMatrixNoUpScaling * Matrix.CreateLookAt(camPos, camPos + Vector3.Backward, Vector3.Down);
             basicEffect.Projection = Matrix.CreateOrthographic(Global.WindowWidth, Global.WindowHeight, 1, 100);
 
 			// Send to Graphics / pošle do grafike
-			Rabcr.Game.GraphicsDevice.SetVertexBuffer(shapeBuffer);
+		//	Rabcr.Game.GraphicsDevice.SetVertexBuffer(shapeBuffer);
+		//	Rabcr.Game.GraphicsDevice.Indices = indexBuffer;
 
 			foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes) {  
 				effectPass.Apply();  
 			
-				Rabcr.Game.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, vert,  0, vert.Length/3);
+				Rabcr.Game.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vert, 0,  vert.Length, incides, 0, incides.Length/3);
 			}
 		}
 
-		void WindChange(){
-			timeToChageWind = 2000 + FastRandom.Int(1000);
-			wind=!wind;
-			if (!wind){
-				StopWavingTrees();
-				StopWind();
-			}else{
-				StartWind();
+		//void WindChange() {
+		//	timeToChageWind = 2000 + FastRandom.Int(1000);
+		//	wind=!wind;
+		//	if (!wind) {
+		//		StopWavingTrees();
+		//		StopWindSound();
+		//	} else {
+		//		StartWindSound();
+		//	}
+		//}
+
+		void DoorEvent(){
+			int x = mousePosDiv16.X,
+				y = mousePosDiv16.Y;
+
+			if (y<0) return;
+			if (y>125) return;
+
+			Terrain chunk = terrain[x];
+
+			if (chunk.IsTopBlocks[y]) {
+				switch (chunk.TopBlocks[y].Id) {
+					case (ushort)BlockId.DoorOpen:
+						CloseDoor(x,y);
+						return;	
+
+					case (ushort)BlockId.DoorOpenDownPart:
+						CloseDoor(x, ((DoorBlock)chunk.TopBlocks[y]).originalY);
+						return;	
+				}
+			}
+			
+			if (chunk.IsSolidBlocks[y]) {
+				switch (chunk.SolidBlocks[y].Id) {	
+					case (ushort)BlockId.DoorClose:
+						OpenDoor(x,y);
+						return;
+
+					case (ushort)BlockId.DoorCloseDownPart:
+						OpenDoor(x, ((DoorBlock)chunk.SolidBlocks[y]).originalY);
+						return;	
+				}
+			}
+
+			void OpenDoor(int x, int y) {
+				// Add open
+				chunk.IsTopBlocks[y]=true;
+				chunk.IsTopBlocks[y+1]=true;
+				chunk.IsTopBlocks[y+2]=true;
+
+				chunk.TopBlocks[y]=new NormalBlock(doorOpenTexture, (ushort)BlockId.DoorOpen, new Vector2(x*16, y*16));
+				DoorBlock doorBlock=new((ushort)BlockId.DoorOpenDownPart) {originalY=y};
+				chunk.TopBlocks[y+1]=doorBlock;
+				chunk.TopBlocks[y+2]=doorBlock;
+
+				// Remove close
+				chunk.IsSolidBlocks[y]=false;
+				chunk.IsSolidBlocks[y+1]=false;
+				chunk.IsSolidBlocks[y+2]=false;
+
+				chunk.SolidBlocks[y]=null;
+				chunk.SolidBlocks[y+1]=null;
+				chunk.SolidBlocks[y+2]=null;
+
+				chunk.RefreshLightingRemoveSolid(x,y);
+				chunk.RefreshLightingRemoveSolid(x,y+1);
+				chunk.RefreshLightingRemoveSolid(x,y+2);
+			}
+
+			void CloseDoor(int x, int y) {
+				// Add close
+				chunk.IsSolidBlocks[y]=true;
+				chunk.IsSolidBlocks[y+1]=true;
+				chunk.IsSolidBlocks[y+2]=true;
+
+				chunk.SolidBlocks[y]=new NormalBlock(doorCloseTexture, (ushort)BlockId.DoorClose, new Vector2(x*16, y*16));
+				DoorBlock doorBlock=new((ushort)BlockId.DoorCloseDownPart) {originalY=y};
+				chunk.SolidBlocks[y+1]=doorBlock;
+				chunk.SolidBlocks[y+2]=doorBlock;
+
+				// Remove open
+				chunk.IsTopBlocks[y]=false;
+				chunk.IsTopBlocks[y+1]=false;
+				chunk.IsTopBlocks[y+2]=false;
+
+				chunk.TopBlocks[y]=null;
+				chunk.TopBlocks[y+1]=null;
+				chunk.TopBlocks[y+2]=null;
+
+				//RemoveTopBlock(x,y);
+				//RemoveTopBlock(x,y+1);
+				//RemoveTopBlock(x,y+2);
+				chunk.RefreshLightingRemoveTop(y,(ushort)BlockId.DoorOpenDownPart);
+				chunk.RefreshLightingRemoveTop(y,(ushort)BlockId.DoorOpenDownPart);
+				chunk.RefreshLightingRemoveTop(y,(ushort)BlockId.DoorOpenDownPart);
 			}
 		}
+
+		void ManageChangeWeatherInBiomes() {
+			//foreach (BiomeData biome in Biomes) {
+			//	if (biome==Biome.Arctic) {
+			//		biome.ChangeWeather();
+			//	}
+			//}
+		}
+		
 	}
-	//class VectorStack4 {
- //       public Vector2 TopLeft, TopRight, BottomLeft, BottomRight;
-	//	float w=1, h=1;
- //       public VectorStack4(int x, int y) {
- //           float xx=(x*18f)/w;
- //           float yy=(y*18f)/h;
-
- //           TopLeft     = new Vector2(1f/w+xx+16f/w, 1f/w+yy);
- //           TopRight    = new Vector2(1f/w+xx,       1f/w+yy);
- //           BottomLeft  = new Vector2(1f/w+xx+16f/w, 1f/w+yy+16f/w);
- //           BottomRight = new Vector2(1f/w+xx,       1f/w+ yy+16f/h);
- //       }
- //   }
 }

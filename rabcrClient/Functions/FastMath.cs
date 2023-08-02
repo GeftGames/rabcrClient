@@ -119,5 +119,19 @@ namespace rabcrClient {
         public static int Abs(int input) => input>=0 ? input  : -input;
 
         public static float Abs(float input) => input>=0f ? input : -input;
+
+        //public static Color bilinear(Color[,] corners, Vector2 uv) {
+        //     Color cTop = Lerp(corners[0, 1], corners[1, 1], uv.X);
+        //     Color cBot = Lerp(corners[0, 0], corners[1, 0], uv.X);
+        //     Color cUV  = Lerp(cBot, cTop, uv.Y);
+        //     return cUV;
+        // } 
+         
+        // public static Color bilinear(Color c1, Color c2, Color c3, Color c4, float a1, float a2, float a3, float a4) {
+        //     Color cTop = Lerp(c3, c4, uv.X);
+        //     Color cBot = Lerp(c1, c2, uv.X);
+        //     Color cUV  = Lerp(cBot, cTop, uv.Y);
+        //     return cUV;
+        // }
     }
 }

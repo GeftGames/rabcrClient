@@ -12,69 +12,45 @@ namespace rabcrClient {
         public virtual void SaveTop(List<byte> list) { }
     }
 
-    struct GenBiomeData{
-        public ushort Start, End;
-        public Biome Name;
-    }
-
-    struct BiomeData{
+    class GenBiomeData{
         public int Start, End;
         public Biome Name;
     }
 
-    enum Biome :byte {
+    public enum Biome :byte {
         None,
-            SaltOcean,
-          //  SugarOcean,
+        SaltOcean,
+        HotPlains,
+        Arctic,
+        Tundra,
+        Bog,
+        Subtropics,
+        Desert,
+        Savanna,
+        Mangrove,
+        TropicalRainforest,
+        WetTundra,
+        Taiga,
+        Swamp,
+        Plains,
+        LeaveForest,
+        Jungle,
+        ColdTaiga,
+        DryTundra,
+        Fen,
+        ArcticPlains,
+        BothForest,
+        Beach,
+        SpruceForest,
+        HumidSubtropical,
+        ExtremeColdBeach,
+        ColdBeach,
+        HotBeach,
 
-            HotPlains,
-            //_polar,
-            Arctic,
-            //CoolTemperateDesertScrub,
-            //ArticMountains,
-
-            // _Subarctic,
-            Tundra,
-           // ArcticAlpineDesert,
-
-            //_Mild,
-            Bog,
-           // Wetland,
-           // TemperateFreshWaterSwampForest,
-          //  Saltmarsh,
-            Subtropics,
-          //  Heath,
-
-            //_Tropical,
-            Desert,
-            Savanna,
-            Mangrove,
-
-            //WarmTemperateDesert,
-
-            TropicalRainforest,
-            WetTundra,
-            Taiga,
-            Swamp,
-            Plains,
-            LeaveForest,
-            Jungle,
-            ColdTaiga,
-            DryTundra,
-            Fen,
-            ArcticPlains,
-            BothForest,
-            Beach,
-            SpruceForest,
-            HumidSubtropical,
-            ExtremeColdBeach,
-            ColdBeach,
-            HotBeach,
-
-            Moon,
-            Mars,
-            SpaceStation,
-        }
+        Moon,
+        Mars,
+        SpaceStation,
+    }
 
     public class GenDataWater: GenDataBasic{
         public override void SaveTop(List<byte> list) {
@@ -144,7 +120,7 @@ namespace rabcrClient {
             Low,
         }
 
-        readonly List<GenBiomeData> BiomeDataList=new List<GenBiomeData>();
+        readonly List<GenBiomeData> BiomeDataList=new();
         enum ChangerBiome: byte{
             None,
 
@@ -584,11 +560,20 @@ namespace rabcrClient {
                 };
 
                 foreach (GenBiomeData b in BiomeDataList) {
-                    bytes.Add((byte)(int)b.Name);
+                    #if DEBUG
+                    if (b==null || b.Name==Biome.None){throw new Exception("Unknown Biome"); }
+                    #endif
+                    bytes.Add((byte)b.Name);
                     bytes.Add((byte)b.Start);
                     bytes.Add((byte)(b.Start>>8));
                     bytes.Add((byte)b.End);
                     bytes.Add((byte)(b.End>>8));
+                    bytes.Add((byte)(0));//Rain
+                    bytes.Add((byte)(0));//snow
+                    bytes.Add((byte)(0));//sand
+                    bytes.Add((byte)(0));//windforce
+                    bytes.Add((byte)(0));//rainforce
+                    bytes.Add((byte)(0));//snowforce
                 }
                 File.WriteAllBytes(playedWorld+"\\"+"Earth"+"Biomes.ter", bytes.ToArray());
             }
@@ -749,7 +734,8 @@ namespace rabcrClient {
                 // Lithosphere
                 GenerateUnderSurface(chunk,terrainHeight+1);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.SaltOcean, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.SaltOcean, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.SaltOcean.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -800,7 +786,8 @@ namespace rabcrClient {
                 GenerateUnderSurface(chunk,terrainHeight+1);
             }
 
-             BiomeDataList.Add(new GenBiomeData{ Name=Biome.SaltOcean, Start=(ushort)start, End=(ushort)generatePos});
+             BiomeDataList.Add(new GenBiomeData{ Name=Biome.SaltOcean, Start=start, End=generatePos});
+             Debug.WriteLine("Generated "+Biome.SaltOcean.ToString()+" Start: "+start+" end"+generatePos);
         }
 
     //    void BiomeBeachDown() {
@@ -985,7 +972,8 @@ namespace rabcrClient {
 
                 GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Arctic, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Arctic, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Arctic.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1035,7 +1023,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk,terrainHeight+1);
                 } else GenerateUnderSurface(chunk,terrainHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.ArcticPlains, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.ArcticPlains, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Arctic.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1095,7 +1084,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
              }
-             BiomeDataList.Add(new GenBiomeData{ Name=Biome.Tundra, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+             BiomeDataList.Add(new GenBiomeData{ Name=Biome.Tundra, Start=generatePos, End=generatePos+biomeSize});
+             Debug.WriteLine("Generated "+Biome.Tundra.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
              generatePos+=biomeSize;
         }
 
@@ -1145,7 +1135,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+1);
              }
-             BiomeDataList.Add(new GenBiomeData{ Name=Biome./*Dry*/Tundra, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+             BiomeDataList.Add(new GenBiomeData{ Name=Biome./*Dry*/Tundra, Start=generatePos, End=generatePos+biomeSize});
+             Debug.WriteLine("Generated "+Biome.Tundra.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
              generatePos+=biomeSize;
         }
 
@@ -1204,7 +1195,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
              }
-             BiomeDataList.Add(new GenBiomeData{ Name=Biome./*Wet*/Tundra, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+             BiomeDataList.Add(new GenBiomeData{ Name=Biome./*Wet*/Tundra, Start=generatePos, End=generatePos+biomeSize});
+             Debug.WriteLine("Generated "+Biome.Tundra.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
              generatePos+=biomeSize;
         }
 
@@ -1323,7 +1315,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, dirtHeight+1+terrainHeight);
                 } else GenerateUnderSurface(chunk, dirtHeight+terrainHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.ColdTaiga, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.ColdTaiga, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.ColdTaiga.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1435,7 +1428,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, dirtHeight+1+terrainHeight);
                 } else GenerateUnderSurface(chunk, dirtHeight+terrainHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Taiga, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Taiga, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Taiga.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1545,7 +1539,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.SpruceForest, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.SpruceForest, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.SpruceForest.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1683,7 +1678,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.BothForest, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.BothForest, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.BothForest.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1822,7 +1818,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Fen, Start=(ushort)(generatePos), End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Fen, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Fen.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -1937,7 +1934,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Swamp, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Swamp, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Swamp.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2081,7 +2079,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.LeaveForest, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.LeaveForest, Start=generatePos, End=generatePos+biomeSize});
+             Debug.WriteLine("Generated "+Biome.LeaveForest.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2179,7 +2178,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Plains, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Plains, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Plains.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2242,7 +2242,8 @@ namespace rabcrClient {
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
 
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.HotPlains, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize) });
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.HotPlains, Start=generatePos, End=generatePos+biomeSize });
+            Debug.WriteLine("Generated "+Biome.HotPlains.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2418,7 +2419,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{Name=Biome.Subtropics, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{Name=Biome.Subtropics, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Subtropics.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2548,7 +2550,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.HumidSubtropical, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize) });
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.HumidSubtropical, Start=generatePos, End=generatePos+biomeSize });
+            Debug.WriteLine("Generated "+Biome.HumidSubtropical.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2658,7 +2661,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{Name=Biome.Desert, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{Name=Biome.Desert, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Desert.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2692,7 +2696,7 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-              if (!chunk.SetLightPosHalf) {
+                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 if (seabedChange<0) {
@@ -2785,7 +2789,8 @@ namespace rabcrClient {
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
 
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Savanna, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Savanna, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Savanna.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2819,7 +2824,7 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-        if (!chunk.SetLightPosHalf) {
+                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 for (int b = terrainHeight; b<terrainHeight+dirtHeight; b++) chunk.SolidBlocks[b]=(ushort)BlockId.Dirt;
@@ -2855,7 +2860,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Mangrove, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Mangrove, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Mangrove.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -2891,7 +2897,7 @@ namespace rabcrClient {
                 } else dirtChange--;
 
                 chunk.LightPosFull=terrainHeight;
-               if (!chunk.SetLightPosHalf) {
+                if (!chunk.SetLightPosHalf) {
                     if (terrainHeight>53) chunk.LightPosHalf=53; else chunk.LightPosHalf=terrainHeight;
                 }
                 if (FastRandom.Bool()) {
@@ -2966,7 +2972,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
-            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Jungle, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.Jungle, Start=generatePos, End=generatePos+biomeSize});
+            Debug.WriteLine("Generated "+Biome.Jungle.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -3064,6 +3071,8 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
+            BiomeDataList.Add(new GenBiomeData{ Name=Biome.DryTundra, Start=(ushort)generatePos, End=(ushort)(generatePos+biomeSize)});
+            Debug.WriteLine("Generated "+Biome.Arctic.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -3157,6 +3166,7 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
+            Debug.WriteLine("Generated "+Biome.Arctic.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
 
@@ -3252,6 +3262,7 @@ namespace rabcrClient {
                     GenerateUnderSurface(chunk, terrainHeight+dirtHeight+1);
                 } else GenerateUnderSurface(chunk, terrainHeight+dirtHeight);
             }
+            Debug.WriteLine("Generated "+Biome.Arctic.ToString()+" Start: "+generatePos+" end"+(generatePos+biomeSize));
             generatePos+=biomeSize;
         }
         #endregion

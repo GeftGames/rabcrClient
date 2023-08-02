@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 #if DEBUG
@@ -6,6 +7,100 @@ using System.Diagnostics;
 #endif
 
 namespace rabcrClient {
+    public class Precipitation {
+      //  public bool None;
+        public bool Rain, Snow, Sand/*, Hail*/;
+        public float RainForce, SnowForce, SandForce/*, HailForce*/;
+        public float RainEndTime, SnowEndTime, SandEndTime, HailEndTime;
+        public float Fog; // Mornings, after rain,...
+        public float Temperature;
+        public float WindForce;
+        public float AddingForce;
+
+        public float rainWithStorm; 
+    }
+
+    //class MyGameTime{
+    //    public int Year;
+    //    public int Days;
+    //    public int Hours;
+    //    public int Minutes;
+
+    //    public static MyGameTime operator +(MyGameTime t1, MyGameTime t2){
+    //        MyGameTime ret=new MyGameTime();
+    //        ret.Minutes=t1.Minutes+t2.Minutes;
+    //        ret.Hours=t1.Hours+t2.Hours;
+    //        if (ret.Minutes>=60) ret.Hours+=ret.Minutes/60;
+    //        ret.Days=t1.Days+t2.Days;
+    //        if (ret.Hours>=24) ret.Days+=ret.Hours/24;
+    //        ret.Year=t1.Year+t2.Year;
+
+    //        return ret;
+    //    }
+
+    //    public static bool (MyGameTime t1, MyGameTime t2){
+    //        MyGameTime ret=new MyGameTime();
+    //        ret.Minutes=t1.Minutes+t2.Minutes;
+    //        ret.Hours=t1.Hours+t2.Hours;
+    //        if (ret.Minutes>=60) ret.Hours+=ret.Minutes/60;
+    //        ret.Days=t1.Days+t2.Days;
+    //        if (ret.Hours>=24) ret.Days+=ret.Hours/24;
+    //        ret.Year=t1.Year+t2.Year;
+
+    //        return ret;
+    //    }
+    //}
+
+    public class BiomeData{
+        public int Start, End;
+        public Biome Type;
+        public Precipitation precipitation;
+        //public float windForce;   // from -1 to 1
+        //public float AddingForce; // changing
+        public int TimeToEndPrecipitation; // hours
+        //public float Temperature;
+        //public float PrecipitationForce;
+
+  //      public void ChangeWeather(){
+  //          if (Type==Biome.Arctic) {
+		//		if (precipitation==Precipitation.Snowing) {
+  //                  precipitation=Precipitation.None;
+  //                  TimeToEndPrecipitation=(FastRandom.Int(24)+1);
+		//		} else if (precipitation==Precipitation.None) {
+  //                  precipitation=Precipitation.Snowing;
+  //                  TimeToEndPrecipitation=FastRandom.Int(5*24)+1;
+  //              }
+		//	}
+  //          if (Type==Biome.ArcticPlains) {
+		//		if (precipitation==Precipitation.Snowing) {
+  //                  precipitation=Precipitation.None;
+  //                  TimeToEndPrecipitation=(FastRandom.Int(24)+1);
+		//		} else if (precipitation==Precipitation.None) {
+  //                  precipitation=Precipitation.Snowing;
+  //                  TimeToEndPrecipitation=FastRandom.Int(5*24)+1;
+  //              }
+		//	} 
+  //         // if (Name==Biome.Beach) {
+		//		if (precipitation==Precipitation.Rain) {
+  //                  precipitation=Precipitation.None;
+  //                  TimeToEndPrecipitation=(FastRandom.Int(24)+1);
+		//		} else if (precipitation==Precipitation.None) {
+  //                  precipitation=Precipitation.Rain;
+  //                  TimeToEndPrecipitation=FastRandom.Int(5*24)+1;
+  //              }
+		////	}
+  //      }
+    }
+
+ //   public enum Precipitation : byte {
+	//	None,
+	//	Snowing,
+	//	Rain,
+	//	Storm,
+	//	RainWithSnow,
+	//	SandStorm,
+	//}
+
     public class CraftingIn{
         public ItemNonInv[] ItemSlot;
         public bool HaveItemInInventory;
@@ -425,6 +520,7 @@ namespace rabcrClient {
                 (ushort)BlockId.ChristmasBallRed => true,
                 (ushort)BlockId.ChristmasBallTeal => true,
                 (ushort)BlockId.ChristmasBallYellow => true,
+                (ushort)BlockId.SpruceLeavesWithSnow => true,
                 _ => false,
             };
         
@@ -1532,6 +1628,13 @@ namespace rabcrClient {
             (ushort)BlockId.GrassBlockHills,
             (ushort)BlockId.GrassBlockJungle,
             (ushort)BlockId.GrassBlockPlains,
+            (ushort)BlockId.GrassBlockSnowClay,
+            (ushort)BlockId.GrassBlockSnowCompost,
+            (ushort)BlockId.GrassBlockSnowDesert,
+            (ushort)BlockId.GrassBlockSnowForest,
+            (ushort)BlockId.GrassBlockSnowHills,
+            (ushort)BlockId.GrassBlockSnowJungle,
+            (ushort)BlockId.GrassBlockSnowPlains,
             (ushort)BlockId.RedSand,
             (ushort)BlockId.Regolite,
             (ushort)BlockId.Cobblestone,
@@ -1544,6 +1647,25 @@ namespace rabcrClient {
             }
             return false;
         }
+
+        public static int IsFallingOnSide(ushort blockId) 
+            => blockId switch {
+                (ushort)BlockId.Sand => 2,
+                (ushort)BlockId.Dirt => 1,
+                (ushort)BlockId.Gravel => 1,
+                (ushort)BlockId.GrassBlockClay => 1,
+                (ushort)BlockId.GrassBlockCompost => 1,
+                (ushort)BlockId.GrassBlockDesert => 1,
+                (ushort)BlockId.GrassBlockForest => 1,
+                (ushort)BlockId.GrassBlockHills => 1,
+                (ushort)BlockId.GrassBlockJungle => 1,
+                (ushort)BlockId.GrassBlockPlains => 1,
+                (ushort)BlockId.RedSand => 2,
+                (ushort)BlockId.Regolite => 2,
+                (ushort)BlockId.Cobblestone => 1,
+                (ushort)BlockId.Compost => 1,
+                _=>-1
+            };
 
         public static bool CanDestroy(ushort blockId) {
             foreach (ushort i in nonBreaktableBlocks) {

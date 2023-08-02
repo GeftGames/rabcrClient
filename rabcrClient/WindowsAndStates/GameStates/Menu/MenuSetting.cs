@@ -22,7 +22,7 @@ namespace rabcrClient {
         const int DocumentSize=500;
         int start,end;
         float smoothMouse=0;
-        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500+90;
+        int PageHeight=1290+60+70+60+90+90+90+90+90+90+500+90+90;
         #endregion
         bool afterrestart;
         public override void Init() {

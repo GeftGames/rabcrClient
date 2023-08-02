@@ -105,6 +105,8 @@
       <DependentUpon>FormError.cs</DependentUpon>
     </Compile>
     <Compile Include="GameBar.cs" />
+    <Compile Include="InterLogic\Game\BlockType\DoorBlock.cs" />
+    <Compile Include="Lighting.cs" />
     <Compile Include="Particles.cs" />
     <Compile Include="ClothesTypes.cs" />
     <Compile Include="Functions\FastMath.cs" />
@@ -248,6 +250,7 @@
     <Compile Include="WindowsAndStates\GameStates\Game\GWorld.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\Multiplayer.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\PlanetSystem.cs" />
+    <Compile Include="WindowsAndStates\GameStates\Game\Singleplayer\Inventory.cs" />
     <Compile Include="WindowsAndStates\GameStates\Game\Singleplayer.cs" />
     <Compile Include="WindowsAndStates\GameStates\Menu.cs" />
     <Compile Include="WindowsAndStates\GameStates\Menu\Informations.cs" />

@@ -306,8 +306,8 @@ namespace rabcrClient {
 
             for (int i = -radius; i <= radius; i++) {
                 index = i + radius;
-                offsetsHoriz[index] = new Vector2((float)i/ Global.WindowWidth, 0f);
-                offsetsVert[index] = new Vector2(0f, (float)i/ Global.WindowHeight);
+                offsetsHoriz[index] = new Vector2((float)i*Global.WindowWidthDiv, 0f);
+                offsetsVert[index] = new Vector2(0f, (float)i*Global.WindowHeightDiv);
             }
 
             float total = 0f;

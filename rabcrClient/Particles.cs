@@ -57,70 +57,139 @@ namespace rabcrClient {
             VSpeed =vSpeed*(size*0.5f+0.5f);
             Height=Size<0.25f ? 3 : (Size<0.75f ? 4 : 5);
             Width=Size<0.5f ? 1 : 2;
-        }
 
-        public void Update() {
-            Position.X+=HSpeed*Size;
+            rec.Width=Width;
+            rec.Height=Height;
+
+        }
+      public  Rectangle rec;
+        public void Update(float wind) {
+            Position.X+=HSpeed*Size*wind;
             Position.Y+=VSpeed;
+
+            if (Position.X>Global.WindowWidth)Position.X-=Global.WindowWidth;
+			if (Position.X<0)Position.X+=Global.WindowWidth;
+
+            rec.X=(int)(Position.X+0.5f);
+            rec.Y=(int)(Position.Y+0.5f);
         }
 
-        public void Draw(float x, float y,float a) {
+        public void Draw(/*float x, float y,*/float a) {
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
+                destinationRectangle: rec,//new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
                 color: Color*a
             );
         }
 
-        public void DrawBetterQuality(float x, float y,float a) {
-            Rabcr.spriteBatch.Draw(
-                texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x)+1, (int)(Position.Y+0.5f+y)+1, Width, Height),
-                color: Color.Black*a*0.05f
-            );
-
-            Rabcr.spriteBatch.Draw(
-                texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y)-1, Width, Height),
-                color: Color.White*a*0.05f
-            );
-
-            Rabcr.spriteBatch.Draw(
-                texture: Rabcr.Pixel,
-                destinationRectangle: new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
-                color: Color*a
-            );
-        }
+        //public void DrawBetterQuality(/*float x, float y,*/float a) {
+        //    rec.X++;
+        //    rec.Y++;
+        //    Rabcr.spriteBatch.Draw(
+        //        texture: Rabcr.Pixel,
+        //        destinationRectangle: rec,//new Rectangle((int)(Position.X+0.5f+x)+1, (int)(Position.Y+0.5f+y)+1, Width, Height),
+        //        color: Color.Black*a*0.05f
+        //    );
+        //     rec.X--;
+        //    rec.Y-=2;
+        //    Rabcr.spriteBatch.Draw(
+        //        texture: Rabcr.Pixel,
+        //        destinationRectangle: rec,//new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y)-1, Width, Height),
+        //        color: Color.White*a*0.05f
+        //    );
+        //     rec.Y++;
+        //    Rabcr.spriteBatch.Draw(
+        //        texture: Rabcr.Pixel,
+        //        destinationRectangle: rec,//new Rectangle((int)(Position.X+0.5f+x), (int)(Position.Y+0.5f+y), Width, Height),
+        //        color: Color*a
+        //    );
+        //}
     }
 
     class ParticleSnow {
         public Vector2 Position;
 
         public float HSpeed, VSpeed;
-      //  public Color Color;
-        //	public float Angle;
         float time=0f;
-      //  public float Size;
         float amplitude=1;
+        Rectangle rec;
         public ParticleSnow(float size, float vSpeed) {
-        //    Color=Color.White*(Size=size);
             VSpeed=vSpeed*size;
+            rec.Width=rec.Height=FastRandom.Int(5);
         }
-
-        public void Update(bool right) {
+        public void Update(float wind) {
             time+=0.1f;
             if (time==(int)time) amplitude=FastRandom.FloatTWO()-1;
 
-            if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
-            else Position.X-=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
+            //if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
+            //else 
+            Position.X-=HSpeed*wind+amplitude*((float)Math.Cos(time))*0.25f;
             Position.Y+=VSpeed+((float)Math.Sin(time))*HSpeed*0.5f/*+0.2f*/;
+
+            if (Position.X>Global.WindowWidth)Position.X-=Global.WindowWidth;
+			if (Position.X<0)Position.X+=Global.WindowWidth;
+
+            rec.X=(int)(Position.X+0.5f);
+            rec.Y=(int)(Position.Y+0.5f);
         }
 
-        public void Draw(float x, float y, Color c) { 
+        public void Draw(/*float x, float y,*/ float c) { 
             Rabcr.spriteBatch.Draw(
                 texture: Rabcr.Pixel2,
-                new Vector2(Position.X/*+0.5f*/+x, Position.Y/*+0.5f*/+y),
-                color: c
+              rec,//  new Vector2(Position.X/*+0.5f*/+x, Position.Y/*+0.5f*/+y),
+                color: Color.White*c
+            );
+        }
+    }
+
+    class ParticleSand {
+        public Vector2 Position;
+
+        public float HSpeed, VSpeed;
+        float time=0f;
+        float amplitude=1;
+        readonly Rectangle rec;
+        readonly Texture2D Texture;
+        Color Color;
+        public ParticleSand(/*float size, */float vSpeed, Texture2D texture) {
+
+            HSpeed=1f;
+            Texture=texture;
+
+            rec.Width=rec.Height=FastRandom.Int(8);
+            rec.X=FastRandom.Int(16-rec.Width);
+            rec.Y=FastRandom.Int(16-rec.Height);
+            VSpeed=vSpeed+(16-rec.Width)+1/**size*/;
+
+            int rd=FastRandom.Int(256-100)+100;
+            Color=new Color(rd,rd,rd);
+        }
+
+        public void Update(float wind) {
+            float w=(wind*0.5f + wind>0 ? 0.5f : -0.5f)*25;
+            time+=0.05f;
+            if (time==(int)time) amplitude=FastRandom.FloatTWO()-1;
+
+           // if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
+            //else 
+            Position.X+=HSpeed*w+amplitude*((float)Math.Cos(time))*0.25f*rec.Width*0.1f;
+            Position.Y+=VSpeed+((float)Math.Sin(time))*HSpeed*0.5f*rec.Width*0.1f/*+0.2f*/;
+
+            if (Position.X>Global.WindowWidth)Position.X-=Global.WindowWidth;
+			if (Position.X<0)Position.X+=Global.WindowWidth;
+        }
+
+        public void Draw(float c) { 
+            Rabcr.spriteBatch.Draw(
+                texture: Texture,
+                position: Position,
+                sourceRectangle: rec,
+                color: Color*c,
+                rotation: time*FastMath.PI*2/*Rotation*/,
+                scale: 1f/*0.5f*/,
+                origin: Vector2.Zero,
+                effects: SpriteEffects.None,
+                layerDepth: 1
             );
         }
     }
@@ -148,12 +217,15 @@ namespace rabcrClient {
             if (right) Position.X+=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
             else Position.X-=HSpeed+amplitude*((float)Math.Cos(time))*0.25f;
             Position.Y+=VSpeed+((float)Math.Sin(time))*HSpeed*0.5f/*+0.2f*/;
+
+            if (Position.X>Global.WindowWidth)Position.X-=Global.WindowWidth;
+			if (Position.X<0)Position.X+=Global.WindowWidth;
         }
 
-        public void Draw(float x, float y, Color c) 
+        public void Draw(/*float x, float y,*/ Color c) 
             => Rabcr.spriteBatch.Draw(
                 Rabcr.Pixel,
-                new Vector2(Position.X+x, Position.Y+y),
+              Position  /*new Vector2(Position.X+x, Position.Y+y)*/,
                 c
             );
     }
@@ -172,20 +244,20 @@ namespace rabcrClient {
 
         public Color color = Color.White;
         readonly float size;
-        public FallingLeave(int x, int y, /*float size,*/ bool leftWind, bool rain, Rectangle src) {
+        public FallingLeave(int x, int y, /*float size,*//* bool leftWind,*/ /*bool rain,*/ Rectangle src) {
             
             Position=new Vector2(x, y);
           // vecOrigin=new Vector2(/*size*/src.Width*0.5f, src.Height*0.5f/*size*/);
-            if (rain) {
-                if (leftWind) VSpeed=-0.01f; else VSpeed=0.01f;
-            } else {
-                if (leftWind) VSpeed=-0.09f; else VSpeed=0.09f;
-            }
+            //if (rain) {
+            //    if (leftWind) VSpeed=-0.01f; else VSpeed=0.01f;
+            //} else {
+            //    if (leftWind) VSpeed=-0.09f; else VSpeed=0.09f;
+            //}
             size=FastRandom.Float();
             srcrec=src;
         }
 
-        public void Update() {
+        public void Update(float wind) {
             time+=0.07f;
             Position.X+=VSpeed;
             Position.Y+=(float)Math.Cos(time)*0.125f+0.35f;

@@ -1,9 +1,8 @@
-Texture2D SpriteTexture;
-texture2D ShadowTexture; 
-float Height;
-//float starts [Height];
-float Bevel;
-float3x4 WorldViewProjection;
+float angleSin;
+float angleCos;
+float alpha;
+float weight[5];
+
 sampler2D SpriteTextureSampler = sampler_state
 {
 	Texture = <SpriteTexture>;
@@ -16,89 +15,61 @@ struct VertexShaderOutput
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
-//float4 MainPS(VertexShaderOutput input) : COLOR
-//{
-//    float4 color=tex2D(SpriteTextureSampler, input.TextureCoordinates);
-//    if (color.a==0) return color;
 
-//    return (input.Color*color.r+float4(input.Color.r/3, input.Color.g/3, input.Color.b/3, 1-color.r))*color.a;
-//}
-
-float4 ComputeMaxLighting(VertexShaderOutput input) : COLOR
-{
-	//float2 coords=input.TextureCoordinates;
-	////float2 coordsE=float2(coords.x+coords.y*Bevel,coords.y);
-
- //   float4 color=tex2D(SpriteTextureSampler, coords);
- //  // float4 color0=tex2D(SpriteTextureSampler, float2(0,0));
-	////float source=color.r;
-
- //   //float2 posLast=coords;
-	////posLast.y+=Height;
-	
- //  // float4 colorP=tex2D(SpriteTextureSampler, posLast);
-	//float source=color.r;
-	//int index=(int)(coords.x*Height);
-	//float inArray=starts[index];
-	//if (source>inArray) starts[index]=coords.y;
-
-
- //   return float4(input.Color.r, z, colorP.r, 1);
+float4 ComputeMaxLighting(VertexShaderOutput input) : COLOR {
 
 	float2 coords=input.TextureCoordinates;
-	float2 vectorLight=float2(Bevel,1);
-	float bestColor=1.0;
-	float distance=Height*50;
-	for (int i = 0; i < 1; i++) {
-		float2 actualPos=coords-i*vectorLight*distance;
-		float4 color=tex2D(SpriteTextureSampler, actualPos);
-		if (color.r<bestColor)bestColor=color.r;
+	float4 color=tex2D(SpriteTextureSampler, coords);
+	
+	float ConpInt = color.b*weight[0];
+
+	float s=angleSin;
+	float c=angleCos;
+
+	for (int i = 1; i < 5; i++) {
+		float2 vec=float2(c*i, s*i)*2.0f;
+
+		float2 actualPos = coords - vec;
+		float2 actualPos2 = coords + vec;
+		
+		float actualColor = tex2D(SpriteTextureSampler, actualPos).r;
+		float actualColor2 = tex2D(SpriteTextureSampler, actualPos2).r;
+
+		ConpInt += (actualColor + actualColor2) * weight[i];
 	}
-	return float4(bestColor, bestColor, bestColor, bestColor);
-}
+	
 
-//struct VS_OUTPUT
-//{
-//    float4 Pos  : POSITION;
-//    float2 Tex  : TEXCOORD0;
-//};
-struct vertexInfo
-{
-    float3 position : POSITION;
-    float2 uv: TEXCOORD0;
-    float3 color : COLOR;
-};
-struct v2p
-{
-    float4 position : SV_POSITION;
-    float2 uv : TEXCOORD0;
-    float3 color : TEXCOORD1;
-};
-//float2 UVTile;
-v2p VS(vertexInfo input/*float3 InPos  : POSITION, float2 InTex  : TEXCOORD0*/) {
-//    VS_OUTPUT Out = (VS_OUTPUT)0;
+	float FragmentColor = color.a*weight[0];
+	float intenzity=(ConpInt*0.5+0.1);
+	//s*=intenzity;
+	//c*=intenzity;
 
-//    // transform the position to the screen
-//	Out.Pos =mul(WorldViewProjection, float4(InPos,1.0));//mul(InPos, WorldViewProjection);
+	for (int j = 1; j < 5; j++) {
+		float2 vec=float2(c*j, s*j)*2.0f;
 
-//    //Out.Pos = float4(InPos,1) + float4(-TextureDimensions.x, TextureDimensions.y, 0, 0);
-////    Out.Pos =InPos;///* float4(InPos,1) + */float4(1-TextureDimensions.x, TextureDimensions.y, 0, 0);
-//    Out.Tex = InTex;
+		float2 actualPos = coords - vec;
+		float2 actualPos2 = coords + vec;
 
-//    return Out;
+		float actualColor = tex2D(SpriteTextureSampler, actualPos).a;
+		float actualColor2 = tex2D(SpriteTextureSampler, actualPos2).a;
 
-	//v2p output;
- //   output.position = mul(WorldViewProjection, float4(input.position,1.0));
- //   output.uv = input.uv * UVTile;
- //   output.color = input.color;
-	v2p output;
-output.position = input.position;
-output.color = input.color;
-output.uv = input.uv;
+		FragmentColor += (actualColor+actualColor2) * weight[j];
+	}
 
-return output;
+	//for (int k = 1; k < 5; k++) {
+	//	float2 actualPos=coords+float2(-i*distanceW*2,0);
+	//	float actualColor=tex2D(SpriteTextureSampler, actualPos).a;
+	//	FragmentColor+=actualColor*weight[k];
+	//}
+	//for (int z = 1; z < 5; z++) {
+	//	float2 actualPos=coords+float2(i*distanceW*2,0);
+	//	float actualColor=tex2D(SpriteTextureSampler, actualPos).a;
+	//	FragmentColor+=actualColor*weight[z];
+	//}
 
-    //return output;
+	//float s=sin(color.a*10)*0.1+0.1;
+	
+	return float4(0,0,0,FragmentColor*0.2f*alpha+color.a*0.05f);
 }
 
 technique SpriteDrawing
@@ -106,6 +77,5 @@ technique SpriteDrawing
 	pass P0
 	{
 		PixelShader = compile ps_4_0_level_9_1 ComputeMaxLighting();
-		VertexShader = compile vs_4_0_level_9_1 VS();
 	}
 };

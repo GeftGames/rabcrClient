@@ -3,13 +3,14 @@ using System;
 
 namespace rabcrClient {
     static class Global {
-        public static int WindowWidth=300;
+        public static int WindowWidth=300, WindowHeight=250;
+        public static float WindowWidthDiv=1/300f, WindowHeightDiv=1f/250;
+        public static int WindowWidthHalf=300, WindowHeightHalf=250;
+
+
         public static float ItemAnimation, ItemAnimation2,itemAnimationPos;
-        public static int WindowHeight=250;
 
-        public static int WindowWidthHalf=300;
 
-        public static int WindowHeightHalf=250;
         public static int WorldDifficulty; // 0==surival 1==text 2==Creative
         public static bool HasSoundGraphics=true;
 

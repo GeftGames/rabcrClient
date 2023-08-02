@@ -3402,8 +3402,8 @@
       <eng>Clean</eng>
       <ces>Vyčistit</ces>
       <mor>Vyčistit</mor>
-      <mor-ha>Vêčêstět</mor-ha>
-      <mor-hax>Večestět</mor-hax>
+      <mor-ha>Vêpôcovat</mor-ha>
+      <mor-hax>Vepocovat</mor-hax>
       <mor-va>Vypucovať</mor-va>
       <slk>Vyčistiť</slk>
       <deu>Putzen</deu>
@@ -11272,6 +11272,8 @@
       <eng>Help with GeDo</eng>
       <ces>Pomoc s GeDo</ces>
       <mor>Pomoct s GeDo</mor>
+      <mor-ha>Pomuct s GeDo</mor-ha>
+      <mor-hax>Pomuct s GeDo</mor-hax>
       <mor-va>Pomocť s GeDo</mor-va>
       <slk>Pomoc s Gedo</slk>
       <eo>Helpu kun GeDo</eo>
@@ -18712,7 +18714,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="301">
       <eng>Constructed</eng>
       <ces>Umělé</ces>
-      <mor-ha>Oměly</mor-ha>
+      <mor-ha>Ôměly</mor-ha>
+      <mor-hax>Oměly</mor-hax>
       <pol>Języki sztuczne</pol>
       <slk>Umelé jazyky</slk>
       <spa>Lenguajes artificiales</spa>
@@ -18795,6 +18798,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="302">
       <eng>Asian</eng>
       <ces>Asie</ces>
+      <mor>Asija</mor>
+      <mor-ha>Asija</mor-ha>
+      <mor-hax>Asija</mor-hax>
       <pol>Azja</pol>
       <slk>Ázia</slk>
       <spa>Asia</spa>
@@ -18954,6 +18960,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="304">
       <eng>American</eng>
       <ces>Amerika</ces>
+      <mor>Amerika</mor>
       <pol>Ameryka</pol>
       <slk>Amerika</slk>
       <spa>América</spa>
@@ -19033,8 +19040,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="305">
       <eng>European</eng>
       <ces>Evropa</ces>
-      <pol>Europa</pol>
       <slk>Európa</slk>
+      <pol>Europa</pol>
       <spa>Europa</spa>
       <fra>Europe</fra>
       <deu>Europa</deu>
@@ -19109,9 +19116,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="306">
       <eng>Australian</eng>
+      <ces>Austrálie</ces>
+      <mor>Austrálie</mor>
       <pol>Australia</pol>
       <slk>Austrália</slk>
-      <ces>Austrálie</ces>
       <spa>Australia</spa>
       <deu>Australien</deu>
       <jpn>オーストラリア</jpn>
@@ -19188,8 +19196,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
       <eng>Germanic</eng>
       <ces>Germánské</ces>
       <mor-ha>Germánsky</mor-ha>
-      <pol>Języki germańskie</pol>
+      <mor-hax>Germánsky</mor-hax>
       <slk>Germánske</slk>
+      <pol>Języki germańskie</pol>
       <spa>Lenguas germánicas</spa>
       <fra>Langues germaniques</fra>
       <deu>Germanische</deu>
@@ -19266,10 +19275,11 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="308">
       <eng>Slavic</eng>
-      <pol>Języki słowiańskie</pol>
-      <slk>Slovanské jazyky</slk>
       <ces>Slovanské jazyky</ces>
-      <mor-ha>Slovansky jazšekê</mor-ha>
+      <mor-ha>Slovansky jazêkê</mor-ha>
+      <mor-hax>Slovansky jazeke</mor-hax>
+      <slk>Slovanské jazyky</slk>
+      <pol>Języki słowiańskie</pol>
       <spa>Lenguas eslavas</spa>
       <fra>Langues slaves</fra>
       <deu>Slawische Sprachen</deu>
@@ -66591,7 +66601,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1563">
       <ces>Tagy se nesmí překrývat</ces>
-      <mor-ha>Tage se nesmi překrévat</mor-ha>
+      <mor-hax>Tage se nesmi překrévat</mor-hax>
+      <mor-ha>Tagê se nesmi překrévat</mor-ha>
       <mor-va>Tagy sa nesmí překrývať</mor-va>
       <eng>Tags must not overlap</eng>
       <fra>Les balises ne doivent pas se chevaucher</fra>
@@ -67006,7 +67017,9 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1568">
       <ces>Barevné efekty</ces>
-      <mor-ha>Barevny efekte</mor-ha>
+      <mor>Barevné efekty</mor>
+      <mor-ha>Barevny efektê</mor-ha>
+      <mor-hax>Barevny efekte</mor-hax>
       <eng>Color effects</eng>
       <fra>Effets de couleur</fra>
       <ara>تأثيرات اللون</ara>
@@ -67581,8 +67594,8 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1575">
       <ces>Nebezpečná url se tváří jako odkaz na stránku, ale skutečnosti není</ces>
       <mor>Nebezpečná url vypadá jak odkaz na stránku, ale ve skutečnostě néni</mor>
-      <mor-ha>Nebezpečná url vêpadá jak odkaz na stránkô, ale ve skôtečnostě néni</mor-ha>
-      <mor-hax>Nebezpečná url vepadá jak odkaz na stránko, ale ve skotečnostě néni</mor-hax>
+      <mor-ha>Nebezpečná url vêpadá jak odkaz na stránkô, ale faktickê néni</mor-ha>
+      <mor-hax>Nebezpečná url vepadá jak odkaz na stránko, ale fakticke néni</mor-hax>
       <mor-va>Nejistá url vyzerá pjekňe jak odkaz na stránku, ale néni jaksapatřící</mor-va>
       <slk>Nebezpečná url sa tvári ako odkaz na stránku, ale skutočne nie je</slk>
       <eng>The dangerous url looks like a link to a page, but it really isn't</eng>
@@ -68850,7 +68863,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     </a>
     <a id="1592">
       <eng>It looks like you have another more powerful graphics card,</eng>
-      <ces>Vypadáto, že máte další lepší grafickou kartu,</ces>
+      <ces>Vypadáto, že máte jinou lepší grafickou kartu,</ces>
       <mor-ha>Vêpadáto, že máte dalši lepši grafickó kartô,</mor-ha>
       <mor-hax>Vepadáto, že máte dalši lepši grafickó karto,</mor-hax>
       <mor-va>Vyzerá to, že máte další lepší grafickú kartu,</mor-va>
@@ -69918,6 +69931,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1613">
       <eng>Graphics</eng>
       <ces>Grafika</ces>
+      <mor>Grafika</mor>
       <slk>Grafika</slk>
       <pol>Grafika</pol>
       <deu>Grafik</deu>
@@ -69983,6 +69997,7 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1614">
       <eng>Spruce leaves with snow</eng>
       <ces>Smrkové jehličí se sněhem</ces>
+      <mor>Smrkové jehličí se sněhem</mor>
       <mor-ha>Smrkovy jehlêči se sněhem</mor-ha>
       <mor-hax>Smrkovy jehleči se sněhem</mor-hax>
       <mor-va>Smrekové spenčí se sněhem</mor-va>
@@ -70057,9 +70072,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1615">
       <eng>Invert mouse scroll</eng>
       <ces>Obrátit posun kolečkem</ces>
+      <mor>Obrátit posun kolečkem</mor>
       <mor-ha>Kolečko zhurô pácem</mor-ha>
       <mor-hax>Kolečko zhuro pácem</mor-hax>
-      <slk>Invert Mouse Scroll</slk>
+      <mor-va>Obrátiť tor šibnúti kolcem</mor-va>
       <pol>Odwróć przewijanie myszy</pol>
       <deu>Maus-Bildlauf umkehren</deu>
       <jpn>マウススクロールを反転する</jpn>
@@ -70089,9 +70105,10 @@ Dans quel temps se déplace-t-il %longueur%km? s=v·t</fra-ca>
     <a id="1616">
       <eng>Some settings will be applied after restart.</eng>
       <ces>Některé nastavení bude aplikováno až po znovuspuštění.</ces>
-      <mor>Nekeré nastavení bude aplikováné až po znovuspuštění.</mor>
-      <mor-ha>Nekery nastaveni bôde aplikováné až po znovôspôštěni.</mor-ha>
-      <mor-hax>Nekery nastaveni bode aplikováné až po znovospoštěni.</mor-hax>
+      <mor>Nekeré nastavení bude aplikováné až po zavření a novém spuštění.</mor>
+      <mor-ha>Nekery nastaveni bôde aplikováné až po zavřeni a novym spôštěni.</mor-ha>
+      <mor-hax>Nekery nastaveni bode aplikováné až po zavřeni a novym spoštěni.</mor-hax>
+      <mor-va>Nekeré nastavení bude užité až po zavření a novém spuštění.</mor-va>
       <slk>Po reštarte sa použijú niektoré nastavenia.</slk>
       <pol>Niektóre ustawienia zostaną zastosowane po ponownym uruchomieniu.</pol>
       <deu>Einige Einstellungen werden nach dem Neustart angewendet.</deu>

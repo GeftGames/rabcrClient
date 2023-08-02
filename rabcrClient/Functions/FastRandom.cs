@@ -7,9 +7,10 @@ namespace rabcrClient {
         #region Data Members
 
         // Constants
-        const double DOUBLE_UNIT = 1.0 / ( int.MaxValue + 1.0 );
-        const double DOUBLE_UNIT_HALF = 0.5 / ( int.MaxValue + 1.0 );
-        const double DOUBLE_UNIT_TWO = 2.0 / ( int.MaxValue + 1.0 );
+        const double DOUBLE_UNIT = 1.0 / (int.MaxValue + 1.0);
+        const double DOUBLE_UNIT_HALF = 0.5 / (int.MaxValue + 1.0);
+        const double DOUBLE_UNIT_TWO = 2.0 / (int.MaxValue + 1.0);
+
         // State Fields
         static ulong
             x_ = (ulong)Guid.NewGuid().GetHashCode(),
@@ -20,23 +21,14 @@ namespace rabcrClient {
 
         static int freeBuffer;
         #endregion
-
-        #region Constructor
-
-        /// <summary>Constructs a new generator using two random Guid hash codes as a seed.</summary>
-        //public static FastRandom() {
-        //    y_;
-        //    x_
-        //}
-
+           
         /// <summary>Constructs a new generator with the supplied seed.</summary>
         /// <param name = "seed">The seed value.</param>
         public static void SetSeed(ulong seed) {
             x_=seed<<3;
             x_=seed>>3;
         }
-        #endregion
-
+   
         #region Public Methods
         /// <summary>Generates a pseudorandom boolean.</summary>
         /// <returns>A pseudorandom boolean.</returns>
@@ -158,6 +150,26 @@ namespace rabcrClient {
             return (int)(buffer & 0x0000000000000F);
         }
 
+         ///<summary>Generates a pseudorandom float from zero to one, fast, 1/256 precisive.</summary>
+         ///<returns>Returns float from zero to one</returns>
+         public static float FloatLowPrecisive() {
+            if (freeBuffer > 7) {
+                freeBuffer-=8;
+                return (float)((buffer>>=7) & 0x000000000000FF)/256;
+            }
+
+            x_ ^= x_ << 23;
+
+            ulong temp_x = y_;
+            y_ = x_ ^ y_ ^ ( x_ >> 17 ) ^ ( y_ >> 26 );
+            x_ = temp_x;
+
+            buffer = y_ + temp_x;
+         
+            freeBuffer=64-8;
+            return (float)(buffer & 0x000000000000FF)/256;
+        }
+
          public static void Byte2(List<byte> list) {
             if (freeBuffer > 0) {
                 freeBuffer--;
@@ -200,24 +212,24 @@ namespace rabcrClient {
             return (byte)(buffer & 0x000000000000FF);
         }
 
-        public static byte Byte128_Plus128() {
-            if (freeBuffer >= 7) {
-                freeBuffer-=7;
-                return (byte)((buffer>>=7) & 0x0000000000007F + 128);
-            }
+        //public static byte Byte128_Plus128() {
+        //    if (freeBuffer >= 7) {
+        //        freeBuffer-=7;
+        //        return (byte)((buffer>>=7) & 0x0000000000007F + 128);
+        //    }
 
-            x_ ^= x_ << 23;
+        //    x_ ^= x_ << 23;
 
-            ulong temp_x = y_;
+        //    ulong temp_x = y_;
 
-            y_ = x_ ^ y_ ^ ( x_ >> 17 ) ^ ( y_ >> 26 );
-            x_ = temp_x;
+        //    y_ = x_ ^ y_ ^ ( x_ >> 17 ) ^ ( y_ >> 26 );
+        //    x_ = temp_x;
 
-            buffer = y_ + temp_x;
+        //    buffer = y_ + temp_x;
 
-            freeBuffer=64-7;
-            return (byte)(buffer & 0x0000000000007F + 128);
-        }
+        //    freeBuffer=64-7;
+        //    return (byte)(buffer & 0x0000000000007F + 128);
+        //}
 
         public static void Byte(List<byte> list) {
             if (freeBuffer >= 8) {
@@ -279,6 +291,17 @@ namespace rabcrClient {
             x_ = temp_x;
 
             return (float)(DOUBLE_UNIT * (0x7FFFFFFF & (y_ + temp_x)));
+        } 
+        
+        public static float FloatFromMOneToOne() {
+            x_ ^= x_ << 23;
+
+            ulong temp_x = y_;
+
+            y_ = x_ ^ y_ ^ (x_ >> 17) ^ (y_ >> 26);
+            x_ = temp_x;
+
+            return (float)(DOUBLE_UNIT * (0x7FFFFFFF & (y_ + temp_x)))*2-1f;
         }
         
         public static float FloatHalf() {
@@ -497,6 +520,7 @@ namespace rabcrClient {
             return (int)(DOUBLE_UNIT * (0x7FFFFFFF & (temp_x + y_)) * (maxValue-minValue)) + minValue;
         }
 
+        // Generate int from zero to value 
         public static int Int(int value) {
             x_ ^= x_ << 23;
 

@@ -267,7 +267,9 @@
     SewingMachine,
     Ladder,
     DoorOpen,
+    DoorOpenDownPart,
     DoorClose,
+    DoorCloseDownPart,
 
     EggDrop,
 
