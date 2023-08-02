@@ -1,8 +1,11 @@
 # RabigonCraft The most of my World
 ## Download
-Releases here 
+### Releases here 
 - https://rabcr.ga/
 - github
+
+## Wiki
+- https://github.com/GeftGames/rabcrClient/wiki
 
 ## About
 A 2D game written with MonoGame that targets Win.
@@ -18,7 +21,10 @@ A 2D game written with MonoGame that targets Win.
 - Some parts translated by Google translate :)
 
 ## Programing
+### Enviroment
 - Visual Studio 2019 c# (https://visualstudio.microsoft.com/)
 - MonoGame nuget (https://www.monogame.net/)
 - dotnet-mgcb-editor tool for opening .mgcb file (https://docs.monogame.net/articles/tools/mgcb_editor.html)
 - Optional - something for syntax highlight .fx shader files
+### Other projects
+- Font creator https://github.com/GeftGames/FontTextureCreator
