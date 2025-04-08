@@ -3,6 +3,8 @@
 ### Releases here 
 -<s> https://rabcr.ga/</s>
 - github
+- [gamejolt](https://gamejolt.com/games/rabcr/532746)
+- [itch.io](https://geftgames.itch.io/rabigoncraft-the-most-of-my-world)
 
 ## Wiki
 - https://github.com/GeftGames/rabcrClient/wiki
